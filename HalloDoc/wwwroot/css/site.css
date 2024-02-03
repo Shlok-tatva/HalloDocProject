@@ -1,0 +1,17 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+
+.theame_toggle_button {
+    position: absolute !important;
+    z-index: 5;
+    right: 15px;
+    top: 15px;
+}

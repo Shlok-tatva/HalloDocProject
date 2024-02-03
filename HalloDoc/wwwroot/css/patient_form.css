@@ -1,0 +1,167 @@
+body {
+    font-family: 'Poppins';
+    /* background-color: azure; */
+    transition: all 0.2s linear;
+}
+
+.active {
+    border-bottom: 2px solid #01BBE7;
+}
+
+    .active a {
+        color: #01BBE7 !important;
+    }
+
+.links a {
+    text-decoration: none;
+    color: #3a3a3a;
+    font-weight: 600;
+}
+
+.navbar-toggler {
+    display: none;
+    border-color: #01BBE7 !important;
+    box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+    color: #01BBE7;
+}
+
+.w-95 {
+    width: 95%;
+}
+
+.w-60 {
+    width: 60%;
+}
+
+tr, td, th {
+    color: #3a3a3a !important;
+}
+
+td, th {
+    padding-left: 20px !important;
+    padding-top: 10px !important;
+    padding-bottom: 12px !important;
+}
+
+
+
+.form-control:focus,
+.form-control:hover {
+    outline: 0;
+    box-shadow: none;
+    border: 1px solid #01BBE7;
+}
+
+button:hover i {
+    color: white !important;
+}
+
+.hover_white:hover {
+    color: white;
+}
+
+.iti {
+    width: 100%;
+    height: 100%;
+}
+
+.iti input {
+    width: 100%;
+    height: 100%;
+}
+
+.iti__selected-flag,
+.iti__country-list {
+    z-index: 5;
+    color: black !important;
+}
+
+footer {
+    margin-top: 150px !important;
+}
+
+label {
+    font-size: 15px !important;
+}
+
+.form_content {
+    width: 75%;
+}
+
+@media (max-width: 760px) {
+    .form_content {
+        width: 85%;
+    }
+}
+
+@media (max-width: 390px) {
+    label {
+        font-size: 12px !important;
+    }
+}
+
+::placeholder {
+    color: #212529;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #01BBE7;
+}
+
+input[type=date]:required:invalid::-webkit-datetime-edit {
+    color: transparent !important;
+}
+input[type=date]:focus::-webkit-datetime-edit {
+    color: black !important;
+}
+
+.warning_icon{
+    height: 100px;
+    width:100px;
+    border: 2px solid #f7ad00;
+    border-radius: 50000px;
+}
+.warning_icon i{
+    position: relative;
+    bottom: 16px;
+    left: 3px;
+    font-size: 90px;
+    color: #f7ad00;
+}
+
+
+@media (max-width:530px) {
+    .navbar-toggler {
+        display: block;
+    }
+
+    .mobile_d_none {
+        display: none;
+    }
+
+    .mobile_nav {
+        position: absolute;
+        height: 100vh;
+        width: 50%;
+        margin: 0px;
+        background-color: #0d0f10;
+    }
+
+        .mobile_nav div {
+            flex-direction: column;
+        }
+}

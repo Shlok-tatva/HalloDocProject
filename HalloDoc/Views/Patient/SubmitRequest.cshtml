@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["Title"] = "Submit A Request";
+}
+
+
+@section PatientLoginStyle{
+    <link rel="stylesheet" href="~/css/patient_style.css" />
+}
+
+
+<nav class="navbar navbar-light shadow">
+    <div class="container-fluid">
+        <div class="navbar-brand">
+            <img src="/images/logo.png" width="130px" height="60px" alt="" srcset="">
+        </div>
+        <div>
+            <button id="btnSwitch" class="btn btn-lg btn-outline-info theame_toggle_button"><i class="fa-regular fa-moon" id="theme_mode_button"></i></button>
+        </div>
+    </div>
+</nav>
+
+<main class="container-sm m-auto">
+    <div class="d-flex justify-content-around mt-5">
+        <div class=""></div>
+        <h1 class="fw-bold ">I am a...</h1>
+        <div>
+            <a href="index" class="btn btn-lg btn-outline-info hover_white">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </a>
+        </div>
+    </div>
+    <div class="d-flex flex-column justify-content-center align-items-center ">
+        <a href="" class="submit-request-card text-decoration-none my-2 purple">
+            <span class="fs-4 fw-bold">patient</span>
+        </a>
+        <a href="" class="submit-request-card text-decoration-none my-2 info">
+            <span class="fs-4 fw-bold">family/friend</span>
+        </a>
+        <a href="" class="submit-request-card text-decoration-none my-2 green ">
+            <span class="fs-4 fw-bold">Concierge</span>
+        </a>
+        <a href="" class="submit-request-card text-decoration-none my-2 pink ">
+            <span class="fs-4 fw-bold">Business Partners</span>
+        </a>
+    </div>
+</main> 
+
+<partial name ="_Footer" />

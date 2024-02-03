@@ -1,0 +1,219 @@
+/*
+````````````````````````````````````````````````````````````````````````
+``````````````````Login and Forget Password Page````````````````````````
+````````````````````````````````````````````````````````````````````````
+*/
+
+
+body {
+    font-family: 'Poppins';
+    /* background-color: azure; */
+    transition: background 0.2s linear;
+}
+
+.blur_content {
+    height: 100vh;
+    width: max-content !important;
+    margin: auto;
+    padding: 0px;
+    background: inherit;
+    background-image: url("/images/login-banner.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+
+}
+
+.blur {
+    height: 100%;
+    backdrop-filter: blur(10px);
+}
+.bg_blend{
+    background-blend-mode: multiply;
+}
+
+
+.theame_toggle_button {
+    position: absolute !important;
+    z-index: 5;
+    right: 15px;
+    top: 15px;
+}
+
+/*
+````````````````````````````````````````````````````````````````````````
+`````````````````````````Submit Request Page````````````````````````````
+````````````````````````````````````````````````````````````````````````
+*/
+
+.submit-request-card {
+    width: 300px;
+    padding: 20px;
+    /* border: 1px solid black; */
+    border-radius: 10px;
+}
+
+    .submit-request-card span {
+        text-transform: uppercase;
+    }
+
+    .submit-request-card:hover {
+        border-width: 2px;
+        cursor: pointer;
+    }
+
+.purple {
+    background-color: #1849ba19;
+    border: 1px solid #1849ba;
+}
+
+    .purple > span {
+        color: #1849ba;
+    }
+
+.info {
+    background-color: #00abef19;
+    border: 1px solid #00adef;
+}
+
+    .info > span {
+        color: #00adef;
+    }
+
+.green {
+    background-color: #228b2219;
+    border: 1px solid #228b22;
+}
+
+    .green > span {
+        color: #228b22;
+    }
+
+.pink {
+    background-color: #d90f8119;
+    border: 1px solid #d90f81;
+}
+
+    .pink > span {
+        color: #d90f81;
+    }
+
+main {
+    height: 79.1vh;
+}
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #01BBE7;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+````````````````````````````````````````````````````````````````````````
+``````````````````````````Utility Classes ``````````````````````````````
+````````````````````````````````````````````````````````````````````````
+*/
+
+.mt-n3 {
+    margin-top: -130px;
+}
+
+.bg-darkblue {
+    background-color: #0d1556;
+}
+
+.bg-darkblue:hover {
+    background-color: #050c45;
+
+}
+
+button:hover i{
+    color: white !important;
+}
+
+.hover_white:hover{
+    color: white;
+}
+.input_icon{
+    position: absolute;
+    font-size: 20px;
+   top: 15px;
+    right: 12px;
+}
+.form-control:focus, .form-control:hover {
+    outline: 0;
+    box-shadow: none;
+    border: 1px solid #01BBE7;
+  }
+
+.create_Account{
+    width: 350px;
+}
+
+
+
+
+
+
+
+/*
+````````````````````````````````````````````````````````````````````````
+`````````````````````````Responsive Design``````````````````````````````
+````````````````````````````````````````````````````````````````````````
+*/
+@media (max-width: 760px) {
+    .bg_image{
+        background-image: url("/images/login-banner.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    
+    .blur_content {
+        width: 100% !important;
+    }
+
+    .blur {
+        width: 100% !important;
+    }
+
+    .mt-n3 {
+        margin-top: -120px;
+    }
+    .fotor_logo{
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    .create_Account{
+        width: 80%;
+
+    }
+
+}
+
+@media (max-width: 1000px) {
+    .width_100 {
+        width: 100% !important;
+    }
+}
