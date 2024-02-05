@@ -1,0 +1,34 @@
+﻿@*
+For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+     ViewData["Title"] = "Family Friend Request";
+}
+
+@section PatientRequestStyle {
+    <link rel="stylesheet" href="~/css/patient_style.css" />
+    <link rel="stylesheet" href="~/css/patient_form.css" />
+}
+
+<partial name="_RequestNav" />
+
+<!-- Main content start  -->
+<div class=" mt-5 container-sm m-auto">
+    <div class="mt-4 w-75 m-auto">
+        <div class="text-end">
+            <a href="./submitRequest" class="btn btn-lg btn-outline-info hover_white ms-5" >
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Form start  -->
+    <div class="mt-4 m-auto form_content">
+        <div class="row p-4 shadow rounded-3">
+            <partial name="_FamilyFriendData" />
+            <partial name="_PatientData" />
+        </div>
+    </div>
+</div>
+<partial name="_Footer" />
+

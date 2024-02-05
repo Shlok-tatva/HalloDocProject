@@ -23,6 +23,26 @@ namespace HelloDoc.Controllers
         {
             return View();
         }
+        public IActionResult PatientRequest()
+        {
+            ViewData["ViewName"] = "PatientRequest";
+            return View();
+        }
+        public IActionResult FamilyFriendRequest()
+        {
+            ViewData["ViewName"] = "FamilyFriendRequest";
+            return View();
+        }
+        public IActionResult ConciergeRequest()
+        {
+            ViewData["ViewName"] = "ConciergeRequest";
+            return View();
+        }
+        public IActionResult BusinessRequest()
+        {
+            ViewData["ViewName"] = "BusinessRequest";
+            return View();
+        }
 
     }
 }

@@ -1,0 +1,107 @@
+﻿@*
+For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<!-- Patient Information -->
+
+<h5 class="col-12 fw-bold my-3">Patient Information</h5>
+
+<div class="form-floating my-3">
+    <textarea class="form-control" placeholder="" id="floatingTextarea2" style="height: 100px"></textarea>
+    <label for="floatingTextarea2" class="ms-3">Enter Brief Details Of Symptoms</label>
+</div>
+<div class="form-floating col-md-6 my-3">
+    <input type="text" class="form-control" placeholder="name@example.com">
+    <label for="floatingInput" class="control-label ms-3">
+        First Name
+    </label>
+
+</div>
+<div class="form-floating col-md-6 my-3">
+    <input type="text" class="form-control" placeholder="name@example.com">
+    <label for="floatingInput" class="control-label ms-3">
+        Last Name
+    </label>
+
+</div>
+<div class="form-floating col-md-6 my-3">
+    <input type="date" class="form-control">
+    <label for="floatingInput" class="control-label ms-3">
+        Date Of Birth
+    </label>
+
+</div>
+<!-- Patient Contact Information -->
+<h5 class="col-12 fw-bold my-3">Patient Contact Information</h5>
+<div class="form-floating col-md-6 my-3">
+    <input type="email" class="form-control" placeholder="name@example.com">
+    <label for="floatingInput" class="control-label ms-3">
+        Email
+    </label>
+
+</div>
+<div class="col-md-6 d-flex align-items-center my-3">
+    <input id="phone" type="tel" class="form-control">
+</div>
+
+<!-- Patient Location -->
+<h5 class="col-12 fw-bold my-3">Patient Location</h5>
+
+@if (!String.Equals(ViewData["ViewName"], "ConciergeRequest"))
+{
+    <div class="form-floating col-md-6 my-3">
+        <input type="text" class="form-control" placeholder="name@example.com">
+        <label for="floatingInput" class="control-label ms-3">
+            Street
+        </label>
+    </div>
+
+
+    <div class="form-floating col-md-6 my-3">
+        <input type="text" class="form-control" placeholder="name@example.com">
+        <label for="floatingInput" class="control-label ms-3">
+            City
+        </label>
+    </div>
+    <div class="form-floating col-md-6 my-3">
+        <input type="text" class="form-control" placeholder="name@example.com">
+        <label for="floatingInput" class="control-label ms-3">
+            State
+        </label>
+    </div>
+    <div class="form-floating col-md-6 my-3">
+        <input type="text" class="form-control" placeholder="name@example.com">
+        <label for="floatingInput" class="control-label ms-3">
+            Zip Code
+        </label>
+    </div>
+}
+
+<div class="form-floating col-md-6 my-3">
+    <input type="text" class="form-control" placeholder="name@example.com">
+    <label for="floatingInput" class="control-label ms-3">
+        Room # / Suite (optional)
+    </label>
+</div>
+
+@if (!String.Equals(ViewData["ViewName"] , "ConciergeRequest") && !String.Equals(ViewData["ViewName"] , "BusinessRequest"))
+{
+
+    <h5 class="col-12 fw-bold my-3">(Optinal) Upload Photo or Document</h5>
+    <div class="my-3">
+        <input type="file" class="visually-hidden" id="inputFile">
+        <label for="inputFile" class="border border-1 rounded-2 d-flex justify-content-between">
+            <div class="d-flex align-items-center ms-3 mt-2">
+                <p>Select File</p>
+            </div>
+            <div class="p-2 bg-info rounded-2 text-white d-flex align-items-center ">
+                <i class="bi bi-cloud-arrow-up mx-2"></i> <span>Upload</span>
+            </div>
+        </label>
+    </div>
+}
+<div class="my-3 d-flex justify-content-end ">
+    <button class="btn btn-info btn-lg text-white mx-2">Submit</button>
+    <button class="btn btn-outline-info btn-lg">Cancel</button>
+</div>
+
