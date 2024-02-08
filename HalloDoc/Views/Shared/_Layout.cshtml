@@ -25,7 +25,7 @@
     @RenderSection("PatientRequestStyle", false)
 </head>
 
-<body>
+<body >
     <div class="h-100">
         <main role="main" class="h-100">
             @RenderBody()
@@ -37,14 +37,22 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        @await RenderSectionAsync("PasswordIcon", required: false)
+
+    @await RenderSectionAsync("PasswordIcon", required: false)
     @await RenderSectionAsync("Scripts", required: false)
+
+
 
     @if (String.Equals(ViewData["ViewName"], "ConciergeRequest") || String.Equals(ViewData["ViewName"], "BusinessRequest") || String.Equals(ViewData["ViewName"], "FamilyFriendRequest"))
     {
         <partial name = "_WarningModal" />
     }
+    else
+    {
+        @await RenderSectionAsync("PatinetPasswordFeildGenration", required: false)
+    }
 
 </body>
+<partial name="_ValidationScriptsPartial" />
 
 </html>

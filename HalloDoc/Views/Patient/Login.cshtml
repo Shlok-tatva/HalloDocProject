@@ -1,4 +1,6 @@
-﻿@{
+﻿@model HalloDoc_DAL.Models.Aspnetuser
+
+@{
     ViewData["Title"] = "Login Page";
 }
 
@@ -41,20 +43,23 @@
                         </a>
                         <h2 class="text-center pb-3 mt-2 fw-bold">
                             Login To Your Account</h1>
+                            <form asp-action="CheckUser">
+                                <input type="hidden" asp-for="Id" value="1" />
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control" placeholder="name@example.com">
-                                <label for="floatingInput" class="control-label">
+                                <input asp-for="Email" type="email" class="form-control" placeholder="name@example.com">
+                                <label asp-for="Email" for="floatingInput" class="control-label">
                                     Username
                                 </label>
                                 <i class="bi bi-person-circle input_icon"></i>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="password" class="form-control" id="inpt" placeholder="Password">
-                                <label for="floatingPassword" class="control-label">Password</label>
+                                <input asp-for="Passwordhash" type="password" class="form-control" id="inpt" placeholder="Password">
+                                <label asp-for="Passwordhash" for="floatingPassword" class="control-label">Password</label>
                                 <i class="bi bi-eye-fill input_icon" id="pass"></i>
                             </div>
                             <button class="w-100 btn btn-lg btn-info text-white  my-2" type="submit">Log In</button>
-                            <a href="/Patient/forgetPassword" class="w-100 btn btn-lg text-info" type="submit">
+                            </form>
+                            <a href="/Patient/forgetPassword" class="w-100 btn btn-lg text-info" type="">
                                 Forget
                                 Password
                                 ?

@@ -70,12 +70,20 @@ if(input2) { // Check if input2 is not null
 
 
 
-// Write your JavaScript code.
-var modal = document.getElementById("myModal");
+let inputFile = document.getElementById("inputFile");
+let fileNameInput = document.getElementById('fileNameInput');
 
-// Add an event listener to the window load event
-window.addEventListener("load", function() {
-    
+if (inputFile) {
+
+inputFile.addEventListener("change", function () {
+    // Get the file name from the files property
+    let fileName = inputFile.files[0].name;
+    // Get the paragraph element by query selector
+    let fileLabel = document.querySelector("label[for=inputFile] p");
+    // Update the text content with the file name
+    fileLabel.textContent = fileName;
+
+    fileNameInput.value = fileName;
+
 });
-
-
+}

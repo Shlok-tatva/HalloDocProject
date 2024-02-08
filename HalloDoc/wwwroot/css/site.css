@@ -16,3 +16,6 @@ html {
     top: 15px;
 }
 
+.password-fields {
+    display: none;
+}

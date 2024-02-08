@@ -447,7 +447,7 @@ CREATE TABLE SMSLog (
 
 
 CREATE TABLE "User" (
-	UserId int PRIMARY KEY,
+	UserId SERIAL PRIMARY KEY,
 	AspNetUserId varchar(128) REFERENCES AspNetUsers(Id),
 	FirstName varchar(100) NOT NULL,
 	LastName varchar(100),
