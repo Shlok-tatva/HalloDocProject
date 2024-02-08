@@ -30,16 +30,19 @@ namespace HalloDoc.Models
         [Phone(ErrorMessage = "Invalid phone number")]
         public string PhoneNumber { get; set; }
 
+        [Required(ErrorMessage = "Please enter Street")]
         public string Street { get; set; }
 
+        [Required(ErrorMessage = "Please enter City")]
         public string City { get; set; }
 
+        [Required(ErrorMessage = "Please enter State")]
         public string State { get; set; }
 
-        //[RegularExpression(@"^\d{5}$", ErrorMessage = "Invalid zip code")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "Invalid zip code")]
         public string ZipCode { get; set; }
 
-        public string RoomOrSuite { get; set; }
+        public string? RoomOrSuite { get; set; }
 
         public string? FileName { get; set; }
     }

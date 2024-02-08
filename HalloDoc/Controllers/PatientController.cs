@@ -91,6 +91,8 @@ namespace HelloDoc.Controllers
 
                         aspnetuser.Id = str;
                         aspnetuser.Username = formData.Email;
+                        aspnetuser.Email = formData.Email;
+                        aspnetuser.Phonenumber = formData.PhoneNumber;
                         aspnetuser.Passwordhash = formData.Password;
                         aspnetuser.Createddate = DateTime.Now;
                         _aspnetuserrepo.Add(aspnetuser);
@@ -99,6 +101,12 @@ namespace HelloDoc.Controllers
                         user.Firstname = formData.FirstName;
                         user.Lastname = formData.LastName;
                         user.Email = formData.Email;
+                        user.Mobile = formData.PhoneNumber;
+                        user.Street = formData.Street;
+                        user.City = formData.City;
+                        user.State = formData.State;
+                        user.Zipcode = formData.ZipCode;
+                        user.Isdeleted = false;
                         user.Createdby = aspnetuser.Id;
                         user.Createddate = DateTime.Now;
                         _userrepo.Add(user);
@@ -120,8 +128,8 @@ namespace HelloDoc.Controllers
                         requestclient.Firstname = formData.FirstName;
                         requestclient.Address = formData.Street;
                         requestclient.Lastname = formData.LastName;
-                        requestclient.Email = formData.Email;
                         requestclient.Phonenumber = formData.PhoneNumber;
+                        requestclient.Email = formData.Email;
                         _requestclientrepo.Add(requestclient);
 
                         transaction.Complete();
@@ -147,8 +155,8 @@ namespace HelloDoc.Controllers
                         requestclient.Firstname = formData.FirstName;
                         requestclient.Address = formData.Street;
                         requestclient.Lastname = formData.LastName;
-                        requestclient.Email = formData.Email;
                         requestclient.Phonenumber = formData.PhoneNumber;
+                        requestclient.Email = formData.Email;
                         _requestclientrepo.Add(requestclient);
 
                         transaction.Complete();

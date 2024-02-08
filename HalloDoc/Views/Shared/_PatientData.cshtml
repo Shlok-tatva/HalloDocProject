@@ -78,6 +78,8 @@
         <label asp-for="@Model.Street" for="floatingInput" class="control-label ms-3">
             Street
         </label>
+        <span asp-validation-for="Street" class="text-danger"></span>
+
     </div>
 
 
@@ -86,23 +88,29 @@
         <label asp-for="@Model.City" for="floatingInput" class="control-label ms-3">
             City
         </label>
+        <span asp-validation-for="City" class="text-danger"></span>
+
     </div>
     <div class="form-floating col-md-6 my-3">
         <input asp-for="@Model.State" type="text" class="form-control" placeholder="name@example.com">
         <label asp-for="@Model.State" for="floatingInput" class="control-label ms-3">
             State
         </label>
+        <span asp-validation-for="State" class="text-danger"></span>
+
     </div>
     <div class="form-floating col-md-6 my-3">
         <input asp-for="@Model.ZipCode" type="text" class="form-control" placeholder="name@example.com">
         <label asp-for="@Model.ZipCode" for="floatingInput" class="control-label ms-3">
             Zip Code
         </label>
+        <span asp-validation-for="ZipCode" class="text-danger"></span>
+
     </div>
 }
 
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="@Model.RoomOrSuite" type="text" class="form-control" placeholder="name@example.com">
+    <input asp-for="@Model.RoomOrSuite" type="text" class="form-control">
     <label asp-for="@Model.RoomOrSuite" for="floatingInput" class="control-label ms-3">
         Room # / Suite (optional)
     </label>
