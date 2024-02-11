@@ -1,42 +1,51 @@
-﻿@*
-For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model BusinessFormData;
 
 <h5 class="col-12 fw-bold my-3"> Business Information</h5>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="BusinessFirstName" type="text" class="form-control" placeholder="">
+    <label asp-for="BusinessFirstName" for="floatingInput" class="control-label ms-3">
         Your First Name
     </label>
+    <span asp-validation-for="BusinessFirstName" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="BusinessLastName" type="text" class="form-control" placeholder="">
+    <label asp-for="BusinessLastName" for="floatingInput" class="control-label ms-3">
         Your Last Name
     </label>
-</div>
+    <span asp-validation-for="BusinessLastName" class="text-danger"></span>
 
-<div class="col-md-6 d-flex align-items-center my-3">
-    <input id="phone1" type="tel" class="form-control">
+
 </div>
 
 <div class="form-floating col-md-6 my-3">
-    <input type="email" class="form-control" placeholder="">
+    <input asp-for="BusinessPhoneNumber" id="phone1" type="tel" class="form-control"> <br />
     <label for="floatingInput" class="control-label ms-3">
+    </label>
+    <span asp-validation-for="BusinessPhoneNumber" class="text-danger"></span>
+</div>
+
+<div class="form-floating col-md-6 my-3">
+    <input asp-for="BusinessEmail" type="email" class="form-control" placeholder="">
+    <label asp-for="BusinessEmail" for="floatingInput" class="control-label ms-3">
         Your Email
     </label>
+    <span asp-validation-for="BusinessEmail" class="text-danger"></span>
+
 </div>
 
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="BusinessOrPropertyName" type="text" class="form-control" placeholder="">
+    <label asp-for="BusinessOrPropertyName" for="floatingInput" class="control-label ms-3">
         Business / Property Name
     </label>
+    <span asp-validation-for="BusinessOrPropertyName" class="text-danger"></span>
 </div>
 
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="CaseNumber" type="text" class="form-control" placeholder="">
+    <label asp-for="CaseNumber" for="floatingInput" class="control-label ms-3">
         Case Number (Optinal)
     </label>
+    <span asp-validation-for="CaseNumber" class="text-danger"></span>
 </div>

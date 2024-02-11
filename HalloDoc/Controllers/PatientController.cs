@@ -162,8 +162,6 @@ namespace HelloDoc.Controllers
                         transaction.Complete();
                     }
 
-                    
-
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
@@ -192,6 +190,22 @@ namespace HelloDoc.Controllers
             ViewData["ViewName"] = "FamilyFriendRequest";
             return View();
         }
+
+        [HttpPost]
+        public IActionResult SubmitFamilyFriendData(FamilyFriendFormData formData)
+        {
+            if (ModelState.IsValid)
+            {
+               
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+
+        }
+
         public IActionResult ConciergeRequest()
         {
             ViewData["ViewName"] = "ConciergeRequest";

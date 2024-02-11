@@ -1,6 +1,5 @@
-﻿@*
-For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FamilyFriendFormData;
+
 @{
      ViewData["Title"] = "Family Friend Request";
 }
@@ -23,12 +22,14 @@ For more information on enabling MVC for empty projects, visit https://go.micros
     </div>
 
     <!-- Form start  -->
+    <form asp-action="SubmitFamilyFriendData">
     <div class="mt-4 m-auto form_content">
         <div class="row p-4 shadow rounded-3">
-            <partial name="_FamilyFriendData" />
-            <partial name="_PatientData" />
+            <partial name="_FamilyFriendData" model="Model" />
+            <partial name="_PatientData" model="Model" />
         </div>
     </div>
+    </form>
 </div>
 <partial name="_Footer" />
 

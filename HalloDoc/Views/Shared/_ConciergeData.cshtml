@@ -1,60 +1,76 @@
-﻿@*
-For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ConciergeFormData;
+
 
 <h5 class="col-12 fw-bold my-3"> Concierge Information</h5>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="ConciergeFirstName" type="text" class="form-control" placeholder="">
+    <label asp-for="ConciergeFirstName" for="floatingInput" class="control-label ms-3">
         Your First Name
     </label>
+    <span asp-validation-for="ConciergeFirstName" class="text-danger"></span>
 </div>
+
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="ConciergeLastName" type="text" class="form-control" placeholder="">
+    <label asp-for="ConciergeLastName" for="floatingInput" class="control-label ms-3">
         Your Last Name
     </label>
-</div>
-<div class="col-md-6 d-flex align-items-center my-3">
-    <input id="phone1" type="tel" class="form-control">
+    <span asp-validation-for="ConciergeLastName" class="text-danger"></span>
+
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input type="email" class="form-control" placeholder="">
+    <input asp-for="ConciergePhoneNumber" id="phone1" type="tel" class="form-control"> <br />
     <label for="floatingInput" class="control-label ms-3">
+    </label>
+    <span asp-validation-for="ConciergePhoneNumber" class="text-danger"></span>
+</div>
+<div class="form-floating col-md-6 my-3">
+    <input asp-for="ConciergeEmail" type="email" class="form-control" placeholder="">
+    <label asp-for="ConciergeEmail" for="floatingInput" class="control-label ms-3">
         Your Email
     </label>
+    <span asp-validation-for="ConciergeEmail" class="text-danger"></span>
+
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="HotelOrPropertyName" type="text" class="form-control" placeholder="">
+    <label asp-for="HotelOrPropertyName" for="floatingInput" class="control-label ms-3">
         Hotel / Property Name
-    </label>
+    </label> 
+    <span asp-validation-for="HotelOrPropertyName" class="text-danger"></span>
 </div>
 
 <!-- Concierge Location  -->
 <h5 class="col-12 fw-bold my-3"> Concierge Location</h5>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="ConciergeStreet" type="text" class="form-control" placeholder="">
+    <label asp-for="ConciergeStreet" for="floatingInput" class="control-label ms-3">
         Street
     </label>
+    <span asp-validation-for="ConciergeStreet" class="text-danger"></span>
 
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="ConciergeCity" type="text" class="form-control" placeholder="">
+    <label asp-for="ConciergeCity" for="floatingInput" class="control-label ms-3">
         City
     </label>
+    <span asp-validation-for="ConciergeCity" class="text-danger"></span>
+
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="ConciergeState" type="text" class="form-control" placeholder="">
+    <label asp-for="ConciergeState" for="floatingInput" class="control-label ms-3">
         State
     </label>
+    <span asp-validation-for="ConciergeState" class="text-danger"></span>
+
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input type="text" class="form-control" placeholder="">
-    <label for="floatingInput" class="control-label ms-3">
+    <input asp-for="ConciergeZipCode" type="text" class="form-control" placeholder="">
+    <label asp-for="ConciergeZipCode" for="floatingInput" class="control-label ms-3">
         Zip Code
     </label>
+    <span asp-validation-for="ConciergeZipCode" class="text-danger"></span>
+
 </div>

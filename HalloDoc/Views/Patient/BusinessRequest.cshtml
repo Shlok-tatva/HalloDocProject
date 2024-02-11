@@ -1,6 +1,5 @@
-﻿@*
-For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model BusinessFormData;
+
 @{
      ViewData["Title"] = "Business Request";
 }
@@ -22,12 +21,14 @@ For more information on enabling MVC for empty projects, visit https://go.micros
     </div>
 
     <!-- Form start  -->
+    <form asp-action="SubmitBusinessData">
     <div class="mt-4 m-auto form_content">
         <div class="row p-4 shadow rounded-3">
-            <partial name="_BusinessData" />
-            <partial name="_PatientData" />
+            <partial name="_BusinessData" model="Model" />
+            <partial name="_PatientData" model="Model" />
         </div>
     </div>
+    </form>
 </div>
 <partial name="_Footer" />
 
