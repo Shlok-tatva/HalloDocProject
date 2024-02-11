@@ -42,9 +42,9 @@ namespace HalloDoc_BAL.Repository
             return await _context.Aspnetusers.ToListAsync();
         }
 
-        public async Task<HalloDoc_DAL.Models.Aspnetuser> GetByIdAsync(string id)
+        public Aspnetuser GetByEmail (string email)
         {
-            return await _context.Aspnetusers.FirstOrDefaultAsync(m => m.Id == id);
+            return  _context.Aspnetusers.FirstOrDefault(m => m.Email == email);
         }
 
         public void Update(HalloDoc_DAL.Models.Aspnetuser aspnetuser)

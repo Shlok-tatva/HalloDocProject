@@ -1,0 +1,40 @@
+﻿body {
+    font-family: 'Poppins';
+    /* background-color: azure; */
+    transition: all 0.2s linear;
+}
+
+.active {
+    border-bottom: 2px solid #01BBE7;
+}
+
+    .active a {
+        color: #01BBE7 !important;
+    }
+
+.links a {
+    text-decoration: none;
+    color: #3a3a3a;
+    font-weight: 600;
+}
+
+.navbar-toggler {
+    display: none;
+    border-color: #01BBE7 !important;
+    box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+    color: #01BBE7;
+}
+
+
+@media (max-width:530px) {
+    .navbar-toggler {
+        display: block;
+    }
+
+    .mobile_d_none {
+        display: none;
+    }
+}

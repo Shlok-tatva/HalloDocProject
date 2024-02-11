@@ -1,30 +1,39 @@
-﻿@*
-For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
+﻿@model string
 <header>
     <div class="navbar pb-0">
         <div class="container-fluid border-bottom border-2">
+
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
                 aria-controls="navbarHeader" aria-expanded="true" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <a href="#" class="navbar-brand d-flex align-items-center  ps-md-1 ps-lg-5  ">
                 <img src="/images/logo.png" width="130px" height="60px" alt="" srcset="">
             </a>
+
             <div class="d-flex justify-content-around align-items-center">
-                @*<h6 class="mx-2 my-2 mobile_d_none">Welcome, <strong>Shlok Jadeja</strong></h6>*@
-                @*<a href="" class="btn btn-outline-info mx-2">
-                <i class="bi bi-box-arrow-left"></i> <span class="mobile_d_none">Logout</span>
-                </a>*@
-                <button id="btnSwitch" class="btn btn-outline-info" style="scale:1.2;">
+                <h6 class="mx-2 my-2 mobile_d_none">Welcome, <strong>@Model</strong></h6>
+                
+
+
+                    <form asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-outline-info mx-2">
+                            <i class="bi bi-box-arrow-left"></i> <span class="mobile_d_none">Logout</span>
+                        </button>
+                    </form>
+                
+
+
+                <button id="btnSwitch" class="btn btn-sm btn-outline-info" style="scale:1.2;">
                     <i class="fa-regular fa-moon" id="theme_mode_button"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    @*<div class="collapse ps-md-5 shadow-sm" id="navbarHeader">
+    <div class="collapse ps-md-5 shadow-sm" id="navbarHeader">
     <div class="container-fluid mobile_nav">
     <div class="d-flex">
     <div class="p-3 links active">
@@ -35,13 +44,8 @@ For more information on enabling MVC for empty projects, visit http://go.microso
     </div>
     </div>
     </div>
-    </div>*@
+    </div>
 
 </header>
 
 
-<script>
-    if (window.innerWidth > 530) {
-        document.getElementById('navbarHeader').classList.add("show");
-    }
-</script>
