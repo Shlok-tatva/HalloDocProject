@@ -37,14 +37,16 @@ namespace HalloDoc.Models
         public string City { get; set; }
 
         [Required(ErrorMessage = "Please enter State")]
-        public string State { get; set; }
+        public string State { get; set; } 
 
         [RegularExpression(@"^\d{6}$", ErrorMessage = "Invalid zip code")]
         public string ZipCode { get; set; }
 
         public string? RoomOrSuite { get; set; }
 
-        public string? FileName { get; set; }
+        public IFormFile? UploadFile { get; set; }
+
+        public string? UploadImage { get; set; }
     }
 
 }

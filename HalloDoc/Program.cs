@@ -12,6 +12,15 @@ builder.Services.AddScoped<IAspnetuserRepository, AspnetuserRepository>();
 builder.Services.AddScoped<IRequestClientRepository, RequestClientRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRConciergeRepository, RConciergeRepository>();
+builder.Services.AddScoped<IRequestConciergeRepository, RequestConciergeRepository>();
+builder.Services.AddScoped<IRequestBusinessRepository, RequestBusinessRepository>();
+builder.Services.AddScoped<IRBusinessRepository, RBusinessRepository>();
+builder.Services.AddScoped<IRequestwisefileRepository, RequestwisefileRepository>();
+
+
+
+
 
 builder.Services.AddSession(options =>
 {

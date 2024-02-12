@@ -9,25 +9,19 @@ using System.Threading.Tasks;
 
 namespace HalloDoc_BAL.Repository
 {
-    public class RequestRepository : IRequestRepository
+    public class RBusinessRepository : IRBusinessRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public RequestRepository(ApplicationDbContext context)
+        public RBusinessRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public void Add(Request request)
+        public void Add(RBusinessdatum rbusinessdata)
         {
-            _context.Add(request);
+            _context.Add(rbusinessdata);
             _context.SaveChanges();
         }
-
-        public List<Request> GetAll(int userId) {
-            return _context.Requests.Where(r => r.Userid == userId).ToList();
-        }
-
     }
-
 }

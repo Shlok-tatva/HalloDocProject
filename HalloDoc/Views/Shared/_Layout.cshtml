@@ -26,6 +26,11 @@
 
 <body >
     <div class="h-100">
+        @if (String.Equals(ViewData["ViewName"], "Dashboard"))
+        {
+        <partial name="_NavBar" model="ViewBag.Username" />            
+        }
+
         <main role="main" class="h-100">
             @RenderBody()
         </main>

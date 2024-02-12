@@ -2,7 +2,7 @@
 
 namespace HalloDoc.Models
 {
-    public class BusinessFormData : ConciergeFormData
+    public class BusinessFormData : PatientFormData
     {
         [Required(ErrorMessage = "Please enter your first name")]
         public string BusinessFirstName { get; set; }

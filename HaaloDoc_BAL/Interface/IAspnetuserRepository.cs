@@ -7,7 +7,6 @@ namespace HalloDoc_BAL.Interface
         void Add(Aspnetuser aspnetuser);
         Task DeleteAsync(string id);
         bool Exists(string email);
-        Task<List<Aspnetuser>> GetAllAsync();
         Aspnetuser GetByEmail(string email);
         void Update(Aspnetuser aspnetuser);
         string GetUserPassword(string email);

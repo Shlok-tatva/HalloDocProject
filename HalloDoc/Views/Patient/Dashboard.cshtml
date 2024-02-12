@@ -1,6 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<HalloDoc.Models.DashboardViewModel>
+
 @{
     ViewData["Title"] = "Welcome to Dashboard";
 }
@@ -16,4 +15,46 @@
     </script>
 }
 
-<partial name ="_NavBar" model="ViewBag.Username" />
+<main class=" mt-5 w-95 m-auto">
+    <h4 class="fw-bolder ">
+        Medical History
+    </h4>
+
+    <div class="d-flex flex-column  shadow  rounded-4 mt-4">
+        <div class="align-self-end p-3 px-4">
+            <button class="btn btn-large btn-outline-info p-2 px-3 ">Create New Request</button>
+        </div>
+
+        <div class="overflow-x-scroll ">
+            <table class="w-100 table" cellspacing="15" cellspadding="15">
+                <thead>
+                <tr class="table-light">
+                    <th class="w-25">Created Date <i class="bi bi-arrow-down"></i></th>
+                    <th class="w-60">Current Status</th>
+                    <th>Document</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.requestDate.DayOfWeek @item.requestDate.Day , @item.requestDate.Year </td>
+                            <td>@item.statusString</td>
+                           
+                            <td>
+                                @if (@item.documentPath != string.Empty)
+                                {
+                                @*<a href="@item.documentPath" class="btn btn-outline-info " target ="_blank">(1) Documents</a>*@
+                            }
+                                
+                            </td>
+ 
+                        </tr>    
+                    }
+                </tbody>
+           </table>
+        </div>
+    </div>
+
+</main>

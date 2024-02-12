@@ -9,25 +9,21 @@ using System.Threading.Tasks;
 
 namespace HalloDoc_BAL.Repository
 {
-    public class RequestRepository : IRequestRepository
+    public class RequestConciergeRepository : IRequestConciergeRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public RequestRepository(ApplicationDbContext context)
+        public RequestConciergeRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public void Add(Request request)
+        public void Add(Requestconcierge requestConcierge)
         {
-            _context.Add(request);
+            _context.Add(requestConcierge);
             _context.SaveChanges();
-        }
 
-        public List<Request> GetAll(int userId) {
-            return _context.Requests.Where(r => r.Userid == userId).ToList();
-        }
 
+        }
     }
-
 }

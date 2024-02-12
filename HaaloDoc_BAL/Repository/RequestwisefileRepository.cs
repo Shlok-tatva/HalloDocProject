@@ -9,25 +9,24 @@ using System.Threading.Tasks;
 
 namespace HalloDoc_BAL.Repository
 {
-    public class RequestRepository : IRequestRepository
+    public class RequestwisefileRepository : IRequestwisefileRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public RequestRepository(ApplicationDbContext context)
+        public RequestwisefileRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public void Add(Request request)
+        public void Add(Requestwisefile requestwisefile)
         {
-            _context.Add(request);
+            _context.Add(requestwisefile);
             _context.SaveChanges();
         }
 
-        public List<Request> GetAll(int userId) {
-            return _context.Requests.Where(r => r.Userid == userId).ToList();
+        public List<Requestwisefile> GetAll()
+        {
+            return _context.Requestwisefiles.ToList();
         }
-
     }
-
 }

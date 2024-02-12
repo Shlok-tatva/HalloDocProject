@@ -32,7 +32,6 @@
     </label>
     <span asp-validation-for="DateOfBirth" class="text-danger"></span>
 </div>
-<input asp-for="Password" type="password" class="form-control" value="123456" hidden>
 <!-- Patient Contact Information -->
 <h5 class="col-12 fw-bold my-3">Patient Contact Information</h5>
 <div class="form-floating col-md-6 my-3">
@@ -50,7 +49,7 @@
 </div>
 
 <div class="form-floating col-md-6 my-3 password-fields">
-    <input asp-for="Password" type="password"  class="form-control" placeholder="name@example.com" required>
+    <input asp-for="Password" type="password"  class="form-control" required>
     <label asp-for="Password" for="floatingInput" class="control-label ms-3">
         Password
     </label>
@@ -58,7 +57,7 @@
 </div>
 
 <div id="" class="form-floating col-md my-3 password-fields">
-    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="name@example.com" required>
+    <input asp-for="ConfirmPassword" type="password" class="form-control" required>
     <label asp-for="ConfirmPassword" for="floatingInput" class="control-label ms-3">
         Confirm Password
     </label>
@@ -121,9 +120,9 @@
 
     <h5 class="col-12 fw-bold my-3">(Optinal) Upload Photo or Document</h5>
     <div class="my-3">
-        <input type="file" class="visually-hidden" id="inputFile">
-        <input type="hidden" asp-for="FileName" id="fileNameInput">
-        <label asp-for="FileName" for="inputFile" class="border border-1 rounded-2 d-flex justify-content-between">
+        @*<input type="file" class="visually-hidden" id="inputFile"> *@
+        <input asp-for="UploadFile" id="inputFile" class="visually-hidden">
+        <label asp-for="UploadFile" for="inputFile" class="border border-1 rounded-2 d-flex justify-content-between">
             <div class="d-flex align-items-center ms-3 mt-2">
                 <p>Select File</p>
             </div>

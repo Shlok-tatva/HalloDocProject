@@ -37,11 +37,6 @@ namespace HalloDoc_BAL.Repository
             return _context.Aspnetusers.Any(e => e.Username == email);
         }
 
-        public async Task<List<HalloDoc_DAL.Models.Aspnetuser>> GetAllAsync()
-        {
-            return await _context.Aspnetusers.ToListAsync();
-        }
-
         public Aspnetuser GetByEmail (string email)
         {
             return  _context.Aspnetusers.FirstOrDefault(m => m.Email == email);

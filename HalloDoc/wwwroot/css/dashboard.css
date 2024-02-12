@@ -28,6 +28,23 @@
     color: #01BBE7;
 }
 
+.w-95 {
+    width: 95%;
+}
+
+.w-60 {
+    width: 60%;
+}
+
+tr, td, th {
+    color: #3a3a3a !important;
+}
+
+td, th {
+    padding-left: 20px !important;
+    padding-top: 10px !important;
+    padding-bottom: 12px !important;
+}
 
 @media (max-width:530px) {
     .navbar-toggler {
@@ -37,4 +54,16 @@
     .mobile_d_none {
         display: none;
     }
+
+    .mobile_nav {
+        position: absolute;
+        height: 100vh;
+        width: 50%;
+        margin: 0px;
+        background-color: #0d0f10;
+    }
+
+        .mobile_nav div {
+            flex-direction: column;
+        }
 }

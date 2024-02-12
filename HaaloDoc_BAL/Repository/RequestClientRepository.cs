@@ -25,5 +25,10 @@ namespace HalloDoc_BAL.Repository
 
         }
 
+        public List<Requestclient> GetAll()
+        {
+            return _context.Requestclients.ToList();
+        }
+
     }
 }
