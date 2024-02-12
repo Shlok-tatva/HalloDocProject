@@ -46,6 +46,7 @@
                                 @if (@item.documentPath != string.Empty)
                                 {
                                 @*<a href="@item.documentPath" class="btn btn-outline-info " target ="_blank">(1) Documents</a>*@
+                                    <a asp-controller="Patient" asp-action="DocumentView">Documents</a>
                             }
                                 
                             </td>

@@ -460,6 +460,15 @@ namespace HelloDoc.Controllers
 
         }
 
+        public IActionResult DocumentView()
+        {
+            var email = HttpContext.Session.GetString("UserId");
+            var username = GetUsernameFromEmail(email); // Extract username from email
+            ViewBag.Username = username;
+            ViewData["ViewName"] = "DocumentView";
+            return View();
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
