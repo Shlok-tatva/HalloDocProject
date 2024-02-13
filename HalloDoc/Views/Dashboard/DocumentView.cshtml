@@ -69,29 +69,30 @@
                 });
             }
 
-            $("#inputFile1").change(function () {
+            // $("#inputFile1").change(function () {
+            //     let file = document.getElementById("inputFile1").files[0];
+            //     var requestId = $('#inputFile1').data('requestId');
+            //     var formData = new FormData();
+            //     formData.append('file', file);
+            //     formData.append('UploadImage', "");
+            //     formData.append('requestId', requestId);
 
-                let file = document.getElementById("inputFile1").files[0];
-                var requestId = $('#inputFile1').data('requestId');
-                var formData = new FormData();
-                formData.append('UploadFile' , file);
-                formData.append('UploadImage' , "");
-                formData.append('requestId', 33);
+            //     $.ajax({
+            //         url: '/Patient/UploadFile',
+            //         type: 'POST',
+            //         data: formData,
+            //         contentType: false,
+            //         processData: false,
+            //         success: function (res) {
+            //             alert("File uploaded successfully!");
+                        
+            //         },
+            //         error: function (xhr, status, error) {
+            //             alert("File upload failed: " + error);
+            //         }
+            //     });
+            // });
 
-                $.ajax({
-                    url: '/Patient/UploadFile',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (res){
-                        alert(res);
-                    },
-                    error : function (er){
-                        alert(er.message);
-                    }
-                });
-            });
         });
 
 
@@ -113,18 +114,11 @@
                 <p class="pt-1">Check here for any files that you or the doctors of your subsequentts requestors have attached for you to review. </p>
             </div>
 
-            <div class="my-3">
-        @*<input type="file" class="visually-hidden" id="inputFile"> *@
-                <input type="file" id="inputFile1" class="visually-hidden" data-requestId="@Model[0].Requestid" enctype="multipart/form-data">
-                <label for="inputFile1" class="border border-1 rounded-2 d-flex justify-content-between">
-                    <div class="d-flex align-items-center ms-3 mt-2">
-                         <p>Select File</p>
-                    </div>
-                     <div class="p-2 bg-info rounded-2 text-white d-flex align-items-center ">
-                          <i class="bi bi-cloud-arrow-up mx-2"></i> <span>Upload</span>
-                    </div>
-                 </label>
-            </div>
+            <form id="uploadForm" asp-action="UploadFile" method="post" enctype="multipart/form-data">
+                <input type="text" value="@Model[0].Requestid" name="requestId" />
+                <input type="file" name="file" id="inputFile1">
+                <button type="submit" class="btn btn-primary">Upload File</button>
+            </form>
 
             <div class="d-flex justify-content-between mt-5 mb-4 px-1">
                 <h5 class="fw-bold">Documents</h5>

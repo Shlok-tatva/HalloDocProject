@@ -100,7 +100,54 @@ namespace HalloDoc.Controllers
             byte[] fileBytes = System.IO.File.ReadAllBytes(physicalPath);
             return File(fileBytes, "application/octet-stream", fileName);
         }
-       
+
+        [HttpPost("UploadFile")]
+        public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string UploadImage, [FromForm] int requestId)
+        {
+            try
+            {
+                if (file != null && file.Length > 0)
+                {
+                    HandleFileUpload(file, requestId);
+                    return RedirectToAction("DocumentView"); // Redirect to the appropriate action after successful upload
+                }
+                else
+                {
+                    ModelState.AddModelError("file", "Please select a file to upload.");
+                    return View(); // Return the view with validation errors
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while uploading the file: " + ex.Message);
+                return View(); // Return the view with error message
+            }
+        }
+
+        private void HandleFileUpload(IFormFile UploadFile, int requestId)
+        {
+            var requestwisefile = new Requestwisefile();
+            string FilePath = "wwwroot\\Upload\\" + requestId;
+            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string fileNameWithPath = Path.Combine(path, UploadFile.FileName);
+            string UploadImage = "~" + FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + UploadFile.FileName;
+
+            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+            {
+                UploadFile.CopyTo(stream);
+            }
+
+            requestwisefile.Requestid = requestId;
+            requestwisefile.Filename = UploadImage;
+            requestwisefile.Createddate = DateTime.Now;
+            _requestwisefilerepo.Add(requestwisefile);
+        }
+
+
 
         private string GetUsernameFromEmail(string email)
         {

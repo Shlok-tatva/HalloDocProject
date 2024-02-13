@@ -425,22 +425,6 @@ namespace HelloDoc.Controllers
 
         }
 
-        
-
-        [HttpPost("upload")]
-        public IActionResult UploadFile(IFormFile file , string UploadImage , int requestId)
-        {
-            try
-            {
-                HandleFileUpload(file, UploadImage , requestId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
-        }
-
 
         private void HandleFileUpload (IFormFile UploadFile , String UploadImage , int requestId){
             var requestwisefile = new Requestwisefile();
