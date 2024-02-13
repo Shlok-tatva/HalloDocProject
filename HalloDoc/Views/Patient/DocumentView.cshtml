@@ -1,6 +1,5 @@
-﻿
-@{
-}
+﻿@model List<HalloDoc.Models.DocumentViewModel>;
+
 @section DashboardCSS{
     <link rel="stylesheet" href="~/css/dashboard.css" />
 }
@@ -10,9 +9,124 @@
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
         }
-
         </script>
         }
-   
 
-<h1>Document View</h1>
+@section DownloadfileJs{
+    <script>
+        $(document).ready(function () {
+            // Click event handler for the download button
+            $('.download-btn').click(function () {
+               
+                var filepath = $(this).data('file');
+               
+                $.ajax({
+                    url: '/Patient/DownloadFile',
+                    type: 'GET',
+                    data: { filePath: filepath },
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                     success: function (response) {
+                        // Create a blob URL from the response
+                        var url = window.URL.createObjectURL(new Blob([response]));
+
+                        // Create a temporary anchor element
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = filepath;
+                        document.body.appendChild(a);
+
+                        // Trigger a click event on the anchor element to initiate the download
+                        a.click();
+
+                        // Remove the anchor element from the document
+                        document.body.removeChild(a);
+
+                        // Release the blob URL
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function () {
+                        // Handle error
+                        swal.fire({
+                            title: "Oops..",
+                            text: "Oops! Something went wrong while downloading your file. ☹️ It could be that the file was deleted from the server or your browser crashed. Please check your internet connection and try again later.",
+                            icon: "error",
+                            showCancelButton: true,
+                            showConfirmButton: false,
+                            cancelButtonText: "Okay",
+                            cancelButtonColor: "#01BBE7",
+                        })
+                    }
+                });
+            });
+        });
+    </script>
+        }
+
+<div class=" mt-5 container m-auto">
+    <div class="mt-4 w-95 m-auto">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">Documents</h3>
+            <a href="./Dashboard" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </a>
+        </div>
+        <div class="shadow p-3 mt-3 rounded">
+            <div class="text-secondary">
+                <span>Patient Name</span>
+                <h5 class="text-info fw-bold">Testing Name <span class="text-secondary fw-normal">(MD54623820024500)</span> </h5> 
+                <p class="pt-1">Check here for any files that you or the doctors of your subsequentts requestors have attached for you to review. </p>
+            </div>
+
+            <div class="my-3">
+        @*<input type="file" class="visually-hidden" id="inputFile"> *@
+        <input type="file" id="inputFile1" class="visually-hidden">
+                <label  for="inputFile1" class="border border-1 rounded-2 d-flex justify-content-between">
+                    <div class="d-flex align-items-center ms-3 mt-2">
+                         <p>Select File</p>
+                    </div>
+                     <div class="p-2 bg-info rounded-2 text-white d-flex align-items-center ">
+                          <i class="bi bi-cloud-arrow-up mx-2"></i> <span>Upload</span>
+                    </div>
+                 </label>
+            </div>
+
+            <div class="d-flex justify-content-between mt-5 mb-4 px-1">
+                <h5 class="fw-bold">Documents</h5>
+                <button  class="btn btn-outline-info hover_white ms-5">
+                     Download All
+                </button>
+            </div>
+
+            <div class="overflow-x-scroll ">
+                <table id="filetable" class="w-100 table" cellspacing="15" cellspadding="15">
+                    <thead>
+                        <tr class="table-light">
+                            <th><input type="checkbox"></input></th>
+                            <th class="w-50">FileName</th>
+                            <th class="w-25">Uploader</th>
+                            <th class="w-25">Created Date <i class="bi bi-arrow-down"></i></th>
+                            <th class="w-10">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <th><input type="checkbox"></input></th>
+                                <td> <img src="~/images/pdf.svg" width="20px" class="m-1" /> @item.fileName</td>
+                                <td>Shlok Jadeja</td>
+                                <td>@item.uploadDate.DayOfWeek @item.uploadDate.Day , @item.uploadDate.Year </td>
+                                <td><button class="btn btn-outline-info download-btn" data-file="@item.UploadImage"><i class="bi bi-cloud-arrow-down fw-bold"></i></button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+

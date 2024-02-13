@@ -3,6 +3,8 @@ using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Simplification;
+using Microsoft.CodeAnalysis;
 using NuGet.Protocol.Core.Types;
 using System.Collections;
 using System.Diagnostics;
@@ -95,7 +97,6 @@ namespace HelloDoc.Controllers
                         var user = new User();
                         var request = new Request();
                         var requestClient = new Requestclient();
-                        var requestwisefile = new Requestwisefile();
                         var aspnetuser = _aspnetuserrepo.GetByEmail(formData.Email);
 
                         if (aspnetuser == null)
@@ -145,25 +146,7 @@ namespace HelloDoc.Controllers
 
                         if (formData.UploadFile != null)
                         {
-                            string FilePath = "wwwroot\\Upload\\" + request.Requestid;
-                            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-                            if (!Directory.Exists(path))
-                                Directory.CreateDirectory(path);
-
-                            string fileNameWithPath = Path.Combine(path, formData.UploadFile.FileName);
-                            formData.UploadImage = "~" + FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + formData.UploadFile.FileName;
-
-                            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-                            {
-                                formData.UploadFile.CopyTo(stream);
-                            }
-
-                            requestwisefile.Requestid = request.Requestid;
-                            requestwisefile.Filename = formData.UploadImage;
-                            requestwisefile.Createddate = DateTime.Now;
-
-                            _requestwisefilerepo.Add(requestwisefile);
+                            HandleFileUpload(formData.UploadFile , formData.UploadImage , request.Requestid);
                         }
 
                         requestClient.Notes = formData.Symptoms;
@@ -438,35 +421,68 @@ namespace HelloDoc.Controllers
             var username = GetUsernameFromEmail(email); // Extract username from email
             ViewBag.Username = username;
             User user = _userrepo.GetUser(email);
-            List<Request> requestlist = _requestrepo.GetAll(user.Userid);
-            Debug.Write(requestlist);
-
             var requestData = from request in _requestrepo.GetAll(user.Userid)
-                              join Requestwisefile in _requestwisefilerepo.GetAll()
-                              on request.Requestid equals Requestwisefile.Requestid into gj
+                              join requestFile in _requestwisefilerepo.GetAll()
+                              on request.Requestid equals requestFile.Requestid into gj
                               from subfile in gj.DefaultIfEmpty()
+                              group subfile by new { request.Requestid, request.Status , request.Createddate} into g
                               select new DashboardViewModel
                               {
-                                  requestDate = request.Createddate,
-                                  requestStatus = request.Status,
-                                  documentPath = subfile?.Filename ?? string.Empty,
+                                  Requestid = g.Key.Requestid,
+                                  requestDate = g.Key.Createddate,
+                                  requestStatus = g.Key.Status,
+                                  DocumentCount = g.Count(f => f != null)  // Count of documents for each request
                               };
-
-
 
             var dashboardRequests = requestData.ToList();
 
             return View(dashboardRequests);
-
         }
-
-        public IActionResult DocumentView()
+        public IActionResult DocumentView(int Requestid)
         {
+            ViewData["ViewName"] = "DocumentView";
             var email = HttpContext.Session.GetString("UserId");
             var username = GetUsernameFromEmail(email); // Extract username from email
             ViewBag.Username = username;
-            ViewData["ViewName"] = "DocumentView";
-            return View();
+            User user = _userrepo.GetUser(email);
+
+            // Fetch all request-wise files for the given Requestid
+            var requestwiseFiles = from request in _requestrepo.GetAll(user.Userid)
+                              join requestFile in _requestwisefilerepo.GetAll()
+                              on request.Requestid equals requestFile.Requestid
+                              where request.Requestid == Requestid
+                              select new DocumentViewModel
+                              {
+                                  Requestid = request.Requestid,
+                                  uploadDate = request.Createddate,
+                                  UploadImage = requestFile.Filename,
+                                  fileName =  Path.GetFileName(requestFile.Filename),
+                              };
+
+            // Pass the list of DocumentViewModel to the view
+            return View(requestwiseFiles.ToList());
+        }
+
+        public IActionResult DownloadFile(string filePath)
+        {
+            var physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('~', '/'));
+
+            // Check if the file exists
+            if (!System.IO.File.Exists(physicalPath))
+            {
+                return NotFound(); // Return 404 Not Found if the file does not exist
+            }
+
+            string fileName = Path.GetFileName(filePath);
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(physicalPath);
+            return File(fileBytes, "application/octet-stream", fileName);
+        }
+
+        public void UploadFilefrimDocumentview(DocumentViewModel fileData)
+        {
+
+            HandleFileUpload(fileData.UploadFile, fileData.UploadImage , fileData.Requestid);
         }
 
         public IActionResult Logout()
@@ -485,6 +501,33 @@ namespace HelloDoc.Controllers
             return email;
         }
 
-    }
+        private void HandleFileUpload (IFormFile UploadFile , String UploadImage , int requestId){
+            var requestwisefile = new Requestwisefile();
+                            string FilePath = "wwwroot\\Upload\\" + requestId;
+                            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
 
+                            if (!Directory.Exists(path))
+                                Directory.CreateDirectory(path);
+
+                            string fileNameWithPath = Path.Combine(path, UploadFile.FileName);
+                            UploadImage = "~" + FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + UploadFile.FileName;
+
+                            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                            {
+                                UploadFile.CopyTo(stream);
+                            }
+
+                            requestwisefile.Requestid = requestId;
+                            requestwisefile.Filename = UploadImage;
+                            requestwisefile.Createddate = DateTime.Now;
+            _requestwisefilerepo.Add(requestwisefile);
+        }
+
+       
+
+    }
 }
+
+
+
+

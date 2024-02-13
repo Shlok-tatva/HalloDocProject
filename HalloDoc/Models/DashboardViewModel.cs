@@ -2,9 +2,16 @@
 {
     public class DashboardViewModel
     {
+        public int Requestid { get; set; }
+
         public DateTime requestDate { get; set; }
 
         public int requestStatus { get; set; }
+
+
+        public string documentPath { get; set; }
+
+        public int DocumentCount { get; set; }
 
         public string statusString
         {
@@ -47,8 +54,6 @@
                 }
             }
         }
-
-        public string documentPath { get; set; }
     }
 }
 
