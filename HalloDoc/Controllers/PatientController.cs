@@ -44,10 +44,12 @@ namespace HelloDoc.Controllers
             return View();
         }
 
+
         public IActionResult Login()
         {
             return View();
         }
+
 
         public IActionResult LoginUser(Aspnetuser user)
         {
@@ -60,7 +62,7 @@ namespace HelloDoc.Controllers
             if (storedPassword != null && storedPassword == user.Passwordhash)
             {
                 HttpContext.Session.SetString("UserId", user.Email);
-                return RedirectToAction("Dashboard");
+                return Redirect("/dashboard/dashboard");
 
             }
             else
@@ -69,21 +71,25 @@ namespace HelloDoc.Controllers
             }
         }
 
+
         public IActionResult ForgetPassword()
         {
             return View();
         }
+
 
         public IActionResult SubmitRequest()
         {
             return View();
         }
 
+
         public IActionResult PatientRequest()
         {
             ViewData["ViewName"] = "PatientRequest";
             return View();
         }
+
 
         [HttpPost]
         public IActionResult SubmitPatientForm(PatientFormData formData)
@@ -188,11 +194,13 @@ namespace HelloDoc.Controllers
             return Ok(new { exists = emailExists });
         }
 
+
         public IActionResult FamilyFriendRequest()
         {
             ViewData["ViewName"] = "FamilyFriendRequest";
             return View();
         }
+
 
         [HttpPost]
         public IActionResult SubmitFamilyFriendData(FamilyFriendFormData formData)
@@ -253,11 +261,13 @@ namespace HelloDoc.Controllers
 
         }
 
+
         public IActionResult ConciergeRequest()
         {
             ViewData["ViewName"] = "ConciergeRequest";
             return View();
         }
+
 
         [HttpPost]
         public IActionResult SubmitConciergeData(ConciergeFormData formData)
@@ -333,11 +343,13 @@ namespace HelloDoc.Controllers
 
         }
 
+
         public IActionResult BusinessRequest()
         {
             ViewData["ViewName"] = "BusinessRequest";
             return View();
         }
+
 
         [HttpPost]
         public IActionResult SubmitBusinessData(BusinessFormData formData)
@@ -413,93 +425,22 @@ namespace HelloDoc.Controllers
 
         }
 
+        
 
-        public IActionResult Dashboard()
+        [HttpPost("upload")]
+        public IActionResult UploadFile(IFormFile file , string UploadImage , int requestId)
         {
-            ViewData["ViewName"] = "Dashboard";
-            var email = HttpContext.Session.GetString("UserId");
-            var username = GetUsernameFromEmail(email); // Extract username from email
-            ViewBag.Username = username;
-            User user = _userrepo.GetUser(email);
-            var requestData = from request in _requestrepo.GetAll(user.Userid)
-                              join requestFile in _requestwisefilerepo.GetAll()
-                              on request.Requestid equals requestFile.Requestid into gj
-                              from subfile in gj.DefaultIfEmpty()
-                              group subfile by new { request.Requestid, request.Status , request.Createddate} into g
-                              select new DashboardViewModel
-                              {
-                                  Requestid = g.Key.Requestid,
-                                  requestDate = g.Key.Createddate,
-                                  requestStatus = g.Key.Status,
-                                  DocumentCount = g.Count(f => f != null)  // Count of documents for each request
-                              };
-
-            var dashboardRequests = requestData.ToList();
-
-            return View(dashboardRequests);
-        }
-        public IActionResult DocumentView(int Requestid)
-        {
-            ViewData["ViewName"] = "DocumentView";
-            var email = HttpContext.Session.GetString("UserId");
-            var username = GetUsernameFromEmail(email); // Extract username from email
-            ViewBag.Username = username;
-            User user = _userrepo.GetUser(email);
-
-            // Fetch all request-wise files for the given Requestid
-            var requestwiseFiles = from request in _requestrepo.GetAll(user.Userid)
-                              join requestFile in _requestwisefilerepo.GetAll()
-                              on request.Requestid equals requestFile.Requestid
-                              where request.Requestid == Requestid
-                              select new DocumentViewModel
-                              {
-                                  Requestid = request.Requestid,
-                                  uploadDate = request.Createddate,
-                                  UploadImage = requestFile.Filename,
-                                  fileName =  Path.GetFileName(requestFile.Filename),
-                              };
-
-            // Pass the list of DocumentViewModel to the view
-            return View(requestwiseFiles.ToList());
-        }
-
-        public IActionResult DownloadFile(string filePath)
-        {
-            var physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('~', '/'));
-
-            // Check if the file exists
-            if (!System.IO.File.Exists(physicalPath))
+            try
             {
-                return NotFound(); // Return 404 Not Found if the file does not exist
+                HandleFileUpload(file, UploadImage , requestId);
+                return Ok();
             }
-
-            string fileName = Path.GetFileName(filePath);
-
-            byte[] fileBytes = System.IO.File.ReadAllBytes(physicalPath);
-            return File(fileBytes, "application/octet-stream", fileName);
-        }
-
-        public void UploadFilefrimDocumentview(DocumentViewModel fileData)
-        {
-
-            HandleFileUpload(fileData.UploadFile, fileData.UploadImage , fileData.Requestid);
-        }
-
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login");
-        }
-
-
-        private string GetUsernameFromEmail(string email)
-        {
-            if (!string.IsNullOrEmpty(email) && email.Contains("@"))
+            catch (Exception ex)
             {
-                return email.Split('@')[0];
+                return NotFound();
             }
-            return email;
         }
+
 
         private void HandleFileUpload (IFormFile UploadFile , String UploadImage , int requestId){
             var requestwisefile = new Requestwisefile();
@@ -523,8 +464,9 @@ namespace HelloDoc.Controllers
             _requestwisefilerepo.Add(requestwisefile);
         }
 
-       
 
+       
+       
     }
 }
 

@@ -14,40 +14,48 @@
 
 @section DownloadfileJs{
     <script>
-        $(document).ready(function () {
-            // Click event handler for the download button
-            $('.download-btn').click(function () {
-               
-                var filepath = $(this).data('file');
-               
-                $.ajax({
-                    url: '/Patient/DownloadFile',
-                    type: 'GET',
-                    data: { filePath: filepath },
-                    xhrFields: {
-                        responseType: 'blob'
-                    },
-                     success: function (response) {
-                        // Create a blob URL from the response
-                        var url = window.URL.createObjectURL(new Blob([response]));
 
-                        // Create a temporary anchor element
+        $(document).ready(function () {
+
+            $('#selectAllCheckbox').change(function () {
+            $('.fileCheckbox').prop('checked', $(this).prop('checked'));
+        });
+
+            $('.downloadAll').click(function () {
+            $('.fileCheckbox:checked').each(function () {
+                var filePath = $(this).closest('tr').find('.download-btn').data('file');
+                downloadFile(filePath);
+            });
+        });
+
+            $('.download-btn').click(function () {
+                var filepath = $(this).data('file');
+                downloadFile(filepath);
+                  
+                });
+
+            function downloadFile(filePath) {
+             
+                $.ajax({
+                    url: '/Dashboard/DownloadFile', 
+                    type: 'GET',
+                    data: { filePath: filePath },
+                    xhrFields: {
+                        responseType: 'blob' 
+                    },
+                    success: function (response) {
+                        
+                        var url = window.URL.createObjectURL(new Blob([response]));
                         var a = document.createElement('a');
                         a.href = url;
-                        a.download = filepath;
+                        a.download = filePath.substring(filePath.lastIndexOf('/') + 1); // Set the download attribute to the file name
                         document.body.appendChild(a);
-
-                        // Trigger a click event on the anchor element to initiate the download
                         a.click();
-
-                        // Remove the anchor element from the document
                         document.body.removeChild(a);
-
-                        // Release the blob URL
                         window.URL.revokeObjectURL(url);
                     },
                     error: function () {
-                        // Handle error
+                       
                         swal.fire({
                             title: "Oops..",
                             text: "Oops! Something went wrong while downloading your file. ☹️ It could be that the file was deleted from the server or your browser crashed. Please check your internet connection and try again later.",
@@ -59,8 +67,34 @@
                         })
                     }
                 });
+            }
+
+            $("#inputFile1").change(function () {
+
+                let file = document.getElementById("inputFile1").files[0];
+                var requestId = $('#inputFile1').data('requestId');
+                var formData = new FormData();
+                formData.append('UploadFile' , file);
+                formData.append('UploadImage' , "");
+                formData.append('requestId', 33);
+
+                $.ajax({
+                    url: '/Patient/UploadFile',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (res){
+                        alert(res);
+                    },
+                    error : function (er){
+                        alert(er.message);
+                    }
+                });
             });
         });
+
+
     </script>
         }
 
@@ -81,8 +115,8 @@
 
             <div class="my-3">
         @*<input type="file" class="visually-hidden" id="inputFile"> *@
-        <input type="file" id="inputFile1" class="visually-hidden">
-                <label  for="inputFile1" class="border border-1 rounded-2 d-flex justify-content-between">
+                <input type="file" id="inputFile1" class="visually-hidden" data-requestId="@Model[0].Requestid" enctype="multipart/form-data">
+                <label for="inputFile1" class="border border-1 rounded-2 d-flex justify-content-between">
                     <div class="d-flex align-items-center ms-3 mt-2">
                          <p>Select File</p>
                     </div>
@@ -94,16 +128,16 @@
 
             <div class="d-flex justify-content-between mt-5 mb-4 px-1">
                 <h5 class="fw-bold">Documents</h5>
-                <button  class="btn btn-outline-info hover_white ms-5">
+                <button  class="btn btn-outline-info hover_white ms-5 downloadAll">
                      Download All
                 </button>
             </div>
 
-            <div class="overflow-x-scroll ">
-                <table id="filetable" class="w-100 table" cellspacing="15" cellspadding="15">
+            <div class="overflow-x-scroll">
+                <table class="w-100 table" cellspacing="15" cellspadding="15">
                     <thead>
                         <tr class="table-light">
-                            <th><input type="checkbox"></input></th>
+                            <th><input type="checkbox" id="selectAllCheckbox"></th>
                             <th class="w-50">FileName</th>
                             <th class="w-25">Uploader</th>
                             <th class="w-25">Created Date <i class="bi bi-arrow-down"></i></th>
@@ -115,8 +149,8 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <th><input type="checkbox"></input></th>
-                                <td> <img src="~/images/pdf.svg" width="20px" class="m-1" /> @item.fileName</td>
+                                <td><input type="checkbox" class="fileCheckbox"></td>
+                                <td><img src="~/images/pdf.svg" width="20px" class="m-1" /> @item.fileName</td>
                                 <td>Shlok Jadeja</td>
                                 <td>@item.uploadDate.DayOfWeek @item.uploadDate.Day , @item.uploadDate.Year </td>
                                 <td><button class="btn btn-outline-info download-btn" data-file="@item.UploadImage"><i class="bi bi-cloud-arrow-down fw-bold"></i></button></td>
@@ -128,5 +162,4 @@
         </div>
     </div>
 </div>
-
 

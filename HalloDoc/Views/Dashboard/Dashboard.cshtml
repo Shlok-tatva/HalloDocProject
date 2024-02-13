@@ -45,7 +45,7 @@
                                 @if (@item.DocumentCount != 0)
                                 {
                                 @*<a href="@item.documentPath" class="btn btn-outline-info " target ="_blank">(1) Documents</a>*@
-                                    <a href="@Url.Action("DocumentView" , "Patient" , new {Requestid = item.Requestid})" class="btn btn-outline-info "> (@item.DocumentCount) Documents</a>
+                                    <a href="@Url.Action("DocumentView" , "Dashboard" , new {Requestid = item.Requestid})" class="btn btn-outline-info "> (@item.DocumentCount) Documents</a>
                             }
                             </td>
  
