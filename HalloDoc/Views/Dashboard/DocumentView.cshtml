@@ -71,19 +71,60 @@
 
         });
 
-        $("#uploadForm").submit(function(){
-            var file = $("#file").value;
-            if(file == null){
+        $("#uploadForm").submit(function(e){
+            e.preventDefault();
+            var formData = new FormData();
+
+            if ($('#file')[0].files[0] == undefined){
                 swal.fire({
                     title: "Oops..",
-                    text: "Oops! Something went wrong while Uplaoding your file. ☹️ Please Select One File ",
+                    text: "Oops!☹️ Please Select One File ",
                     icon: "error",
                     showCancelButton: true,
                     showConfirmButton: false,
                     cancelButtonText: "Okay",
                     cancelButtonColor: "#01BBE7",
                 })
+                return;
             }
+            
+            formData.append('file', $('#file')[0].files[0]);
+            formData.append('requestId', $('#requestId').val());
+            console.log($('#requestId').val());
+
+            $.ajax({
+                url:'/uploadfile',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(reponse){
+                    swal.fire({
+                        title: "Done",
+                        text: "Your Document Upload SuccessFully.. !",
+                        icon: "success",
+                        showCancelButton: true,
+                        showConfirmButton: false,
+                        cancelButtonText: "Okay",
+                        cancelButtonColor: "#01BBE7"  
+                    }).then(function(){
+                        location.reload();
+                    })
+                    
+                },
+                error: function(){
+                    swal.fire({
+                        title: "Oops..",
+                        text: "Oops! Something went wrong while Uplaoding your file. ☹️ Please Select One File ",
+                        icon: "error",
+                        showCancelButton: true,
+                        showConfirmButton: false,
+                        cancelButtonText: "Okay",
+                        cancelButtonColor: "#01BBE7",
+                    })
+                }
+            })
+            
         })
 
     </script>
@@ -104,7 +145,8 @@
                 <p class="pt-1">Check here for any files that you or the doctors of your subsequentts requestors have attached for you to review. </p>
             </div>
 
-            <form id="uploadForm" asp-action="UploadFile" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
+            <form id="uploadForm" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
+                <input type="text" value="@Model[0].Requestid" class="visually-hidden" id="requestId"></input>
                 <input type="file" name="file" id="file" class="border border-1">
                 <button type="submit" class="btn btn-info text-white uploadfile">Upload File</button>
             </form>
@@ -134,7 +176,7 @@
                             <tr>
                                 <td><input type="checkbox" class="fileCheckbox"></td>
                                 <td><img src="~/images/pdf.svg" width="20px" class="m-1" /> @item.fileName</td>
-                                <td>Shlok Jadeja</td>
+                                <td>@ViewBag.Username</td>
                                 <td>@item.uploadDate.DayOfWeek @item.uploadDate.Day , @item.uploadDate.Year </td>
                                 <td><button class="btn btn-outline-info download-btn" data-file="@item.UploadImage"><i class="bi bi-cloud-arrow-down fw-bold"></i></button></td>
                             </tr>

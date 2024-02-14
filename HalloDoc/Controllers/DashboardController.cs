@@ -98,25 +98,17 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost("UploadFile")]
-        public void UploadFile([FromForm] IFormFile file, [FromForm] string UploadImage, [FromForm] int requestId)
+        public IActionResult UploadFile(IFormFile file, int requestId)
         {
             try
-            {
-                if (file != null && file.Length > 0)
-                {
+            {  
                     HandleFileUpload(file, requestId);
-                    
-                }
-                else
-                {
-                    ModelState.AddModelError("file", "Please select a file to upload.");
-                    
-                }
+                    return Ok(new { success = true });            
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "An error occurred while uploading the file: " + ex.Message);
-                
+                Console.WriteLine(ex.ToString());
+                return BadRequest(new { success = false, message = "An error occurred while Uploading the file" });
             }
         }
 
