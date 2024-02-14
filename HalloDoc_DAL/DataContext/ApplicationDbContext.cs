@@ -88,7 +88,7 @@ public partial class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         // change port to 5432 for company PC and Database to HelloDoc
-        => optionsBuilder.UseNpgsql("User ID = postgres;Password=shlok123;Server=localhost;Port=5433;Database=HalloDoc;Integrated Security=true;Pooling=true;");
+        => optionsBuilder.UseNpgsql("User ID = postgres;Password=shlok123;Server=localhost;Port=5432;Database=HelloDoc;Integrated Security=true;Pooling=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

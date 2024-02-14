@@ -19,3 +19,21 @@ html {
 .password-fields {
     display: none;
 }
+
+::-webkit-file-upload-button {
+    display: none !important;
+}
+
+::file-selector-button {
+    display: none;
+}
+
+input#file {
+    width:90.5% !important;
+    height: 50px;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+.uploadfile{
+    border-radius: 0px !important;
+} 

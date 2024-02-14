@@ -33,10 +33,6 @@ namespace HalloDoc.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
-        public IActionResult Dashboard()
-        {
             ViewData["ViewName"] = "Dashboard";
             var email = HttpContext.Session.GetString("UserId");
             var username = GetUsernameFromEmail(email); // Extract username from email
@@ -102,25 +98,25 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost("UploadFile")]
-        public IActionResult UploadFile([FromForm] IFormFile file, [FromForm] string UploadImage, [FromForm] int requestId)
+        public void UploadFile([FromForm] IFormFile file, [FromForm] string UploadImage, [FromForm] int requestId)
         {
             try
             {
                 if (file != null && file.Length > 0)
                 {
                     HandleFileUpload(file, requestId);
-                    return RedirectToAction("DocumentView"); // Redirect to the appropriate action after successful upload
+                    
                 }
                 else
                 {
                     ModelState.AddModelError("file", "Please select a file to upload.");
-                    return View(); // Return the view with validation errors
+                    
                 }
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "An error occurred while uploading the file: " + ex.Message);
-                return View(); // Return the view with error message
+                
             }
         }
 

@@ -69,32 +69,22 @@
                 });
             }
 
-            // $("#inputFile1").change(function () {
-            //     let file = document.getElementById("inputFile1").files[0];
-            //     var requestId = $('#inputFile1').data('requestId');
-            //     var formData = new FormData();
-            //     formData.append('file', file);
-            //     formData.append('UploadImage', "");
-            //     formData.append('requestId', requestId);
-
-            //     $.ajax({
-            //         url: '/Patient/UploadFile',
-            //         type: 'POST',
-            //         data: formData,
-            //         contentType: false,
-            //         processData: false,
-            //         success: function (res) {
-            //             alert("File uploaded successfully!");
-                        
-            //         },
-            //         error: function (xhr, status, error) {
-            //             alert("File upload failed: " + error);
-            //         }
-            //     });
-            // });
-
         });
 
+        $("#uploadForm").submit(function(){
+            var file = $("#file").value;
+            if(file == null){
+                swal.fire({
+                    title: "Oops..",
+                    text: "Oops! Something went wrong while Uplaoding your file. ☹️ Please Select One File ",
+                    icon: "error",
+                    showCancelButton: true,
+                    showConfirmButton: false,
+                    cancelButtonText: "Okay",
+                    cancelButtonColor: "#01BBE7",
+                })
+            }
+        })
 
     </script>
         }
@@ -103,21 +93,20 @@
     <div class="mt-4 w-95 m-auto">
         <div class="d-flex justify-content-between">
             <h3 class="fw-bold">Documents</h3>
-            <a href="./Dashboard" class="btn btn-lg btn-outline-info hover_white ms-5">
+            <a href="./index" class="btn btn-lg btn-outline-info hover_white ms-5">
                 <i class="fa-solid fa-chevron-left"></i> Back
             </a>
         </div>
         <div class="shadow p-3 mt-3 rounded">
             <div class="text-secondary">
                 <span>Patient Name</span>
-                <h5 class="text-info fw-bold">Testing Name <span class="text-secondary fw-normal">(MD54623820024500)</span> </h5> 
+                <h5 class="text-info fw-bold">@ViewBag.Username<span class="text-secondary fw-normal">(@Model[0].Requestid)</span> </h5>
                 <p class="pt-1">Check here for any files that you or the doctors of your subsequentts requestors have attached for you to review. </p>
             </div>
 
-            <form id="uploadForm" asp-action="UploadFile" method="post" enctype="multipart/form-data">
-                <input type="text" value="@Model[0].Requestid" name="requestId" />
-                <input type="file" name="file" id="inputFile1">
-                <button type="submit" class="btn btn-primary">Upload File</button>
+            <form id="uploadForm" asp-action="UploadFile" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
+                <input type="file" name="file" id="file" class="border border-1">
+                <button type="submit" class="btn btn-info text-white uploadfile">Upload File</button>
             </form>
 
             <div class="d-flex justify-content-between mt-5 mb-4 px-1">

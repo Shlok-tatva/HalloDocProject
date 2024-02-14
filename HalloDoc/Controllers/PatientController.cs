@@ -62,7 +62,7 @@ namespace HelloDoc.Controllers
             if (storedPassword != null && storedPassword == user.Passwordhash)
             {
                 HttpContext.Session.SetString("UserId", user.Email);
-                return Redirect("/dashboard/dashboard");
+                return Redirect("/dashboard/index");
 
             }
             else
