@@ -37,3 +37,34 @@ input#file {
 .uploadfile{
     border-radius: 0px !important;
 } 
+
+.iti {
+    width: 100%;
+    height: 100%;
+}
+
+.iti input {
+    width: 100%;
+    height: 100%;
+}
+
+.iti__selected-flag,
+.iti__country-list {
+    z-index: 5;
+    color: black !important;
+}
+
+
+.btn-outline-info:hover{
+    color: white !important;
+}
+
+.readonly {
+    background: #f3f3f3;
+    cursor: not-allowed;
+}
+
+.notallowed {
+    background: #f3f3f3;
+    cursor: not-allowed;
+}

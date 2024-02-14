@@ -23,9 +23,21 @@ namespace HalloDoc_BAL.Repository
             _context.Add(user);
             _context.SaveChanges();
         }
+
+        public void Update(User user)
+        {
+            _context.Update(user);
+            _context.SaveChanges();
+        }
         public  User GetUser(string email)
         {
             return _context.Users.FirstOrDefault(m => m.Email == email);
         }
+
+        public User GetUserByID(int id)
+        {
+            return _context.Users.FirstOrDefault(m => m.Userid == id);
+        }
+
     }
 }

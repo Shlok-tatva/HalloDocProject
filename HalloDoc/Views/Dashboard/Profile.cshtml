@@ -1,0 +1,163 @@
+﻿@model UserDataviewModel;
+
+@section DashboardCSS {
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+}
+
+@section NavbarScript {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+@section UserProfileScript {
+    <script>
+        $(document).ready(function () {
+            $(".readonly").prop('readonly', true);
+            $("#editButton").click(function () {
+                $(".togleInput").toggleClass("readonly").prop('readonly', function (i, readonly) {
+                    return !readonly;
+                });
+                var buttonText = $(this).text();
+                $(this).text(buttonText === "Edit" ? "Save" : "Edit");
+            });
+
+           
+            $("#editButton").click(function () {
+                if ($(this).text() === "Edit") {
+                    swal.fire({
+                        title: "Are you sure?",
+                        text: "Once saved, your changes will be updated in the database.",
+                        icon: "warning",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        confirmButtonText: "Save Changes",
+                        denyButtonText: "Cancel Changes",
+                        confirmButtonColor: "#01BBE7",
+                        dangerMode: true,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var formData = new FormData();
+
+                            formData.append('userid', $("#userid").val());
+                            formData.append('FirstName', $("#FirstName").val());
+                            formData.append('LastName', $("#LastName").val());
+                            formData.append('Email', $("#email").val());
+                            formData.append('DateOfBirth', $("#DateOfBirth").val());
+                            formData.append('phone', $("#phone").val());
+                            formData.append('Street', $("#Street").val());
+                            formData.append('State', $("#State").val());
+                            formData.append('City', $("#City").val());
+                            formData.append('ZipCode', $("#ZipCode").val());
+
+                             $.ajax({
+                                url: "/UpdateUser",
+                                method: "POST",
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                 success: function(response) {
+                                    Swal.fire("Saved!", "", "success");
+                                 },
+                                 error: function(xhr, status, error) {
+                                    Swal.fire("Error While Save Changes!", "", "error");
+                                 }
+                             }); 
+                        } else if (result.isDenied) {
+                            Swal.fire("Changes are not saved", "", "info");
+                        }
+                    })
+                    
+                }
+            });
+        });
+    </script>
+}
+
+
+<div class=" my-5 container m-auto">
+    <div class="mt-4 w-95 m-auto">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">User profile</h3>
+            <a href="./index" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </a>
+        </div>
+        <div class="shadow p-3 mt-3 rounded-2">
+
+ <form id="updateUser">
+        <div class=" row">
+            <input id="userid" value="@Model.userid" class="visually-hidden">
+            <!-- General Information -->
+            <h5 class="col-12 fw-bold my-3">General Information</h5>
+            <div class="form-floating col-md-6 my-3">
+                <input id="FirstName" type="text" class="form-control togleInput readonly" value="@Model.FirstName">
+                <label for="floatingInput" class="control-label ms-3">
+                    First Name
+                </label>
+            </div>
+            <div class="form-floating col-md-6 my-3">
+                        <input id="LastName" type="text" class="form-control togleInput readonly" value="@Model.LastName">
+                <label for="floatingInput" class="control-label ms-3">
+                    Last Name
+                </label>
+            </div>
+            <div class="form-floating col-md-6 my-3">
+                <input id="DateOfBirth" type="date" class="form-control togleInput readonly" value="@Model.DateOfBirth">
+                <label for="dob" class="control-label ms-3">
+                    Date Of Birth
+                </label>
+            </div>
+            <!-- Contact Information -->
+            <h5 class="col-12 fw-bold my-3">Contact Information</h5>
+            <div class="form-floating col-md-6 my-3">
+                        <input id="email" type="email" class="form-control notallowed" value="@Model.Email" readonly>
+                <label for="floatingInput" class="control-label ms-3">
+                    Email
+                </label>
+            </div>
+            <!-- Contact Information -->
+            <div class="form-floating col-md-6 my-3">
+                        <input id="phone" type="tel" class="form-control togleInput readonly" value="@Model.PhoneNumber"> <br />
+                <label for="floatingInput" class="control-label ms-3">
+                </label>
+            </div>
+            <h5 class="col-12 fw-bold my-3">Location Information</h5>
+            <div class="form-floating col-md-6 my-3">
+                        <input id="Street" type="text" class="form-control togleInput readonly" value="@Model.Street">
+                <label for="floatingInput" class="control-label ms-3">
+                    Street
+                </label>
+            </div>
+            <div class="form-floating col-md-6 my-3">
+                        <input id="City" type="text" class="form-control togleInput readonly" value="@Model.City">
+                <label for="floatingInput" class="control-label ms-3">
+                    City
+                </label>
+            </div>
+            <div class="form-floating col-md-6 my-3">
+                        <input id="State" type="text" class="form-control togleInput readonly" value="@Model.State">
+                <label for="floatingInput" class="control-label ms-3">
+                    State
+                </label>
+            </div>
+            <div class="form-floating col-md-4 my-3">
+                <input id="ZipCode" type="text" class="form-control togleInput readonly" value="@Model.ZipCode">
+                <label for="floatingInput" class="control-label ms-3">
+                    Zip Code
+                </label>
+            </div>
+            <div class="col-md-2 my-auto">
+            <button class="btn  btn-outline-info btn-lg">
+                <i class="bi bi-geo-alt"></i> Map</button>
+            </div> 
+        </div>
+</form>
+        <div class="d-flex justify-content-end mt-5 mb-2 me-2">
+            <button class="btn btn-info btn-lg text-white" id="editButton">Edit</button>
+        </div>
+        </div>
+    </div>
+</div>

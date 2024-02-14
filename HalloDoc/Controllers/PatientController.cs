@@ -44,40 +44,6 @@ namespace HelloDoc.Controllers
             return View();
         }
 
-
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-
-        public IActionResult LoginUser(Aspnetuser user)
-        {
-            if (user.Email == null || user.Passwordhash == null)
-            {
-                return Json("Username and password cannot be empty.");
-            }
-
-            var storedPassword = _aspnetuserrepo.GetUserPassword(user.Email);
-            if (storedPassword != null && storedPassword == user.Passwordhash)
-            {
-                HttpContext.Session.SetString("UserId", user.Email);
-                return Redirect("/dashboard/index");
-
-            }
-            else
-            {
-                return Json("Wrong password.");
-            }
-        }
-
-
-        public IActionResult ForgetPassword()
-        {
-            return View();
-        }
-
-
         public IActionResult SubmitRequest()
         {
             return View();
@@ -447,9 +413,6 @@ namespace HelloDoc.Controllers
                             requestwisefile.Createddate = DateTime.Now;
             _requestwisefilerepo.Add(requestwisefile);
         }
-
-
-       
        
     }
 }

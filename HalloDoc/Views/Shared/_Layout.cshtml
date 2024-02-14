@@ -29,7 +29,7 @@
 
 <body >
     <div class="h-100">
-        @if (String.Equals(ViewData["ViewName"], "Dashboard") || String.Equals(ViewData["ViewName"], "DocumentView"))
+        @if (String.Equals(ViewData["ViewName"], "Dashboard") || String.Equals(ViewData["ViewName"], "DocumentView") || String.Equals(ViewData["ViewName"], "UserProfile"))
         {
         <partial name="_NavBar" model="ViewBag.Username" />            
         }
@@ -48,8 +48,11 @@
     @await RenderSectionAsync("PasswordIcon", required: false)
     @await RenderSectionAsync("NavbarScript", required: false)
     @await RenderSectionAsync("DownloadfileJs", required: false)
+    @await RenderSectionAsync("UserProfileScript", required: false)
+
 
     @await RenderSectionAsync("Scripts", required: false)
+    
 
 
 
