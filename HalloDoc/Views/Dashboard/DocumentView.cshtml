@@ -12,66 +12,68 @@
         </script>
         }
 
-@section DownloadfileJs{
+@section Scripts{
     <script>
 
-        $(document).ready(function () {
-
-            $('#selectAllCheckbox').change(function () {
+        $('#selectAllCheckbox').change(function () {
             $('.fileCheckbox').prop('checked', $(this).prop('checked'));
         });
 
-            $('.downloadAll').click(function () {
+        $('.downloadAll').click(function () {
             $('.fileCheckbox:checked').each(function () {
                 var filePath = $(this).closest('tr').find('.download-btn').data('file');
                 downloadFile(filePath);
             });
         });
 
+        $('.download-btn').click(function () {
+            downloadFile($(this).data('file'));
+        })
 
 
-            function downloadFile(filePath) {
-             
-                $.ajax({
-                    url: '/Dashboard/DownloadFile', 
-                    type: 'GET',
-                    data: { filePath: filePath },
-                    xhrFields: {
-                        responseType: 'blob' 
-                    },
-                    success: function (response) {
-                        
-                        var url = window.URL.createObjectURL(new Blob([response]));
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = filePath.substring(filePath.lastIndexOf('/') + 1); // Set the download attribute to the file name
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                    },
-                    error: function () {
-                       
-                        swal.fire({
-                            title: "Oops..",
-                            text: "Oops! Something went wrong while downloading your file. ☹️ It could be that the file was deleted from the server or your browser crashed. Please check your internet connection and try again later.",
-                            icon: "error",
-                            showCancelButton: true,
-                            showConfirmButton: false,
-                            cancelButtonText: "Okay",
-                            cancelButtonColor: "#01BBE7",
-                        })
-                    }
-                });
-            }
 
-        });
+        function downloadFile(filePath) {
 
-        $("#uploadForm").submit(function(e){
+            $.ajax({
+                url: '/Dashboard/DownloadFile',
+                type: 'GET',
+                data: { filePath: filePath },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (response) {
+
+                    var url = window.URL.createObjectURL(new Blob([response]));
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = filePath.substring(filePath.lastIndexOf('/') + 1); // Set the download attribute to the file name
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                },
+                error: function () {
+
+                    swal.fire({
+                        title: "Oops..",
+                        text: "Oops! Something went wrong while downloading your file. ☹️ It could be that the file was deleted from the server or your browser crashed. Please check your internet connection and try again later.",
+                        icon: "error",
+                        showCancelButton: true,
+                        showConfirmButton: false,
+                        cancelButtonText: "Okay",
+                        cancelButtonColor: "#01BBE7",
+                    })
+                }
+            });
+        }
+
+     
+
+        $("#uploadForm").submit(function (e) {
             e.preventDefault();
             var formData = new FormData();
 
-            if ($('#file')[0].files[0] == undefined){
+            if ($('#file')[0].files[0] == undefined) {
                 swal.fire({
                     title: "Oops..",
                     text: "Oops!☹️ Please Select One File ",
@@ -83,18 +85,18 @@
                 })
                 return;
             }
-            
+
             formData.append('file', $('#file')[0].files[0]);
             formData.append('requestId', $('#requestId').val());
             console.log($('#requestId').val());
 
             $.ajax({
-                url:'/uploadfile',
+                url: '/uploadfile',
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(reponse){
+                success: function (reponse) {
                     swal.fire({
                         title: "Done",
                         text: "Your Document Upload SuccessFully.. !",
@@ -102,13 +104,13 @@
                         showCancelButton: true,
                         showConfirmButton: false,
                         cancelButtonText: "Okay",
-                        cancelButtonColor: "#01BBE7"  
-                    }).then(function(){
+                        cancelButtonColor: "#01BBE7"
+                    }).then(function () {
                         location.reload();
                     })
-                    
+
                 },
-                error: function(){
+                error: function () {
                     swal.fire({
                         title: "Oops..",
                         text: "Oops! Something went wrong while Uplaoding your file. ☹️ Please Select One File ",
@@ -120,7 +122,7 @@
                     })
                 }
             })
-            
+
         })
 
     </script>
@@ -173,8 +175,8 @@
                                 <td><input type="checkbox" class="fileCheckbox"></td>
                                 <td><img src="~/images/pdf.svg" width="20px" class="m-1" /> @item.fileName</td>
                                 <td>@ViewBag.Username</td>
-                                <td>@item.uploadDate.DayOfWeek @item.uploadDate.Day , @item.uploadDate.Year </td>
-                                <td><button class="btn btn-outline-info download-btn" data-file="@item.UploadImage"><i class="bi bi-cloud-arrow-down fw-bold"></i></button></td>
+                                <td>@item.uploadDate.ToString()</td>
+                                <td><button class="btn btn-outline-info download-btn" data-file="@item.UploadImage"><i class="bi bi-cloud-arrow-down fw-bold"></i></button><td>
                             </tr>
                         }
                     </tbody>

@@ -64,9 +64,6 @@
     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
 </div>
 
-
-
-
 <!-- Patient Location -->
 <h5 class="col-12 fw-bold my-3">Patient Location</h5>
 
@@ -109,6 +106,18 @@
         Room # / Suite (optional)
     </label>
 </div>
+
+
+@if(String.Equals(ViewData["ViewName"] , "RequestForSomeone")){
+    <h5 class="col-12 fw-bold my-3">Relation</h5>
+     <div class="form-floating col-md-6 my-3">
+        <input asp-for="RelationWithPatinet" type="text" class="form-control" placeholder="name@example.com">
+        <label asp-for="RelationWithPatinet"  for="floatingInput" class="control-label ms-3">
+            Relation with Patinet (Optional)
+        </label>
+        
+    </div>
+} 
 
 @if (!String.Equals(ViewData["ViewName"] , "ConciergeRequest") && !String.Equals(ViewData["ViewName"] , "BusinessRequest"))
 {

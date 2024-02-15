@@ -39,18 +39,17 @@
         </main>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"> </script>
 
     @await RenderSectionAsync("PasswordIcon", required: false)
     @await RenderSectionAsync("NavbarScript", required: false)
-    @await RenderSectionAsync("DownloadfileJs", required: false)
     @await RenderSectionAsync("UserProfileScript", required: false)
-
-
     @await RenderSectionAsync("Scripts", required: false)
     
 

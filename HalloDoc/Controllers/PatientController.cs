@@ -10,6 +10,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing.Text;
 using System.Transactions;
+using Microsoft.AspNetCore.Identity;
 
 namespace HelloDoc.Controllers
 {
@@ -70,6 +71,7 @@ namespace HelloDoc.Controllers
                         var request = new Request();
                         var requestClient = new Requestclient();
                         var aspnetuser = _aspnetuserrepo.GetByEmail(formData.Email);
+                        var hasher = new PasswordHasher<string>();
 
                         if (aspnetuser == null)
                         {
@@ -82,7 +84,8 @@ namespace HelloDoc.Controllers
                             aspnetuser.Username = formData.Email;
                             aspnetuser.Email = formData.Email;
                             aspnetuser.Phonenumber = formData.PhoneNumber;
-                            aspnetuser.Passwordhash = formData.Password;
+                            string hashedPassword = hasher.HashPassword(null, formData.Password);
+                            aspnetuser.Passwordhash = hashedPassword;
                             aspnetuser.Createddate = DateTime.Now;
                             _aspnetuserrepo.Add(aspnetuser);
 

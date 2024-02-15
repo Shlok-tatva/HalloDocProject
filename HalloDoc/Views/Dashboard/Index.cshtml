@@ -3,8 +3,30 @@
 @{
     ViewData["Title"] = "Welcome to Dashboard";
 }
-@section DashboardCSS{
+@section DashboardCSS {
     <link rel="stylesheet" href="~/css/dashboard.css" />
+
+    <style>
+        @* .btn-outline-info:hover {
+            color: black !important;
+        } *@
+        .modal:before { 
+            content: ''; 
+            display: inline-block; 
+            height: 100vh; @* for mobile set it 35 vh *@
+            vertical-align: middle; 
+        } 
+        .modal{
+            text-align: center;
+        }
+          
+        .modal-dialog { 
+            display: inline-block; 
+            text-align: center;
+            vertical-align: middle; 
+            width: 100%;
+        }      
+    </style>
 }
 
 @section NavbarScript {
@@ -15,6 +37,20 @@
     </script>
 }
 
+@section Scripts {
+    <script>
+           document.getElementById("continueButton").addEventListener("click", function () {
+        var selectedOption = document.querySelector('input[name="options-outlined"]:checked').id;
+        if (selectedOption === "success-outlined") {
+           
+            window.location.href = "/Dashboard/RequestForme";
+        } else if (selectedOption === "danger-outlined") {
+            window.location.href = "/Dashboard/RequestForSomeone";
+        }
+    });
+    </script>
+}
+
 <main class=" mt-5 w-95 m-auto">
     <h4 class="fw-bolder ">
         Medical History
@@ -22,38 +58,73 @@
 
     <div class="d-flex flex-column  shadow  rounded-4 mt-4">
         <div class="align-self-end p-3 px-4">
-            <button class="btn btn-large btn-outline-info p-2 px-3 ">Create New Request</button>
+            <button class="btn btn-large btn-outline-info p-2 px-3" id="newRequest" data-bs-toggle="modal"
+                data-bs-target="#create_new">Create New Request</button>
         </div>
 
         <div class="overflow-x-scroll ">
             <table class="w-100 table" cellspacing="15" cellspadding="15">
                 <thead>
-                <tr class="table-light">
-                    <th class="w-25">Created Date <i class="bi bi-arrow-down"></i></th>
-                    <th class="w-60">Current Status</th>
-                    <th>Document</th>
-                </tr>
+                    <tr class="table-light">
+                        <th>Request ID</th>
+                        <th class="w-25">Created Date <i class="bi bi-arrow-down"></i></th>
+                        <th class="w-50">Current Status</th>
+                        <th>Document</th>
+                    </tr>
                 </thead>
 
                 <tbody>
                     @foreach (var item in Model)
                     {
                         <tr>
+                            <td>@item.Requestid</td>
                             <td>@item.requestDate.DayOfWeek @item.requestDate.Day , @item.requestDate.Year </td>
                             <td>@item.statusString</td>
                             <td>
                                 @if (@item.DocumentCount != 0)
                                 {
-                                @*<a href="@item.documentPath" class="btn btn-outline-info " target ="_blank">(1) Documents</a>*@
-                                    <a href="@Url.Action("DocumentView" , "Dashboard" , new {Requestid = item.Requestid})" class="btn btn-outline-info "> (@item.DocumentCount) Documents</a>
-                            }
+                                    @*<a href="@item.documentPath" class="btn btn-outline-info " target ="_blank">(1)
+                            Documents</a>*@
+                                    <a href="@Url.Action("DocumentView" , "Dashboard" , new {Requestid = item.Requestid})"
+                                        class="btn btn-outline-info "> (@item.DocumentCount) Documents</a>
+                                }
                             </td>
- 
-                        </tr>    
+
+                        </tr>
                     }
                 </tbody>
-           </table>
+            </table>
         </div>
     </div>
-
 </main>
+
+
+<div class="modal fade" id="create_new" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-info text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Request</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <p>
+                    Here, I want to create new request for...
+                </p>
+                <div class="text-center">
+                    <input type="radio" class="btn-check" name="options-outlined" id="success-outlined"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-info mx-2" for="success-outlined">Me</label>
+
+                    <input type="radio" class="btn-check" name="options-outlined" id="danger-outlined"
+                        autocomplete="off">
+                    <label class="btn btn-outline-info mx-2" for="danger-outlined">Some one else</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input value="Continue" id="continueButton" type="button" class="btn btn-outline-info">
+                <button type="button" class="btn btn-info text-white" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

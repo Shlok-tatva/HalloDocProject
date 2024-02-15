@@ -46,6 +46,8 @@ namespace HalloDoc.Models
 
         public IFormFile? UploadFile { get; set; }
 
+        public string? RelationWithPatinet {get; set;}
+
         public string? UploadImage { get; set; }
     }
 
