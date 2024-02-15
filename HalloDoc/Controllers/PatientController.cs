@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.Drawing.Text;
 using System.Transactions;
 using Microsoft.AspNetCore.Identity;
+using System.Net.Mail;
+using System.Net;
 
 namespace HelloDoc.Controllers
 {
@@ -377,6 +379,17 @@ namespace HelloDoc.Controllers
 
                         _requestbusinessrepo.Add(requestbusiness);
 
+                        var token = Guid.NewGuid().ToString();
+
+                        // Construct the account creation link
+                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?token={token}";
+
+                        // Send email to the patient
+                        var emailSubject = "Account Creation Link";
+                        var emailBody = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
+                        SendEmail(formData.Email, emailSubject, emailBody);
+
+
                         transaction.Complete();
 
                         return RedirectToAction("Index");
@@ -416,7 +429,40 @@ namespace HelloDoc.Controllers
                             requestwisefile.Createddate = DateTime.Now;
             _requestwisefilerepo.Add(requestwisefile);
         }
-       
+
+        public void SendEmail(string toEmail, string subject, string body)
+        {
+            try
+            {
+                // Configure SMTP client
+                using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com"))
+                {
+                    smtpClient.UseDefaultCredentials = false;
+                    smtpClient.Credentials = new NetworkCredential("shlokjadeja177@gmail.com", "pgqv mnuc aspa cglb");
+                    smtpClient.Port = 587;
+                    smtpClient.EnableSsl = true;
+
+                    // Construct the email message
+                    using (MailMessage mailMessage = new MailMessage())
+                    {
+                        mailMessage.From = new MailAddress("shlokjadeja177@gmail.com");
+                        mailMessage.To.Add(toEmail);
+                        mailMessage.Subject = subject;
+                        mailMessage.Body = body;
+                        mailMessage.IsBodyHtml = true;
+
+                        // Send the email
+                        smtpClient.Send(mailMessage);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception, log error, etc.
+                throw new ApplicationException("Failed to send email", ex);
+            }
+        }
+
     }
 }
 
