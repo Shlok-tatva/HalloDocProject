@@ -54,11 +54,6 @@ input#file {
     color: black !important;
 }
 
-
-.btn-outline-info:hover{
-    color: white !important;
-}
-
 .readonly {
     background: #f3f3f3;
     cursor: not-allowed;
@@ -67,4 +62,20 @@ input#file {
 .notallowed {
     background: #f3f3f3;
     cursor: not-allowed;
+}
+
+.btn-outline-info {
+    border-width: 2px !important;
+    font-weight: 800 !important;
+}
+.btn{
+    border-radius: 5px !important;
+}
+
+.hover_primary:hover {
+    background-color: #0dcaf0 !important;
+}
+
+.hover_white:hover{
+    color:white !important;
 }

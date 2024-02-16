@@ -190,11 +190,14 @@ namespace HalloDoc.Controllers
         }
 
         public IActionResult RequestForme(){
+            ViewData["ViewName"] = "RequestForme";
             var email = HttpContext.Session.GetString("UserId");
             if (email == null)
             {
                 return Redirect("/Login");
             }
+            var username = GetUsernameFromEmail(email); // Extract username from email
+            ViewBag.Username = username;
 
             User user = _userrepo.GetUser(email);
             var patinetData = new PatientFormData{
@@ -212,6 +215,14 @@ namespace HalloDoc.Controllers
         public IActionResult RequestForSomeone(PatientFormData formData)
         {
             ViewData["ViewName"] = "RequestForSomeone";
+            var email = HttpContext.Session.GetString("UserId");
+            if (email == null)
+            {
+                return Redirect("/Login");
+            }
+            var username = GetUsernameFromEmail(email); // Extract username from email
+            ViewBag.Username = username;
+
             return View();
         }
 
