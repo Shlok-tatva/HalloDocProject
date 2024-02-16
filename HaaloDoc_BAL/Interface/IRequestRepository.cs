@@ -10,6 +10,8 @@ namespace HalloDoc_BAL.Interface
     public interface IRequestRepository
     {
         void Add(Request request);
+        Request Get(int id);
         List<Request> GetAll(int userId);
+        void Update(Request request);
     }
 }

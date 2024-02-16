@@ -6,5 +6,6 @@ namespace HalloDoc_BAL.Interface
     {
         void Add(Requestclient requestclient);
         public List<Requestclient> GetAll();
+        Requestclient Get(int id);
     }
 }

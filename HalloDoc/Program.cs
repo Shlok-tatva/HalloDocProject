@@ -17,6 +17,9 @@ builder.Services.AddScoped<IRequestConciergeRepository, RequestConciergeReposito
 builder.Services.AddScoped<IRequestBusinessRepository, RequestBusinessRepository>();
 builder.Services.AddScoped<IRBusinessRepository, RBusinessRepository>();
 builder.Services.AddScoped<IRequestwisefileRepository, RequestwisefileRepository>();
+builder.Services.AddScoped<IPatientFunctionRepository, PatientFunctionRepository>();
+
+
 
 
 

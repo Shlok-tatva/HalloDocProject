@@ -18,9 +18,11 @@ namespace HalloDoc.Controllers
         private readonly IRBusinessRepository _rbusinessrepo;
         private readonly IRequestBusinessRepository _requestbusinessrepo;
         private readonly IRequestwisefileRepository _requestwisefilerepo;
+        private readonly IPatientFunctionRepository _patientFuncrepo;
 
 
-        public DashboardController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo)
+
+        public DashboardController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo , IPatientFunctionRepository patientFuncrepo)
         {
             _aspnetuserrepo = aspnetuser;
             _requestclientrepo = requestclient;
@@ -31,6 +33,7 @@ namespace HalloDoc.Controllers
             _rbusinessrepo = rbusinessrepo;
             _requestbusinessrepo = requestbusinessrepo;
             _requestwisefilerepo = requestwisefilerepo;
+            _patientFuncrepo = patientFuncrepo;
         }
 
         public IActionResult Index()
@@ -87,7 +90,7 @@ namespace HalloDoc.Controllers
                                    select new DocumentViewModel
                                    {
                                        Requestid = request.Requestid,
-                                       uploadDate = request.Createddate,
+                                       uploadDate = requestFile.Createddate,    
                                        UploadImage = requestFile.Filename,
                                        fileName = Path.GetFileName(requestFile.Filename),
                                    };
@@ -259,6 +262,12 @@ namespace HalloDoc.Controllers
                     requestClient.State = formData.State;
                     requestClient.Zipcode = formData.ZipCode;
                     _requestclientrepo.Add(requestClient);
+
+                    string key = "770A8A65DA156D24EE2A093277530142";
+                    string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
+                    var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
+
+                    _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
 
                     transaction.Complete();
 

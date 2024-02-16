@@ -30,5 +30,11 @@ namespace HalloDoc_BAL.Repository
             return _context.Requestclients.ToList();
         }
 
+        public Requestclient Get(int id)
+        {
+            return _context.Requestclients.FirstOrDefault(r => r.Requestid == id);
+
+        }
+
     }
 }

@@ -150,9 +150,12 @@
                     Zip Code
                 </label>
             </div>
+            @{
+                        var googleMapsLink = $"https://www.google.com/maps/search/?api=1&query={Uri.EscapeDataString(Model.Street)},{Uri.EscapeDataString(Model.City)},{Uri.EscapeDataString(Model.State)},{Uri.EscapeDataString(Model.ZipCode)}";
+            }
             <div class="col-md-2 my-auto">
-            <button class="btn  btn-outline-info btn-lg">
-                <i class="bi bi-geo-alt"></i> Map</button>
+                        <a href="@googleMapsLink" target="_blank" class="btn  btn-outline-info btn-lg">
+                <i class="bi bi-geo-alt"></i> Map</a>
             </div> 
         </div>
 </form>

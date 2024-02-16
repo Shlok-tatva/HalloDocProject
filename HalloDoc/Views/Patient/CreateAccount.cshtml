@@ -1,0 +1,80 @@
+﻿@model CreateAccountViewModel;
+
+@{
+    ViewData["Title"] = "Create Password";
+}
+
+@section PatientLoginStyle {
+    <link rel="stylesheet" href="~/css/patient_style.css" />
+}
+@section PasswordIcon {
+    <script>
+        let pass = document.getElementById('pass');
+        let inpt = document.getElementById('inpt');
+
+        pass.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (inpt.type === 'password') {
+                inpt.type = 'text'
+                pass.classList.remove("bi-eye-fill")
+                pass.classList.add("bi-eye-slash-fill")
+            } else {
+                inpt.type = 'password'
+                pass.classList.remove("bi-eye-slash-fill")
+                pass.classList.add("bi-eye-fill")
+
+            }
+        })
+    </script>
+}
+
+
+<partial name="_Themebutton">
+    <div class="container-fluid p-0">
+        <div class="row g-0 align-items-center blur_content z-0">
+            <div class="col-md-6 w-100 blur">
+                <div class="d-flex flex-column align-items-center  justify-content-between h-100">
+                    <div class="mt-5 text-center ">
+                        <!-- <h1 class="text-info">HalloDoc</h1> -->
+                        <img src="../images/logo.png" width="250px" alt="" srcset="">
+                    </div>
+                    <form asp-action="submitAccount" class="p-md-2 bg-transparent  mb-4 create_Account">
+                        <h2 class="text-center pb-3 mt-2 fw-bold">
+                            Create Account</h1>
+                            <input asp-for="requestId" type="text" value="@Model.requestId" class="visually-hidden"></input>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Email" type="email" class="form-control notallowed" value="@Model.Email" readonly>
+                                <label for="floatingInput" class="control-label">
+                                    Email
+                                </label>
+                                <i class="bi bi-person-circle input_icon"></i>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Password" type="password" class="form-control" id=""
+                                       placeholder="Password">
+                                <label for="floatingPassword" class="control-label">Password</label>
+                                <!-- <i class="bi bi-eye-fill input_icon" id=""></i> -->
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" id="inpt"
+                                       placeholder="Password">
+                                <label for="floatingPassword" class="control-label">Confirm Password</label>
+                                <i class="bi bi-eye-fill input_icon" id="pass"></i>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+
+                            </div>
+                            <button class="w-100 btn btn-lg btn-info text-white  my-2" type="submit">Create</button>
+                    </form>
+                    <div class="text-center">
+                        <p>
+                            <a href="" class="text-decoration-none text-secondary">Terms of Conditions</a>
+                            <span class="text-secondary">|</span>
+                            <a href="" class="text-decoration-none text-secondary">Privacy Policy</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

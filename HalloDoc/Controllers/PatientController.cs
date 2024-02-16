@@ -13,6 +13,8 @@ using System.Transactions;
 using Microsoft.AspNetCore.Identity;
 using System.Net.Mail;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace HelloDoc.Controllers
 {
@@ -27,9 +29,12 @@ namespace HelloDoc.Controllers
         private readonly IRBusinessRepository _rbusinessrepo;
         private readonly IRequestBusinessRepository _requestbusinessrepo;
         private readonly IRequestwisefileRepository _requestwisefilerepo;
+        private readonly IPatientFunctionRepository _patientFuncrepo;
 
 
-        public PatientController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo)
+
+
+        public PatientController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo, IPatientFunctionRepository patientFuncrepo)
         {
             _aspnetuserrepo = aspnetuser;
             _requestclientrepo = requestclient;
@@ -40,6 +45,7 @@ namespace HelloDoc.Controllers
             _rbusinessrepo = rbusinessrepo;
             _requestbusinessrepo = requestbusinessrepo;
             _requestwisefilerepo = requestwisefilerepo;
+            _patientFuncrepo = patientFuncrepo;
         }
 
         public IActionResult Index()
@@ -215,6 +221,11 @@ namespace HelloDoc.Controllers
 
                         _requestclientrepo.Add(requestClient);
 
+                        string key = "770A8A65DA156D24EE2A093277530142";
+                        string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
+                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
+                        _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
+
                         transaction.Complete();
 
                         return RedirectToAction("Index");
@@ -297,6 +308,11 @@ namespace HelloDoc.Controllers
 
                         _requestConciergerepo.Add(requestConcierge);
 
+                        string key = "770A8A65DA156D24EE2A093277530142";
+                        string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
+                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
+                        _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
+
                         transaction.Complete();
 
                         return RedirectToAction("Index");
@@ -335,6 +351,7 @@ namespace HelloDoc.Controllers
                         var requestClient = new Requestclient();
                         var rbusiness = new RBusinessdatum();
                         var requestbusiness = new Requestbusiness();
+
 
                         request.Requesttypeid = 4;
                         request.Firstname = formData.BusinessFirstName;
@@ -379,15 +396,10 @@ namespace HelloDoc.Controllers
 
                         _requestbusinessrepo.Add(requestbusiness);
 
-                        var token = Guid.NewGuid().ToString();
-
-                        // Construct the account creation link
-                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?token={token}";
-
-                        // Send email to the patient
-                        var emailSubject = "Account Creation Link";
-                        var emailBody = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
-                        SendEmail(formData.Email, emailSubject, emailBody);
+                        string key = "770A8A65DA156D24EE2A093277530142";
+                        string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
+                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
+                       _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
 
 
                         transaction.Complete();
@@ -404,6 +416,74 @@ namespace HelloDoc.Controllers
             {
                 return RedirectToAction("BusinessRequest");
             }
+
+        }
+
+        public IActionResult createAccount()
+        {
+            string encryptEmail = Request.Query["email"];
+            string key = "770A8A65DA156D24EE2A093277530142";
+            string email = _patientFuncrepo.Decrypt(encryptEmail, key);
+
+            int requestId = Convert.ToInt32(Request.Query["requestId"]);
+            Console.Write(requestId);
+
+            CreateAccountViewModel data = new CreateAccountViewModel { Email = email, requestId = requestId, };
+
+            return View(data);
+        }
+
+        public void submitAccount(CreateAccountViewModel formData)
+        {
+            Requestclient requestClient = _requestclientrepo.Get(formData.requestId);
+            Request request = _requestrepo.Get(formData.requestId);
+
+            using(var trancation = new TransactionScope())
+            {
+                try
+                {
+                    var aspnetuser = new Aspnetuser();
+                    var user = new User();
+                    var hasher = new PasswordHasher<string>();
+
+                    Guid guid = Guid.NewGuid();
+                    string str = guid.ToString();
+
+                    aspnetuser.Id = str;
+                    aspnetuser.Username = formData.Email;
+                    aspnetuser.Email = formData.Email;
+                    aspnetuser.Phonenumber = requestClient.Phonenumber;
+                    string hashedPassword = hasher.HashPassword(null, formData.Password);
+                    aspnetuser.Passwordhash = hashedPassword;
+                    aspnetuser.Createddate = DateTime.Now;
+                    _aspnetuserrepo.Add(aspnetuser);
+
+                    user.Aspnetuserid = aspnetuser.Id;
+                    user.Firstname = requestClient.Firstname;
+                    user.Lastname = requestClient.Lastname;
+                    user.Email = formData.Email;
+                    user.Mobile = requestClient.Phonenumber;
+                    user.Street = requestClient.Street;
+                    user.City = requestClient.City;
+                    user.State = requestClient.State;
+                    user.Zipcode = requestClient.Zipcode;
+                    user.Isdeleted = false;
+                    user.Createdby = aspnetuser.Id;
+                    user.Createddate = DateTime.Now;
+                    _userrepo.Add(user);
+
+                    request.Userid = user.Userid;
+                    _requestrepo.Update(request);
+
+                    trancation.Complete();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+
+
 
         }
 
@@ -430,38 +510,6 @@ namespace HelloDoc.Controllers
             _requestwisefilerepo.Add(requestwisefile);
         }
 
-        public void SendEmail(string toEmail, string subject, string body)
-        {
-            try
-            {
-                // Configure SMTP client
-                using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com"))
-                {
-                    smtpClient.UseDefaultCredentials = false;
-                    smtpClient.Credentials = new NetworkCredential("shlokjadeja177@gmail.com", "pgqv mnuc aspa cglb");
-                    smtpClient.Port = 587;
-                    smtpClient.EnableSsl = true;
-
-                    // Construct the email message
-                    using (MailMessage mailMessage = new MailMessage())
-                    {
-                        mailMessage.From = new MailAddress("shlokjadeja177@gmail.com");
-                        mailMessage.To.Add(toEmail);
-                        mailMessage.Subject = subject;
-                        mailMessage.Body = body;
-                        mailMessage.IsBodyHtml = true;
-
-                        // Send the email
-                        smtpClient.Send(mailMessage);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle exception, log error, etc.
-                throw new ApplicationException("Failed to send email", ex);
-            }
-        }
 
     }
 }
