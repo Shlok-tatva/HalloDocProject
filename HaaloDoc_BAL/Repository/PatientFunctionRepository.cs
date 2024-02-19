@@ -63,15 +63,15 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void SendEmail(string toEmail, string accountCreationLink)
+        public void SendEmail(string toEmail, string Title, string Message)
         {
             try
             {
                 // Configure SMTP client
                 using (SmtpClient smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io"))
                 {
-                    var subject = "Account Creation Link";
-                    var emailBody = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
+                    var subject = Title;
+                    var emailBody = Message;
 
                     smtpClient.UseDefaultCredentials = false;
                     //smtpClient.Credentials = new NetworkCredential("shlokjadeja177@gmail.com", "pgqv mnuc aspa cglb");

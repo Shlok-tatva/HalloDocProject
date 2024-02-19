@@ -147,7 +147,7 @@ namespace HalloDoc.Controllers
                 LastName = user.Lastname,
                 Email = user.Email,
                 PhoneNumber = user.Mobile,
-                DateOfBirth = user.Intyear.Value.ToString() + "-" + user.Strmonth + "-" + string.Format("{0:00}", user.Intdate.Value),
+                DateOfBirth = user.Intyear.Value.ToString("") + "-" + user.Strmonth + "-" + string.Format("{0:00}", user.Intdate.Value),
                 Street = user.Street,
                 State = user.State,
                 City = user.City,
@@ -278,7 +278,9 @@ namespace HalloDoc.Controllers
                     string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
                     var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
 
-                    _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
+                    var title = "Account Creation LInk";
+                    var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
+                    _patientFuncrepo.SendEmail(formData.Email, title, message);
 
                     transaction.Complete();
 

@@ -42,7 +42,7 @@ namespace HalloDoc_BAL.Repository
             return  _context.Aspnetusers.FirstOrDefault(m => m.Email == email);
         }
 
-        public void Update(HalloDoc_DAL.Models.Aspnetuser aspnetuser)
+        public void Update(Aspnetuser aspnetuser)
         {
             _context.Update(aspnetuser);
             _context.SaveChanges();

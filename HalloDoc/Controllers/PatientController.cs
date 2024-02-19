@@ -102,6 +102,9 @@ namespace HelloDoc.Controllers
                             user.Lastname = formData.LastName;
                             user.Email = formData.Email;
                             user.Mobile = formData.PhoneNumber;
+                            user.Intyear = formData.DateOfBirth.Year;
+                            user.Intdate = formData.DateOfBirth.Day;
+                            user.Strmonth = formData.DateOfBirth.Month.ToString("00");
                             user.Street = formData.Street;
                             user.City = formData.City;
                             user.State = formData.State;
@@ -138,7 +141,7 @@ namespace HelloDoc.Controllers
                         requestClient.Lastname = formData.LastName;
                         requestClient.Phonenumber = formData.PhoneNumber;
                         requestClient.Email = formData.Email;
-                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString();
+                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString("00");
                         requestClient.Intyear = formData.DateOfBirth.Year;
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
@@ -190,19 +193,31 @@ namespace HelloDoc.Controllers
                     {
                         var request = new Request();
                         var requestClient = new Requestclient();
+                        var user = _userrepo.GetUser(formData.Email);
 
                         request.Requesttypeid = 1;
                         request.Firstname = formData.f_firstName;
                         request.Lastname = formData.f_lastName;
                         request.Email = formData.f_Email;
+
+                        if(user != null)
+                        {
+                            request.Userid = user.Userid;
+                        }
+
                         request.Phonenumber = formData.f_PhoneNumber;
                         request.Status = 1;
                         request.Isurgentemailsent = false;
                         request.Isdeleted = false;
                         request.Createddate = DateTime.Now;
                         request.Relationname = formData.relationWithPatinet;
-                        
+
                         _requestrepo.Add(request);
+
+                        if (formData.UploadFile != null)
+                        {
+                            HandleFileUpload(formData.UploadFile, formData.UploadImage, request.Requestid);
+                        }
 
                         requestClient.Notes = formData.Symptoms;
                         requestClient.Requestid = request.Requestid;
@@ -211,20 +226,24 @@ namespace HelloDoc.Controllers
                         requestClient.Address = formData.Street;
                         requestClient.Lastname = formData.LastName;
                         requestClient.Email = formData.Email;
-                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString();
+                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString("00");
                         requestClient.Intyear = formData.DateOfBirth.Year;
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
                         requestClient.City = formData.City;
                         requestClient.State = formData.State;
                         requestClient.Zipcode = formData.ZipCode;
-
                         _requestclientrepo.Add(requestClient);
 
-                        string key = "770A8A65DA156D24EE2A093277530142";
-                        string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
-                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
-                        _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
+                        if (user == null)
+                        {
+                            string key = "770A8A65DA156D24EE2A093277530142";
+                            string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
+                            var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
+                            var title = "Account Creation LInk";
+                            var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
+                            _patientFuncrepo.SendEmail(formData.Email, title, message);
+                        }
 
                         transaction.Complete();
 
@@ -264,11 +283,17 @@ namespace HelloDoc.Controllers
                         var requestClient = new Requestclient();
                         var rconcierge = new RConcierge();
                         var requestConcierge = new Requestconcierge();
+                        var user = _userrepo.GetUser(formData.Email);
+
 
                         request.Requesttypeid = 3;
                         request.Firstname = formData.ConciergeFirstName;
                         request.Lastname = formData.ConciergeLastName;
                         request.Email = formData.ConciergeEmail;
+                        if (user != null)
+                        {
+                            request.Userid = user.Userid;
+                        }
                         request.Phonenumber = formData.ConciergePhoneNumber;
                         request.Status = 1;
                         request.Isurgentemailsent = false;
@@ -283,7 +308,7 @@ namespace HelloDoc.Controllers
                         requestClient.Email = formData.Email;
                         requestClient.Phonenumber = formData.PhoneNumber;
                         requestClient.Address = formData.HotelOrPropertyName;
-                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString();
+                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString("00");
                         requestClient.Intyear = formData.DateOfBirth.Year;
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
@@ -308,11 +333,16 @@ namespace HelloDoc.Controllers
 
                         _requestConciergerepo.Add(requestConcierge);
 
-                        string key = "770A8A65DA156D24EE2A093277530142";
-                        string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
-                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
-                        _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
+                        if(user == null)
+                        {
+                            string key = "770A8A65DA156D24EE2A093277530142";
+                            string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
+                            var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
 
+                            var title = "Account Creation LInk";
+                            var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
+                            _patientFuncrepo.SendEmail(formData.Email, title, message);
+                        }
                         transaction.Complete();
 
                         return RedirectToAction("Index");
@@ -351,12 +381,16 @@ namespace HelloDoc.Controllers
                         var requestClient = new Requestclient();
                         var rbusiness = new RBusinessdatum();
                         var requestbusiness = new Requestbusiness();
-
+                        var user = _userrepo.GetUser(formData.Email);
 
                         request.Requesttypeid = 4;
                         request.Firstname = formData.BusinessFirstName;
                         request.Lastname = formData.BusinessLastName;
                         request.Email = formData.BusinessEmail;
+                        if (user != null)
+                        {
+                            request.Userid = user.Userid;
+                        }
                         request.Phonenumber = formData.BusinessPhoneNumber;
                         request.Status = 1;
                         request.Isurgentemailsent = false;
@@ -371,7 +405,7 @@ namespace HelloDoc.Controllers
                         requestClient.Email = formData.Email;
                         requestClient.Phonenumber = formData.PhoneNumber;
                         requestClient.Address = formData.BusinessOrPropertyName;
-                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString();
+                        requestClient.Strmonth = formData.DateOfBirth.Month.ToString("00");
                         requestClient.Intyear = formData.DateOfBirth.Year;
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
@@ -396,11 +430,15 @@ namespace HelloDoc.Controllers
 
                         _requestbusinessrepo.Add(requestbusiness);
 
-                        string key = "770A8A65DA156D24EE2A093277530142";
-                        string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
-                        var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
-                       _patientFuncrepo.SendEmail(formData.Email, accountCreationLink);
-
+                        if(user == null)
+                        {
+                            string key = "770A8A65DA156D24EE2A093277530142";
+                            string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
+                            var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
+                            var title = "Account Creation LInk";
+                            var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
+                            _patientFuncrepo.SendEmail(formData.Email, title, message);
+                        }
 
                         transaction.Complete();
 
@@ -433,11 +471,14 @@ namespace HelloDoc.Controllers
             return View(data);
         }
 
-        public void submitAccount(CreateAccountViewModel formData)
+        public IActionResult submitAccount(CreateAccountViewModel formData)
         {
             Requestclient requestClient = _requestclientrepo.Get(formData.requestId);
             Request request = _requestrepo.Get(formData.requestId);
+            User CheckUser = _userrepo.GetUser(formData.Email);
 
+            if(CheckUser == null)
+            {
             using(var trancation = new TransactionScope())
             {
                 try
@@ -462,6 +503,9 @@ namespace HelloDoc.Controllers
                     user.Firstname = requestClient.Firstname;
                     user.Lastname = requestClient.Lastname;
                     user.Email = formData.Email;
+                    user.Intyear = requestClient.Intyear;
+                    user.Intdate = requestClient.Intdate;
+                    user.Strmonth = requestClient.Strmonth;
                     user.Mobile = requestClient.Phonenumber;
                     user.Street = requestClient.Street;
                     user.City = requestClient.City;
@@ -476,11 +520,21 @@ namespace HelloDoc.Controllers
                     _requestrepo.Update(request);
 
                     trancation.Complete();
+                        return Redirect("/login");
                 }
                 catch(Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
+                        return Redirect("/Login");
+
+                    }
                 }
+
+            }
+            else
+            {
+                TempData["Error"] = "User Already Exists";
+                return Redirect("/Login");
             }
 
 

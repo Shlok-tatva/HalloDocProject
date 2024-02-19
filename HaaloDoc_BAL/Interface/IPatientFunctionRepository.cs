@@ -4,6 +4,6 @@
     {
         string Encrypt(string plainBytes, string Key);
         string Decrypt(string chiperText, string Key);
-        void SendEmail(string toEmail, string accountCreationLink);
+        void SendEmail(string toEmail, string Title , string Message );
     }
 }

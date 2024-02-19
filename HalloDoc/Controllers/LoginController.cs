@@ -3,6 +3,7 @@ using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.SqlServer.Server;
 
 namespace HalloDoc.Controllers
 {
@@ -31,28 +32,35 @@ namespace HalloDoc.Controllers
                 TempData["Error"] = "Username and password cannot be empty.";
                 return Redirect("/Login");
             }
-
-            var storedPassword = _aspnetuserrepo.GetUserPassword(user.Email);
-
-            var hasher = new PasswordHasher<string>();
-            PasswordVerificationResult result = hasher.VerifyHashedPassword(null, storedPassword, user.Passwordhash);
-
-            if (result == PasswordVerificationResult.Success)
+            if (_aspnetuserrepo.Exists(user.Email))
             {
-                HttpContext.Session.SetString("UserId", user.Email);
-                return Redirect("/dashboard/index");
+                var storedPassword = _aspnetuserrepo.GetUserPassword(user.Email);
+                var hasher = new PasswordHasher<string>();
+                PasswordVerificationResult result = hasher.VerifyHashedPassword(null, storedPassword, user.Passwordhash);
 
-            }
-            else if (result == PasswordVerificationResult.SuccessRehashNeeded)
-            {
-                TempData["Error"] = "Please Change your Password";
-                return Redirect("/Login");
+                if (result == PasswordVerificationResult.Success)
+                {
+                    HttpContext.Session.SetString("UserId", user.Email);
+                    return Redirect("/dashboard/index");
+
+                }
+                else if (result == PasswordVerificationResult.SuccessRehashNeeded)
+                {
+                    TempData["Error"] = "Please Change your Password";
+                    return Redirect("/Login");
+                }
+                else
+                {
+                    TempData["Error"] = "Wrong Credentials";
+                    return Redirect("/Login");
+                }
             }
             else
             {
-                TempData["Error"] = "Wrong Credentials";
+                TempData["Error"] = "User Dose not Exists";
                 return Redirect("/Login");
             }
+            
         }
 
 
@@ -76,10 +84,13 @@ namespace HalloDoc.Controllers
             DateTime date = DateTime.Now;
             string encryptedDate = _petientfunctionrepo.Encrypt(date.ToString(), key);
             var resetPassowrdLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/Login/changePassword?email={encryptedEmail}&datetime={encryptedDate}";
-            _petientfunctionrepo.SendEmail(email, resetPassowrdLink);
+            var title = "Reset Password Link";
+            var message = $"Please click <a href=\"{resetPassowrdLink}\">here</a> to Reset Your Password account.";
+            _petientfunctionrepo.SendEmail(email , title , message);
             return Ok();
         }
 
+        [HttpGet]
         public IActionResult changePassword()
         {
             string encryptedEmail = Request.Query["email"];
@@ -94,13 +105,33 @@ namespace HalloDoc.Controllers
 
             var diffOfDate = currentDate - getDate;
 
-            if (diffOfDate.TotalSeconds < 1200) {
+            if (diffOfDate.TotalSeconds < 1500) {
+                ViewBag.email = email;
                 return View();
             }
             else
             {
                 TempData["Error"] = "Link Expired Please Create New Link";
-                return Redirect("/Login/forgetPassword");
+                return Redirect("/Login/ForgetPassword");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult changePassword(string email , string password , string confirmPassword)
+        {
+            if(password ==  confirmPassword)
+            {
+                var hasher = new PasswordHasher<string>();
+                Aspnetuser aspnetuser = _aspnetuserrepo.GetByEmail(email);
+                string hashedPassword = hasher.HashPassword(null, password);
+                aspnetuser.Passwordhash = hashedPassword;
+                _aspnetuserrepo.Update(aspnetuser);
+                return Ok();
+            }
+            else
+            {
+                TempData["Error"] = "Both password Are not Same";
+                return Redirect("/Login/changePassword");
             }
         }
     }
