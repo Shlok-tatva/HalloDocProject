@@ -146,13 +146,17 @@
             <form id="uploadForm" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
                 <input type="text" value="@Model[0].Requestid" class="visually-hidden" id="requestId"></input>
                 <input type="file" name="file" id="file" class="border border-1">
-                <button type="submit" class="btn btn-info text-white uploadfile">Upload File</button>
+                <button type="submit" class="btn btn-info text-white rounded-end uploadfile">
+                    <span class="desktop_d_none">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> 
+                    </span><span class="mobile_d_none ">Upload File</span></button>
             </form>
 
             <div class="d-flex justify-content-between mt-5 mb-4 px-1">
                 <h5 class="fw-bold">Documents</h5>
-                <button  class="btn btn-outline-info hover_white ms-5 downloadAll">
-                     Download All
+                <button class="btn btn-outline-info hover_white ms-5 downloadAll">
+                    <span class="desktop_d_none"><i class="fa-solid fa-cloud-arrow-down"></i></span>
+                     <span class="mobile_d_none ">Download All</span> 
                 </button>
             </div>
 

@@ -131,11 +131,6 @@ input[type=date]:focus::-webkit-datetime-edit {
     .navbar-toggler {
         display: block;
     }
-
-    .mobile_d_none {
-        display: none;
-    }
-
     .mobile_nav {
         position: absolute;
         height: 100vh;

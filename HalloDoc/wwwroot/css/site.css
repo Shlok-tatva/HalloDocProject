@@ -55,21 +55,18 @@ input#file {
 }
 
 .readonly {
-    background: #f3f3f3;
+    background-color: rgba(128, 128, 128, 0.089) !important;
     cursor: not-allowed;
 }
 
 .notallowed {
-    background: #f3f3f3;
+    background-color: rgba(128, 128, 128, 0.089) !important;
     cursor: not-allowed;
 }
 
 .btn-outline-info {
     border-width: 2px !important;
     font-weight: 800 !important;
-}
-.btn{
-    border-radius: 5px !important;
 }
 
 .hover_primary:hover {
@@ -79,3 +76,20 @@ input#file {
 .hover_white:hover{
     color:white !important;
 }
+
+
+.desktop_d_none{
+    display: none !important;
+}
+
+
+@media (max-width:530px) {
+    .mobile_d_none {
+        display: none;
+    }
+
+    .desktop_d_none{
+        display: block !important;
+    }
+}
+

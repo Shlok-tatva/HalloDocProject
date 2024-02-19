@@ -14,8 +14,8 @@
 
 .links a {
     text-decoration: none;
-    color: #3a3a3a;
-    font-weight: 600;
+    color: black;
+    font-weight: 400;
 }
 
 .navbar-toggler {
@@ -34,10 +34,6 @@
 
 .w-60 {
     width: 60%;
-}
-
-tr, td, th {
-    color: #3a3a3a !important;
 }
 
 td, th {
