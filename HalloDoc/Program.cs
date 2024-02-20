@@ -18,12 +18,7 @@ builder.Services.AddScoped<IRequestBusinessRepository, RequestBusinessRepository
 builder.Services.AddScoped<IRBusinessRepository, RBusinessRepository>();
 builder.Services.AddScoped<IRequestwisefileRepository, RequestwisefileRepository>();
 builder.Services.AddScoped<IPatientFunctionRepository, PatientFunctionRepository>();
-
-
-
-
-
-
+builder.Services.AddScoped<IAdminFunctionRepository, AdminFunctionRepository>();
 
 builder.Services.AddSession(options =>
 {

@@ -1,0 +1,120 @@
+﻿@model List<HalloDoc_Admin.Models.RequestDataTableView>
+
+@section Style{
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+
+@section Scripts {
+    <script src="./js/AdminDashboard.js"></script>
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+<div class="row mx-3 my-4">
+    <div class="AdminStatediv col-xl-2 col-lg-3 col-4">
+        <div id="NewState" class="AdminState p-3" data-status-id="1">
+            <h6 class="fw-semibold m-0 my-2"><img src="./images/svg/New.svg" class="card_svg fs-5 me-1">NEW</h6>
+            <h3 class="fw-bold" id="newCount">0</h3>
+        </div>
+    </div>
+    <div class="AdminStatediv col-xl-2 col-lg-3 col-4">
+        <div id="PendingState" class="AdminState p-3" data-status-id="2">
+            <h6 class="fw-semibold m-0 my-2"><i class="fa-solid fa-user-doctor card_svg fs-5"></i>PENDING</h6>
+            <h3 class="fw-bold" id="pandingCount">0</h3>
+        </div>
+    </div>
+    <div class="AdminStatediv col-xl-2 col-lg-3 col-4">
+        <div id="ActiveState" class="AdminState p-3" data-status-id="3">
+            <h6 class="fw-semibold my-2">
+                <img src="./images/svg/Active.svg" class="card_svg">
+                ACTIVE
+            </h6>
+            <h3 class="fw-bold" id="activeCount">0</h3>
+        </div>
+    </div>
+    <div class="AdminStatediv col-xl-2 col-lg-3 col-4">
+        <div id="ConcludeState" class="AdminState p-3" data-status-id="4">
+            <h6 class="fw-semibold my-2"> <img src="./images/svg/conclude.svg" class="card_svg"> CONCLUDE</h6>
+            <h3 class="fw-bold" id="concludeCount">0</h3>
+        </div>
+    </div>
+    <div class="AdminStatediv col-xl-2 col-lg-3 col-4">
+        <div id="ToCloseState" class="AdminState p-3" data-status-id="5">
+
+            <h6 class="fw-semibold my-2"> <i class="bi bi-x-circle-fill card_avg fs-5"></i> TO CLOSE</h6>
+            <h3 class="fw-bold" id="closeCount">0</h3>
+        </div>
+    </div>
+    <div class="AdminStatediv col-xl-2 col-lg-3 col-4">
+        <div id="UnpaidState" class="AdminState p-3" data-status-id="6  ">
+            <h6 class="fw-semibold my-2"> <img src="./images/svg/unpaid.svg" class="card_svg"> UNPAID</h6>
+            <h3 class="fw-bold" itemid="unpaidCount">0</h3>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between mx-3">
+        <h4>Patients (New)</h4>
+        <div>
+            <button class="btn btn-info text-white">
+                Send Link
+            </button>
+            <button class="btn btn-info text-white">
+                Create Request
+            </button>
+            <button class="btn btn-info text-white">
+                Export
+            </button>
+            <button class="btn btn-info text-white">
+                Export All
+            </button>
+            <button class="btn btn-info text-white">
+                Request DTY Support
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid  mt-4">
+    <div class="d-flex justify-content-between ">
+        <div>
+           
+            <select id="region-dropdown">
+                <option>Region 1</option>
+                <option>Region 1</option>
+                <option>Region 1</option>
+                <option>Region 1</option>
+            </select>
+        </div>
+        <div class="d-flex justify-content-center gap-3 indicators align-items-center ">
+            <button class="btn border-1 border-black ">All</button>
+            <div class="d-flex gap-1 align-items-center justify-content-center ">
+                <div class="rounded-circle patient"></div>
+                <span>Patient</span>
+            </div>
+            <div class="d-flex gap-1 align-items-center ">
+                <div class="rounded-circle family"></div>
+                <span>Family</span>
+            </div>
+            <div class="d-flex gap-1 align-items-center ">
+                <div class="rounded-circle concierge"></div>
+                <span>Concierge</span>
+            </div>
+            <div class="d-flex gap-1 align-items-center ">
+                <div class="rounded-circle business"></div>
+                <span>Business</span>
+            </div>
+        </div>
+    </div>
+
+<table id="request-table" class="display" style="width:100%">
+        <thead></thead>
+    <tbody></tbody>
+</table>
+ </div>
+                

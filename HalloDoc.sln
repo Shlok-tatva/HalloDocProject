@@ -9,12 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalloDoc_DAL", "HalloDoc_DA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalloDoc_BAL", "HaaloDoc_BAL\HalloDoc_BAL.csproj", "{75780A48-68CE-4214-AFC5-0030B0F6C750}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalloDoc_Admin", "HalloDocAdmin\HalloDoc_Admin.csproj", "{7984E755-04D9-4594-909B-8C7BC07162F1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{75780A48-68CE-4214-AFC5-0030B0F6C750} = {75780A48-68CE-4214-AFC5-0030B0F6C750}
-		{CCEFDBFD-EFFF-42A5-B64A-2905F96D138C} = {CCEFDBFD-EFFF-42A5-B64A-2905F96D138C}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,10 +27,6 @@ Global
 		{75780A48-68CE-4214-AFC5-0030B0F6C750}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75780A48-68CE-4214-AFC5-0030B0F6C750}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75780A48-68CE-4214-AFC5-0030B0F6C750}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7984E755-04D9-4594-909B-8C7BC07162F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7984E755-04D9-4594-909B-8C7BC07162F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7984E755-04D9-4594-909B-8C7BC07162F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7984E755-04D9-4594-909B-8C7BC07162F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

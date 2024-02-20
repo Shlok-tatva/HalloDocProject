@@ -39,6 +39,15 @@ namespace HalloDoc_BAL.Repository
             _context.SaveChanges();
         }
 
+        public List<Request> GetRequestFromStatusId(int statusId)
+        {
+            return _context.Requests.Where(r => r.Status == statusId).ToList();
+        }
+
+        public List<Request> GetAll()
+        {
+            return _context.Requests.ToList();
+        }
     }
 
 }
