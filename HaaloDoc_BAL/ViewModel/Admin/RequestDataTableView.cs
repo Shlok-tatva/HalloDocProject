@@ -11,6 +11,12 @@ namespace HalloDoc_Admin.Models
         public string PatientName { get; set; }
 
         [Required]
+        public string PatientEmail { get; set; }
+
+        [Required]
+        public string RequesterEmail { get; set; }
+
+        [Required]
         public string PatientPhoneNumber { get; set; }
 
         [Required]
@@ -34,12 +40,26 @@ namespace HalloDoc_Admin.Models
         public string? Notes { get; set; }
 
         public List<MenuOptionEnum> MenuOptions { get; set; }
+
+        [Required]
+        public int RequestTyepid { get; set; }
     }
 }
 
 public enum MenuOptionEnum
 {
-    viewRequest,
-    blockRequest,
+    assignCase,
+    cancelCase,
+    viewCase,
+    viewNotes,
+    BlockPatient,
+    viewUpload,
+    Transfer,
+    clearCase,
+    sendAgreement,
+    orders,
+    doctorsNote,
+    Encounter,
+    closeCase,
     // Add other menu options as needed
 }

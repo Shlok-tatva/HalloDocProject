@@ -5,6 +5,6 @@ namespace HalloDoc_BAL.Interface
     public interface IAdminFunctionRepository
     {
         IEnumerable<RequestDataTableView> GetRequestsByStatusID(int statusId);
-        IEnumerable<RequestDataTableView> GetRequestByType(int requestTypeid, int statusId);
+        public int[] GetStatus(int statusId);
     }
 }

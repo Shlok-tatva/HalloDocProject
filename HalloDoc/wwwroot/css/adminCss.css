@@ -8,9 +8,6 @@
     }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
 
 .navbar-toggler {
     display: none;
@@ -193,7 +190,38 @@
     background-color: dodgerblue;
 }
 
+tr td {
+    color: white;
+    font-size: 14px;
+    font-family: 'Poppins' !important;
+}
 
+.dropdown{
+    text-align:center !important;
+}
+
+.dropdown-toggle::after {
+    border: 0px !important;
+    margin-left: 0pc !important;
+}
+
+.menu-icon {
+    width: 26px !important;
+    margin: 1px;
+    margin-right: 8px;
+}
+
+.menu-option{
+    border-bottom: 1px solid #e3e3e3;
+}
+
+.mb-10{
+    margin-bottom: 100px;
+}
+
+.min-h-10{
+    min-height: 100px;
+}
 
 @media (max-width: 980px) {
     .logo_img {

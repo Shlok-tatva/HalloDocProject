@@ -38,9 +38,25 @@ namespace HalloDocAdmin.Controllers
         [HttpGet]
         public IActionResult getRequestCountPerStatusId()
         {
-            var requestCount = _requestRepository.GetAll().GroupBy(x => x.Status).ToDictionary(g => g.Key , g => g.Count());
-            return Ok(requestCount);
+            // Group by the concatenated string of status categories returned by GetStatus
+            var allStatusCounts = _requestRepository.GetAll()
+                .GroupBy(x => string.Join(",", _adminFunctionRepository.GetStatus(x.Status)))
+                .Select(g => new
+                {
+                    StatusCategory = g.Key, // Status category string
+                    Count = g.Count() // Count the number of items in the group
+                })
+                .ToDictionary(g => g.StatusCategory, g => g.Count); // Convert to dictionary
+
+            // Output the dictionary to check the counts
+            Console.WriteLine(allStatusCounts);
+
+            return Ok(allStatusCounts);
         }
+
+
+
+
 
     }
 }
