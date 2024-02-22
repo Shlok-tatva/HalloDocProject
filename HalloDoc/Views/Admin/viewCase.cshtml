@@ -1,0 +1,112 @@
+﻿@model HalloDoc_BAL.ViewModel.Models.ViewCase;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+<partial name="_NavBar" />
+<div class=" mt-5 container-sm m-auto w-50 mb-5">
+    <div class="mt-4 m-auto d-flex justify-content-between">
+        <div class="d-flex align-items-center justify-content-center">
+        <h2 class="me-2">View Reservation</h2>
+        <span class="badge text-bg-danger fs-6">patient</span> 
+        </div>
+        <div>
+            <a href="/admin" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Form start  -->
+    <form asp-action="" method="post" enctype="multipart/form-data">
+        <div class="mt-4 m-auto form_content">
+            <div class="row p-4 shadow rounded-3">
+                <h5 class="col-12 fw-bold my-3">Patient Information</h5>
+
+                <div class="form-floating col-12 my-3">
+                    <textarea asp-for="@Model.symptom" class="form-control" placeholder="" id="floatingTextarea2"
+                        style="height: 100px"></textarea>
+                    <label for="floatingTextarea2" class="ms-3">Patients Notes </label>
+                </div>
+
+                <hr />
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="@Model.firstName" type="text" class="form-control" placeholder="name@example.com">
+                    <label for="floatingInput" class="control-label ms-3">
+                        First Name
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="@Model.lastName" type="text" class="form-control" placeholder="name@example.com">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Last Name
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="@Model.dateofBirth" type="date" class="form-control" id="dob">
+                    <label for="dob" class="control-label ms-3">
+                        Date Of Birth
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="@Model.phoneNumber" id="phone" type="tel" class="form-control"> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="@Model.email" type="email" id="email" class="form-control" placeholder="name@example.com">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Email
+                    </label>
+                </div>
+
+                <div class="col-md-6 my-3">
+                    <button class="btn btn-outline-info btn-lg hover_white">Edit</button>
+                </div>
+
+                <h5 class="col-12 fw-bold my-3">Location Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="@Model.Region" type="text" class="form-control" placeholder="name@example.com">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Region
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="@Model.Address" type="text" class="form-control" placeholder="name@example.com">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Business Name / Address
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input type="text" class="form-control" placeholder="name@example.com">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Room #
+                    </label>
+                </div>
+
+                <div class="my-3 d-flex justify-content-end ">
+                    <button class="btn btn-info text-white hover_primary mx-2">View Notes</button>
+                    <button class="btn btn-danger hover_white"> Cancle</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,5 +1,7 @@
-﻿using HalloDoc_Admin.Models;
+﻿using HalloDoc.Models;
+
 using HalloDoc_BAL.Interface;
+using HalloDoc_BAL.ViewModel.Models;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +51,13 @@ namespace HalloDocAdmin.Controllers
             }
             Console.Write(statusCounts);
             return Ok(statusCounts);
+        }
+
+        public IActionResult ViewCase()
+        {
+            int requestId = Int32.Parse(Request.Query["request"]);
+            ViewCase view = _adminFunctionRepository.GetViewCase(requestId);
+            return View(view);
         }
 
     }

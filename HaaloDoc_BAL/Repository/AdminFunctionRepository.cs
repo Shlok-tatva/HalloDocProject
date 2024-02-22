@@ -1,11 +1,7 @@
-﻿using HalloDoc_Admin.Models;
+﻿
+using HalloDoc_BAL.ViewModel.Models;
 using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.DataContext;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -73,22 +69,48 @@ namespace HalloDoc_BAL.Repository
             switch (statusId)
             {
                 case 1:
-                    return new int[] { 1, 2 };
+                    return new int[] { 1 };
                 case 2:
-                    return new int[] { 4, 14, 15};
+                    return new int[] { 2 };
                 case 3:
-                    return new int[] { 5,6,7};
+                    return new int[] { 4, 5};
                 case 4:
-                    return new int[] { 8, 9, 10, 11 };
+                    return new int[] { 6 };
                 case 5:
-                    return new int[] { 3, 13, 14, 15 };
+                    return new int[] { 3, 7 , 8 };
                 case 6:
-                    return new int[] { 12 };
+                    return new int[] { 9 };
                 default:
                     return new int[] { };
             }
         }
 
+
+        public ViewCase GetViewCase(int requestId)
+        {
+            var request = _context.Requests.FirstOrDefault(r => r.Requestid == requestId);
+            var requestClient = _context.Requestclients.FirstOrDefault(r => r.Requestid == requestId);
+
+            var view = new ViewCase
+            {
+                requestId = request.Requestid,
+                firstName = requestClient.Firstname,
+                symptom = requestClient.Notes,
+                lastName = requestClient.Lastname,
+                dateofBirth = requestClient.Intyear.Value.ToString("") + "-" + requestClient.Strmonth + "-" + string.Format("{0:00}", requestClient.Intdate.Value),
+                phoneNumber = requestClient.Phonenumber,
+                Address = requestClient.Street + " " + requestClient.City + " " + requestClient.State + " " + requestClient.Zipcode,
+                email = requestClient.Email,
+                Region = requestClient.Regionid,
+                requesterfirstName = request.Firstname,
+                requesterlastName = request.Lastname,
+                requesterEmail = request.Email,
+                requesterPhoneNumber = request.Phonenumber,
+                requesttypeId = request.Requesttypeid
+            };
+
+            return view;
+        }
 
        
 

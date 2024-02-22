@@ -1,5 +1,6 @@
 ﻿html {
     font-size: 14px;
+    font-family: "Poppins" !important;
 }
 
 @media (min-width: 768px) {
@@ -190,10 +191,24 @@
     background-color: dodgerblue;
 }
 
+table {
+    table-layout: fixed;
+}
 tr td {
     color: white;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 200;
     font-family: 'Poppins' !important;
+}
+tr{
+    border-bottom:1px solid #f0f0f0 ;
+    text-align: center;
+}
+
+th{
+    background-color: #6969697c;
+    text-align: center;
+
 }
 
 .dropdown {
@@ -221,6 +236,22 @@ tr td {
 
 .min-h-10 {
     min-height: 100px;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
 }
 
 @media (max-width: 980px) {

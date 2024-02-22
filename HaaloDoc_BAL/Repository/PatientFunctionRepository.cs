@@ -68,15 +68,16 @@ namespace HalloDoc_BAL.Repository
             try
             {
                 // Configure SMTP client
-                using (SmtpClient smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io"))
+                 using (SmtpClient smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io"))
+                //using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com"))
                 {
                     var subject = Title;
                     var emailBody = Message;
-
                     smtpClient.UseDefaultCredentials = false;
                     //smtpClient.Credentials = new NetworkCredential("shlokjadeja177@gmail.com", "pgqv mnuc aspa cglb");
-                    smtpClient.Credentials = new NetworkCredential("436da98810b726", "5c043668fb3765");
+                     smtpClient.Credentials = new NetworkCredential("436da98810b726", "5c043668fb3765");
                     smtpClient.Port = 587;
+                    
                     smtpClient.EnableSsl = true;
 
                     // Construct the email message
