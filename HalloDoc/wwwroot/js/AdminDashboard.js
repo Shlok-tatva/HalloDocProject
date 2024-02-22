@@ -8,6 +8,7 @@ $(document).ready(function () {
                 $('#request-table tbody').empty();
                 $('#request-table thead').empty();
 
+
                 if (data.length > 0) {
                     var headers = Object.keys(data[0]);
                     var headerMapping = {
@@ -117,7 +118,7 @@ $(document).ready(function () {
                         var enumName = mapNumberToEnumName(option);
                         var link = toCamelCase(enumName);
                         var imageUrl = menuOptionImageMapping[enumName];
-                        dropdownMenu.append('<li><a class="dropdown-item menu-option" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName  + '</a></li>');
+                        dropdownMenu.append('<li><a class="dropdown-item menu-option" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</a></li>');
                     });
 
                     var dropdownButton = $('<div class="dropdown">');
@@ -136,7 +137,6 @@ $(document).ready(function () {
                     retrieve: true,
                     info: true,
                     "pageLength": 10,
-                    "lengthMenu": [10, 25, 50, 100],
                     "language": {
                         "paginate": {
                             "next": "&#8594;",
@@ -144,11 +144,13 @@ $(document).ready(function () {
                         }
                     }
                 });
+                $('#request-table_length').css('display', 'none');
 
 
                 $('#request-table tbody tr').each(function () {
                     var requestTypeId = $(this).data('request-type-id');
-                    var colors = ['#5fbc61', '#ffb153', '#fb91ca', '#007fc6e8'];
+                    //var colors = ['#5fbc61', '#ffb153', '#fb91ca', '#007fc6e8'];
+                    var colors = ['forestgreen', 'darkorange', 'deeppink', 'dodgerblue'];
                     if (requestTypeId >= 1 && requestTypeId <= 4) {
                         $(this).css('background-color', colors[requestTypeId - 1]);
                     }
@@ -174,30 +176,26 @@ $(document).ready(function () {
         url: 'Admin/getRequestCountPerStatusId',
         type: "GET",
         success: function (data) {
-            Object.keys(data).forEach(function (key) {
-                var statusIds = key.split(',');
-                var updateCount = function (selector, validStatuses) {
-                    if (statusIds.some(id => validStatuses.includes(id))) {
-                        $(selector).text(data[key]);
-                    }
-                };
-                updateCount('#newCount', ['1', '2']);
-                updateCount('#pandingCount', ['4', '14', '15']);
-                updateCount('#activeCount', ['5', '6', '7']);
-                updateCount('#concludeCount', ['8', '9', '10', '11']);
-                updateCount('#closeCount', ['3', '13', '14', '15']);
-            });
+            console.log(data);
+            $('#newCount').text(data[1]);
+            $('#pandingCount').text(data[2]);
+            $('#activeCount').text(data[3]);
+            $('#concludeCount').text(data[4]);
+            $('#closeCount').text(data[5]);
+            $('#unpaidCount').text(data[6]);
+
         },
         error: function () {
             alert("Error while fetching count");
         }
     });
 
+
     $('.btn-all').click(function () {
         showSpinnerAndFilter(null);
     });
     $('.btn-patient').click(function () {
-       
+
         showSpinnerAndFilter(1);
     });
 
@@ -212,6 +210,50 @@ $(document).ready(function () {
     $('.btn-business').click(function () {
         showSpinnerAndFilter(4);
     });
+
+
+
+
+    $('#NewState').click(function () {
+        $('.click').not(this).removeClass('click');
+        $('#requestState').text('(New)');
+        $(this).toggleClass('click');
+    });
+
+    $('#ActiveState').click(function () {
+        $('.click').not(this).removeClass('click');
+        $('#requestState').text('(ACTIVE)');
+        $(this).toggleClass('click');
+    });
+   
+    $('#PendingState').click(function () {
+        $('.click').not(this).removeClass('click');
+        $('#requestState').text('(PANDING)');
+        $(this).toggleClass('click');
+    });
+
+    $('#ConcludeState').click(function () {
+        $('.click').not(this).removeClass('click');
+        $('#requestState').text('(CONCLUDE)');
+        $(this).toggleClass('click');
+    });
+
+    $('#ToCloseState').click(function () {
+        $('.click').not(this).removeClass('click');
+        $('#requestState').text('(TO CLOSE)');
+        $(this).toggleClass('click');
+    });
+
+    $('#UnpaidState').click(function () {
+        $('.click').not(this).removeClass('click');
+        $('#requestState').text('(UNPAID)');
+        $(this).toggleClass('click');
+    });
+
+
+
+
+
 
     function showSpinnerAndFilter(requestTypeId) {
         $('#spinner').show();

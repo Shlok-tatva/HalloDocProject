@@ -51,14 +51,14 @@
     <div class="AdminStatediv col-xl-2 col-lg-3 col-4">
         <div id="UnpaidState" class="AdminState p-3" data-status-id="6  ">
             <h6 class="fw-semibold my-2"> <img src="./images/svg/unpaid.svg" class="card_svg"> UNPAID</h6>
-            <h3 class="fw-bold" itemid="unpaidCount">0</h3>
+            <h3 class="fw-bold" id="unpaidCount">0</h3>
         </div>
     </div>
 </div>
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between mx-3">
-        <h4>Patients (New)</h4>
+        <h4>Patients <span id="requestState" class="">(New)</span></h4>
         <div>
             <button class="btn btn-info text-white">
                 Send Link
@@ -118,7 +118,8 @@
 
 
 
-    <div id="spinner" class="spinner-border text-info text-center" role="status" style="display: none;">
+    
+    <div id="spinner" class="spinner-grow text-info" role="status" style="display: none;">
         <span class="visually-hidden">Loading...</span>
     </div>
 

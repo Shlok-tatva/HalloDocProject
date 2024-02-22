@@ -23,9 +23,9 @@
     border-bottom: 2px solid #01BBE7;
 }
 
-    .active a {
-        color: #01BBE7 !important;
-    }
+.active a {
+    color: #01BBE7 !important;
+}
 
 .links a {
     text-decoration: none;
@@ -48,16 +48,16 @@
     border-radius: 10px;
 }
 
-    #NewState:hover {
-        background-color: #213f99;
-        color: #ffffff;
-        border: 1px solid #213f99;
-        border-radius: 10px;
-    }
+#NewState:hover {
+    background-color: #213f99;
+    color: #ffffff;
+    border: 1px solid #213f99;
+    border-radius: 10px;
+}
 
-        #NewState:hover img {
-            filter: brightness(20);
-        }
+#NewState:hover img {
+    filter: brightness(20);
+}
 
 
 
@@ -68,16 +68,16 @@
     border-radius: 10px;
 }
 
-    #ActiveState:hover {
-        background-color: #228b22;
-        color: #ffffff;
-        border: 1px solid #228b22;
-        border-radius: 10px;
-    }
+#ActiveState:hover {
+    background-color: #228b22;
+    color: #ffffff;
+    border: 1px solid #228b22;
+    border-radius: 10px;
+}
 
-        #ActiveState:hover img {
-            filter: brightness(20);
-        }
+#ActiveState:hover img {
+    filter: brightness(20);
+}
 
 
 
@@ -88,12 +88,12 @@
     border-radius: 10px;
 }
 
-    #PendingState:hover {
-        background-color: #00adef;
-        color: #ffffff;
-        border: 1px solid #00adef;
-        border-radius: 10px;
-    }
+#PendingState:hover {
+    background-color: #00adef;
+    color: #ffffff;
+    border: 1px solid #00adef;
+    border-radius: 10px;
+}
 
 
 
@@ -104,16 +104,16 @@
     border-radius: 10px;
 }
 
-    #ConcludeState:hover {
-        background-color: #d90f81;
-        color: #ffffff;
-        border: 1px solid #d90f81;
-        border-radius: 10px;
-    }
+#ConcludeState:hover {
+    background-color: #d90f81;
+    color: #ffffff;
+    border: 1px solid #d90f81;
+    border-radius: 10px;
+}
 
-        #ConcludeState:hover img {
-            filter: brightness(20);
-        }
+#ConcludeState:hover img {
+    filter: brightness(20);
+}
 
 
 #ToCloseState {
@@ -123,12 +123,12 @@
     border-radius: 10px;
 }
 
-    #ToCloseState:hover {
-        background-color: #0371d7;
-        color: #ffffff;
-        border: 1px solid #0371d7;
-        border-radius: 10px;
-    }
+#ToCloseState:hover {
+    background-color: #0371d7;
+    color: #ffffff;
+    border: 1px solid #0371d7;
+    border-radius: 10px;
+}
 
 #UnpaidState {
     background-color: #f1edf5;
@@ -137,16 +137,16 @@
     border-radius: 10px;
 }
 
-    #UnpaidState:hover {
-        background-color: #9966cf;
-        color: #ffffff;
-        border: 1px solid #9966cf;
-        border-radius: 10px;
-    }
+#UnpaidState:hover {
+    background-color: #9966cf;
+    color: #ffffff;
+    border: 1px solid #9966cf;
+    border-radius: 10px;
+}
 
-        #UnpaidState:hover img {
-            filter: brightness(20);
-        }
+#UnpaidState:hover img {
+    filter: brightness(20);
+}
 
 .card_svg {
     width: 25px;
@@ -196,8 +196,8 @@ tr td {
     font-family: 'Poppins' !important;
 }
 
-.dropdown{
-    text-align:center !important;
+.dropdown {
+    text-align: center !important;
 }
 
 .dropdown-toggle::after {
@@ -211,15 +211,15 @@ tr td {
     margin-right: 8px;
 }
 
-.menu-option{
+.menu-option {
     border-bottom: 1px solid #e3e3e3;
 }
 
-.mb-10{
+.mb-10 {
     margin-bottom: 100px;
 }
 
-.min-h-10{
+.min-h-10 {
     min-height: 100px;
 }
 
@@ -322,7 +322,100 @@ tr td {
         background-color: #0d0f10;
     }
 
-        .mobile_nav div {
-            flex-direction: column;
-        }
+    .mobile_nav div {
+        flex-direction: column;
+    }
+}
+
+
+
+#spinner {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    z-index: 50;
+    margin: auto;
+    top: 60%;
+    left: 42%;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #00adef;
+}
+
+div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .page-link:focus {
+    background-color: #00adef;
+}
+
+.pagination .page-item.active .page-link:hover {
+    background-color: #00adef;
+}
+
+
+
+
+
+
+
+
+
+/*For Js Only*/
+
+#NewState.click {
+    background-color: #213f99;
+    color: #ffffff;
+    border: 1px solid #213f99;
+    border-radius: 10px;
+}
+
+#NewState.click img {
+    filter: brightness(20);
+}
+
+#ActiveState.click {
+    background-color: #228b22;
+    color: #ffffff;
+    border: 1px solid #228b22;
+    border-radius: 10px;
+}
+
+#ActiveState.click img {
+    filter: brightness(20);
+}
+
+
+#PendingState.click {
+    background-color: #00adef;
+    color: #ffffff;
+    border: 1px solid #00adef;
+    border-radius: 10px;
+}
+
+#ConcludeState.click {
+    background-color: #d90f81;
+    color: #ffffff;
+    border: 1px solid #d90f81;
+    border-radius: 10px;
+}
+
+#ConcludeState.click img {
+    filter: brightness(20);
+}
+
+#ToCloseState.click {
+    background-color: #0371d7;
+    color: #ffffff;
+    border: 1px solid #0371d7;
+    border-radius: 10px;
+}
+
+#UnpaidState.click {
+    background-color: #9966cf;
+    color: #ffffff;
+    border: 1px solid #9966cf;
+    border-radius: 10px;
+}
+
+#UnpaidState.click img {
+    filter: brightness(20);
 }
