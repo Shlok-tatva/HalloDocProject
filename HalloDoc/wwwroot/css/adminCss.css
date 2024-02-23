@@ -34,121 +34,6 @@
     font-weight: 400;
 }
 
-
-
-
-.AdminStatediv {
-    position: relative;
-    margin: 1.4rem 0;
-}
-
-#NewState {
-    background-color: #e8eaf1;
-    color: #213f99;
-    border: 1px solid #213f99;
-    border-radius: 10px;
-}
-
-#NewState:hover {
-    background-color: #213f99;
-    color: #ffffff;
-    border: 1px solid #213f99;
-    border-radius: 10px;
-}
-
-#NewState:hover img {
-    filter: brightness(20);
-}
-
-
-
-#ActiveState {
-    background-color: #d0f0c0;
-    color: #228b22;
-    border: 1px solid #228b22;
-    border-radius: 10px;
-}
-
-#ActiveState:hover {
-    background-color: #228b22;
-    color: #ffffff;
-    border: 1px solid #228b22;
-    border-radius: 10px;
-}
-
-#ActiveState:hover img {
-    filter: brightness(20);
-}
-
-
-
-#PendingState {
-    background-color: #e5f3f8;
-    color: #00adef;
-    border: 1px solid #00adef;
-    border-radius: 10px;
-}
-
-#PendingState:hover {
-    background-color: #00adef;
-    color: #ffffff;
-    border: 1px solid #00adef;
-    border-radius: 10px;
-}
-
-
-
-#ConcludeState {
-    background-color: #f6e6ef;
-    color: #d90f81;
-    border: 1px solid #d90f81;
-    border-radius: 10px;
-}
-
-#ConcludeState:hover {
-    background-color: #d90f81;
-    color: #ffffff;
-    border: 1px solid #d90f81;
-    border-radius: 10px;
-}
-
-#ConcludeState:hover img {
-    filter: brightness(20);
-}
-
-
-#ToCloseState {
-    background-color: #e5eef6;
-    color: #0371d7;
-    border: 1px solid #0371d7;
-    border-radius: 10px;
-}
-
-#ToCloseState:hover {
-    background-color: #0371d7;
-    color: #ffffff;
-    border: 1px solid #0371d7;
-    border-radius: 10px;
-}
-
-#UnpaidState {
-    background-color: #f1edf5;
-    color: #9966cf;
-    border: 1px solid #9966cf;
-    border-radius: 10px;
-}
-
-#UnpaidState:hover {
-    background-color: #9966cf;
-    color: #ffffff;
-    border: 1px solid #9966cf;
-    border-radius: 10px;
-}
-
-#UnpaidState:hover img {
-    filter: brightness(20);
-}
-
 .card_svg {
     width: 25px;
     height: 25px;
@@ -167,27 +52,23 @@
     margin-right: 3rem;
 }
 
-.patient {
-    height: 15px;
+.circle{
     width: 15px;
+    height: 15px;
+}
+.patient {
     background-color: forestgreen;
 }
 
 .family {
-    height: 15px;
-    width: 15px;
     background-color: darkorange;
 }
 
 .concierge {
-    height: 15px;
-    width: 15px;
     background-color: deeppink;
 }
 
 .business {
-    height: 15px;
-    width: 15px;
     background-color: dodgerblue;
 }
 
@@ -238,6 +119,7 @@ th{
     min-height: 100px;
 }
 
+/*Search Icon CSS*/
 .has-search .form-control {
     padding-left: 2.375rem;
 }
@@ -254,21 +136,124 @@ th{
     color: #aaa;
 }
 
-@media (max-width: 980px) {
-    .logo_img {
-        position: relative;
-        left: 80px;
+
+.AdminStatediv {
+    position: relative;
+    margin: 1.4rem 0;
+}
+
+#NewState {
+    background-color: #e8eaf1;
+    color: #213f99;
+    border: 1px solid #213f99;
+    border-radius: 10px;
+}
+
+    #NewState.active {
+        background-color: #213f99 !important;
+        color: #ffffff !important;
+        border: 1px solid #213f99;
+        border-radius: 10px;
     }
 
-    .AdminState {
-        border-radius: 0 !important;
-        text-align: center;
-    }
+#NewState.active h6 image{
+    filter: brightness(20);
 }
+
+#ActiveState {
+    background-color: #d0f0c0;
+    color: #228b22;
+    border: 1px solid #228b22;
+    border-radius: 10px;
+}
+
+    #ActiveState.active {
+        background-color: #228b22 !important;
+        color: #ffffff !important;
+        border: 1px solid #228b22;
+        border-radius: 10px;
+    }
+
+
+
+#PendingState {
+    background-color: #e5f3f8;
+    color: #00adef;
+    border: 1px solid #00adef;
+    border-radius: 10px;
+}
+
+    #PendingState.active {
+        background-color: #00adef !important;
+        color: #ffffff !important;
+        border: 1px solid #00adef;
+        border-radius: 10px;
+    }
+
+
+
+
+#ConcludeState {
+    background-color: #f6e6ef;
+    color: #d90f81;
+    border: 1px solid #d90f81;
+    border-radius: 10px;
+}
+
+    #ConcludeState.active {
+        background-color: #d90f81 !important;
+        color: #ffffff !important;
+        border: 1px solid #d90f81;
+        border-radius: 10px;
+    }
+
+
+
+#ToCloseState {
+    background-color: #e5eef6;
+    color: #0371d7;
+    border: 1px solid #0371d7;
+    border-radius: 10px;
+}
+
+    #ToCloseState.active {
+        background-color: #0371d7 !important;
+        color: #ffffff !important;
+        border: 1px solid #0371d7;
+        border-radius: 10px;
+    }
+
+
+
+#UnpaidState {
+    background-color: #f1edf5;
+    color: #9966cf;
+    border: 1px solid #9966cf;
+    border-radius: 10px;
+}
+
+    #UnpaidState.active {
+        background-color: #9966cf !important;
+        color: #ffffff !important;
+        border: 1px solid #9966cf;
+        border-radius: 10px;
+    }
+
+
+.AdminState {
+    height: 100px;
+}
+
+    .AdminState:hover {
+        height: 100px;
+        opacity: 0.8;
+    }
+
 
 @media (min-width: 980px) {
 
-    #NewState:hover::after {
+
+    #NewState.active::after {
         position: absolute;
         content: '';
         left: 40%;
@@ -279,7 +264,7 @@ th{
         transition: 1s;
     }
 
-    #ActiveState:hover::after {
+    #ActiveState.active::after {
         position: absolute;
         content: '';
         left: 40%;
@@ -290,7 +275,7 @@ th{
         transition: 1s;
     }
 
-    #PendingState:hover::after {
+    #PendingState.active::after {
         position: absolute;
         content: '';
         left: 40%;
@@ -301,7 +286,7 @@ th{
         transition: 1s;
     }
 
-    #ConcludeState:hover::after {
+    #ConcludeState.active::after {
         position: absolute;
         content: '';
         left: 40%;
@@ -312,7 +297,7 @@ th{
         transition: 1s;
     }
 
-    #ToCloseState:hover::after {
+    #ToCloseState.active::after {
         position: absolute;
         content: '';
         left: 40%;
@@ -323,7 +308,7 @@ th{
         transition: 1s;
     }
 
-    #UnpaidState:hover::after {
+    #UnpaidState.active::after {
         position: absolute;
         content: '';
         left: 40%;
@@ -335,6 +320,37 @@ th{
     }
 }
 
+
+
+/* ViewCase Page CSS  */
+
+.viewCaseContiner{
+    width: 50%;
+}
+.badg{
+    scale : 0.85;
+}
+
+@media (max-width: 980px) {
+    .logo_img {
+        position: relative;
+        left: 80px;
+    }
+
+    .AdminState {
+        border-radius: 0 !important;
+        text-align: center;
+    }
+    .viewCaseContiner{
+        width: 85%;
+    }
+    .badg{
+        font-size: 12px !important;
+    }
+    h2{
+        font-size: 12px;
+    }
+}
 
 @media (max-width:590px) {
     .navbar-toggler {
@@ -350,7 +366,9 @@ th{
         height: 100vh;
         width: 50% !important;
         margin: 0px;
-        background-color: #0d0f10;
+        z-index: 100;
+        background-color: white;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     }
 
     .mobile_nav div {
@@ -389,64 +407,3 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .
 
 
 
-
-/*For Js Only*/
-
-#NewState.click {
-    background-color: #213f99;
-    color: #ffffff;
-    border: 1px solid #213f99;
-    border-radius: 10px;
-}
-
-#NewState.click img {
-    filter: brightness(20);
-}
-
-#ActiveState.click {
-    background-color: #228b22;
-    color: #ffffff;
-    border: 1px solid #228b22;
-    border-radius: 10px;
-}
-
-#ActiveState.click img {
-    filter: brightness(20);
-}
-
-
-#PendingState.click {
-    background-color: #00adef;
-    color: #ffffff;
-    border: 1px solid #00adef;
-    border-radius: 10px;
-}
-
-#ConcludeState.click {
-    background-color: #d90f81;
-    color: #ffffff;
-    border: 1px solid #d90f81;
-    border-radius: 10px;
-}
-
-#ConcludeState.click img {
-    filter: brightness(20);
-}
-
-#ToCloseState.click {
-    background-color: #0371d7;
-    color: #ffffff;
-    border: 1px solid #0371d7;
-    border-radius: 10px;
-}
-
-#UnpaidState.click {
-    background-color: #9966cf;
-    color: #ffffff;
-    border: 1px solid #9966cf;
-    border-radius: 10px;
-}
-
-#UnpaidState.click img {
-    filter: brightness(20);
-}

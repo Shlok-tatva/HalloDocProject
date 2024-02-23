@@ -9,15 +9,73 @@
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
         }
+
+        $(document).ready(function(){
+
+            $('#updateEmail').on('submit', function (e) {
+                e.preventDefault();
+
+                var formData = new FormData();
+                formData.append('requestId', $('#requestId').val());
+                formData.append('Email', $('#email').val());
+
+                $.ajax({
+                    url: "/UpdateEmail",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                                Swal.fire("Saved!", "", "success");
+                                                 },
+                    error: function(xhr, status, error) {
+                                    Swal.fire("Error While Save Changes!", "", "error");
+                                 }
+                             }); 
+            })
+        })
+
     </script>
 }
 
 <partial name="_NavBar" />
-<div class=" mt-5 container-sm m-auto w-50 mb-5">
+<div class=" mt-5 container-sm m-auto mb-5 viewCaseContiner">
     <div class="mt-4 m-auto d-flex justify-content-between">
         <div class="d-flex align-items-center justify-content-center">
-        <h2 class="me-2">View Reservation</h2>
-        <span class="badge text-bg-danger fs-6">patient</span> 
+
+            @if(@Model.statusId == 1){
+        <h3 class="me-2 mt-1 fw-bolder">New Request</h3>
+        }
+        else if(@Model.statusId == 2){
+        <h3 class="me-2 mt-1 fw-bolder">Panding Request </h3>
+        }
+        else if(@Model.statusId == 4 || @Model.statusId == 5){
+       <h3 class="me-2 mt-1 fw-bolder">Active Request</h3>
+        }
+        else if(@Model.statusId == 6){
+       <h3 class="me-2 mt-1 fw-bolder">Concluded Request</h3>
+        }
+        else if(@Model.statusId == 3 || @Model.statusId == 7 || @Model.statusId == 8){
+       <h3 class="me-2 mt-1 fw-bolder">Closed Request</h3>
+        }
+        else if(@Model.statusId == 9){
+       <h3 class="me-2 mt-1 fw-bolder">Unpaid Request</h3>
+        }
+
+
+        @if(@Model.requesttypeId == 1){
+        <span class="badg fs-6 patient rounded-5 p-1 px-3 text-light fw-bolder">patient</span> 
+        }
+        else if(@Model.requesttypeId == 2){
+        <span class="badg fs-6 family rounded-5 p-1 px-3 text-light fw-bolder">Family / Friend</span> 
+        }
+        else if(@Model.requesttypeId == 3){
+        <span class="badg fs-6 concierge rounded-5 p-1 px-3 text-light fw-bolder">Concierge</span> 
+        }
+        else if(@Model.requesttypeId == 4){
+        <span class="badg fs-6 business rounded-5 p-1 px-3 text-light fw-bolder">Business</span> 
+        }
+        
         </div>
         <div>
             <a href="/admin" class="btn btn-lg btn-outline-info hover_white ms-5">
@@ -26,87 +84,121 @@
         </div>
     </div>
 
-    <!-- Form start  -->
-    <form asp-action="" method="post" enctype="multipart/form-data">
+    <div  method="post" enctype="multipart/form-data">
         <div class="mt-4 m-auto form_content">
             <div class="row p-4 shadow rounded-3">
                 <h5 class="col-12 fw-bold my-3">Patient Information</h5>
 
                 <div class="form-floating col-12 my-3">
-                    <textarea asp-for="@Model.symptom" class="form-control" placeholder="" id="floatingTextarea2"
-                        style="height: 100px"></textarea>
+                    <input value="@Model.symptom" class="form-control readonly" id="floatingTextarea2"
+                        style="height: 100px" readonly></input>
                     <label for="floatingTextarea2" class="ms-3">Patients Notes </label>
                 </div>
 
                 <hr />
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="@Model.firstName" type="text" class="form-control" placeholder="name@example.com">
+                    <input value="@Model.firstName" type="text" class="form-control readonly" readonly>
                     <label for="floatingInput" class="control-label ms-3">
                         First Name
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="@Model.lastName" type="text" class="form-control" placeholder="name@example.com">
+                    <input value="@Model.lastName" type="text" class="form-control readonly" readonly>
                     <label for="floatingInput" class="control-label ms-3">
                         Last Name
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="@Model.dateofBirth" type="date" class="form-control" id="dob">
+                    <input value="@Model.dateofBirth" type="date" class="form-control readonly" id="dob">
                     <label for="dob" class="control-label ms-3">
                         Date Of Birth
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="@Model.phoneNumber" id="phone" type="tel" class="form-control"> <br />
+                    <input value="@Model.phoneNumber" id="phone" type="tel" class="form-control readonly" readonly> <br />
                     <label for="floatingInput" class="control-label ms-3">
                     </label>
                 </div>
 
+               <form id="updateEmail" class="col-md-12 row">
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="@Model.email" type="email" id="email" class="form-control" placeholder="name@example.com">
+                    <input id="requestId" value="@Model.requestId" class="visually-hidden">
+                    <input name="Email" type="email" value="@Model.email" id="email" class="form-control">
                     <label for="floatingInput" class="control-label ms-3">
                         Email
                     </label>
                 </div>
-
                 <div class="col-md-6 my-3">
-                    <button class="btn btn-outline-info btn-lg hover_white">Edit</button>
+                    <button class="btn btn-outline-info btn-lg hover_white" type="submit">Edit</button>
                 </div>
+                </form>
+  
+
+                @if(@Model.requesttypeId != 1){
+                <h5 class="col-12 fw-bold my-3">Requester Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input value="@Model.requesterfirstName" type="text" class="form-control readonly" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        First Name
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input value="@Model.requesterlastName" type="text" class="form-control readonly" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Last Name
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input value="@Model.requesterPhoneNumber" id="phone1" type="tel" class="form-control readonly" readonly> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input value="@Model.requesterEmail" type="email" class="form-control" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Email
+                    </label>
+                </div>
+                }
+
 
                 <h5 class="col-12 fw-bold my-3">Location Information</h5>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="@Model.Region" type="text" class="form-control" placeholder="name@example.com">
+                    <input value="@Model.Region" type="text" class="form-control readonly" readonly>
                     <label for="floatingInput" class="control-label ms-3">
                         Region
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="@Model.Address" type="text" class="form-control" placeholder="name@example.com">
+                    <input value="@Model.Address" type="text" class="form-control readonly" readonly>
                     <label for="floatingInput" class="control-label ms-3">
                         Business Name / Address
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input type="text" class="form-control" placeholder="name@example.com">
+                    <input type="text" class="form-control readonly" readonly>
                     <label for="floatingInput" class="control-label ms-3">
                         Room #
                     </label>
                 </div>
 
-                <div class="my-3 d-flex justify-content-end ">
+                <div class="my-3 d-flex justify-content-end">
                     <button class="btn btn-info text-white hover_primary mx-2">View Notes</button>
                     <button class="btn btn-danger hover_white"> Cancle</button>
                 </div>
 
             </div>
         </div>
-    </form>
+    </div>
 </div>

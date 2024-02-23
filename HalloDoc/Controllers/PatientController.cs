@@ -119,7 +119,7 @@ namespace HelloDoc.Controllers
                             user = _userrepo.GetUser(formData.Email);
                         }
 
-                        request.Requesttypeid = 2;
+                        request.Requesttypeid = 1;
                         request.Userid = user.Userid;
                         request.Firstname = formData.FirstName;
                         request.Lastname = formData.LastName;
@@ -195,7 +195,7 @@ namespace HelloDoc.Controllers
                         var requestClient = new Requestclient();
                         var user = _userrepo.GetUser(formData.Email);
 
-                        request.Requesttypeid = 1;
+                        request.Requesttypeid = 2;
                         request.Firstname = formData.f_firstName;
                         request.Lastname = formData.f_lastName;
                         request.Email = formData.f_Email;

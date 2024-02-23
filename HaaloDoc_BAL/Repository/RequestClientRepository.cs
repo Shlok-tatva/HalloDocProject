@@ -36,5 +36,10 @@ namespace HalloDoc_BAL.Repository
 
         }
 
+        public void Update(Requestclient request){
+            _context.Requestclients.Update(request);
+            _context.SaveChanges();
+        }
+
     }
 }

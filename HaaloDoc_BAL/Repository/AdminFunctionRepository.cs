@@ -2,6 +2,7 @@
 using HalloDoc_BAL.ViewModel.Models;
 using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.DataContext;
+using HalloDoc_DAL.Models;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -96,6 +97,7 @@ namespace HalloDoc_BAL.Repository
                 requestId = request.Requestid,
                 firstName = requestClient.Firstname,
                 symptom = requestClient.Notes,
+                statusId = request.Status,
                 lastName = requestClient.Lastname,
                 dateofBirth = requestClient.Intyear.Value.ToString("") + "-" + requestClient.Strmonth + "-" + string.Format("{0:00}", requestClient.Intdate.Value),
                 phoneNumber = requestClient.Phonenumber,
@@ -112,7 +114,14 @@ namespace HalloDoc_BAL.Repository
             return view;
         }
 
-       
+
+        public List<Region> GetAllReagion()
+        {
+            return _context.Regions.ToList();
+
+        }
+
+
 
     }
 }

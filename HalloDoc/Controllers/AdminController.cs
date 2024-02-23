@@ -27,7 +27,9 @@ namespace HalloDocAdmin.Controllers
         public IActionResult Index()
         {
             ViewData["ViewName"] = "Dashboard";
-            return View();
+            var regions = _adminFunctionRepository.GetAllReagion();
+
+            return View(regions);
         }
 
         [HttpGet]
@@ -58,6 +60,23 @@ namespace HalloDocAdmin.Controllers
             int requestId = Int32.Parse(Request.Query["request"]);
             ViewCase view = _adminFunctionRepository.GetViewCase(requestId);
             return View(view);
+        }
+
+        [HttpPost("UpdateEmail")]
+        public IActionResult UpdateEmail(int requestId , string Email)
+        {
+            try
+            {
+                Requestclient requestclient = _requestClientRepository.Get(requestId);
+                requestclient.Email = Email;
+                _requestClientRepository.Update(requestclient);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
         }
 
     }

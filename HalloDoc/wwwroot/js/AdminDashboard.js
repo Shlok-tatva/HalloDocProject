@@ -1,3 +1,4 @@
+
 $(document).ready(function () {
 
     function reloadDataTable(statusID) {
@@ -50,6 +51,7 @@ $(document).ready(function () {
 
                 data.forEach(function (request) {
                     var newRow = $('<tr>').attr('data-request-type-id', request.requestTyepid);
+
                     for (var key in request) {
                         if (!["menuOptions", "requestTyepid", "status", "requesterPhoneNumber", "requesterEmail" , "requestId"].includes(key)) {
                             if (key === "patientPhoneNumber") {
@@ -126,9 +128,16 @@ $(document).ready(function () {
 
                     request.menuOptions.forEach(function (option) {
                         var enumName = mapNumberToEnumName(option);
-                        var link = toCamelCase(enumName) + '?request=' + request.requestId;
                         var imageUrl = menuOptionImageMapping[enumName];
-                        dropdownMenu.append('<li><a class="dropdown-item menu-option" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</a></li>');
+
+                        if ([2 , 3 , 5 , 9 , 10 , 11 , 12].includes(option)) {
+                            var link = toCamelCase(enumName) + '?request=' + request.requestId;
+                            dropdownMenu.append('<li><a class="dropdown-item menu-option" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</a></li>');
+                        } else {
+                            var id = toCamelCase(enumName)
+                            dropdownMenu.append('<li><button class="dropdown-item menu-option" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</button></li>');
+                        }
+
                     });
 
                     var dropdownButton = $('<div class="dropdown">');
@@ -140,20 +149,25 @@ $(document).ready(function () {
 
                 });
 
+
                 // $('#request-table').DataTable({
-                //     paging: true,
-                //     searching: false,
-                //     ordering: false,
-                //     retrieve: true,
-                //     info: true,
-                //     "pageLength": 10,
-                //     "language": {
-                //         "paginate": {
-                //             "next": "&#8594;",
-                //             "previous": "&#8592;"
-                //         }
-                //     }
-                // });
+                //     paging: false,
+                //      searching: true,
+                //      ordering: false,
+                //      retrieve: true,
+                //      info: false,
+                //      "initComplete": function (settings, json) {
+
+                //         $('#patientsearch').val(settings.oPreviousSearch.sSearch);
+
+                //         $('#patientsearch').on('keyup', function () {
+                //             var searchValue = $(this).val();
+                //             settings.oPreviousSearch.sSearch = searchValue;
+                //             settings.oApi._fnReDraw(settings);
+                //         });
+                //     },
+                //  });
+
 
 
                 $('#request-table_length').css('display', 'none');
@@ -167,6 +181,7 @@ $(document).ready(function () {
                         $(this).css('background-color', colors[requestTypeId - 1]);
                     }
                 });
+
 
             },
 
@@ -248,41 +263,61 @@ $(document).ready(function () {
 
 
     $('#NewState').click(function () {
-        $('.click').not(this).removeClass('click');
+        $('.active').not(this).removeClass('active');
         $('#requestState').text('(New)');
-        $(this).toggleClass('click');
+        $(this).toggleClass('active');
     });
 
     $('#ActiveState').click(function () {
-        $('.click').not(this).removeClass('click');
+        $('.active').not(this).removeClass('active');
         $('#requestState').text('(ACTIVE)');
-        $(this).toggleClass('click');
+        $(this).toggleClass('active');
     });
    
     $('#PendingState').click(function () {
-        $('.click').not(this).removeClass('click');
+        $('.active').not(this).removeClass('active');
         $('#requestState').text('(PANDING)');
-        $(this).toggleClass('click');
+        $(this).toggleClass('active');
     });
 
     $('#ConcludeState').click(function () {
-        $('.click').not(this).removeClass('click');
+        $('.active').not(this).removeClass('active');
         $('#requestState').text('(CONCLUDE)');
-        $(this).toggleClass('click');
+        $(this).toggleClass('active');
     });
 
     $('#ToCloseState').click(function () {
-        $('.click').not(this).removeClass('click');
+        $('.active').not(this).removeClass('active');
         $('#requestState').text('(TO CLOSE)');
-        $(this).toggleClass('click');
+        $(this).toggleClass('active');
     });
     $('#UnpaidState').click(function () {
-        $('.click').not(this).removeClass('click');
+        $('.active').not(this).removeClass('active');
         $('#requestState').text('(UNPAID)');
-        $(this).toggleClass('click');
+        $(this).toggleClass('active');
     });
 });
 
-
-
+function Search() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("patientsearch");
+    console.log(input)
+    filter = input.value.toUpperCase();
+    console.log(filter)
+    table = document.getElementById("request-table");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            //indexOf will return the position of first matched character
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            }
+            else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
 

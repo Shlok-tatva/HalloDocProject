@@ -9,6 +9,9 @@ namespace HalloDoc_BAL.ViewModel.Models
         public int requestId { get; set; }
 
         [Required]
+        public int statusId {get; set;}
+
+        [Required]
         public string symptom { get; set; }
 
         [Required]
