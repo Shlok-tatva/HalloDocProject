@@ -47,14 +47,6 @@ td, th {
 }
 
 
-
-.form-control:focus,
-.form-control:hover {
-    outline: 0;
-    box-shadow: none;
-    border: 1px solid #01BBE7;
-}
-
 button:hover i {
     color: white !important;
 }

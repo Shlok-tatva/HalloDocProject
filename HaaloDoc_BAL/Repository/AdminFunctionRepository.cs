@@ -122,6 +122,5 @@ namespace HalloDoc_BAL.Repository
         }
 
 
-
     }
 }

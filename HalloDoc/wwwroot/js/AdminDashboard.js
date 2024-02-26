@@ -50,7 +50,6 @@ $(document).ready(function () {
                     renderMobileAccoridan(data);     
                 }      
             },
-
             error: function () {
                 alert("Error while fetching Data");
             }
@@ -112,8 +111,8 @@ $(document).ready(function () {
                     } else if (key === 'patientEmail') {
                         var emailCell = $('<td class="scale-1">');
                         var dropdownMenu = $('<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">');
-                        dropdownMenu.append('<li><a class="dropdown-item menu-option" href="mailto:' + request.patientEmail + '">' + request.patientEmail + '</a></li>');
-                        dropdownMenu.append('<li><a class="dropdown-item menu-option" href="mailto:' + request.requesterEmail + '">' + request.requesterEmail + '</a></li>');
+                        dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="mailto:${request.patientEmail}">${request.patientEmail}</a></li>`);
+                        dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="mailto:${request.requesterEmail}">${request.requesterEmail}</a></li>`);
                         var dropdownButton = $('<div class="dropdown">');
                         dropdownButton.append('<button class="btn btn-outline-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-envelope"></i></button>');
                         dropdownButton.append(dropdownMenu);
@@ -136,11 +135,10 @@ $(document).ready(function () {
 
                 if ([2, 3, 5, 9, 10, 11, 12].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    dropdownMenu.append('<li><a class="dropdown-item menu-option" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</a></li>');
+                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
                 } else {
                     var id = toCamelCase(enumName);
-                    console.log(request.requestId);
-                    dropdownMenu.append('<li><div class="dropdown-item menu-option open-modal"' + ' data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-modal-id="' + modalId + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</div></li>');
+                    dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
                    
                 }
 
@@ -176,10 +174,11 @@ $(document).ready(function () {
             var header = $('<h2 class="accordion-header" id="heading' + panelId + '">');
             var body = $('<div id="' + panelId + '" class="accordion-collapse collapse">');
             var actions = '';
+            var viewCase = '';
             var menuOptionColors = {
                 0: '#943DB8', 
                 1: '#E42929', 
-                2: '#EE9125',  
+                2: 'white',  
                 3: '#228B22',  
                 4: '#228B22',  
                 5: '#943DB8',
@@ -193,16 +192,20 @@ $(document).ready(function () {
 
             request.menuOptions.forEach(function (option) {
                 var enumName = mapNumberToEnumName(option);
-                var imageUrl = menuOptionImageMapping[enumName];
                 var backgroundColor = menuOptionColors[option] || 'blue';
                 var modalId = toCamelCase(enumName) + 'Modal';
 
-                if ([2, 3, 5, 9, 10, 11, 12].includes(option)) {
+                if ([3, 5, 9, 10, 11, 12].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</a>';
-                } else {
+                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>';
+                }
+                else if (option == 2) {
+                    var link = toCamelCase(enumName) + '?request=' + request.requestId;
+                    viewCase += '<a class="btn w-50 btn-transparent border border-1 border-primary text-primary rounded-5 viewCasebtn" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>'
+                }
+                else {
                     var id = toCamelCase(enumName)
-                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '">' + '<image src="./images/' + imageUrl + '" class="menu-icon" />' + enumName + '</a>';
+                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>';
                 }
             });
 
@@ -230,37 +233,14 @@ $(document).ready(function () {
                     bgColor = "black";
             }
 
-            var header = $('<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#' + panelId + '" aria-expanded="true" aria-controls="' + panelId + '">');
-            header.append('<div class="w-100 gap-2 border-5 pt-3 pb-5 px-4">' +
-                '<div class="d-flex justify-content-between mb-3">' +
-                '<span class="mobilesearch fs-5 ">' + request.patientName + '</span>' +
-                '<div class="d-flex align-items-center">' +
-                '<div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: ' + bgColor + ';"></div>' +
-                '<span class="fs-5">' + requestTypeText + '</span>' +
-                '</div>' +
-                '</div>' +
-                '<div class="d-flex justify-content-between ">' +
-                '<div class="">' +
-                '<span class="fs-5">' + request.address + '</span>' +
-                '</div>' +
-                '<div class="btn btn-transparent border border-1 border-info text-info rounded-5">Map Location</div>' +
-                '</div>' +
-                '</div>');
+            var header = $(`<button class="accordion-button bg-info-subtle border-bottom border-1 border-secondary-subtle " type="button" data-bs-toggle="collapse" data-bs-target="#${panelId}" aria-expanded="true" aria-controls="${panelId}">`);
 
-            var accordionBody = '<div class="accordion-body">' +
-                '<div class="d-flex flex-column gap-2 bg-info-subtle mb-2 py-3 px-4 ">' +
-                '<div><i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' +
-                '<span class="fs-5">Date of Birth: ' + request.dateOfBirth + '</span></div>' +
-                '<div><i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' +
-                '<span class="fs-5">Email: ' + request.patientEmail + '</span></div>' +
-                '<div><i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' +
-                '<span class="fs-5">Phone: ' + request.patientPhoneNumber + '</span></div>' +
-                '<div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' +
-                '<span class="fs-5">Requestor: ' + request.requesterName + '</span></div>';
+            header.append(`<div class="w-100 gap-2 border-5 pt-3 pb-5 px-4"><div class="d-flex justify-content-between mb-3"><span class="mobilesearch fs-5 ">${request.patientName}</span><div class="d-flex align-items-center"><div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: ${bgColor};"></div><span class="fs-5">${requestTypeText}</span></div></div><div class="d-flex justify-content-between "><div class=""><span class="fs-5">${request.address}</span></div><div class="btn btn-transparent border border-1 border-info text-info rounded-5">Map Location</div></div></div>`);
+
+            var accordionBody = `<div class="accordion-body p-0"><div class="d-flex flex-column gap-2 bg-info-subtle mb-2 py-3 px-4 "><div class="text-end">${viewCase}</div><div><i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Date of Birth: ${request.dateOfBirth}</span></div><div><i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Email: ${request.patientEmail}</span></div><div><i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Phone: ${request.patientPhoneNumber}</span></div><div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Requestor: ${request.requesterName}</span></div>`;
 
             if (request.status === 2) {
-                accordionBody += '<div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' +
-                    '<span class="fs-5">Doctor Name: ' + request.doctorName + '</span></div>';
+                accordionBody += '<div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' + '<span class="fs-5">Doctor Name: ' + request.doctorName + '</span></div>';
             }
 
             accordionBody += '<div class="d-flex flex-column mt-3 gap-3">' +
@@ -293,18 +273,19 @@ $(document).ready(function () {
 
     $('.AdminState').click(function () {
         var statusId = $(this).data("status-id");
+        localStorage.setItem("lastStatusID" , statusId);
         reloadDataTable(statusId);
     });
 
 
-    reloadDataTable(1);
+    var lastStatusID = localStorage.getItem("lastStatusID")
+    reloadDataTable(lastStatusID || 1);
 
 
     $.ajax({
         url: 'Admin/getRequestCountPerStatusId',
         type: "GET",
         success: function (data) {
-            console.log(data);
             $('#newCount').text(data[1]);
             $('#pandingCount').text(data[2]);
             $('#activeCount').text(data[3]);
@@ -354,42 +335,64 @@ $(document).ready(function () {
 
     }
 
-    $('#NewState').click(function () {
-        $('.active').not(this).removeClass('active');
+
+
+function setLastState(state) {
+    localStorage.setItem('lastState', state);
+}
+
+
+function getLastState() {
+    return localStorage.getItem('lastState');
+}
+
+
+function handleStateClick(state) {
+    $('.active').not(this).removeClass('active');
+    $('#requestState').text('(' + state.toUpperCase() + ')');
+    $(this).toggleClass('active');
+}
+
+    var lastState = getLastState();
+
+    // Set initial state based on last state or default to 'New'
+    if (lastState) {
+        $('#requestState').text('(' + lastState.toUpperCase() + ')');
+        $('#' + lastState + 'State').addClass('active');
+    } else {
         $('#requestState').text('(New)');
-        $(this).toggleClass('active');
+        $('#NewState').addClass('active');
+    }
+
+    $('#NewState').click(function () {
+        handleStateClick.call(this, 'New');
+        setLastState('New');
     });
 
     $('#ActiveState').click(function () {
-        $('.active').not(this).removeClass('active');
-        $('#requestState').text('(ACTIVE)');
-        $(this).toggleClass('active');
+        handleStateClick.call(this, 'Active');
+        setLastState('Active');
     });
-   
+
     $('#PendingState').click(function () {
-        $('.active').not(this).removeClass('active');
-        $('#requestState').text('(PANDING)');
-        $(this).toggleClass('active');
+        handleStateClick.call(this, 'Pending');
+        setLastState('Pending');
     });
 
     $('#ConcludeState').click(function () {
-        $('.active').not(this).removeClass('active');
-        $('#requestState').text('(CONCLUDE)');
-        $(this).toggleClass('active');
+        handleStateClick.call(this, 'Conclude');
+        setLastState('Conclude');
     });
 
     $('#ToCloseState').click(function () {
-        $('.active').not(this).removeClass('active');
-        $('#requestState').text('(TO CLOSE)');
-        $(this).toggleClass('active');
+        handleStateClick.call(this, 'To Close');
+        setLastState('ToClose');
     });
+
     $('#UnpaidState').click(function () {
-        $('.active').not(this).removeClass('active');
-        $('#requestState').text('(UNPAID)');
-        $(this).toggleClass('active');
+        handleStateClick.call(this, 'Unpaid');
+        setLastState('Unpaid');
     });
-
-
 
 
     /*Modal Click open the Modal  */
@@ -398,7 +401,6 @@ $(document).ready(function () {
     $(document).on('click', '.open-modal', function () {
         var modalId = $(this).data('modal-id');
         var requestId = $(this).data('request-id'); // Get the requestId from the clicked button
-        console.log(requestId);
 
         // Update the modal body to display the requestId
         $('#' + modalId).find('#requestIdDisplay').text(requestId);
@@ -415,9 +417,7 @@ $(document).ready(function () {
 function Search() {
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("patientsearch");
-    console.log(input)
     filter = input.value.toUpperCase();
-    console.log(filter)
     table = document.getElementById("request-table");
     tr = table.getElementsByTagName("tr");
     for (i = 0; i < tr.length; i++) {

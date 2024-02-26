@@ -12,5 +12,6 @@ namespace HalloDoc_BAL.Interface
         public ViewCase GetViewCase(int requestId);
 
         public List<Region> GetAllReagion();
+
     }
 }

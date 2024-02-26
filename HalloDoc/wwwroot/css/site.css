@@ -96,6 +96,33 @@ hr{
 
 }
 
+.notesText {
+    font-size: 12px;
+}
+
+.form-control:focus,
+.form-control:hover {
+    outline: 0;
+    box-shadow: none;
+    border: 1px solid #01BBE7;
+}
+
+.viewCasebtn {  
+    position: relative;
+    background-color: white;
+    width: 108px !important;
+    height: 44px;
+    font-size: 16px;
+    padding: 9px;
+    bottom: 42px;
+    font-family: 'Poppins';
+    z-index: 100;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
 @media (max-width:530px) {
     .mobile_d_none {
         display: none;

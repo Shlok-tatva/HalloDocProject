@@ -14,14 +14,17 @@ namespace HalloDocAdmin.Controllers
         private readonly ILogger<AdminController> _logger;
         private readonly IRequestRepository _requestRepository;
         private readonly IRequestClientRepository _requestClientRepository;
+        private readonly IRequestNotesRepository _requestNotesRepository;
         private readonly IAdminFunctionRepository _adminFunctionRepository;
 
-        public AdminController(ILogger<AdminController> logger , IRequestRepository requestRepository, IRequestClientRepository requestClientRepository , IAdminFunctionRepository adminFunctionRepository)
+
+        public AdminController(ILogger<AdminController> logger , IRequestRepository requestRepository, IRequestClientRepository requestClientRepository , IAdminFunctionRepository adminFunctionRepository , IRequestNotesRepository requestNotesRepository)
         {
             _logger = logger;
             _requestRepository = requestRepository;
             _requestClientRepository = requestClientRepository;
             _adminFunctionRepository = adminFunctionRepository;
+            _requestNotesRepository = requestNotesRepository;
         }
 
         public IActionResult Index()
@@ -78,6 +81,50 @@ namespace HalloDocAdmin.Controllers
             }
 
         }
+
+        public IActionResult ViewNotes()
+        {
+            int requestId = Int32.Parse(Request.Query["request"]);
+            Requestnote note = _requestNotesRepository.Get(requestId);
+            if(note == null)
+            {
+                note = new Requestnote();
+            }
+            ViewBag.requestId = requestId;
+            return View(note);
+        }
+
+        [HttpPost("UpdateNotes")]
+        public IActionResult UpdateNotes(int requestId , string adminNotes)
+        {
+            try
+            {
+                Requestnote requestnote = _requestNotesRepository.Get(requestId);
+                if(requestnote == null)
+                {
+                    Requestnote note = new Requestnote();
+                    note.Requestid = requestId;
+                    note.Adminnotes = adminNotes;
+                    note.Createdby = "faeb647e-a0fe-4b31-a87d-4a2c9693242b";
+                    note.Createddate = DateTime.Now;
+                    _requestNotesRepository.Add(note);
+                    return Ok();
+                }
+                else
+                {
+                    requestnote.Adminnotes = adminNotes;
+                    requestnote.Modifiedby = "faeb647e-a0fe-4b31-a87d-4a2c9693242b";
+                    requestnote.Modifieddate = DateTime.Now;
+                    _requestNotesRepository.Update(requestnote);
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
 
     }
 }

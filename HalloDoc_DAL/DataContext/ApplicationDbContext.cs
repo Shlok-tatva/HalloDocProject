@@ -87,8 +87,8 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // change port to 5432 for company PC and Database to HelloDoc
-        => optionsBuilder.UseNpgsql("User ID = postgres;Password=shlok123;Server=localhost;Port=5433;Database=HalloDoc;Integrated Security=true;Pooling=true;");
+
+        => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=HelloDoc;User Id=postgres;Password=shlok123;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -293,7 +293,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Requestnotesid).HasName("requestnotes_pkey");
 
-            entity.Property(e => e.Requestnotesid).ValueGeneratedNever();
+            entity.Property(e => e.Requestnotesid).HasDefaultValueSql("nextval('requestnotes_id_seq'::regclass)");
 
             entity.HasOne(d => d.Request).WithMany(p => p.Requestnotes)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -408,6 +408,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.Region).WithMany(p => p.Users).HasConstraintName("User_regionid_fkey");
         });
+        modelBuilder.HasSequence("requestnotes_id_seq");
         modelBuilder.HasSequence("user_id_seq");
 
         OnModelCreatingPartial(modelBuilder);

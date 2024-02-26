@@ -15,8 +15,9 @@
 
 <div class="row mx-3 my-4">
     <div class="AdminStatediv col-xl-2 col-lg-3 col-sm-4 col-6">
-        <button id="NewState" data-status-id="1" class="AdminState p-2 w-100 text-lg-start active">
-            <h6 class="fw-semibold m-0 my-2"><svg xmlns="http://www.w3.org/2000/svg"
+        <button id="NewState" data-status-id="1" class="AdminState p-2 w-100 text-lg-start">
+            <h6 class="fw-semibold m-0 my-2">
+                <svg xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" height="20px" width="20px" version="1.1" id="_x32_"
                     viewBox="0 0 512 512" xml:space="preserve" fill="currentColor">
                     <g>
@@ -89,11 +90,11 @@
                 <span class="mobile_d_none">Create Request</span>
             </button>
             <button class="btn btn-info text-white">
-                <i class="fa-solid fa-share"></i>
+                <img src="~/images/export-all-ic.svg" width="20px" height="20px" />
                 <span class="mobile_d_none">Export</span>
             </button>
             <button class="btn btn-info text-white">
-                <i class="fa-solid fa-share"></i>
+                <img src="~/images/exportall-ic.svg" width="20px" height="20px" />
                 <span class="mobile_d_none">Export All</span>
             </button>
             <button class="btn btn-info text-white">
@@ -128,8 +129,8 @@
             </div>
         </div>
 
-
-        <div class="col-xl-6 d-flex justify-content-xl-end justify-content-center gap-2 gap-sm-3 gap-xl-4 p-0">
+        @*Filter Buttons *@
+        <div class="col-xl-6 d-flex flex-wrap justify-content-end">
             <div class="d-flex align-items-center filter-btn">
                 <button class="btn border-0 border-black btn-all">All</button>
             </div>
@@ -176,129 +177,6 @@
         <!-- Accordion panels will be dynamically added here -->
     </div>
 
-
-   @*  <div class="accordion d-md-none" id="RequestAccordian">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                <div class="w-100 gap-2 border-5 pt-3 pb-5 px-4">
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="mobilesearch fs-5 ">Shlok jadeja</span>
-                        <div class="d-flex align-items-center">
-                            <div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: dodgerblue;"></div>
-                            <span class="fs-5">Business</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between ">
-                        <div class="">
-                            <span class="fs-5">43 Krishna Tenament</span>
-                        </div>
-                        <div class="btn btn-transparent border border-1 border-info text-info rounded-5">Map Location</div>
-                    </div>
-                </div>
-            </button>
-        </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#RequestAccordian">
-            <div class="accordion-body">
-                <div class="d-flex flex-column gap-2 bg-info-subtle   mb-2 py-3 px-4 ">
-                    <div>
-                        <i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                        <span class="fs-5">Date of Birth: 17/7/2003</span>
-                    </div>
-                    <div>
-                        <i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                        <span class="fs-5">Email: shlokjadeja177</span>
-                    </div>
-                    <div>
-                        <i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                        <span class="fs-5">Phone: 9726666647</span>
-                    </div>
-                    <div>
-                        <i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                        <span class="fs-5">Requestor: kunj</span>
-                    </div>
-
-                    <div class="d-flex flex-column mt-3 gap-3">
-                        <div class="row g-2">
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #943DB8">Assign Case</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white  rounded-5" style="background-color:  #E42929">Cancel Case</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #EE9125">View Case</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #228B22">Block Patient</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #228B22">View Uploads</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white  rounded-5" style="background-color:  #228B22">View Notes</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #00ADEF">Orders</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #EE9125">Doctors Note</a>
-                            <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #228B22">Encounter</a>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            </div>
-        </div>
-
-     <div class="accordion-item">
-            <h2 class="accordion-header" id="headingTwo">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    <div class="w-100 gap-2 border-5 pt-3 pb-5 px-4">
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="mobilesearch fs-5 ">Shlok jadeja</span>
-                            <div class="d-flex align-items-center">
-                                <div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: dodgerblue;"></div>
-                                <span class="fs-5">Business</span>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between ">
-                            <div class="">
-                                <span class="fs-5">43 Krishna Tenament</span>
-                            </div>
-                            <div class="btn btn-transparent border border-1 border-info text-info rounded-5">Map Location</div>
-                        </div>
-                    </div>
-                </button>
-            </h2>
-
-            <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#RequestAccordian">
-                <div class="accordion-body">
-                    <div class="d-flex flex-column gap-2 bg-info-subtle mb-2 py-3 px-4 ">
-                        <div>
-                            <i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                            <span class="fs-5">Date of Birth: 17/7/2003</span>
-                        </div>
-                        <div>
-                            <i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                            <span class="fs-5">Email: shlokjadeja177</span>
-                        </div>
-                        <div>
-                            <i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                            <span class="fs-5">Phone: 9726666647</span>
-                        </div>
-                        <div>
-                            <i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>
-                            <span class="fs-5">Requestor: kunj</span>
-                        </div>
-
-                        <div class="d-flex flex-column mt-3 gap-3">
-                            <div class="row g-2">
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #943DB8">Assign Case</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white  rounded-5" style="background-color:  #E42929">Cancel Case</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #EE9125">View Case</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #228B22">Block Patient</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #228B22">View Uploads</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white  rounded-5" style="background-color:  #228B22">View Notes</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #00ADEF">Orders</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #EE9125">Doctors Note</a>
-                                <a role="button" class="btn w-50 btn-transparent border border-1 text-white rounded-5" style="background-color: #228B22">Encounter</a>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> *@
-
-
 </div>
 
 
@@ -315,8 +193,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Request ID: <span id="requestIdDisplay"></span></p> <!-- Display request ID here -->
-                <!-- Other modal content -->
+                <p>Request ID: <span id="requestIdDisplay"></span></p> 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
