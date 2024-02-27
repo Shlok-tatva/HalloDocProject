@@ -1,0 +1,45 @@
+﻿
+<div class="modal fade" id="cancelCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content border-0" id="cancleCase">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirm Cancellation</h5>
+                <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Patient Name: <span id="patientName" class="fw-bold text-info"></span></p>
+                <input type="text" id="requestIdDisplay" value="" class="visually-hidden" />
+                <div>
+                     <div class="form-floating ">
+                        <select class="form-select pt-1" aria-label="Default select example" id="reasonForCancle">
+                            <option>Reasons of Cancellation</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+
+                    <div class="form-floating my-3">
+                        <input id="additionalNotes" type="text" class="form-control togleInput" style="height:120px;" required>
+                        <label for="floatingInput" class="control-label">
+                            Provide Additional Notes
+                        </label>
+                    </div>
+                </div>
+                @* <p>Request ID: <span id="requestIdDisplay"></span></p> *@
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-info text-white btn-lg">Confirm</button>
+                <button type="reset" class="btn btn-outline-info hover_white fw-100 btn-lg"
+                        data-dismiss="modal">
+                    cancle
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

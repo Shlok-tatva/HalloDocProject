@@ -33,6 +33,11 @@ namespace HalloDoc_BAL.Repository
             return _context.Requests.Where(r => r.Userid == userId).ToList();
         }
 
+        public List<Request> GetAll(string email)
+        {
+            return _context.Requests.Where(r => r.Email == email).ToList();
+        }
+
         public void Update(Request request)
         {
             _context.Update(request);

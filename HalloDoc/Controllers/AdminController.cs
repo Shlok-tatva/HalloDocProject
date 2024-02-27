@@ -6,6 +6,7 @@ using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
@@ -31,15 +32,23 @@ namespace HalloDocAdmin.Controllers
         {
             ViewData["ViewName"] = "Dashboard";
             var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.username = "Shlok Jadeja";
 
             return View(regions);
         }
 
         [HttpGet]
-        public IActionResult GetRequest(int status_id)
+        public IActionResult GetRequestByStatusId(int status_id)
         {
             var statusIdWiseRequest = _adminFunctionRepository.GetRequestsByStatusID(status_id);
             return Ok(statusIdWiseRequest.ToList());
+        }
+
+        [HttpGet]
+        public IActionResult GetRequest(int requestId)
+        {
+            var request = _requestClientRepository.Get(requestId);
+            return Ok(request);
         }
 
         [HttpGet]
@@ -125,6 +134,45 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [HttpPost("BlockPatient")]
+        public IActionResult BlockPatient(int requestId , string reason)
+        {
+            using (var transaction = new TransactionScope())
+            { 
+                
+                try
+            {
+                Request request = _requestRepository.Get(requestId);
+                Requestclient rc = _requestClientRepository.Get(requestId);
+                request.Status = 10; // it is for Block the request
+                _requestRepository.Update(request);
+                Blockrequest blockrequest = new Blockrequest();
+                blockrequest.Requestid = requestId.ToString();
+                blockrequest.Reason = reason;
+                blockrequest.Phonenumber = rc.Phonenumber;
+                blockrequest.Email = rc.Email;
+                blockrequest.Createddate = DateTime.Now;
+                _adminFunctionRepository.blockRequst(blockrequest);
+                    transaction.Complete();
 
+                    return Ok();
+            }
+            catch(Exception ex)
+            {
+                return NotFound();
+            }
+        }
+        }
+
+
+        [HttpPost("CancleCase")]
+        public IActionResult CancleRequest(int requestId , string reason , string notes)
+        {
+            using(var transaction = new TransactionScope())
+            {
+               
+                return Ok();
+            }
+        }
     }
 }

@@ -1,4 +1,49 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<HalloDoc_DAL.Models.Region>;
+
+<div class="modal fade" id="assignCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Assign Request</h5>
+                <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="notesText">To assign this request, search and select another Physician.</p>
+                <div>
+
+                    <div class="form-floating">
+                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                            @foreach (var region in Model)
+                            {
+                                <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                            }
+                        </select>
+                        <label for="floatingSelect">Narrow Search by Region</label>
+                    </div>
+
+                    <div class="form-floating my-4">
+                        <select class="form-select pt-1" aria-label="Default select example">
+                            <option>Select Physician</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                </div>
+                @* <p>Request ID: <span id="requestIdDisplay"></span></p> *@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info text-white btn-lg">Submit</button>
+                <button type="button" class="btn btn-outline-info hover_white fw-100 btn-lg"
+                        data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

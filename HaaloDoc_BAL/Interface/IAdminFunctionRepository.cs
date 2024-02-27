@@ -13,5 +13,7 @@ namespace HalloDoc_BAL.Interface
 
         public List<Region> GetAllReagion();
 
+        public void blockRequst(Blockrequest request);
+
     }
 }

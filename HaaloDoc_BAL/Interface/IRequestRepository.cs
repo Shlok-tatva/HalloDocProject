@@ -12,6 +12,7 @@ namespace HalloDoc_BAL.Interface
         void Add(Request request);
         Request Get(int id);
         List<Request> GetAll(int userId);
+        public List<Request> GetAll(string email);
         void Update(Request request);
         List<Request> GetRequestFromStatusId (int statusId);
         List<Request> GetAll();

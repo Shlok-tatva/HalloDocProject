@@ -110,7 +110,6 @@ namespace HalloDoc_BAL.Repository
                 requesterPhoneNumber = request.Phonenumber,
                 requesttypeId = request.Requesttypeid
             };
-
             return view;
         }
 
@@ -121,6 +120,11 @@ namespace HalloDoc_BAL.Repository
 
         }
 
+        public void blockRequst(Blockrequest request)
+        {
+            _context.Blockrequests.Add(request);
+            _context.SaveChanges();
+        }
 
     }
 }

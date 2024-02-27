@@ -17,9 +17,9 @@
     <div class="AdminStatediv col-xl-2 col-lg-3 col-sm-4 col-6">
         <button id="NewState" data-status-id="1" class="AdminState p-2 w-100 text-lg-start">
             <h6 class="fw-semibold m-0 my-2">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink" height="20px" width="20px" version="1.1" id="_x32_"
-                    viewBox="0 0 512 512" xml:space="preserve" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="20px"
+                    width="20px" version="1.1" id="_x32_" viewBox="0 0 512 512" xml:space="preserve"
+                    fill="currentColor">
                     <g>
                         <path class="st0"
                             d="M13.175,203.061c0,0-0.004-0.013-0.007-0.026l-0.672-1.763L13.175,203.061z" />
@@ -34,7 +34,8 @@
                         <path class="st0"
                             d="M377.221,190.694l-15.605,3.068c-0.852,0.164-1.266,0.634-1.224,1.515l-1.221,54.291l-0.258,0.046 l-24.847-49.16c-0.398-0.699-0.983-1.084-1.708-0.94l-10.61,2.083c-0.839,0.17-1.237,0.744-1.338,1.541l-3.911,54.82l-0.242,0.052 l-22.19-49.701c-0.255-0.718-0.839-1.096-1.691-0.927l-15.732,3.082c-0.852,0.17-0.996,0.706-0.725,1.417l37.266,76.23 c0.398,0.685,0.98,1.084,1.708,0.94l12.19-2.403c0.852-0.163,1.25-0.751,1.348-1.528l4.368-54.415l0.242-0.045l24.521,48.728 c0.385,0.685,0.97,1.084,1.822,0.914l12.19-2.403c0.852-0.157,1.365-0.77,1.352-1.535l5.504-84.645 C378.4,190.955,378.073,190.524,377.221,190.694z" />
                     </g>
-                </svg> NEW</h6>
+                </svg> NEW
+            </h6>
             <h3 class="fw-bold" id="newCount">0</h3>
         </button>
     </div>
@@ -107,14 +108,13 @@
 </div>
 
 
-<div class="container-fluid  mt-4  mb-10 rounded shadow p-0 w-98">
+<div class="container-fluid  mt-4  mb-10 rounded shadow p-0 w-98 pb-1">
 
     <div class="row ps-2 mb-lg-0 mb-3">
         <div class="row col-xl-6">
             <div class="col-sm-6 has-search my-auto">
                 <span class="fa fa-search form-control-feedback"></span>
-                    <input id="patientsearch" type="text" class="form-control" placeholder="Search"
-                        onkeypress="Search()">
+                <input id="patientsearch" type="text" class="form-control" placeholder="Search" onkeypress="Search()">
             </div>
             <div class="col-sm-6">
                 <div class="">
@@ -135,19 +135,20 @@
                 <button class="btn border-0 border-black btn-all">All</button>
             </div>
             <div class="d-flex align-items-center">
-                <button class=" btn d-flex gap-1 align-items-center justify-content-center filter-btn" data-filter-value="1">
+                <button class=" btn d-flex gap-1 align-items-center justify-content-center filter-btn"
+                    data-filter-value="1">
                     <div class="rounded-circle circle patient"></div>
                     <span>Patient</span>
                 </button>
             </div>
             <div class="d-flex align-items-center">
-                <button class="btn d-flex gap-1 align-items-center filter-btn" data-filter-value = "2">
+                <button class="btn d-flex gap-1 align-items-center filter-btn" data-filter-value="2">
                     <div class="rounded-circle circle family"></div>
                     <span>Family</span>
                 </button>
             </div>
             <div class="d-flex align-items-center">
-                <button class="btn d-flex gap-1 align-items-center filter-btn" data-filter-value = "3">
+                <button class="btn d-flex gap-1 align-items-center filter-btn" data-filter-value="3">
                     <div class="rounded-circle circle concierge"></div>
                     <span>Concierge</span>
                 </button>
@@ -168,38 +169,25 @@
         <span class="visually-hidden">Loading...</span>
     </div>
 
-    <table id="request-table" class="w-100 overflow-x-scroll mobile_d_none">
+    <table id="request-table" class="w-100 overflow-x-scroll table_d_none">
         <thead></thead>
         <tbody></tbody>
     </table>
-
-    <div class="accordion d-md-none" id="RequestAccordion">
+    <div class="accordion accordian_d_block" id="RequestAccordion">
         <!-- Accordion panels will be dynamically added here -->
     </div>
 
-</div>
-
-
-
-
-
-<div class="modal fade" id="assignCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Request ID: <span id="requestIdDisplay"></span></p> 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
+    <div id="pagination">
+        <button id="first-button" class="pagination_btn">First</button>
+        <button id="prev-button" class="pagination_btn" disabled><i class="bi bi-chevron-left fs-5"></i> </button>
+        <!-- Pagination buttons container -->
+        <div id="page-buttons"></div>
+        <button id="next-button" class="pagination_btn"> <i class="bi bi-chevron-right fs-5"></i> </button>
+        <button id="last-button" class="pagination_btn">Last</button>
     </div>
+
 </div>
 
+<partial name="_assignCase" model="Model"></partial>
+<partial name="_blockCase" />
+<partial name="_cancleCase" />

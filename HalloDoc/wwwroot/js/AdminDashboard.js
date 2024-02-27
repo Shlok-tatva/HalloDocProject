@@ -36,24 +36,28 @@ $(document).ready(function () {
 
     function reloadDataTable(statusID) {
         $.ajax({
-            url: '/Admin/GetRequest',
+            url: '/Admin/GetRequestByStatusId',
             type: "GET",
             data: { status_id: statusID },
             success: function (data) {
-
+    
                 $('#request-table tbody').empty();
                 $('#request-table thead').empty();
                 $('#RequestAccordion').empty();
-
+    
                 if (data.length > 0) {
-                    renderDesktopTable(data, statusID);
-                    renderMobileAccoridan(data);     
-                }      
+                    data.sort((a, b) => a.requestId - b.requestId);
+                    if (window.innerWidth < 900) {
+                        renderMobileAccoridan(data);
+                    } else {
+                        renderDesktopTable(data, statusID);
+                    }
+                }
             },
             error: function () {
                 alert("Error while fetching Data");
             }
-
+    
         });
     }
 
@@ -92,7 +96,7 @@ $(document).ready(function () {
         });
         $('#request-table thead').append(headerRow);
         data.forEach(function (request, index) {
-            var newRow = $('<tr>').attr('data-request-type-id', request.requestTyepid);
+            var newRow = $('<tr class="data-row">').attr('data-request-type-id', request.requestTyepid);
             var newAcordian = $('<div class="accordion-item">');
 
 
@@ -159,18 +163,19 @@ $(document).ready(function () {
                     $(this).css('background-color', colors[requestTypeId - 1]);
                 }
             });
+            
+            setupPagination(10);
+
 
         });
     }
 
     function renderMobileAccoridan(data) {
+        $(".data-row").remove();
         var accordion = $('#RequestAccordion');
-        data.forEach(function (request, index) {
-            var newAcordian = $('<div class="accordion-item">');
-            var dropdownMenu = $('<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">');
-           
+        data.forEach(function (request, index) {           
             var panelId = 'panel' + index;
-            var panel = $('<div class="accordion-item">').attr('data-request-type-id', request.requestTyepid);;
+            var panel = $('<div class="accordion-item data-row">').attr('data-request-type-id', request.requestTyepid);;
             var header = $('<h2 class="accordion-header" id="heading' + panelId + '">');
             var body = $('<div id="' + panelId + '" class="accordion-collapse collapse">');
             var actions = '';
@@ -235,7 +240,7 @@ $(document).ready(function () {
 
             var header = $(`<button class="accordion-button bg-info-subtle border-bottom border-1 border-secondary-subtle " type="button" data-bs-toggle="collapse" data-bs-target="#${panelId}" aria-expanded="true" aria-controls="${panelId}">`);
 
-            header.append(`<div class="w-100 gap-2 border-5 pt-3 pb-5 px-4"><div class="d-flex justify-content-between mb-3"><span class="mobilesearch fs-5 ">${request.patientName}</span><div class="d-flex align-items-center"><div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: ${bgColor};"></div><span class="fs-5">${requestTypeText}</span></div></div><div class="d-flex justify-content-between "><div class=""><span class="fs-5">${request.address}</span></div><div class="btn btn-transparent border border-1 border-info text-info rounded-5">Map Location</div></div></div>`);
+            header.append(`<div class="w-100 gap-2 border-5 pt-3 pb-5 px-4"><div class="d-flex justify-content-between mb-3"><span class="mobilesearch fs-5 ">${request.patientName}</span><div class="d-flex align-items-center"><div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: ${bgColor};"></div><span class="fs-5">${requestTypeText}</span></div></div><div class="d-flex justify-content-between "><div class=""><span class="fs-5">${request.address}</span></div><div class="btn btn-transparent btn-sm border border-1 border-info text-info rounded-5">Map Location</div></div></div>`);
 
             var accordionBody = `<div class="accordion-body p-0"><div class="d-flex flex-column gap-2 bg-info-subtle mb-2 py-3 px-4 "><div class="text-end">${viewCase}</div><div><i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Date of Birth: ${request.dateOfBirth}</span></div><div><i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Email: ${request.patientEmail}</span></div><div><i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Phone: ${request.patientPhoneNumber}</span></div><div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Requestor: ${request.requesterName}</span></div>`;
 
@@ -255,6 +260,7 @@ $(document).ready(function () {
             panel.append(body);
             accordion.append(panel);
 
+            setupPagination(5);
 
         });
     }
@@ -280,6 +286,8 @@ $(document).ready(function () {
 
     var lastStatusID = localStorage.getItem("lastStatusID")
     reloadDataTable(lastStatusID || 1);
+
+
 
 
     $.ajax({
@@ -396,23 +404,106 @@ function handleStateClick(state) {
 
 
     /*Modal Click open the Modal  */
-
-
     $(document).on('click', '.open-modal', function () {
         var modalId = $(this).data('modal-id');
-        var requestId = $(this).data('request-id'); // Get the requestId from the clicked button
-
+        var requestId = $(this).data('request-id');
+        var data = getRequest(requestId);
+        var patientName = data.firstname + " , " + data.lastname;
         // Update the modal body to display the requestId
-        $('#' + modalId).find('#requestIdDisplay').text(requestId);
-
-
+        $('#' + modalId).find('#requestIdDisplay').prop("value" , requestId);
+        $('#' + modalId).find('#patientName').text(patientName);
         // Show the modal
         $('#' + modalId).modal('show');
     });
 
 
+    $('.close').on('click' , function (){
+        $('#assignCaseModal').modal('hide');
+    })
+
+    function getRequest(requestId) {
+        var requestdata;
+        $.ajax({
+            url: '/Admin/GetRequest',
+            type: "GET",
+            data: { requestId: requestId }, 
+            async: false, // synchronous request to ensure data is returned before proceding 
+            success: function (data) {
+                    requestdata =  data;
+            },
+            error: function (e) {
+                alert("Error while fetching Data");
+            }
+        });
+        return requestdata;
+    }
 
 });
+
+
+
+
+/** For Modal of the request*/
+
+
+$(document).ready(function () {
+
+
+    /* Block Request Ajax Call */
+    $('#blockRequest').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData();
+        formData.append('requestId', $('#requestIdDisplay').val());
+        formData.append('reason', $('#reasonForBlock').val());
+
+        $.ajax({
+            url: "/BlockPatient",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                Swal.fire("Saved!", "", "success").then(function () {
+                    location.reload();
+                });
+            },
+            error: function (xhr, status, error) {
+                Swal.fire("Error While Save Changes!", "", "error");
+            }
+        });
+    })
+
+    /* Clear Case Ajax Call*/
+    $('#cancleCase').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData();
+        formData.append('requestId', $('#requestIdDisplay').val());
+        formData.append('reason', $('#reasonForCancle').val());
+        formData.append('notes', $('#additionalNotes').val());
+
+
+        $.ajax({
+            url: "/CancleCase",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                Swal.fire("Saved!", "", "success").then(function () {
+                    location.reload();
+                });
+            },
+            error: function (xhr, status, error) {
+                Swal.fire("Error While Save Changes!", "", "error");
+            }
+        });
+    })
+
+
+});
+
 
 function Search() {
     var input, filter, table, tr, td, i, txtValue;
@@ -433,5 +524,84 @@ function Search() {
             }
         }
     }
+}
+
+function setupPagination(items) {
+    const itemsPerPage = items;
+    let currentPage = 1;
+    let totalPages = Math.ceil($('.data-row').length / itemsPerPage);
+    const maxPageButtons = 3;
+    let startPage = 1;
+
+    function showRowsForPage(page) {
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        $('.data-row').hide();
+        $('.data-row').slice(startIndex, endIndex).show();
+    }
+
+    function generatePaginationButtons() {
+        $('#page-buttons').empty(); // Clear existing buttons
+        let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+        for (let i = startPage; i <= endPage; i++) {
+            const buttonClass = (i === currentPage) ? 'page-button current-page' : 'page-button';
+            $('#page-buttons').append(`<button class="${buttonClass}" data-page="${i}">${i}</button>`);
+        }
+    }
+
+    $('#next-button').on('click', function () {
+        if (currentPage < totalPages) {
+            currentPage++;
+            startPage = Math.max(currentPage - Math.floor(maxPageButtons / 2), 1);
+            showRowsForPage(currentPage);
+            generatePaginationButtons();
+            updateButtonStates();
+        }
+    });
+
+    $('#prev-button').on('click', function () {
+        if (currentPage > 1) {
+            currentPage--;
+            startPage = Math.max(currentPage - Math.floor(maxPageButtons / 2), 1);
+            showRowsForPage(currentPage);
+            generatePaginationButtons();
+            updateButtonStates();
+        }
+    });
+
+    $('#first-button').on('click', function () {
+        currentPage = 1;
+        startPage = 1;
+        showRowsForPage(currentPage);
+        generatePaginationButtons();
+        updateButtonStates();
+    });
+
+    $('#last-button').on('click', function () {
+        currentPage = totalPages;
+        startPage = Math.max(totalPages - maxPageButtons + 1, 1);
+        showRowsForPage(currentPage);
+        generatePaginationButtons();
+        updateButtonStates();
+    });
+
+    $(document).on('click', '.page-button', function () {
+        const page = $(this).data('page');
+        currentPage = page;
+        showRowsForPage(currentPage);
+        generatePaginationButtons();
+        updateButtonStates();
+    });
+
+    // Function to update button states
+    function updateButtonStates() {
+        $('#prev-button').prop('disabled', currentPage === 1);
+        $('#next-button').prop('disabled', currentPage === totalPages);
+    }
+
+    // Initialize page with first set of rows and pagination buttons
+    showRowsForPage(currentPage);
+    generatePaginationButtons();
+    updateButtonStates();
 }
 

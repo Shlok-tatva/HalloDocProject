@@ -71,7 +71,6 @@ input#file {
 
 .btn-outline-info {
     border-width: 2px !important;
-    font-weight: 800 !important;
 }
 
 .hover_primary:hover {
@@ -122,6 +121,15 @@ hr{
 .accordion-button:focus {
     box-shadow: none;
 }
+
+.accordion-button::after{
+    width: 0px !important;
+}
+
+.dropdown-item {
+    cursor: pointer !important;
+}
+
 
 @media (max-width:530px) {
     .mobile_d_none {
