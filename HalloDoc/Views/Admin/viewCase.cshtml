@@ -1,4 +1,4 @@
-﻿@model HalloDoc_BAL.ViewModel.Models.ViewCase;
+﻿@model HalloDoc_BAL.ViewModel.Admin.ViewCaseView;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -36,6 +36,7 @@
         })
 
     </script>
+    <script src="~/js/AdminActionModal.js"></script>
 }
 
 <partial name="_NavBar" />
@@ -194,6 +195,10 @@
                 </div>
 
                 <div class="my-3 d-flex justify-content-end">
+                    @if (@Model.statusId == 1)
+                    {
+                        <a class="btn btn-success text-white mx-2 open-modal" data-option="Assign Case" data-request-id="@Model.requestId" data-toggle="modal" data-modal-id="assignCaseModal">Assign Case</a>
+                    }
                     <a href="./viewNotes/?request=@Model.requestId" class="btn btn-info text-white hover_primary mx-2">View Notes</a>
                     <button class="btn btn-danger hover_white"> Cancle</button>
                 </div>
@@ -202,3 +207,8 @@
         </div>
     </div>
 </div>
+
+@if (@Model.statusId == 1)
+{
+<partial name="_assignCase" model="Model.ListofRegion" />
+}

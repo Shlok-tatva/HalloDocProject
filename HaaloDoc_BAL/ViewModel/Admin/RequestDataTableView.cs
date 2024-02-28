@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HalloDoc_BAL.ViewModel.Models
+namespace HalloDoc_BAL.ViewModel.Admin
 {
     public class RequestDataTableView
     {

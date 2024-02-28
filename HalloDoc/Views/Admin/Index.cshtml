@@ -1,4 +1,4 @@
-﻿@model List<HalloDoc_DAL.Models.Region>
+﻿@model HalloDoc_BAL.ViewModel.Admin.AdminDashboardView;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -6,6 +6,7 @@
 
 @section Scripts {
     <script src="./js/AdminDashboard.js"></script>
+    <script src="~/js/AdminActionModal.js"></script>
     <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
@@ -120,7 +121,7 @@
                 <div class="">
                     <select class="p-2 mt-3 px-4 form-control mb-3 w-100 " id="regionsearch">
                         <option value="0">All Region</option>
-                        @foreach (var region in Model)
+                        @foreach (var region in Model.regions)
                         {
                             <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
                         }
@@ -130,7 +131,7 @@
         </div>
 
         @*Filter Buttons *@
-        <div class="col-xl-6 d-flex flex-wrap justify-content-end">
+        <div class="col-xl-6 d-flex flex-wrap justify-content-end filterbuttons">
             <div class="d-flex align-items-center filter-btn">
                 <button class="btn border-0 border-black btn-all">All</button>
             </div>
@@ -188,6 +189,6 @@
 
 </div>
 
-<partial name="_assignCase" model="Model"></partial>
-<partial name="_blockCase" />
-<partial name="_cancleCase" />
+<partial name="_assignCase" model="Model.regions"></partial>
+<partial name="_blockCase"  />
+<partial name="_cancelCase" model="Model.casetags" />

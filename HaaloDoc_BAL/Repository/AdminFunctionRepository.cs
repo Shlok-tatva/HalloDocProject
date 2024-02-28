@@ -1,18 +1,33 @@
-﻿
-using HalloDoc_BAL.ViewModel.Models;
-using HalloDoc_BAL.Interface;
+﻿using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.DataContext;
 using HalloDoc_DAL.Models;
+using System.Transactions;
+using HalloDoc_BAL.ViewModel.Admin;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace HalloDoc_BAL.Repository
 {
     public class AdminFunctionRepository : IAdminFunctionRepository
     {
         private readonly ApplicationDbContext _context;
+        public IRequestRepository _requestRepository;
+        public IRequestClientRepository _requestClientRepository;
+        public IRequestNotesRepository  _requestNotesRepository;
 
-        public AdminFunctionRepository(ApplicationDbContext context)
+        public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository)
         {
             _context = context;
+            _requestRepository = requestRepository;
+            _requestClientRepository = requestClientRepository;
+            _requestNotesRepository = requestNotesRepository;
+        }
+
+        public AdminDashboardView GetAdminDashboardView()
+        {
+            AdminDashboardView view = new AdminDashboardView();
+            view.regions = GetAllReagion();
+            view.casetags = GetAllCaseTag();
+            return view;
         }
 
         public IEnumerable<RequestDataTableView> GetRequestsByStatusID(int statusId)
@@ -36,7 +51,7 @@ namespace HalloDoc_BAL.Repository
                                           Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
                                           RequesterPhoneNumber = r.Phonenumber,
                                           status = r.Status,
-                                          MenuOptions = GetMenuOptionsForStatus(statusId), 
+                                          MenuOptions = GetMenuOptionsForStatus(statusId),
                                           RequestTyepid = r.Requesttypeid
                                       };
 
@@ -64,7 +79,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-
+        
         public int[] GetStatus(int statusId)
         {
             switch (statusId)
@@ -74,11 +89,11 @@ namespace HalloDoc_BAL.Repository
                 case 2:
                     return new int[] { 2 };
                 case 3:
-                    return new int[] { 4, 5};
+                    return new int[] { 4, 5 };
                 case 4:
                     return new int[] { 6 };
                 case 5:
-                    return new int[] { 3, 7 , 8 };
+                    return new int[] { 3, 7, 8 };
                 case 6:
                     return new int[] { 9 };
                 default:
@@ -87,12 +102,13 @@ namespace HalloDoc_BAL.Repository
         }
 
 
-        public ViewCase GetViewCase(int requestId)
+        public ViewCaseView GetViewCase(int requestId)
         {
             var request = _context.Requests.FirstOrDefault(r => r.Requestid == requestId);
             var requestClient = _context.Requestclients.FirstOrDefault(r => r.Requestid == requestId);
+            List<Region> listofRegion = _context.Regions.ToList();
 
-            var view = new ViewCase
+            var view = new ViewCaseView
             {
                 requestId = request.Requestid,
                 firstName = requestClient.Firstname,
@@ -108,23 +124,131 @@ namespace HalloDoc_BAL.Repository
                 requesterlastName = request.Lastname,
                 requesterEmail = request.Email,
                 requesterPhoneNumber = request.Phonenumber,
-                requesttypeId = request.Requesttypeid
+                requesttypeId = request.Requesttypeid,
+                ListofRegion = listofRegion,
             };
             return view;
+        }
+
+        public ViewNotesView GetViewNotesView(int requestId)
+        {
+            ViewNotesView view = new ViewNotesView();
+            Requestnote note = _requestNotesRepository.Get(requestId);
+
+            if (note == null)
+            {
+                note = new Requestnote();
+                note.Requestid = requestId;
+                note.Adminnotes = "-";
+                note.Physiciannotes = "-";
+            }
+            view.requestId = requestId;
+            view.adminNote = note.Adminnotes;
+            view.physicianNote = note.Physiciannotes;
+            
+
+            List<Requeststatuslog> requeststatuslogs = _context.Requeststatuslogs.Where(r => r.Requestid == requestId).ToList();
+
+            if (requeststatuslogs.Count > 0)
+            { 
+                List<string> transferNotes = new List<string>();
+                requeststatuslogs.Sort((a, b) => b.Requeststatuslogid - a.Requeststatuslogid);
+
+                foreach (var item in requeststatuslogs)
+                {
+                    if(item.Adminid != null && item.Physicianid == null)
+                    {
+                    transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                    }
+                    else if (item.Adminid == null && item.Physicianid != null)
+                    {
+                        transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                    }
+                }
+                view.transferNotes = transferNotes;
+            }
+            else
+            {
+                view.transferNotes = null;
+            }
+     
+            return view;
+
         }
 
 
         public List<Region> GetAllReagion()
         {
             return _context.Regions.ToList();
-
         }
-
-        public void blockRequst(Blockrequest request)
+        public List<Casetag> GetAllCaseTag()
         {
-            _context.Blockrequests.Add(request);
-            _context.SaveChanges();
+            return _context.Casetags.ToList();
         }
 
+        public void blockRequst(int requestId, string reason , int adminId)
+        {
+            using (var transaction = new TransactionScope())
+            {
+
+                try
+                {
+                    Request request = _requestRepository.Get(requestId);
+                    Requestclient rc = _requestClientRepository.Get(requestId);
+
+                    request.Status = 10; // it is for Block the request
+                    _requestRepository.Update(request);
+                    Blockrequest blockrequest = new Blockrequest();
+                    blockrequest.Requestid = requestId.ToString();
+                    blockrequest.Reason = reason;
+                    blockrequest.Phonenumber = rc.Phonenumber;
+                    blockrequest.Email = rc.Email;
+                    blockrequest.Createddate = DateTime.Now;
+                    _context.Blockrequests.Add(blockrequest);
+                    _context.SaveChanges();
+
+                    Requeststatuslog requestlog = new Requeststatuslog();
+                    requestlog.Requestid = requestId;
+                    requestlog.Status = 10;
+                    requestlog.Adminid = adminId;
+                    requestlog.Notes = reason;
+                    requestlog.Createddate = DateTime.Now;
+                    requestlog.Transtoadmin = false;
+                    _context.Requeststatuslogs.Add(requestlog);
+                    _context.SaveChanges();
+
+                    transaction.Complete();
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+
+        public void cancelCase(int requestId , int adminId , string reason , string note)
+        {
+            using(var transaction = new TransactionScope())
+            {
+
+            Request request = _requestRepository.Get(requestId);
+            request.Status = 3;
+            request.Casetag = reason;
+            _requestRepository.Update(request);
+
+            Requeststatuslog requestlog = new Requeststatuslog();
+                requestlog.Requestid = requestId;
+                requestlog.Status = 3;
+                requestlog.Adminid = adminId;
+                requestlog.Notes = reason + "(" + note + ")";
+                requestlog.Createddate = DateTime.Now;
+                requestlog.Transtoadmin = false;
+                _context.Requeststatuslogs.Add(requestlog);
+                _context.SaveChanges();
+
+                transaction.Complete();
+            }
+
+        }
     }
 }

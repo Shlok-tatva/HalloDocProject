@@ -1,9 +1,10 @@
 ﻿
+using HalloDoc_DAL.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace HalloDoc_BAL.ViewModel.Models
+namespace HalloDoc_BAL.ViewModel.Admin
 {
-    public class ViewCase
+    public class ViewCaseView
     {
         [Required]
         public int requestId { get; set; }
@@ -33,6 +34,8 @@ namespace HalloDoc_BAL.ViewModel.Models
         public string phoneNumber { get; set; }
 
         public int? Region { get; set; }
+
+        public List<Region> ListofRegion { get; set; }
 
         [Required]
         public string Address { get; set; }

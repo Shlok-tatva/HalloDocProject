@@ -14,6 +14,8 @@
                 <p class="notesText">To assign this request, search and select another Physician.</p>
                 <div>
 
+                    <input type="text" id="requestIdassignCase"></input>
+
                     <div class="form-floating">
                         <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
                             @foreach (var region in Model)
@@ -35,11 +37,10 @@
                         </select>
                     </div>
                 </div>
-                @* <p>Request ID: <span id="requestIdDisplay"></span></p> *@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-info text-white btn-lg">Submit</button>
-                <button type="button" class="btn btn-outline-info hover_white fw-100 btn-lg"
+                <button type="button" class="btn btn-outline-info hover_white fw-100 btn-lg close"
                         data-dismiss="modal">
                     Close
                 </button>

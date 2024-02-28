@@ -1,11 +1,12 @@
 ﻿using HalloDoc.Models;
 
 using HalloDoc_BAL.Interface;
-using HalloDoc_BAL.ViewModel.Models;
+using HalloDoc_BAL.Repository;
+using HalloDoc_BAL.ViewModel.Admin;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+
 using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
@@ -31,10 +32,9 @@ namespace HalloDocAdmin.Controllers
         public IActionResult Index()
         {
             ViewData["ViewName"] = "Dashboard";
-            var regions = _adminFunctionRepository.GetAllReagion();
-            ViewBag.username = "Shlok Jadeja";
+            AdminDashboardView view = _adminFunctionRepository.GetAdminDashboardView();
 
-            return View(regions);
+            return View(view);
         }
 
         [HttpGet]
@@ -70,7 +70,7 @@ namespace HalloDocAdmin.Controllers
         public IActionResult ViewCase()
         {
             int requestId = Int32.Parse(Request.Query["request"]);
-            ViewCase view = _adminFunctionRepository.GetViewCase(requestId);
+            ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
             return View(view);
         }
 
@@ -94,13 +94,9 @@ namespace HalloDocAdmin.Controllers
         public IActionResult ViewNotes()
         {
             int requestId = Int32.Parse(Request.Query["request"]);
-            Requestnote note = _requestNotesRepository.Get(requestId);
-            if(note == null)
-            {
-                note = new Requestnote();
-            }
+            ViewNotesView view = _adminFunctionRepository.GetViewNotesView(requestId);
             ViewBag.requestId = requestId;
-            return View(note);
+            return View(view);
         }
 
         [HttpPost("UpdateNotes")]
@@ -135,43 +131,33 @@ namespace HalloDocAdmin.Controllers
         }
 
         [HttpPost("BlockPatient")]
-        public IActionResult BlockPatient(int requestId , string reason)
+        public IActionResult BlockPatient(int requestId , string reason , int adminId)
         {
-            using (var transaction = new TransactionScope())
-            { 
-                
-                try
+            try
             {
-                Request request = _requestRepository.Get(requestId);
-                Requestclient rc = _requestClientRepository.Get(requestId);
-                request.Status = 10; // it is for Block the request
-                _requestRepository.Update(request);
-                Blockrequest blockrequest = new Blockrequest();
-                blockrequest.Requestid = requestId.ToString();
-                blockrequest.Reason = reason;
-                blockrequest.Phonenumber = rc.Phonenumber;
-                blockrequest.Email = rc.Email;
-                blockrequest.Createddate = DateTime.Now;
-                _adminFunctionRepository.blockRequst(blockrequest);
-                    transaction.Complete();
+                _adminFunctionRepository.blockRequst(requestId, reason , adminId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
 
-                    return Ok();
+                return NotFound();
+            }
+        }
+
+
+        [HttpPost("CancelCase")]
+        public IActionResult CancelCase(int requestId , int adminId , string reason , string notes)
+        {
+            try
+            {
+                _adminFunctionRepository.cancelCase(requestId, adminId, reason, notes); 
+                return Ok();
+
             }
             catch(Exception ex)
             {
                 return NotFound();
-            }
-        }
-        }
-
-
-        [HttpPost("CancleCase")]
-        public IActionResult CancleRequest(int requestId , string reason , string notes)
-        {
-            using(var transaction = new TransactionScope())
-            {
-               
-                return Ok();
             }
         }
     }

@@ -1,19 +1,18 @@
-﻿
-using HalloDoc_BAL.ViewModel.Models;
+﻿using HalloDoc_BAL.ViewModel.Admin;
 using HalloDoc_DAL.Models;
 
-namespace HalloDoc_BAL.Interface
+namespace HalloDoc_BAL.Repository
 {
     public interface IAdminFunctionRepository
     {
+        void blockRequst(int requestId, string reason , int adminId);
+        AdminDashboardView GetAdminDashboardView();
+        List<Casetag> GetAllCaseTag();
+        List<Region> GetAllReagion();
         IEnumerable<RequestDataTableView> GetRequestsByStatusID(int statusId);
-        public int[] GetStatus(int statusId);
-
-        public ViewCase GetViewCase(int requestId);
-
-        public List<Region> GetAllReagion();
-
-        public void blockRequst(Blockrequest request);
-
+        int[] GetStatus(int statusId);
+        ViewCaseView GetViewCase(int requestId);
+        ViewNotesView GetViewNotesView(int requestId);
+        public void cancelCase(int requestId, int adminId, string reason, string note);
     }
 }
