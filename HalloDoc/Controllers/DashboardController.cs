@@ -19,10 +19,11 @@ namespace HalloDoc.Controllers
         private readonly IRequestBusinessRepository _requestbusinessrepo;
         private readonly IRequestwisefileRepository _requestwisefilerepo;
         private readonly IPatientFunctionRepository _patientFuncrepo;
+        private readonly ICommonFunctionRepository _commonFunctionrepo;
 
 
 
-        public DashboardController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo , IPatientFunctionRepository patientFuncrepo)
+        public DashboardController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo , IPatientFunctionRepository patientFuncrepo, ICommonFunctionRepository commonFunctionrepo)
         {
             _aspnetuserrepo = aspnetuser;
             _requestclientrepo = requestclient;
@@ -34,6 +35,7 @@ namespace HalloDoc.Controllers
             _requestbusinessrepo = requestbusinessrepo;
             _requestwisefilerepo = requestwisefilerepo;
             _patientFuncrepo = patientFuncrepo;
+            _commonFunctionrepo = commonFunctionrepo;
         }
 
         public IActionResult Index()
@@ -113,13 +115,11 @@ namespace HalloDoc.Controllers
             return File(fileBytes, "application/octet-stream", fileName);
         }
 
-
-        [HttpPost("UploadFile")]
         public IActionResult UploadFile(IFormFile file, int requestId)
         {
             try
             {  
-                    HandleFileUpload(file, requestId);
+                    _commonFunctionrepo.HandleFileUpload(file, requestId , null);
                     return Ok(new { success = true });            
             }
             catch (Exception ex)
@@ -128,6 +128,8 @@ namespace HalloDoc.Controllers
                 return BadRequest(new { success = false, message = "An error occurred while Uploading the file" });
             }
         }
+
+
 
         public IActionResult Profile(UserDataviewModel userData)
         {
@@ -256,7 +258,7 @@ namespace HalloDoc.Controllers
 
                     if (formData.UploadFile != null)
                     {
-                        HandleFileUpload(formData.UploadFile, request.Requestid);
+                        _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid , null);
                     }
 
                     requestClient.Notes = formData.Symptoms;
@@ -293,30 +295,6 @@ namespace HalloDoc.Controllers
             }
         }
 
-        
-
-        private void HandleFileUpload(IFormFile UploadFile, int requestId)
-        {
-            var requestwisefile = new Requestwisefile();
-            string FilePath = "wwwroot\\Upload\\" + requestId;
-            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            string fileNameWithPath = Path.Combine(path, UploadFile.FileName);
-            string UploadImage = "~" + FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + UploadFile.FileName;
-
-            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-            {
-                UploadFile.CopyTo(stream);
-            }
-
-            requestwisefile.Requestid = requestId;
-            requestwisefile.Filename = UploadImage;
-            requestwisefile.Createddate = DateTime.Now;
-            _requestwisefilerepo.Add(requestwisefile);
-        }
 
         private string GetUsernameFromEmail(string email)
         {

@@ -18,15 +18,17 @@ namespace HalloDocAdmin.Controllers
         private readonly IRequestClientRepository _requestClientRepository;
         private readonly IRequestNotesRepository _requestNotesRepository;
         private readonly IAdminFunctionRepository _adminFunctionRepository;
+        private readonly ICommonFunctionRepository _commonFunctionrepo;
 
 
-        public AdminController(ILogger<AdminController> logger , IRequestRepository requestRepository, IRequestClientRepository requestClientRepository , IAdminFunctionRepository adminFunctionRepository , IRequestNotesRepository requestNotesRepository)
+        public AdminController(ILogger<AdminController> logger, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IAdminFunctionRepository adminFunctionRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo)
         {
             _logger = logger;
             _requestRepository = requestRepository;
             _requestClientRepository = requestClientRepository;
             _adminFunctionRepository = adminFunctionRepository;
             _requestNotesRepository = requestNotesRepository;
+            _commonFunctionrepo = commonFunctionrepo;
         }
 
         public IActionResult Index()
@@ -159,6 +161,82 @@ namespace HalloDocAdmin.Controllers
             {
                 return NotFound();
             }
+        }
+
+
+          public IActionResult ViewUpload()
+          {
+            int requestId = Int32.Parse(Request.Query["request"]);
+            Request request = _requestRepository.Get(requestId);
+
+            List<ViewUploadView> documetns =  _adminFunctionRepository.GetuploadedDocuments(requestId);
+            ViewBag.requestId = requestId;
+            ViewBag.Username = request.Firstname + " " + request.Lastname;
+            return View(documetns);
+          }
+
+        [HttpPost("UploadFile")]
+        public IActionResult UploadFile(IFormFile file, int requestId)
+        {
+            int adminId = 4;
+
+            try
+            {
+                _commonFunctionrepo.HandleFileUpload(file, requestId , adminId);
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return BadRequest(new { success = false, message = "An error occurred while Uploading the file" });
+            }
+        }
+
+        public IActionResult DownloadFile(string filePath)
+        {
+            var physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('~', '/'));
+            // Check if the file exists
+            if (!System.IO.File.Exists(physicalPath))
+            {
+                return NotFound(); // Return 404 Not Found if the file does not exist
+            }
+
+            string fileName = Path.GetFileName(filePath);
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(physicalPath);
+            return File(fileBytes, "application/octet-stream", fileName);
+        }
+
+        public IActionResult DeleteFile(string filePath , int fileId)
+        {
+            var physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('~', '/'));
+
+            if (!System.IO.File.Exists(physicalPath))
+            {
+                return NotFound();
+            }
+            try
+            {
+                System.IO.File.Delete(physicalPath);
+                _adminFunctionRepository.DeletefileFromDatabase(fileId);
+                
+                return Ok(); 
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, $"An error occurred while deleting the file: {ex.Message}");
+            }
+        }
+
+        public IActionResult SendfilesonMail(string receverEmail , string[] filePaths)
+        {
+            var title = "Files attachment below";
+            var message = "In this mail you receive you file as a attachment";
+
+            _adminFunctionRepository.SendEmail("shlok.jadeja@etatvasoft.com", title, message, filePaths);
+
+            return Ok();
         }
     }
 }

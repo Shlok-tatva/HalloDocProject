@@ -4,6 +4,8 @@ using HalloDoc_DAL.Models;
 using System.Transactions;
 using HalloDoc_BAL.ViewModel.Admin;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Net.Mail;
+using System.Net;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -156,13 +158,25 @@ namespace HalloDoc_BAL.Repository
 
                 foreach (var item in requeststatuslogs)
                 {
+                    if(item.Status == 3 && item.Adminid != null)
+                    {
+                        view.adminCancelationNote = item.Notes;
+                    }
+                    else if(item.Status == 3 && item.Physicianid != null)
+                    {
+                        view.physicianCancelationNote = item.Notes;
+                    }
+                    else
+                    {
                     if(item.Adminid != null && item.Physicianid == null)
                     {
                     transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
                     }
                     else if (item.Adminid == null && item.Physicianid != null)
                     {
-                        transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                    transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                    }
+
                     }
                 }
                 view.transferNotes = transferNotes;
@@ -249,6 +263,90 @@ namespace HalloDoc_BAL.Repository
                 transaction.Complete();
             }
 
+        }
+
+        public List<ViewUploadView> GetuploadedDocuments(int requestId)
+        {
+            var requestwisefiles = from requestFile in _context.Requestwisefiles
+                                   where requestFile.Requestid == requestId
+                                   select new ViewUploadView
+                                   {
+                                       Requestid = requestId,
+                                       fileId = requestFile.Requestwisefileid,
+                                       uploadDate = requestFile.Createddate,
+                                       UploadImage = requestFile.Filename,
+                                       fileName = Path.GetFileName(requestFile.Filename),
+                                   };
+
+            return requestwisefiles.ToList();
+        }
+
+        public void DeletefileFromDatabase(int fileId)
+        {
+            try
+            {
+                Requestwisefile file = _context.Requestwisefiles.FirstOrDefault(x => x.Requestwisefileid == fileId);
+
+                if (file != null)
+                {
+                _context.Requestwisefiles.Remove(file);
+                _context.SaveChanges();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
+        public void SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null)
+        {
+            try
+            {
+                // Configure SMTP client
+                using (SmtpClient smtpClient = new SmtpClient("mail.etatvasoft.com"))
+                {
+                    var subject = Title;
+                    var emailBody = Message;
+                    smtpClient.UseDefaultCredentials = false;
+                    smtpClient.Credentials = new NetworkCredential("shlok.jadeja@etatvasoft.com", "Shlok@#177");
+                    smtpClient.Port = 587;
+                    smtpClient.EnableSsl = true;
+
+                    // Construct the email message
+                    using (MailMessage mailMessage = new MailMessage())
+                    {
+                        mailMessage.From = new MailAddress("shlok.jadeja@etatvasoft.com");
+                        mailMessage.To.Add(toEmail);
+                        mailMessage.Subject = subject;
+                        mailMessage.Body = emailBody;
+                        mailMessage.IsBodyHtml = true;
+
+                        // Attach files
+                        if (attachmentFilePaths != null && attachmentFilePaths.Length > 0)
+                        {
+                            foreach (string filePath in attachmentFilePaths)
+                            {
+                                if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+                                {
+                                    Attachment attachment = new Attachment(filePath);
+                                    mailMessage.Attachments.Add(attachment);
+                                }
+                            }
+                        }
+
+                        // Send the email
+                        smtpClient.Send(mailMessage);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception, log error, etc.
+                throw new ApplicationException("Failed to send email", ex);
+            }
         }
     }
 }

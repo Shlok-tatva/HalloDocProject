@@ -30,11 +30,12 @@ namespace HelloDoc.Controllers
         private readonly IRequestBusinessRepository _requestbusinessrepo;
         private readonly IRequestwisefileRepository _requestwisefilerepo;
         private readonly IPatientFunctionRepository _patientFuncrepo;
+        private readonly ICommonFunctionRepository _commonFunctionrepo;
 
 
 
 
-        public PatientController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo, IPatientFunctionRepository patientFuncrepo)
+        public PatientController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo, IPatientFunctionRepository patientFuncrepo, ICommonFunctionRepository commonFunctionrepo)
         {
             _aspnetuserrepo = aspnetuser;
             _requestclientrepo = requestclient;
@@ -46,6 +47,7 @@ namespace HelloDoc.Controllers
             _requestbusinessrepo = requestbusinessrepo;
             _requestwisefilerepo = requestwisefilerepo;
             _patientFuncrepo = patientFuncrepo;
+            _commonFunctionrepo = commonFunctionrepo;
         }
 
         public IActionResult Index()
@@ -132,7 +134,7 @@ namespace HelloDoc.Controllers
 
                         if (formData.UploadFile != null)
                         {
-                            HandleFileUpload(formData.UploadFile , formData.UploadImage , request.Requestid);
+                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile , request.Requestid, null);
                         }
 
                         requestClient.Notes = formData.Symptoms;
@@ -216,7 +218,7 @@ namespace HelloDoc.Controllers
 
                         if (formData.UploadFile != null)
                         {
-                            HandleFileUpload(formData.UploadFile, formData.UploadImage, request.Requestid);
+                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid, null);
                         }
 
                         requestClient.Notes = formData.Symptoms;
@@ -540,30 +542,6 @@ namespace HelloDoc.Controllers
 
 
         }
-
-
-        private void HandleFileUpload (IFormFile UploadFile , String UploadImage , int requestId){
-            var requestwisefile = new Requestwisefile();
-                            string FilePath = "wwwroot\\Upload\\" + requestId;
-                            string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-
-                            if (!Directory.Exists(path))
-                                Directory.CreateDirectory(path);
-
-                            string fileNameWithPath = Path.Combine(path, UploadFile.FileName);
-                            UploadImage = "~" + FilePath.Replace("wwwroot\\Upload\\", "/Upload/") + "/" + UploadFile.FileName;
-
-                            using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-                            {
-                                UploadFile.CopyTo(stream);
-                            }
-
-                            requestwisefile.Requestid = requestId;
-                            requestwisefile.Filename = UploadImage;
-                            requestwisefile.Createddate = DateTime.Now;
-            _requestwisefilerepo.Add(requestwisefile);
-        }
-
 
     }
 }

@@ -14,5 +14,8 @@ namespace HalloDoc_BAL.Repository
         ViewCaseView GetViewCase(int requestId);
         ViewNotesView GetViewNotesView(int requestId);
         public void cancelCase(int requestId, int adminId, string reason, string note);
+        public List<ViewUploadView> GetuploadedDocuments(int requestId);
+        public void DeletefileFromDatabase(int fileId);
+        public void SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null);
     }
 }

@@ -1,0 +1,106 @@
+﻿@model List<HalloDoc_BAL.ViewModel.Admin.ViewUploadView>;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+        </script>
+        <script src="/js/AdminViewDocument.js"></script>
+}
+
+<partial name="_NavBar" />
+
+<div class=" mt-5 container m-auto">
+    <div class="mt-4 w-95 m-auto">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">Documents</h3>
+            <button class="btn btn-lg btn-outline-info hover_white ms-5" onclick="window.history.back()">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+        <div class="shadow p-3 mt-3 rounded">
+            <div class="text-secondary">
+                <span>Patient Name</span>
+                <h5 class="text-info fw-bold">@ViewBag.Username<span class="text-secondary fw-normal">(@ViewBag.requestId)</span> </h5>
+                <p class="pt-1">Check here for any files that you or the doctors of your subsequentts requestors have attached for you to review. </p>
+            </div>
+
+            <form id="uploadForm" method="post" enctype="multipart/form-data" class="d-flex justify-content-between">
+                <input type="text" value="@ViewBag.requestId" class="visually-hidden" id="requestId"></input>
+                <input type="file" name="file" id="file" class="border border-1">
+                <button type="submit" class="btn btn-info text-white rounded-end uploadfile">
+                    <span class="desktop_d_none">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </span><span class="mobile_d_none ">Upload File</span>
+                </button>
+            </form>
+
+            <div class="d-flex justify-content-between mt-5 mb-4 px-1">
+                <h5 class="fw-bold">Documents</h5>
+                <div>
+                <button class="btn btn-outline-info hover_white downloadAll">
+                    <span class="desktop_d_none"><i class="fa-solid fa-cloud-arrow-down"></i></span>
+                    <span class="mobile_d_none">Download All</span>
+                </button>
+                <button class="btn btn-outline-danger hover_white deleteAll">
+                    <span class="desktop_d_none"><i class="fa-solid fa-trash"></i></span>
+                    <span class="mobile_d_none ">Delete All</span>
+                </button>
+                <button class="btn btn-outline-info hover_white sendMail">
+                    <span class="desktop_d_none"><i class="fa-solid fa-paper-plane"></i></span>
+                    <span class="mobile_d_none ">Send Mail</span>
+                </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-scroll">
+
+                @{
+                    if(Model.Count > 0)
+                    {
+                        <table class="w-100 table" cellspacing="15" cellspadding="15">
+                            <thead>
+                                <tr class="table-light">
+                                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                    <th class="w-50">FileName</th>
+                                    <th class="w-50">Uploaded Date <i class="bi bi-arrow-down"></i></th>
+                                    <th class="w-10">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr>
+
+                                        <td><input type="checkbox" class="fileCheckbox"></td>
+                                        <td><img src="~/images/pdf.svg" width="20px" class="m-1" /> @item.fileName</td>
+                                        <td>@item.uploadDate.ToString()</td>
+                                        <td class="d-flex">
+                                            <button class="btn btn-outline-info download-btn mx-1 hover_white" data-file="@item.UploadImage"><i class="bi bi-cloud-arrow-down-fill"></i></button>
+                                            <button class="btn btn-outline-danger delete-btn" data-file="@item.UploadImage" data-fileid="@item.fileId"><i class="fa-solid fa-trash"></i></button>
+
+                                        </td>
+
+                                    </tr>
+
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center fs-4" role="alert">No files Uploaded by users</div>
+                    }
+                }
+
+               
+            </div>
+        </div>
+    </div>
+</div>

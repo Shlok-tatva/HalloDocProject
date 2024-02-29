@@ -26,23 +26,6 @@ $(document).ready(function () {
 
     })
 
-    function getRequest(requestId) {
-        var requestdata;
-        $.ajax({
-            url: '/Admin/GetRequest',
-            type: "GET",
-            data: { requestId: requestId },
-            async: false, // synchronous request to ensure data is returned before proceding 
-            success: function (data) {
-                requestdata = data;
-            },
-            error: function (e) {
-                alert("Error while fetching Data");
-            }
-        });
-        return requestdata;
-    }
-
     /* Block Request Ajax Call */
     $('#blockRequest').on('submit', function (e) {
         e.preventDefault();
@@ -87,15 +70,35 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                Swal.fire("Saved!", "", "success").then(function () {
-                    location.reload();
+                Swal.fire("Case Cancel Successfully!", "", "success").then(function () {
+                    window.location.reload();
                 });
             },
             error: function (xhr, status, error) {
-                Swal.fire("Error While Save Changes!", "", "error");
+                toastMixin.fire({
+                    animation: true,
+                    title: 'Error While Save Changes!',
+                    icon: 'error'
+                });
             }
         });
     })
 
+
+
+    var toastMixin = Swal.mixin({
+        toast: true,
+        icon: 'success',
+        title: 'General Title',
+        animation: false,
+        position: 'top-right',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
 
 });

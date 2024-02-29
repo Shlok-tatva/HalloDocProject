@@ -30,8 +30,6 @@
             downloadFile($(this).data('file'));
         })
 
-
-
         function downloadFile(filePath) {
 
             $.ajax({
@@ -67,6 +65,8 @@
             });
         }
 
+
+        
      
 
         $("#uploadForm").submit(function (e) {
@@ -89,9 +89,8 @@
             formData.append('file', $('#file')[0].files[0]);
             formData.append('requestId', $('#requestId').val());
             console.log($('#requestId').val());
-
             $.ajax({
-                url: '/uploadfile',
+                url: '/Dashboard/UploadFile',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -113,7 +112,7 @@
                 error: function () {
                     swal.fire({
                         title: "Oops..",
-                        text: "Oops! Something went wrong while Uplaoding your file. ☹️ Please Select One File ",
+                        text: "Oops! Something went wrong while Uplaoding your file.",
                         icon: "error",
                         showCancelButton: true,
                         showConfirmButton: false,

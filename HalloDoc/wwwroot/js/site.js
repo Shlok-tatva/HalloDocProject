@@ -87,3 +87,20 @@ inputFile.addEventListener("change", function () {
 
 });
 }
+
+function getRequest(requestId) {
+    var requestdata;
+    $.ajax({
+        url: '/Admin/GetRequest',
+        type: "GET",
+        data: { requestId: requestId },
+        async: false, // synchronous request to ensure data is returned before proceding 
+        success: function (data) {
+            requestdata = data;
+        },
+        error: function (e) {
+            alert("Error while fetching Data");
+        }
+    });
+    return requestdata;
+}

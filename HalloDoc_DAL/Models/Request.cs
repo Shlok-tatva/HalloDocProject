@@ -92,7 +92,7 @@ public partial class Request
     public string? Ip { get; set; }
 
     [Column("casetag")]
-    [StringLength(50)]
+    [StringLength(100)]
     public string? Casetag { get; set; }
 
     [Column("casetagphysician")]

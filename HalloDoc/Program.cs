@@ -20,6 +20,8 @@ builder.Services.AddScoped<IRequestwisefileRepository, RequestwisefileRepository
 builder.Services.AddScoped<IPatientFunctionRepository, PatientFunctionRepository>();
 builder.Services.AddScoped<IAdminFunctionRepository, AdminFunctionRepository>();
 builder.Services.AddScoped<IRequestNotesRepository, RequestNotesRepository>();
+builder.Services.AddScoped<ICommonFunctionRepository, CommonFunctionRepository>();
+
 
 
 builder.Services.AddSession(options =>

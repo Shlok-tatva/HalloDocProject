@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc_DAL.Models;
 
-[Keyless]
 [Table("casetag")]
 public partial class Casetag
 {
+    [Key]
     [Column("casetagid")]
-    public int? Casetagid { get; set; }
+    public int Casetagid { get; set; }
 
     [Column("name")]
-    [StringLength(50)]
+    [StringLength(100)]
     public string? Name { get; set; }
 }

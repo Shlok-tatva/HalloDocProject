@@ -13,6 +13,7 @@ html {
 }
 
 
+
 .theame_toggle_button {
     position: absolute !important;
     z-index: 5;
@@ -67,10 +68,6 @@ input#file {
 .notallowed {
     background-color: rgba(128, 128, 128, 0.089) !important;
     cursor: not-allowed;
-}
-
-.btn-outline-info {
-    border-width: 2px !important;
 }
 
 .hover_primary:hover {
@@ -136,13 +133,15 @@ hr{
 .popup {
     position: absolute;
     top: auto;
-    background: white;
+    left: auto;
+    right: auto;
     padding: 25px;
-    height: auto;
     width: 40%;
+    height: auto;
     z-index: 10;
+    color: black;
+    background-color: white;
     border-radius: 10px !important;
-
 }
 
 #overlay {
@@ -153,18 +152,19 @@ hr{
     background: #020202 !important;
     opacity: 0.1;
     border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(7.8px);
-    -webkit-backdrop-filter: blur(7.8px);
-    border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-@media (max-width:530px) {
+@media (max-width:590px) {
     .mobile_d_none {
         display: none;
     }
-
     .desktop_d_none {
         display: block !important;
+    }
+}
+
+@media (max-width:980px){
+    .popup{
+        width: 60%;
     }
 }

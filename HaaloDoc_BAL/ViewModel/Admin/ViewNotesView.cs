@@ -12,5 +12,9 @@ namespace HalloDoc_BAL.ViewModel.Admin
 
         public List<string> transferNotes { get;set;}
 
+        public string adminCancelationNote { get; set; }
+
+        public string physicianCancelationNote { get; set; }
+
     }
 }

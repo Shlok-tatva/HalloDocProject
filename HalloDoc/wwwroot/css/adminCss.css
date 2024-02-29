@@ -73,7 +73,7 @@
     background-color: dodgerblue;
 }
 
-table {
+#request-table {
     table-layout: fixed;
 }
 
@@ -456,6 +456,9 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .
 
 .accordian_d_block{
     display: none;
+}
+.w-95{
+    width:95% !important;
 }
 
 @media (max-width:900px) {

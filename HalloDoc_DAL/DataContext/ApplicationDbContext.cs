@@ -87,8 +87,8 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
-        => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=HelloDoc;User Id=postgres;Password=shlok123;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("User ID = postgres;Password=shlok123;Server=localhost;Port=5432;Database=HelloDoc;Integrated Security=true;Pooling=true;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -132,6 +132,13 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<Blockrequest>(entity =>
         {
             entity.HasKey(e => e.Blockrequestid).HasName("blockrequests_pkey");
+        });
+
+        modelBuilder.Entity<Casetag>(entity =>
+        {
+            entity.HasKey(e => e.Casetagid).HasName("casetag_pkey");
+
+            entity.Property(e => e.Casetagid).ValueGeneratedNever();
         });
 
         modelBuilder.Entity<Emaillog>(entity =>
@@ -278,8 +285,6 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("requestconcierge_pkey");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Concierge).WithMany(p => p.Requestconcierges)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("requestconcierge_conciergeid_fkey");
@@ -408,6 +413,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.HasOne(d => d.Region).WithMany(p => p.Users).HasConstraintName("User_regionid_fkey");
         });
+        modelBuilder.HasSequence("requestconcierge_id_seq");
         modelBuilder.HasSequence("requestnotes_id_seq");
         modelBuilder.HasSequence("user_id_seq");
 
