@@ -12,7 +12,9 @@ html {
     }
 }
 
-
+/*.form_content {
+    width: 75%;
+}*/
 
 .theame_toggle_button {
     position: absolute !important;
@@ -33,6 +35,11 @@ html {
     display: none;
 }
 
+input[type = "checkbox"]{
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
 input#file {
     width: 90.5% !important;
     height: 50px;
@@ -103,7 +110,7 @@ hr{
     border: 1px solid #01BBE7;
 }
 
-.viewCasebtn {  
+.viewCasebtn {
     position: relative;
     background-color: white;
     width: 108px !important;

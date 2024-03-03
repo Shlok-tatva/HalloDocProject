@@ -14,7 +14,7 @@ namespace HalloDoc_BAL.Repository
         private readonly ApplicationDbContext _context;
         public IRequestRepository _requestRepository;
         public IRequestClientRepository _requestClientRepository;
-        public IRequestNotesRepository  _requestNotesRepository;
+        public IRequestNotesRepository _requestNotesRepository;
 
         public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository)
         {
@@ -39,6 +39,10 @@ namespace HalloDoc_BAL.Repository
                                       join rc in _context.Requestclients.ToList()
                                       on r.Requestid equals rc.Requestid into rrc
                                       from rc in rrc.DefaultIfEmpty()
+                                      join p in _context.Physicians.ToList()
+                                      on r.Physicianid equals p.Physicianid into rp
+                                      from p in rp.DefaultIfEmpty()
+
                                       where statusIds.Contains(r.Status)
                                       select new RequestDataTableView
                                       {
@@ -47,6 +51,7 @@ namespace HalloDoc_BAL.Repository
                                           PatientEmail = rc.Email,
                                           RequesterEmail = r.Email,
                                           DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
+                                          PhysicianName = p != null ? p.Firstname + " " + p.Lastname : "",
                                           RequesterName = r.Firstname + " " + r.Lastname,
                                           RequestedDate = r.Createddate.ToString(),
                                           PatientPhoneNumber = rc.Phonenumber,
@@ -81,7 +86,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        
+
         public int[] GetStatus(int statusId)
         {
             switch (statusId)
@@ -147,35 +152,35 @@ namespace HalloDoc_BAL.Repository
             view.requestId = requestId;
             view.adminNote = note.Adminnotes;
             view.physicianNote = note.Physiciannotes;
-            
+
 
             List<Requeststatuslog> requeststatuslogs = _context.Requeststatuslogs.Where(r => r.Requestid == requestId).ToList();
 
             if (requeststatuslogs.Count > 0)
-            { 
+            {
                 List<string> transferNotes = new List<string>();
                 requeststatuslogs.Sort((a, b) => b.Requeststatuslogid - a.Requeststatuslogid);
 
                 foreach (var item in requeststatuslogs)
                 {
-                    if(item.Status == 3 && item.Adminid != null)
+                    if (item.Status == 3 && item.Adminid != null)
                     {
                         view.adminCancelationNote = item.Notes;
                     }
-                    else if(item.Status == 3 && item.Physicianid != null)
+                    else if (item.Status == 3 && item.Physicianid != null)
                     {
                         view.physicianCancelationNote = item.Notes;
                     }
                     else
                     {
-                    if(item.Adminid != null && item.Physicianid == null)
-                    {
-                    transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
-                    }
-                    else if (item.Adminid == null && item.Physicianid != null)
-                    {
-                    transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
-                    }
+                        if (item.Adminid != null && item.Physicianid == null)
+                        {
+                            transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                        }
+                        else if (item.Adminid == null && item.Physicianid != null)
+                        {
+                            transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                        }
 
                     }
                 }
@@ -185,7 +190,7 @@ namespace HalloDoc_BAL.Repository
             {
                 view.transferNotes = null;
             }
-     
+
             return view;
 
         }
@@ -200,7 +205,7 @@ namespace HalloDoc_BAL.Repository
             return _context.Casetags.ToList();
         }
 
-        public void blockRequst(int requestId, string reason , int adminId)
+        public void blockRequst(int requestId, string reason, int adminId)
         {
             using (var transaction = new TransactionScope())
             {
@@ -240,17 +245,17 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void cancelCase(int requestId , int adminId , string reason , string note)
+        public void cancelCase(int requestId, int adminId, string reason, string note)
         {
-            using(var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope())
             {
 
-            Request request = _requestRepository.Get(requestId);
-            request.Status = 3;
-            request.Casetag = reason;
-            _requestRepository.Update(request);
+                Request request = _requestRepository.Get(requestId);
+                request.Status = 3;
+                request.Casetag = reason;
+                _requestRepository.Update(request);
 
-            Requeststatuslog requestlog = new Requeststatuslog();
+                Requeststatuslog requestlog = new Requeststatuslog();
                 requestlog.Requestid = requestId;
                 requestlog.Status = 3;
                 requestlog.Adminid = adminId;
@@ -289,8 +294,8 @@ namespace HalloDoc_BAL.Repository
 
                 if (file != null)
                 {
-                _context.Requestwisefiles.Remove(file);
-                _context.SaveChanges();
+                    _context.Requestwisefiles.Remove(file);
+                    _context.SaveChanges();
                 }
 
             }
@@ -347,6 +352,73 @@ namespace HalloDoc_BAL.Repository
                 // Handle exception, log error, etc.
                 throw new ApplicationException("Failed to send email", ex);
             }
+        }
+
+        public void CreateProvider(CreateProviderView model, int[] selectedRegions)
+        {
+            model.regionOfservice = selectedRegions;
+
+            using (var transaction = new TransactionScope())
+            {
+                Aspnetuser aspnetuser = _context.Aspnetusers.FirstOrDefault(u => u.Email == model.email);
+                Physician physician = new Physician();
+                List<Physicianregion> physicianRegions = new List<Physicianregion>();
+
+                if (aspnetuser == null)
+                {
+                    aspnetuser = new Aspnetuser();
+                    Guid guid = Guid.NewGuid();
+                    string str = guid.ToString();
+                    string username = "MD." + model.firstName.Substring(0, 3) + "." + model.lastName.Substring(0, 2);
+
+                    aspnetuser.Id = str;
+                    aspnetuser.Username = username;
+                    aspnetuser.Email = model.email;
+                    aspnetuser.Phonenumber = model.phoneNumber;
+                    aspnetuser.Passwordhash = model.password;
+                    aspnetuser.Createddate = DateTime.Now;
+                    _context.Aspnetusers.Add(aspnetuser);
+                    _context.SaveChanges();
+
+                    physician.Email = model.email;
+                    physician.Aspnetuserid = aspnetuser.Id;
+                    physician.Firstname = model.firstName;
+                    physician.Lastname = model.lastName;
+                    physician.Mobile = model.phoneNumber;
+                    physician.Regionid = model.regionId;
+                    physician.Createdby = "fe51db26-1ba6-4880-a20a-36d10cece24e";
+                    physician.Createddate = DateTime.Now;
+                    physician.Status = 1;
+                    physician.Businessname = model.businessName;
+                    physician.Businesswebsite = model.businessWebsite;
+                    _context.Physicians.Add(physician);
+                    _context.SaveChanges();
+
+                    foreach (int regionId in selectedRegions)
+                    {
+                        physicianRegions.Add(new Physicianregion
+                        {
+                            Regionid = regionId,
+                            Physicianid = physician.Physicianid
+                        });
+                    }
+                    _context.Physicianregions.AddRange(physicianRegions);
+                    _context.SaveChanges();
+
+                    transaction.Complete();
+
+                }
+
+            }
+        }
+
+        public List<Physician> GetPhysiciansByRegion(int regionId)
+        {
+            var physicians = (from pr in _context.Physicianregions
+                              join p in _context.Physicians on pr.Physicianid equals p.Physicianid
+                              where pr.Regionid == regionId
+                              select p).ToList();
+            return physicians;
         }
     }
 }

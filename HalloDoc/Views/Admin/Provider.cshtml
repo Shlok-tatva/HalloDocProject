@@ -1,0 +1,82 @@
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+<partial name="_NavBar" />
+
+<div class="mt-5  m-auto mb-5 w-75">
+    <div class="mt-4 m-auto d-flex justify-content-between">
+        <div class="d-flex align-items-center justify-content-center">
+            <h3 class="me-2 mt-1 fw-bolder">Provider Information</h3>
+        </div>
+        <div>
+            <button class="btn btn-lg btn-outline-info hover_white ms-5" onclick="window.history.back()">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+
+    <div class="border-0 rounded-3 shadow my-2">
+
+        <div class="row px-4">
+
+            <div class="col-md-5">
+                <select class="p-2 mt-3 px-4 form-control mb-3 w-100 " id="regionsearch">
+                    <option value="0">All</option>
+                    <option value="0">All</option>
+                    <option value="0">All</option>
+                    <option value="0">All</option>
+                    <option value="0">All</option>
+                </select>
+            </div>
+
+            <div class="col-md-7 my-auto text-end">
+                <a href="/Admin/CreateProvider" class="btn btn-info text-white">Create provider Account</a>
+            </div>
+        </div>
+
+        <div>
+            <table class="w-100 overflow-scroll">
+                <thead >
+                    <tr>
+                    <th class="w-10">Stop <br /> Notification</th>
+                    <th class="w-25">Provider Name</th>
+                    <th class="w-10">Role</th>
+                    <th class="w-20">On Call Status</th>
+                    <th class="w-15">Status</th>
+                    <th class="w-25">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td class="p-3"> <input type="checkbox" name="" id=""></td>
+                        <td class="text-black">shlok Jadeja</td>
+                        <td class="text-black">Physician</td>
+                        <td class="text-black">Un avaible</td>
+                        <td class="text-black">Active</td>
+                        <td class="text-black"> <button class="btn btn-sm btn-outline-info">Contact</button> <button class="btn btn-sm btn-outline-info">edit</button> </td>
+                    </tr>
+
+                     <tr class="">
+                        <td class="p-3"> <input type="checkbox" name="" id=""></td>
+                        <td class="text-black">shlok Jadeja</td>
+                        <td class="text-black">Physician</td>
+                        <td class="text-black">Un avaible</td>
+                        <td class="text-black">Active</td>
+                        <td> <button class="btn btn-sm btn-outline-info">Contact</button> <button class="btn btn-sm btn-outline-info">edit</button> </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -59,9 +59,14 @@ $(document).ready(function () {
 
         var formData = new FormData();
         formData.append('requestId', $('#requestIdcanleCase').val());
+        console.log($('#requestIdcanleCase').val());
         formData.append('reason', $('#reasonForCancle').val());
-        formData.append('adminId', 4);
+        console.log($('#reasonForCancle').val());
+
+        formData.append('adminId', 1); // change to 4 for Company
         formData.append('notes', $('#additionalNotes').val());
+
+        debugger;
 
         $.ajax({
             url: "/CancelCase",
@@ -84,6 +89,41 @@ $(document).ready(function () {
         });
     })
 
+    /*Assign Case Ajax Call */
+
+    $('#assignCaseModal').on("submit", function (e) {
+        e.preventDefault();
+
+        debugger;
+        var formData = new FormData();
+        formData.append('requestId', $('#requestIdassignCase').val());
+        formData.append('physicianId', $('#physicianSelect').val());
+
+        console.log($('#requestIdassignCase').val());
+        console.log($('#physicianSelect').val());
+
+        $.ajax({
+            url: "/AssignCase",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                Swal.fire("Case Assign to Physician Successfully!", "", "success").then(function () {
+                    window.location.reload();
+                });
+            },
+            error: function (xhr, status, error) {
+                toastMixin.fire({
+                    animation: true,
+                    title: 'Error While assign Case to Physician',
+                    icon: 'error'
+                });
+            }
+        });
+
+
+    });
 
 
     var toastMixin = Swal.mixin({
@@ -102,3 +142,4 @@ $(document).ready(function () {
       });
 
 });
+

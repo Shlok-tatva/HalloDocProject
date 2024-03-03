@@ -25,6 +25,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required]
         public string DateOfBirth { get; set; }
 
+        public string PhysicianName {  get; set; }
+
         [Required]
         public string RequesterName { get; set; }
 

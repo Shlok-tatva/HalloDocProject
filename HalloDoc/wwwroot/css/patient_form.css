@@ -12,6 +12,7 @@ body {
         color: #01BBE7 !important;
     }
 
+
 .links a {
     text-decoration: none;
     color: #3a3a3a;
@@ -62,9 +63,7 @@ label {
     font-size: 15px !important;
 }
 
-.form_content {
-    width: 75%;
-}
+
 
 
 

@@ -1,6 +1,6 @@
 ﻿@model List<HalloDoc_DAL.Models.Region>;
 
-<div class="modal fade" id="assignCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+<form class="modal fade" id="assignCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content border-0">
@@ -17,7 +17,8 @@
                     <input type="text" id="requestIdassignCase"></input>
 
                     <div class="form-floating">
-                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+                        <select class="form-select" id="selectregion" aria-label="Floating label select example">
+                            <option value="Select Region" selected hidden>Select Region</option>
                             @foreach (var region in Model)
                             {
                                 <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
@@ -27,19 +28,15 @@
                     </div>
 
                     <div class="form-floating my-4">
-                        <select class="form-select pt-1" aria-label="Default select example">
+                        <select class="form-select pt-1" id="physicianSelect" aria-label="Default select example">
                             <option>Select Physician</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
+
                         </select>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-info text-white btn-lg">Submit</button>
+                <button type="submit" class="btn btn-info text-white btn-lg">Submit</button>
                 <button type="button" class="btn btn-outline-info hover_white fw-100 btn-lg close"
                         data-dismiss="modal">
                     Close
@@ -47,4 +44,4 @@
             </div>
         </div>
     </div>
-</div>
+</form>

@@ -2,7 +2,7 @@
     <div class="navbar pb-0">
         <div class="container-fluid border-bottom border-2">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
-                    aria-controls="navbarHeader" aria-expanded="true" aria-label="Toggle navigation">
+                aria-controls="navbarHeader" aria-expanded="true" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a href="#" class="navbar-brand d-flex align-items-center  ps-md-1 ps-lg-5  ">
@@ -12,7 +12,8 @@
                 <h6 class="mx-2 my-2 mobile_d_none">Welcome, <strong>@ViewBag.Username</strong></h6>
                 <form asp-action="Logout" method="post">
                     <button type="submit" class="btn btn-outline-info mx-2 hover_white">
-                        <strong><i class="bi bi-box-arrow-left fw-bolder"></i></strong>  <span class="mobile_d_none">Logout</span>
+                        <strong><i class="bi bi-box-arrow-left fw-bolder"></i></strong> <span
+                            class="mobile_d_none">Logout</span>
                     </button>
                 </form>
                 <button id="btnSwitch" class="btn btn-sm btn-outline-info hover_white" style="scale: 1.2;">
@@ -34,8 +35,16 @@
                 <div class="p-3 links @(ViewData["ViewName"] == "AdminProfile" ? "active" : "")">
                     <a asp-controller="Admin" asp-action="AdminProfile" class="text">My Profile</a>
                 </div>
-                <div class="p-3 links @(ViewData["ViewName"] == "Providers" ? "active" : "")">
-                    <a asp-controller="Admin" asp-action="Providers" class="text">Providers</a>
+                <div class="p-3 links dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Providers
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item @(ViewData["ViewName"] == "Providers" ? "active" : "")" asp-controller="Admin" asp-action="Provider">Provider</a></li>
+                            <li><a class="dropdown-item" href="#">Scheduling</a></li>
+                            <li><a class="dropdown-item" href="#">Invoicing</a></li>
+                        </ul>
                 </div>
                 <div class="p-3 links @(ViewData["ViewName"] == "Parteners" ? "active" : "")">
                     <a asp-controller="Admin" asp-action="Parteners" class="text">Parteners</a>
@@ -51,5 +60,3 @@
     </div>
 
 </header>
-
-

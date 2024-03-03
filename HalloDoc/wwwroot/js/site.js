@@ -104,3 +104,31 @@ function getRequest(requestId) {
     });
     return requestdata;
 }
+
+$(document).ready(function () {
+    $('#selectregion').on('change', function () {
+        var regionId = document.getElementById("selectregion").value;
+
+        // Make an AJAX request to fetch physicians for the selected region
+        $.ajax({
+            url: '/Admin/GetPhysiciansByRegion', // Replace with your actual controller and action method
+            type: 'GET',
+            data: { regionId: regionId },
+            success: function (data) {
+                // Update the physician select dropdown with fetched data
+                console.log(data);
+                var physicianDropdown = document.getElementById("physicianSelect");
+                physicianDropdown.innerHTML = ''; // Clear existing options
+                data.forEach(function (physician) {
+                    var option = document.createElement("option");
+                    option.value = physician.id;
+                    option.text = physician.name;
+                    physicianDropdown.appendChild(option);
+                });
+            },
+            error: function () {
+                console.error('Failed to fetch physicians.');
+            }
+        });
+    })
+})

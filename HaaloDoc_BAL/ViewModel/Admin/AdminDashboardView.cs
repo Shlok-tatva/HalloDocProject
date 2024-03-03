@@ -9,8 +9,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
 {
     public class AdminDashboardView
     {
-        public List<Region> regions;
+        public List<Region> regions { get; set; }
 
-        public List<Casetag> casetags;
+        public List<Casetag> casetags {  get; set; }
     }
 }

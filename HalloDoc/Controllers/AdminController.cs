@@ -4,9 +4,10 @@ using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.Repository;
 using HalloDoc_BAL.ViewModel.Admin;
 using HalloDoc_DAL.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.IdentityModel.Tokens;
 using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
@@ -46,6 +47,23 @@ namespace HalloDocAdmin.Controllers
             return Ok(statusIdWiseRequest.ToList());
         }
 
+        [HttpPost("AssignCase")]
+        public IActionResult AssignCase(int requestId , int physicianId)
+        {
+            if (requestId != null && physicianId != null)
+            { 
+            Request request = _requestRepository.Get(requestId);
+            request.Physicianid = physicianId;
+            request.Status = 2;
+            _requestRepository.Update(request);
+            return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet]
         public IActionResult GetRequest(int requestId)
         {
@@ -57,7 +75,7 @@ namespace HalloDocAdmin.Controllers
         public IActionResult getRequestCountPerStatusId()
         {
             Dictionary<int, int> statusCounts = new Dictionary<int, int>();
-           
+
             for (int i = 1; i <= 6; i++)
             {
 
@@ -75,6 +93,15 @@ namespace HalloDocAdmin.Controllers
             ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
             return View(view);
         }
+
+
+        [HttpGet]
+        public IActionResult GetPhysiciansByRegion (int regionId)
+        {
+            var physicians = _adminFunctionRepository.GetPhysiciansByRegion(regionId).Select(p => new { Id = p.Physicianid, Name = p.Firstname + " " + p.Lastname });
+            return Ok(physicians);
+        }
+
 
         [HttpPost("UpdateEmail")]
         public IActionResult UpdateEmail(int requestId , string Email)
@@ -153,7 +180,7 @@ namespace HalloDocAdmin.Controllers
         {
             try
             {
-                _adminFunctionRepository.cancelCase(requestId, adminId, reason, notes); 
+                _adminFunctionRepository.cancelCase(requestId, adminId, reason, notes);
                 return Ok();
 
             }
@@ -219,12 +246,12 @@ namespace HalloDocAdmin.Controllers
             {
                 System.IO.File.Delete(physicalPath);
                 _adminFunctionRepository.DeletefileFromDatabase(fileId);
-                
-                return Ok(); 
+
+                return Ok();
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, $"An error occurred while deleting the file: {ex.Message}");
             }
         }
@@ -236,6 +263,33 @@ namespace HalloDocAdmin.Controllers
 
             _adminFunctionRepository.SendEmail("shlok.jadeja@etatvasoft.com", title, message, filePaths);
 
+            return Ok();
+        }
+
+
+
+        public IActionResult Provider(){
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult CreateProvider(){
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+            return View();
+        }
+
+
+        [HttpPost("CreateProvider")]
+        public IActionResult CreateProvider(CreateProviderView model , int[] selectedRegions)
+        {
+            if (ModelState.IsValid)
+            {
+                //remanign work of Physicina Add
+             _adminFunctionRepository.CreateProvider(model, selectedRegions);
+
+            }
             return Ok();
         }
     }

@@ -40,7 +40,7 @@ $(document).ready(function () {
             type: "GET",
             data: { status_id: statusID },
             success: function (data) {
-    
+   
                 $('#request-table tbody').empty();
                 $('#request-table thead').empty();
                 $('#RequestAccordion').empty();
@@ -62,11 +62,13 @@ $(document).ready(function () {
     }
 
     function renderDesktopTable(data, statusID) {
+
         var headers = Object.keys(data[0]);
         var headerMapping = {
             "requestId": "Request ID",
             "patientName": "Name",
             "patientEmail": "Email",
+            "physicianName" : "Physician",
             "patientPhoneNumber": "Phone Number",
             "status": "Status",
             "dateOfBirth": "DateOfBirth",
@@ -81,7 +83,7 @@ $(document).ready(function () {
         var headerRow = $('<tr>');
         headers.forEach(function (header) {
 
-            if (statusID === 1 && header === "phydicanName") {
+            if (statusID === 1 && header === "physicianName") {
                 return;
             }
 
@@ -122,7 +124,11 @@ $(document).ready(function () {
                         dropdownButton.append(dropdownMenu);
                         emailCell.append(dropdownButton);
                         newRow.append(emailCell);
-                    } else {
+                    }
+                    else if (statusID == 1 && key === 'physicianName') {
+                        
+                    }
+                    else {
                         if (request[key] == null) request[key] = '-';
                         newRow.append('<td class="' + key + '">' + request[key] + '</td>');
                     }

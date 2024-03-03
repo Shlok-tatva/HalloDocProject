@@ -17,5 +17,9 @@ namespace HalloDoc_BAL.Repository
         public List<ViewUploadView> GetuploadedDocuments(int requestId);
         public void DeletefileFromDatabase(int fileId);
         public void SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null);
+
+        public void CreateProvider(CreateProviderView model, int[] selectedRegions);
+
+        public List<Physician> GetPhysiciansByRegion(int regionId);
     }
 }
