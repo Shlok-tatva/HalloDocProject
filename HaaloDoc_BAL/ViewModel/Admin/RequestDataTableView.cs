@@ -39,7 +39,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required]
         public string Address { get; set; }
 
-        public string? Notes { get; set; }
+        public string Notes { get; set; }
 
         public List<MenuOptionEnum> MenuOptions { get; set; }
 

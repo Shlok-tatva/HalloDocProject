@@ -3,18 +3,36 @@
 });
 
 $('.downloadAll').click(function () {
+    if ($('.fileCheckbox:checked').length == 0) {
+        toastMixin.fire({
+            animation: true,
+            title: 'Please Select At least One File!',
+            icon: 'error'
+        });
+    } else {
     $('.fileCheckbox:checked').each(function () {
         var filePath = $(this).closest('tr').find('.download-btn').data('file');
         downloadFile(filePath);
     });
+    }
 });
 
+
 $('.deleteAll').click(function () {
+    if ($('.fileCheckbox:checked').length == 0) {
+        toastMixin.fire({
+            animation: true,
+            title: 'Please Select At least One File!',
+            icon: 'error'
+        });
+    }
+    else {
     $('.fileCheckbox:checked').each(function () {
         var filePath = $(this).closest('tr').find('.delete-btn').data('file');
         var fileId = $(this).closest('tr').find('.delete-btn').data('fileid');
         deleteFile(filePath, fileId);
     });
+    }
 });
 
 $('.download-btn').click(function () {
@@ -73,7 +91,6 @@ function deleteFile(filePath, fileId) {
             responseType: 'blob'
         },
         success: function (response) {
-            console.log(response);
             Swal.fire({
                 title: "Done",
                 text: "Document Delete SuccessFully.. !",
@@ -152,7 +169,6 @@ $("#uploadForm").submit(function (e) {
 })
 
 function getEmailDataAndSend() {
-    debugger;
     var attachmentFilePaths = [];
 
     // Loop through table rows to find selected files
@@ -168,7 +184,17 @@ function getEmailDataAndSend() {
     var toEmail = request.email;
     console.log(toEmail);
     console.log(attachmentFilePaths);
+    if (attachmentFilePaths.length == 0) {
+        toastMixin.fire({
+            animation: true,
+            title: 'Please Select At least One File!',
+            icon: 'error'
+        });
+        return;
+    }
+    else {
     sendEmail(toEmail, attachmentFilePaths);
+    }
 }
 
 
@@ -187,10 +213,35 @@ function sendEmail(toEmail, attachmentFilePaths) {
         type: 'POST',
         data: data,
         success: function (response) {
-            console.log('Email sent successfully:', response);
+            console.log(response);
+            toastMixin.fire({
+                animation: true,
+                title: 'Email sent successfully!',
+                icon: 'success'
+            });
         },
-        error: function (xhr, status, error) {
-            console.error('Failed to send email:', error);
+        error: function (error) {
+            toastMixin.fire({
+                animation: true,
+                title: 'Failed to send email',
+                icon: 'error'
+            });
         }
     });
 }
+
+
+var toastMixin = Swal.mixin({
+    toast: true,
+    icon: 'success',
+    title: 'General Title',
+    animation: false,
+    position: 'top-right',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});

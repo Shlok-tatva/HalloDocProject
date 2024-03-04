@@ -83,18 +83,15 @@ $(document).ready(function () {
         var headerRow = $('<tr>');
         headers.forEach(function (header) {
 
-            if (statusID === 1 && header === "physicianName") {
+            if (header === "physicianName" && statusID == 1) {
                 return;
             }
 
             if (["requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId"].includes(header)) {
                 return;
             }
-
             var columnName = headerMapping[header] || header;
-
             headerRow.append('<th class="py-4">' + columnName + '</th>');
-
         });
         $('#request-table thead').append(headerRow);
         data.forEach(function (request, index) {
@@ -106,7 +103,10 @@ $(document).ready(function () {
                 /* For Desktop View Insert table*/
 
                 if (!["menuOptions", "requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId"].includes(key)) {
-                    if (key === "patientPhoneNumber") {
+                    if (statusID == 1 && key === 'physicianName') {
+
+                    }
+                    else if (key === "patientPhoneNumber") {
                         var phoneNumbers = '<button class="btn btn-sm  btn-outline-light my-1"> <i class="bi bi-telephone"></i> ' + request.patientPhoneNumber + '</button>' + (request.requesterPhoneNumber && request.patientPhoneNumber != request.requesterPhoneNumber ? ' <br />' + '<button class="btn btn-sm  btn-outline-light my-1"> <i class="bi bi-telephone"></i> ' + request.requesterPhoneNumber + '</button><br />' : '');
                         if ([2, 3, 4].includes(request.requestTyepid)) {
                             phoneNumbers += "(" + ["familyfriend", "concierge", "business"][request.requestTyepid - 2] + ")";
@@ -124,10 +124,7 @@ $(document).ready(function () {
                         dropdownButton.append(dropdownMenu);
                         emailCell.append(dropdownButton);
                         newRow.append(emailCell);
-                    }
-                    else if (statusID == 1 && key === 'physicianName') {
-                        
-                    }
+                    } 
                     else {
                         if (request[key] == null) request[key] = '-';
                         newRow.append('<td class="' + key + '">' + request[key] + '</td>');
@@ -146,7 +143,8 @@ $(document).ready(function () {
                 if ([2, 3, 5, 9, 10, 11, 12].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
                     dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
-                } else {
+                }
+                else {
                     var id = toCamelCase(enumName);
                     dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
                    
@@ -291,7 +289,12 @@ $(document).ready(function () {
 
 
     var lastStatusID = localStorage.getItem("lastStatusID")
-    reloadDataTable(lastStatusID || 1);
+    if (lastStatusID == null) {
+        reloadDataTable(1)
+    } else {
+        reloadDataTable(lastStatusID);
+    }
+    
 
 
 

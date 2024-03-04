@@ -40,6 +40,7 @@ input[type = "checkbox"]{
     height: 20px;
     margin: 5px;
 }
+
 input#file {
     width: 90.5% !important;
     height: 50px;
@@ -159,6 +160,48 @@ hr{
     background: #020202 !important;
     opacity: 0.1;
     border-radius: 16px;
+}
+
+.form_content {
+    width: 75%;
+}
+
+
+.form-select:focus,
+.form-select:hover {
+    outline: 0;
+    box-shadow: none;
+    border: 1px solid #01BBE7;
+}
+.warning_icon{
+    height: 100px;
+    width:100px;
+    border: 2px solid #f7ad00;
+    border-radius: 50000px;
+}
+.warning_icon i{
+    position: relative;
+    top: 3.5px;
+    left: 3.1px;
+    font-size: 90px;
+    color: #f7ad00;
+}
+
+.swal2-default-outline{
+    box-shadow: none !important;
+}
+.swal2-html-container{
+    font-size: 15px !important;
+}
+.swal2-actions{
+    margin-bottom: 30px !important;
+}
+
+
+@media (max-width: 760px) {
+    .form_content {
+        width: 85%;
+    }
 }
 
 @media (max-width:590px) {

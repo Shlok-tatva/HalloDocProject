@@ -107,6 +107,9 @@ input[type=date]:focus::-webkit-datetime-edit {
     color: #f7ad00;
 }
 
+.form_content {
+    width: 75%;
+}
 
 @media (max-width:530px) {
     .navbar-toggler {

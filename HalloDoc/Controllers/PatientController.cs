@@ -128,6 +128,7 @@ namespace HelloDoc.Controllers
                         request.Email = formData.Email;
                         request.Phonenumber = formData.PhoneNumber;
                         request.Status = 1;
+                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(formData.State , formData.LastName , formData.FirstName);
                         request.Isurgentemailsent = false;
                         request.Createddate = DateTime.Now;
                         _requestrepo.Add(request);

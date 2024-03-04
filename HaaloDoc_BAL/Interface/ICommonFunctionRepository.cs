@@ -6,5 +6,7 @@ namespace HalloDoc_BAL.Interface
     {
         void HandleFileUpload(IFormFile UploadFile, int requestId , int? adminId);
 
+        public string GetConfirmationNumber(string state, string lastname, string firstname);
+
     }
 }

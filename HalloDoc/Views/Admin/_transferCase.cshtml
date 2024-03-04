@@ -1,23 +1,23 @@
 ﻿@model List<HalloDoc_DAL.Models.Region>;
 
-<form class="modal fade" id="assignCaseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-     aria-hidden="true">
+<form class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content border-0">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="exampleModalLongTitle">Assign Request</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Transfer Request</h5>
                 <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
                 </button>
             </div>
             <div class="modal-body">
-                <p class="notesText">To assign this request, search and select another Physician.</p>
+                <p class="notesText">To transfer this request, search and select another Physician.</p>
                 <div>
 
-                    <input type="text" id="requestIdassignCase" class="visually-hidden"></input>
+                    <input type="text" id="requestIdTransferCase" class="visually-hidden"></input>
 
                     <div class="form-floating">
-                        <select class="form-select" id="selectregion" aria-label="Floating label select example">
+                        <select class="form-select" id="selectregionTransfer" aria-label="Floating label select example">
                             <option value="Select Region" selected hidden>Select Region</option>
                             @foreach (var region in Model)
                             {
@@ -28,11 +28,19 @@
                     </div>
 
                     <div class="form-floating my-4">
-                        <select class="form-select pt-1" id="physicianSelect" aria-label="Default select example">
+                        <select class="form-select pt-1" id="physicianSelectTransfer" aria-label="Default select example">
                             <option>Select Physician</option>
 
                         </select>
                     </div>
+
+                    <div class="form-floating my-3">
+                        <input id="Description" type="text" class="form-control togleInput" style="height:120px;" required>
+                        <label for="floatingInput" class="control-label">
+                            Description
+                        </label>
+                    </div>
+
                 </div>
             </div>
             <div class="modal-footer">

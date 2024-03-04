@@ -88,7 +88,7 @@ public partial class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 
-        => optionsBuilder.UseNpgsql("Server=localhost;Port=5433;Database=HalloDoc;User Id=postgres;Password=shlok123;");
+        => optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=HelloDoc;User Id=postgres;Password=shlok123;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

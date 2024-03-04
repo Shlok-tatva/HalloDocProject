@@ -36,31 +36,34 @@ namespace HalloDoc_BAL.Repository
         {
             var statusIds = GetStatus(statusId);
             var statusIdWiseRequest = from r in _context.Requests.ToList()
-                                      join rc in _context.Requestclients.ToList()
-                                      on r.Requestid equals rc.Requestid into rrc
-                                      from rc in rrc.DefaultIfEmpty()
-                                      join p in _context.Physicians.ToList()
-                                      on r.Physicianid equals p.Physicianid into rp
-                                      from p in rp.DefaultIfEmpty()
-
-                                      where statusIds.Contains(r.Status)
-                                      select new RequestDataTableView
-                                      {
-                                          requestId = r.Requestid,
-                                          PatientName = rc.Firstname + " " + rc.Lastname,
-                                          PatientEmail = rc.Email,
-                                          RequesterEmail = r.Email,
-                                          DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
-                                          PhysicianName = p != null ? p.Firstname + " " + p.Lastname : "",
-                                          RequesterName = r.Firstname + " " + r.Lastname,
-                                          RequestedDate = r.Createddate.ToString(),
-                                          PatientPhoneNumber = rc.Phonenumber,
-                                          Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
-                                          RequesterPhoneNumber = r.Phonenumber,
-                                          status = r.Status,
-                                          MenuOptions = GetMenuOptionsForStatus(statusId),
-                                          RequestTyepid = r.Requesttypeid
-                                      };
+                                       join rc in _context.Requestclients.ToList()
+                                       on r.Requestid equals rc.Requestid into rrc
+                                       from rc in rrc.DefaultIfEmpty()
+                                       join p in _context.Physicians.ToList()
+                                       on r.Physicianid equals p.Physicianid into rp
+                                       from p in rp.DefaultIfEmpty()
+                                       join rs in _context.Requeststatuslogs.ToList()
+                                       on r.Requestid equals rs.Requestid into rrs
+                                       from rs in rrs.OrderByDescending(x => x.Createddate).Take(1).DefaultIfEmpty()
+                                       where statusIds.Contains(r.Status)
+                                       select new RequestDataTableView
+                                       {
+                                           requestId = r.Requestid,
+                                           PatientName = rc.Firstname + " " + rc.Lastname,
+                                           PatientEmail = rc.Email,
+                                           RequesterEmail = r.Email,
+                                           DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
+                                           PhysicianName = p != null ? p.Firstname + " " + p.Lastname : "",
+                                           RequesterName = r.Firstname + " " + r.Lastname,
+                                           RequestedDate = r.Createddate.ToString(),
+                                           PatientPhoneNumber = rc.Phonenumber,
+                                           Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
+                                           RequesterPhoneNumber = r.Phonenumber,
+                                           Notes = rs != null ? rs.Notes : "-", // Store result into notes
+                                           status = r.Status,
+                                           MenuOptions = GetMenuOptionsForStatus(statusId),
+                                           RequestTyepid = r.Requesttypeid
+                                       };
 
             return statusIdWiseRequest;
         }
@@ -175,11 +178,11 @@ namespace HalloDoc_BAL.Repository
                     {
                         if (item.Adminid != null && item.Physicianid == null)
                         {
-                            transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                            transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);;
                         }
                         else if (item.Adminid == null && item.Physicianid != null)
                         {
-                            transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLocalTime() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
+                            transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
                         }
 
                     }
@@ -204,6 +207,52 @@ namespace HalloDoc_BAL.Repository
         {
             return _context.Casetags.ToList();
         }
+        public void assignCase(int requestId , int physicianId)
+        {
+            using(var transaction = new TransactionScope()) {
+                Request request = _requestRepository.Get(requestId);
+                request.Physicianid = physicianId;
+                Physician physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == physicianId);
+                request.Status = 2;
+                _requestRepository.Update(request);
+                Requeststatuslog log = new Requeststatuslog();
+
+                log.Requestid = requestId;
+                log.Status = 2;
+                log.Notes = "Request Assign to Physician " + physician.Firstname + " " + physician.Lastname;
+                log.Createddate = DateTime.Now;
+                log.Adminid = 4;
+                log.Transtoadmin = false;
+                _context.Requeststatuslogs.Add(log);
+                _context.SaveChanges();
+
+                transaction.Complete();
+
+            }
+        }
+
+        public void transferCase(int requestId, int physicianId , string note)
+        {
+            using (var transaction = new TransactionScope())
+            {
+                Request request = _requestRepository.Get(requestId);
+                request.Physicianid = physicianId;
+                Physician physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == physicianId);
+                _requestRepository.Update(request);
+
+                Requeststatuslog log = new Requeststatuslog();
+                log.Requestid = requestId;
+                log.Status = 2;
+                log.Notes = "Request Re-Assign to Physician " + physician.Firstname + " " + physician.Lastname + "(" + note + ")";
+                log.Createddate = DateTime.Now;
+                log.Adminid = 4;
+                log.Transtoadmin = false;
+                _context.Requeststatuslogs.Add(log);
+                _context.SaveChanges();
+                transaction.Complete();
+            }
+        }
+
 
         public void blockRequst(int requestId, string reason, int adminId)
         {
@@ -215,7 +264,7 @@ namespace HalloDoc_BAL.Repository
                     Request request = _requestRepository.Get(requestId);
                     Requestclient rc = _requestClientRepository.Get(requestId);
 
-                    request.Status = 10; // it is for Block the request
+                    request.Status = 11; // it is for Block the request
                     _requestRepository.Update(request);
                     Blockrequest blockrequest = new Blockrequest();
                     blockrequest.Requestid = requestId.ToString();
@@ -270,10 +319,12 @@ namespace HalloDoc_BAL.Repository
 
         }
 
+
+
         public List<ViewUploadView> GetuploadedDocuments(int requestId)
         {
             var requestwisefiles = from requestFile in _context.Requestwisefiles
-                                   where requestFile.Requestid == requestId
+                                   where requestFile.Requestid == requestId && requestFile.Isdeleted != true
                                    select new ViewUploadView
                                    {
                                        Requestid = requestId,
@@ -294,7 +345,8 @@ namespace HalloDoc_BAL.Repository
 
                 if (file != null)
                 {
-                    _context.Requestwisefiles.Remove(file);
+                    file.Isdeleted = true;
+                    _context.Requestwisefiles.Update(file);
                     _context.SaveChanges();
                 }
 
@@ -386,7 +438,7 @@ namespace HalloDoc_BAL.Repository
                     physician.Lastname = model.lastName;
                     physician.Mobile = model.phoneNumber;
                     physician.Regionid = model.regionId;
-                    physician.Createdby = "fe51db26-1ba6-4880-a20a-36d10cece24e";
+                    physician.Createdby = "faeb647e-a0fe-4b31-a87d-4a2c9693242b";
                     physician.Createddate = DateTime.Now;
                     physician.Status = 1;
                     physician.Businessname = model.businessName;
@@ -420,5 +472,28 @@ namespace HalloDoc_BAL.Repository
                               select p).ToList();
             return physicians;
         }
+
+        public void clearCase(int requestId)
+        {
+            using(var transaction = new TransactionScope())
+            {
+                Request request = _requestRepository.Get(requestId);
+                request.Status = 10;
+                _requestRepository.Update(request);
+
+                Requeststatuslog log = new Requeststatuslog();
+                log.Requestid = requestId;
+                log.Adminid = 4;
+                log.Status = 10; // clear the request
+                log.Notes = "Reqest Cleared";
+                log.Createddate = DateTime.Now;
+                _context.Requeststatuslogs.Add(log);
+                _context.SaveChanges();
+
+                transaction.Complete();
+
+            }
+        }
+
     }
 }

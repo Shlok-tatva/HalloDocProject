@@ -52,10 +52,7 @@ namespace HalloDocAdmin.Controllers
         {
             if (requestId != null && physicianId != null)
             { 
-            Request request = _requestRepository.Get(requestId);
-            request.Physicianid = physicianId;
-            request.Status = 2;
-            _requestRepository.Update(request);
+            _adminFunctionRepository.assignCase(requestId, physicianId);
             return Ok();
             }
             else
@@ -198,6 +195,7 @@ namespace HalloDocAdmin.Controllers
 
             List<ViewUploadView> documetns =  _adminFunctionRepository.GetuploadedDocuments(requestId);
             ViewBag.requestId = requestId;
+            ViewBag.CFnumber = request.Confirmationnumber;
             ViewBag.Username = request.Firstname + " " + request.Lastname;
             return View(documetns);
           }
@@ -244,9 +242,7 @@ namespace HalloDocAdmin.Controllers
             }
             try
             {
-                System.IO.File.Delete(physicalPath);
                 _adminFunctionRepository.DeletefileFromDatabase(fileId);
-
                 return Ok();
             }
             catch (Exception ex)
@@ -258,23 +254,58 @@ namespace HalloDocAdmin.Controllers
 
         public IActionResult SendfilesonMail(string receverEmail , string[] filePaths)
         {
+            try
+            {
             var title = "Files attachment below";
             var message = "In this mail you receive you file as a attachment";
-
             _adminFunctionRepository.SendEmail("shlok.jadeja@etatvasoft.com", title, message, filePaths);
-
-            return Ok();
+             return Ok();
+            } catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
 
+        [HttpPost("TransferCase")]
+        public IActionResult TransferCase(int requestId , int physicianId, string note)
+        {
+            try
+            {
+                _adminFunctionRepository.transferCase(requestId, physicianId, note);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+
+                return NotFound();
+            }
+        }
+
+        [HttpPost("ClearCase")]
+        public IActionResult ClearCase(int requestId)
+        {
+            try
+            {
+                _adminFunctionRepository.clearCase(requestId);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+
+                return NotFound();
+            }
+        }
+
 
         public IActionResult Provider(){
-
+            ViewData["ViewName"] = "Providers";
             return View();
         }
 
         [HttpGet]
         public IActionResult CreateProvider(){
+            ViewData["ViewName"] = "Providers";
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
             return View();

@@ -36,12 +36,12 @@
                     <a asp-controller="Admin" asp-action="AdminProfile" class="text">My Profile</a>
                 </div>
                 <div class="p-3 links dropdown">
-                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="dropdown-toggle @(ViewData["ViewName"] == "Providers" ? "active" : "")" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             Providers
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item @(ViewData["ViewName"] == "Providers" ? "active" : "")" asp-controller="Admin" asp-action="Provider">Provider</a></li>
+                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Provider">Provider</a></li>
                             <li><a class="dropdown-item" href="#">Scheduling</a></li>
                             <li><a class="dropdown-item" href="#">Invoicing</a></li>
                         </ul>

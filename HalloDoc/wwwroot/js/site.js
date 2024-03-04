@@ -107,9 +107,18 @@ function getRequest(requestId) {
 
 $(document).ready(function () {
     $('#selectregion').on('change', function () {
+        debugger
         var regionId = document.getElementById("selectregion").value;
+        getPhysicians(regionId, "physicianSelect");
+    })
 
-        // Make an AJAX request to fetch physicians for the selected region
+    $('#selectregionTransfer').on('change', function () {
+        debugger
+        var regionId = document.getElementById("selectregionTransfer").value;
+        getPhysicians(regionId, "physicianSelectTransfer");
+    })
+
+    function getPhysicians(regionId, physiciandropId) {
         $.ajax({
             url: '/Admin/GetPhysiciansByRegion', // Replace with your actual controller and action method
             type: 'GET',
@@ -117,8 +126,8 @@ $(document).ready(function () {
             success: function (data) {
                 // Update the physician select dropdown with fetched data
                 console.log(data);
-                var physicianDropdown = document.getElementById("physicianSelect");
-                physicianDropdown.innerHTML = ''; // Clear existing options
+                var physicianDropdown = document.getElementById(physiciandropId);
+                physicianDropdown.innerHTML = '';
                 data.forEach(function (physician) {
                     var option = document.createElement("option");
                     option.value = physician.id;
@@ -130,5 +139,5 @@ $(document).ready(function () {
                 console.error('Failed to fetch physicians.');
             }
         });
-    })
+    }
 })

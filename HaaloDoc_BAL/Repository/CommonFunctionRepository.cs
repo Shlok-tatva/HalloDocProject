@@ -48,5 +48,34 @@ namespace HalloDoc_BAL.Repository
             _context.SaveChanges();
         }
 
+        public string GetConfirmationNumber(string state, string lastname, string firstname)
+        {
+
+            string Region = state.Substring(0, 2).ToUpperInvariant();
+
+            string NameAbbr = lastname.Substring(0, 2).ToUpperInvariant() + firstname.Substring(0, 2).ToUpperInvariant();
+
+            DateTime requestDateTime = DateTime.Now;
+
+            string datePart = requestDateTime.ToString("ddMMyyyy");
+
+            int requestsCount = GetCountOfTodayRequests() + 1;
+
+            string newRequestCount = requestsCount.ToString("D4");
+
+            string ConfirmationNumber = Region + datePart + NameAbbr + newRequestCount;
+
+            return ConfirmationNumber;
+
+        }
+
+
+        private int GetCountOfTodayRequests()
+        {
+            var currentDate = DateTime.Now.Date;
+
+            return _context.Requests.Where(u => u.Createddate.Date == currentDate).Count();
+        }
+
     }
 }
