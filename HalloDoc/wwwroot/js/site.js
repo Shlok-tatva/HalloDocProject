@@ -91,7 +91,7 @@ inputFile.addEventListener("change", function () {
 function getRequest(requestId) {
     var requestdata;
     $.ajax({
-        url: '/Admin/GetRequest',
+        url: '/Admin/GetRequestClient',
         type: "GET",
         data: { requestId: requestId },
         async: false, // synchronous request to ensure data is returned before proceding 
@@ -141,3 +141,5 @@ $(document).ready(function () {
         });
     }
 })
+
+

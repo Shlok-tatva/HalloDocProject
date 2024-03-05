@@ -7,14 +7,43 @@ $(document).ready(function () {
         var requestId = $(this).data('request-id');
         var data = getRequest(requestId);
         var patientName = data.firstname + " , " + data.lastname;
+        console.log(data);
+        var patientPhone = data.phonenumber;
+        var patientEmail = data.email;
         // Update the modal body to display the requestId
         $('#' + modalId).find('#requestIdassignCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdblockCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdcanleCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdTransferCase').prop("value", requestId);
+        $('#' + modalId).find('#requestIdsendAgreement').prop("value", requestId);
+
         $('#' + modalId).find('#patientName').text(patientName);
+        $('#' + modalId).find('#phoneNumberSendAgreement').prop("value", patientPhone);
+        $('#' + modalId).find('#emailSendAgreement').prop("value", patientEmail);
+
+        if (modalId == "sendAgreementModal") {
+            var requestTypeId = $(this).data('request-type-id');
+            var classMap = {
+                1: 'patient',
+                2: 'family',
+                3: 'concierge',
+                4: 'business'
+            };
+            
+            var $modal = $('#sendAgreementModal');
+            var $circle = $modal.find('.circle');
+            var $requestType = $modal.find('#requesttype');
+
+            if (classMap.hasOwnProperty(requestTypeId)) {
+                var className = classMap[requestTypeId];
+                $circle.removeClass('patient family concierge business').addClass(className);
+                $requestType.text(className.charAt(0).toUpperCase() + className.slice(1));
+            }
+        }
+
         // Show the modal
         $('#' + modalId).modal('show');
+
 
         if (modalId == "clearCaseModal") {
             debugger;
@@ -24,11 +53,14 @@ $(document).ready(function () {
     });
 
 
+    /*Modal Click Close the Modal  */
     $('.close').on('click', function () {
+        debugger
         $('#blockPatientModal').modal('hide');
         $('#cancelCaseModal').modal('hide');
         $('#assignCaseModal').modal('hide');
         $('#transferModal').modal('hide');
+        $('#sendAgreementModal').modal('hide');
     })
 
     /* Block Request Ajax Call */
@@ -149,7 +181,7 @@ $(document).ready(function () {
         var formData = new FormData();
         formData.append('requestId', $('#requestIdTransferCase').val());
         formData.append('physicianId', $('#physicianSelectTransfer').val());
-        formData.append('note' , $('#Description').val());
+        formData.append('note', $('#Description').val());
 
         $.ajax({
             url: "/TransferCase",
@@ -181,14 +213,14 @@ $(document).ready(function () {
     });
 
     /* Clear Case Function*/
-    function clearCase(requestId){
+    function clearCase(requestId) {
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
-              confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
-              cancelButton: "btn btn-outline-info btn-lg hover_white"
+                confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
+                cancelButton: "btn btn-outline-info btn-lg hover_white"
             },
             buttonsStyling: false
-          });
+        });
 
         swalWithBootstrapButtons.fire({
             title: "Confirmation of Clear Case",
@@ -224,8 +256,44 @@ $(document).ready(function () {
                     }
                 });
             }
-          });
+        });
     }
+
+    /* Send Agreement Ajax Call*/
+    $('#sendAgreementModal').on("submit", function (e) {
+        e.preventDefault();
+
+        var formData = new FormData();
+        formData.append('requestId', $('#requestIdsendAgreement').val());
+        formData.append('phoneNumber', $('#phoneNumberSendAgreement').val());
+        formData.append('email', $('#emailSendAgreement').val());
+
+        $.ajax({
+            url: "/SendAgreement",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                Swal.fire({
+                    title: "Done",
+                    text: "Agreement Sent to Patient Successfully",
+                    icon: "success",
+                    showConfirmButton: false,
+                    timer: 1000
+                }).then(function () {
+                    location.reload();
+                })
+            },
+            error: function (xhr, status, error) {
+                toastMixin.fire({
+                    animation: true,
+                    title: 'Error While sending Agreement to Patient',
+                    icon: 'error'
+                });
+            }
+        });
+    });
 
 
 

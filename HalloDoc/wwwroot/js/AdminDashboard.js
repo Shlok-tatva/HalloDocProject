@@ -146,7 +146,7 @@ $(document).ready(function () {
                 }
                 else {
                     var id = toCamelCase(enumName);
-                    dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
+                    dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
                    
                 }
 
@@ -179,7 +179,7 @@ $(document).ready(function () {
         var accordion = $('#RequestAccordion');
         data.forEach(function (request, index) {           
             var panelId = 'panel' + index;
-            var panel = $('<div class="accordion-item data-row">').attr('data-request-type-id', request.requestTyepid);;
+            var panel = $('<div class="accordion-item data-row">').attr('data-request-type-id', request.requestTyepid);
             var header = $('<h2 class="accordion-header" id="heading' + panelId + '">');
             var body = $('<div id="' + panelId + '" class="accordion-collapse collapse">');
             var actions = '';
@@ -214,7 +214,7 @@ $(document).ready(function () {
                 }
                 else {
                     var id = toCamelCase(enumName)
-                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>';
+                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '"' + 'data-request-type-id = "'  + request.requestTyepid +   '" >' + enumName + '</a>';
                 }
             });
 

@@ -16,5 +16,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
 
         public string physicianCancelationNote { get; set; }
 
+        public string patientCancelationNote { get; set; }
+
     }
 }

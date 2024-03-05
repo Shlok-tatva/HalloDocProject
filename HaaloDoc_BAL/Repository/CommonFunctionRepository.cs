@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,58 @@ namespace HalloDoc_BAL.Repository
             _requestwisefilerepo = _requestwisefilerepo;
 
         }
-    
+
+        public string Encrypt(string plainBytes, string Key)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(plainBytes);
+
+            using (Aes aesAlgo = Aes.Create())
+            {
+                aesAlgo.Key = Encoding.UTF8.GetBytes(Key)
+        ;
+                aesAlgo.IV = new byte[16];
+
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, aesAlgo.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        csEncrypt.Write(bytes, 0, bytes.Length);
+                        csEncrypt.FlushFinalBlock();
+                    }
+                    return Convert.ToBase64String(msEncrypt.ToArray()).Replace("+", "-").Replace("/", "_").Replace("=", "");
+                }
+            }
+        }
+
+        public string Decrypt(string encryptEmail, string Key)
+        {
+            string paddedData = encryptEmail;
+
+            // Check if padding is needed
+            if (paddedData.Length % 4 != 0)
+            {
+                paddedData += new string('=', 4 - (paddedData.Length % 4));
+            }
+
+            byte[] encryptedBytes = Convert.FromBase64String(paddedData.Replace("-", "+").Replace("_", "/"));
+
+            using (Aes aesAlgo = Aes.Create())
+            {
+                aesAlgo.Key = Encoding.UTF8.GetBytes(Key);
+                aesAlgo.IV = new byte[16];
+
+                using (MemoryStream msDecrypt = new MemoryStream())
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, aesAlgo.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        csDecrypt.Write(encryptedBytes, 0, encryptedBytes.Length);
+                        csDecrypt.FlushFinalBlock();
+                    }
+                    return Encoding.UTF8.GetString(msDecrypt.ToArray());
+                }
+            }
+        }
+
 
         public void HandleFileUpload(IFormFile UploadFile, int requestId , int? adminId)
         {

@@ -544,6 +544,58 @@ namespace HelloDoc.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult reviewAgreement()
+        {
+            var requestId = Request.Query["requestId"];
+            string key = "770A8A65DA156D24EE2A093277530142";
+            var decryptedrequestId = Int32.Parse(_commonFunctionrepo.Decrypt(requestId, key));
+            Request request = _requestrepo.Get(decryptedrequestId);
+            ViewBag.PatientName = request.Firstname + " " + request.Lastname;
+            ViewBag.createdDate = request.Createddate.ToLongDateString();
+            ViewBag.requestId = decryptedrequestId;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult reviewAgreement(int requestId , int status , string? cancellationNote)
+        {
+            using(var transaction = new TransactionScope())
+            {
+                Request request = _requestrepo.Get(requestId);
+                if(request.Status == 2)
+                {
+                Requeststatuslog log = new Requeststatuslog();
+                log.Requestid = requestId;
+                log.Createddate = DateTime.Now;
+
+                if(status == 0)
+                {
+                    request.Status = 4;
+                    log.Status = 4;
+                    log.Notes = "Agreement accepted by patient";
+                    _requestrepo.Update(request);
+                    _patientFuncrepo.createLog(log);
+                    transaction.Complete();
+                    return Ok(new { message = "Agreement accepted by patient" });
+                    }
+                else
+                {
+                    request.Status = 7;
+                    log.Status = 7;
+                    log.Notes = "Agreement canceled by patient , reason:- " + cancellationNote;
+                    _requestrepo.Update(request);
+                    _patientFuncrepo.createLog(log);
+                    transaction.Complete();
+                    return Ok(new { message = "Agreement canceled by patient" });
+                    }
+                }
+                else
+                {
+                    return BadRequest("Maybe You already accept/cancel agreement");
+                }
+            }
+        }
     }
 }
 

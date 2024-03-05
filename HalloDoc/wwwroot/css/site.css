@@ -197,6 +197,36 @@ hr{
     margin-bottom: 30px !important;
 }
 
+.reviewagreement{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+}
+.reviewagreement h5{
+    text-align: justify;
+}
+.blur_content_review {
+    height: 100vh;
+    margin: auto;
+    padding: 0px;
+    background: inherit;
+    background-image: url("/images/login-banner.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+}
+
+.blur {
+    height: 100%;
+    backdrop-filter: blur(20px);
+}
+
+.bg_blend{
+    background-blend-mode: multiply;
+}
 
 @media (max-width: 760px) {
     .form_content {
@@ -210,6 +240,14 @@ hr{
     }
     .desktop_d_none {
         display: block !important;
+    }
+
+    .reviewagreement{
+        width: 100%;
+        padding: 50px;
+    }
+    .reviewagreement h5{
+        font-size: 15px !important;
     }
 }
 

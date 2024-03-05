@@ -22,5 +22,6 @@ namespace HalloDoc_BAL.Repository
         List<Physician> GetPhysiciansByRegion(int regionId);
         void transferCase(int requestId, int physicianId, string note);
         void clearCase(int requestId);
+        void sendAgreement(int requestId, string email, string link);
     }
 }

@@ -1,0 +1,42 @@
+﻿
+<div class="modal fade" id="sendAgreementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content border-0" id="blockRequest">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Send Agreement</h5>
+                <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center mb-3"> <div class="rounded-circle mx-2 circle patient"></div> <span id="requesttype" class="fw-bold"></span></div>
+                <p class="notesText">To Send Agreement please make sure you are updating the Correct contact information below for the reponsible party.</p>
+
+                <input type="text" id="requestIdsendAgreement" value="" class="visually-hidden" />
+                <div>
+                    <div class="form-floating my-3">
+                        <input id="phoneNumberSendAgreement" type="tel" class="form-control" required>
+                        <label for="floatingInput" class="control-label">
+                            Phone Number
+                        </label>
+                    </div>
+
+                    <div class="form-floating my-3">
+                        <input id="emailSendAgreement" type="email" class="form-control" required>
+                        <label for="floatingInput" class="control-label">
+                           Email
+                        </label>
+                    </div>
+                </div>
+                @* <p>Request ID: <span id="requestIdDisplay"></span></p> *@
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-info text-white btn-lg">Submit</button>
+                <div class="btn btn-outline-info hover_white fw-100 btn-lg close">
+                    Cancle
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

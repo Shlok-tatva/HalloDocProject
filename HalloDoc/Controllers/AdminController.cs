@@ -62,7 +62,7 @@ namespace HalloDocAdmin.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRequest(int requestId)
+        public IActionResult GetRequestClient(int requestId)
         {
             var request = _requestClientRepository.Get(requestId);
             return Ok(request);
@@ -116,6 +116,7 @@ namespace HalloDocAdmin.Controllers
             }
 
         }
+
 
         public IActionResult ViewNotes()
         {
@@ -187,8 +188,8 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
-          public IActionResult ViewUpload()
+        #region DocumetnView
+        public IActionResult ViewUpload()
           {
             int requestId = Int32.Parse(Request.Query["request"]);
             Request request = _requestRepository.Get(requestId);
@@ -281,6 +282,7 @@ namespace HalloDocAdmin.Controllers
                 return NotFound();
             }
         }
+        #endregion
 
         [HttpPost("ClearCase")]
         public IActionResult ClearCase(int requestId)
@@ -297,6 +299,17 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+
+        [HttpPost("SendAgreement")]
+        public IActionResult SendAgreement(int requestId , string email , string phoneNumber)
+        {
+            string key = "770A8A65DA156D24EE2A093277530142";
+            string encryptedrequestId = _commonFunctionrepo.Encrypt(requestId.ToString(), key);
+            var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/reviewagreement?&requestId={encryptedrequestId}";
+            _adminFunctionRepository.sendAgreement(requestId, email, accountCreationLink);
+
+            return Ok();
+        }
 
         public IActionResult Provider(){
             ViewData["ViewName"] = "Providers";

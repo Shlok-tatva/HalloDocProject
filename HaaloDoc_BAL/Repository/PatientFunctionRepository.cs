@@ -7,11 +7,20 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using HalloDoc_BAL.Interface;
+using HalloDoc_DAL.Models;
+using HalloDoc_DAL.DataContext;
 
 namespace HalloDoc_BAL.Repository
 {
     public class PatientFunctionRepository : IPatientFunctionRepository
     {
+        private readonly ApplicationDbContext _context;
+
+        public PatientFunctionRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public string Encrypt(string plainBytes, string Key)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(plainBytes);
@@ -63,6 +72,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+
         public void SendEmail(string toEmail, string Title, string Message)
         {
             try
@@ -102,6 +112,16 @@ namespace HalloDoc_BAL.Repository
             {
                 // Handle exception, log error, etc.
                 throw new ApplicationException("Failed to send email", ex);
+            }
+        }
+
+
+        public void createLog(Requeststatuslog log)
+        {
+            if(log != null)
+            {
+                _context.Requeststatuslogs.Add(log);
+                _context.SaveChanges();
             }
         }
     }

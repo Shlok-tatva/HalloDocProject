@@ -4,9 +4,10 @@ namespace HalloDoc_BAL.Interface
 {
     public interface ICommonFunctionRepository
     {
+        string Encrypt(string plainBytes, string Key);
+        string Decrypt(string encryptEmail, string Key);
         void HandleFileUpload(IFormFile UploadFile, int requestId , int? adminId);
-
-        public string GetConfirmationNumber(string state, string lastname, string firstname);
+        string GetConfirmationNumber(string state, string lastname, string firstname);
 
     }
 }

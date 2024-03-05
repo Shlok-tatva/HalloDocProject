@@ -6,6 +6,7 @@ using HalloDoc_BAL.ViewModel.Admin;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Net.Mail;
 using System.Net;
+using System.Net.Http;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -15,13 +16,15 @@ namespace HalloDoc_BAL.Repository
         public IRequestRepository _requestRepository;
         public IRequestClientRepository _requestClientRepository;
         public IRequestNotesRepository _requestNotesRepository;
+        public ICommonFunctionRepository _commonFunctionrepo;
 
-        public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository)
+        public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo)
         {
             _context = context;
             _requestRepository = requestRepository;
             _requestClientRepository = requestClientRepository;
             _requestNotesRepository = requestNotesRepository;
+            _commonFunctionrepo = commonFunctionrepo;
         }
 
         public AdminDashboardView GetAdminDashboardView()
@@ -173,6 +176,14 @@ namespace HalloDoc_BAL.Repository
                     else if (item.Status == 3 && item.Physicianid != null)
                     {
                         view.physicianCancelationNote = item.Notes;
+                    }
+                    else if(item.Status == 4)
+                    {
+                        transferNotes.Add("On " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes); ;
+                    }
+                    else if (item.Status == 7)
+                    {
+                        view.patientCancelationNote = item.Notes;
                     }
                     else
                     {
@@ -495,5 +506,26 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+
+        public void sendAgreement(int requestId , string email , string link)
+        {
+            using(var transaction = new TransactionScope())
+            {
+
+            var title = "Accept the Agreement for your request";
+            var message = $"Please click <a href=\"{link}\">here</a> to accept your agreement for request you created on HalloDoc.";
+            SendEmail(email, title, message);
+            Requeststatuslog log = new Requeststatuslog();
+            log.Requestid = requestId;
+            log.Createddate = DateTime.Now;
+            log.Adminid = 4;
+            log.Status = 2;
+            log.Notes = "Agreement sent to patient by Admin";
+            _context.Requeststatuslogs.Add(log);
+            _context.SaveChanges();
+             transaction.Complete();
+
+            }
+        }
     }
 }

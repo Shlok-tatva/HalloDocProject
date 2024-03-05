@@ -461,6 +461,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination .page-item.active .
     width:95% !important;
 }
 
+
 @media (max-width:900px) {
     .table_d_none {
         display: none;
