@@ -12,12 +12,14 @@ namespace HalloDoc.Controllers
         private readonly IAspnetuserRepository _aspnetuserrepo;
         private readonly IPatientFunctionRepository _petientfunctionrepo;
         private readonly IUserRepository _userrepo;
+        private readonly IJwtServices _jwtServices;
 
-        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo ,IUserRepository userrepo)
+        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , IUserRepository userrepo, IJwtServices jwtServices)
         {
             _aspnetuserrepo = aspnetuser;
             _petientfunctionrepo = petientfunctionrepo;
             _userrepo = userrepo;
+            _jwtServices = jwtServices;
         }
 
         public IActionResult Index()
@@ -40,7 +42,10 @@ namespace HalloDoc.Controllers
 
                 if (result == PasswordVerificationResult.Success)
                 {
+                   string token =  _jwtServices.GenerateToken(user.Email, "user");
+                    HttpContext.Session.SetString("jwttoken", token);
                     HttpContext.Session.SetString("UserId", user.Email);
+
                     return Redirect("/dashboard/index");
 
                 }

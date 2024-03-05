@@ -12,6 +12,8 @@ using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
+
+    [Auth("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;

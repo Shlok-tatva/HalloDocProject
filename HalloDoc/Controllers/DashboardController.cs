@@ -1,5 +1,6 @@
 ﻿using HalloDoc.Models;
 using HalloDoc_BAL.Interface;
+using HalloDoc_BAL.Repository;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -7,6 +8,7 @@ using System.Transactions;
 
 namespace HalloDoc.Controllers
 {
+    [Auth("user")]
     public class DashboardController : Controller
     {
         private readonly IAspnetuserRepository _aspnetuserrepo;
@@ -23,6 +25,7 @@ namespace HalloDoc.Controllers
 
 
 
+       
         public DashboardController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo , IPatientFunctionRepository patientFuncrepo, ICommonFunctionRepository commonFunctionrepo)
         {
             _aspnetuserrepo = aspnetuser;
