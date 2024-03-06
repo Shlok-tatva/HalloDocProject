@@ -42,11 +42,20 @@ namespace HalloDoc.Controllers
 
                 if (result == PasswordVerificationResult.Success)
                 {
-                   string token =  _jwtServices.GenerateToken(user.Email, "user");
-                    HttpContext.Session.SetString("jwttoken", token);
-                    HttpContext.Session.SetString("UserId", user.Email);
-
+                    if(user.Email == "shlok@abc.com")
+                    {
+                        string token = _jwtServices.GenerateToken(user.Email, "Admin");
+                        HttpContext.Session.SetString("jwttoken", token);
+                        HttpContext.Session.SetString("UserId", user.Email);
+                        return Redirect("/Admin");
+                    }
+                    else
+                    {
+                        string token = _jwtServices.GenerateToken(user.Email, "user");
+                        HttpContext.Session.SetString("jwttoken", token);
+                        HttpContext.Session.SetString("UserId", user.Email);
                     return Redirect("/dashboard/index");
+                    }
 
                 }
                 else if (result == PasswordVerificationResult.SuccessRehashNeeded)
@@ -138,6 +147,11 @@ namespace HalloDoc.Controllers
                 TempData["Error"] = "Both password Are not Same";
                 return Redirect("/Login/changePassword");
             }
+        }
+
+        public IActionResult Accessdenied()
+        {
+            return View();
         }
     }
 }

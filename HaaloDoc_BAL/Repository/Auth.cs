@@ -11,10 +11,11 @@ using Microsoft.AspNetCore.Http;
 using HalloDoc_BAL.Interface;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Routing;
 
 namespace HalloDoc_BAL.Repository
 {
-    
+
     public class Auth : Attribute, IAuthorizationFilter
     {
 
@@ -27,8 +28,9 @@ namespace HalloDoc_BAL.Repository
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var jwtServices = context.HttpContext.RequestServices.GetService<IJwtServices>(); 
-            
+
+            var jwtServices = context.HttpContext.RequestServices.GetService<IJwtServices>();
+
             if (jwtServices == null)
             {
 
@@ -37,21 +39,26 @@ namespace HalloDoc_BAL.Repository
 
             var token = context.HttpContext.Session.GetString("jwttoken");
 
-            if(token == null || !jwtServices.ValidateToken(token , out JwtSecurityToken jwttoken))
+            if (token == null || !jwtServices.ValidateToken(token, out JwtSecurityToken jwttoken))
             {
+                context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Index" }));
                 return;
             }
 
-            var roleClaim = jwttoken.Claims.Where(c => c.Type == "role");
-            
+            var roleClaim = jwttoken.Claims.Where(c => c.Type == "role").FirstOrDefault();
+
+            var roleValue = roleClaim.Value;
+
             if (roleClaim == null)
             {
+                context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Index" }));
                 return;
             }
 
-            if(string.IsNullOrWhiteSpace(_role))
+            if (string.IsNullOrWhiteSpace(_role) || roleValue != _role)
             {
-               
+                context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Accessdenied" }));
+                return;
             }
         }
 
