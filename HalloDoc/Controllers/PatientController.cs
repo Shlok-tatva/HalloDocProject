@@ -97,6 +97,7 @@ namespace HelloDoc.Controllers
                             string hashedPassword = hasher.HashPassword(null, formData.Password);
                             aspnetuser.Passwordhash = hashedPassword;
                             aspnetuser.Createddate = DateTime.Now;
+                            aspnetuser.Roleid = 2; // for user it is 2
                             _aspnetuserrepo.Add(aspnetuser);
 
                             user.Aspnetuserid = aspnetuser.Id;
@@ -500,6 +501,7 @@ namespace HelloDoc.Controllers
                     string hashedPassword = hasher.HashPassword(null, formData.Password);
                     aspnetuser.Passwordhash = hashedPassword;
                     aspnetuser.Createddate = DateTime.Now;
+                    aspnetuser.Roleid = 2;
                     _aspnetuserrepo.Add(aspnetuser);
 
                     user.Aspnetuserid = aspnetuser.Id;

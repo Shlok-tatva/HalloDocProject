@@ -1,6 +1,8 @@
 ﻿        using Azure.Core;
 using HalloDoc_BAL.Interface;
+using HalloDoc_BAL.Repository;
 using HalloDoc_DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SqlServer.Server;
@@ -24,11 +26,24 @@ namespace HalloDoc.Controllers
 
         public IActionResult Index()
         {
+            var role = HttpContext.Session.GetInt32("roleid");
+            if (role == 1)
+            {
+                return Redirect("/admin");
+            }
+            else if(role == 2)
+            {
+                return Redirect("/dashboard");
+            }
+            else
+            {
             return View();
+            }
         }
 
         public IActionResult LoginUser(Aspnetuser user)
         {
+            
             if (user.Email == null || user.Passwordhash == null)
             {
                 TempData["Error"] = "Username and password cannot be empty.";
@@ -37,24 +52,34 @@ namespace HalloDoc.Controllers
             if (_aspnetuserrepo.Exists(user.Email))
             {
                 var storedPassword = _aspnetuserrepo.GetUserPassword(user.Email);
+               
                 var hasher = new PasswordHasher<string>();
                 PasswordVerificationResult result = hasher.VerifyHashedPassword(null, storedPassword, user.Passwordhash);
 
                 if (result == PasswordVerificationResult.Success)
                 {
-                    if(user.Email == "shlok@abc.com")
+                    var logedinUser = _aspnetuserrepo.GetByEmail(user.Email);
+                    var role = logedinUser.Roleid;
+
+                    if (role == 1)
                     {
                         string token = _jwtServices.GenerateToken(user.Email, "Admin");
                         HttpContext.Session.SetString("jwttoken", token);
                         HttpContext.Session.SetString("UserId", user.Email);
+                        HttpContext.Session.SetInt32("roleid", 1);
                         return Redirect("/Admin");
+                    }
+                    else if(role == 2)
+                    {
+                        string token = _jwtServices.GenerateToken(user.Email, "User");
+                        HttpContext.Session.SetString("jwttoken", token);
+                        HttpContext.Session.SetString("UserId", user.Email);
+                        HttpContext.Session.SetInt32("roleid", 2);
+                        return Redirect("/dashboard/index");
                     }
                     else
                     {
-                        string token = _jwtServices.GenerateToken(user.Email, "user");
-                        HttpContext.Session.SetString("jwttoken", token);
-                        HttpContext.Session.SetString("UserId", user.Email);
-                    return Redirect("/dashboard/index");
+                        return Redirect("/login");
                     }
 
                 }

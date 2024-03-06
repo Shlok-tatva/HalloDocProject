@@ -13,7 +13,7 @@ using System.Transactions;
 namespace HalloDocAdmin.Controllers
 {
 
-    [Auth("Admin")]
+    [CustomAuth("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -338,5 +338,12 @@ namespace HalloDocAdmin.Controllers
             }
             return Ok();
         }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return Redirect("/Login/index");
+        }
+
     }
 }

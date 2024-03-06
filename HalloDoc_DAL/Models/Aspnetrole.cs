@@ -11,8 +11,7 @@ public partial class Aspnetrole
 {
     [Key]
     [Column("id")]
-    [StringLength(128)]
-    public string Id { get; set; } = null!;
+    public int Id { get; set; }
 
     [Column("name")]
     [StringLength(256)]

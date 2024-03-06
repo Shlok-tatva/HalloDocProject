@@ -16,12 +16,12 @@ using Microsoft.AspNetCore.Routing;
 namespace HalloDoc_BAL.Repository
 {
 
-    public class Auth : Attribute, IAuthorizationFilter
+    public class CustomAuth : Attribute, IAuthorizationFilter
     {
 
         private readonly string _role;
 
-        public Auth(string role = "")
+        public CustomAuth(string role = "")
         {
             _role = role;
         }
@@ -33,7 +33,6 @@ namespace HalloDoc_BAL.Repository
 
             if (jwtServices == null)
             {
-
                 return;
             }
 

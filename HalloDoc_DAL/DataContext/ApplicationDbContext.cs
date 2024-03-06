@@ -24,8 +24,6 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Aspnetuser> Aspnetusers { get; set; }
 
-    public virtual DbSet<Aspnetuserrole> Aspnetuserroles { get; set; }
-
     public virtual DbSet<Blockrequest> Blockrequests { get; set; }
 
     public virtual DbSet<Casetag> Casetags { get; set; }
@@ -118,15 +116,6 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<Aspnetuser>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("aspnetusers_pkey");
-        });
-
-        modelBuilder.Entity<Aspnetuserrole>(entity =>
-        {
-            entity.HasKey(e => new { e.Userid, e.Name }).HasName("aspnetuserroles_pkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Aspnetuserroles)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("aspnetuserroles_userid_fkey");
         });
 
         modelBuilder.Entity<Blockrequest>(entity =>
