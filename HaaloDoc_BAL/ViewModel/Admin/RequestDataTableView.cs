@@ -60,7 +60,6 @@ public enum MenuOptionEnum
     clearCase,
     sendAgreement,
     orders,
-    doctorsNote,
     Encounter,
     closeCase,
     // Add other menu options as needed

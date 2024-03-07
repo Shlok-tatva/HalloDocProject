@@ -12,9 +12,8 @@ $(document).ready(function () {
         7: "Clear Case",
         8: "Send Agreement",
         9: "Orders",
-        10: "Doctors Note",
-        11: "Encounter",
-        12: "Close Case",
+        10: "Encounter",
+        11: "Close Case",
     };
 
     // Object mapping menu options to image URLs
@@ -29,7 +28,6 @@ $(document).ready(function () {
         'Clear Case': 'clearCase.png',
         'Send Agreement': 'sendAgreement.png',
         'Orders': 'orders.png',
-        'Doctors Note': 'doctorNote.png',
         'Encounter': 'encounter.png',
         'Close Case': 'closeCase.png',
     };
