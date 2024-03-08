@@ -138,9 +138,21 @@ $(document).ready(function () {
                 var imageUrl = menuOptionImageMapping[enumName];
                 var modalId = toCamelCase(enumName) + 'Modal';
 
-                if ([2, 3, 5, 9, 10, 11, 12].includes(option)) {
+                if ([2, 3, 5, 9, 11, 12].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
                     dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                }
+                else if (option == 10) {
+                    let status = getEncounterFormstatus(request.requestId);
+                    console.log(status);
+                    if (status == 1) {
+                        var id = toCamelCase(enumName);
+                        dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
+                    }
+                    else {
+                        var link = toCamelCase(enumName) + '?request=' + request.requestId;
+                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                    }
                 }
                 else {
                     var id = toCamelCase(enumName);
@@ -296,7 +308,7 @@ $(document).ready(function () {
 
 
 
-
+    //get requestCount 
     $.ajax({
         url: 'Admin/getRequestCountPerStatusId',
         type: "GET",
@@ -314,6 +326,24 @@ $(document).ready(function () {
         }
     });
 
+    function getEncounterFormstatus(requestId) {
+
+        var status;
+        $.ajax({
+            url: 'Admin/EcounterFormStatus',
+            type: "GET",
+            data: { requestId },
+            async: false,
+            success: function (data) {
+                status = data;                
+            },
+            error: function () {
+                alert("While featching count");
+            }
+        })
+
+        return status;
+    }
 
 
     $('.filter-btn').click(function () {

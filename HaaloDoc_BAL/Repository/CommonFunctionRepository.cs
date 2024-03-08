@@ -1,4 +1,5 @@
 ﻿using HalloDoc_BAL.Interface;
+using HalloDoc_BAL.ViewModel.Admin;
 using HalloDoc_DAL.DataContext;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Http;
@@ -15,11 +16,14 @@ namespace HalloDoc_BAL.Repository
     {
         private readonly ApplicationDbContext _context;
         private readonly IRequestwisefileRepository _requestwisefilerepo;
+        private readonly IRequestClientRepository _requestclientrepo;
 
-        public CommonFunctionRepository(ApplicationDbContext context, IRequestwisefileRepository _requestwisefilerepo)
+        public CommonFunctionRepository(ApplicationDbContext context, IRequestwisefileRepository requestwisefilerepo , IRequestClientRepository requestclientrepo)
         {
             _context = context;
-            _requestwisefilerepo = _requestwisefilerepo;
+            _requestwisefilerepo = requestwisefilerepo;
+            _requestclientrepo = requestclientrepo;
+
 
         }
 
@@ -122,12 +126,15 @@ namespace HalloDoc_BAL.Repository
         }
 
 
+     
+
         private int GetCountOfTodayRequests()
         {
             var currentDate = DateTime.Now.Date;
 
             return _context.Requests.Where(u => u.Createddate.Date == currentDate).Count();
         }
+
 
     }
 }

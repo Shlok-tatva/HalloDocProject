@@ -1,20 +1,31 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
+let anchartag = Array.from(document.getElementsByTagName("a"));
 
 document.getElementById('btnSwitch').addEventListener('click', () => {
     let theme_mode_button = document.getElementById("theme_mode_button");
     let currentTheme = document.documentElement.getAttribute('data-bs-theme');
 
+    console.log(anchartag);
+
+   
+
     if (currentTheme == 'dark') {
         document.documentElement.setAttribute('data-bs-theme', 'light');
         theme_mode_button.classList.add('fa-moon');
         theme_mode_button.classList.remove('fa-sun');
+
+        anchartag.forEach(element => {
+            element.classList.remove("text-white");
+        });
         
     } else {
         document.documentElement.setAttribute('data-bs-theme', 'dark');
         theme_mode_button.classList.remove('fa-moon');
         theme_mode_button.classList.add('fa-sun');
-
+        anchartag.forEach(element => {
+            element.classList.add("text-white");
+        });
     }
 
     // Save the current theme mode to localStorage
@@ -42,6 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         theme_mode_button.classList.remove('fa-moon');
         theme_mode_button.classList.add('fa-sun');
+        anchartag.forEach(element => {
+            element.classList.add("text-white");
+        });
     }
 });
 

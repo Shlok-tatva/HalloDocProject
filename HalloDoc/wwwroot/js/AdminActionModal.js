@@ -3,11 +3,13 @@ $(document).ready(function () {
 
     /*Modal Click open the Modal  */
     $(document).on('click', '.open-modal', function () {
+
         var modalId = $(this).data('modal-id');
         var requestId = $(this).data('request-id');
         var data = getRequest(requestId);
         var patientName = data.firstname + " , " + data.lastname;
         console.log(data);
+        debugger
         var patientPhone = data.phonenumber;
         var patientEmail = data.email;
         // Update the modal body to display the requestId
@@ -16,10 +18,12 @@ $(document).ready(function () {
         $('#' + modalId).find('#requestIdcanleCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdTransferCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdsendAgreement').prop("value", requestId);
+        $('#' + modalId).find('#requestIdencounter').prop("value", data.requestid);
 
         $('#' + modalId).find('#patientName').text(patientName);
         $('#' + modalId).find('#phoneNumberSendAgreement').prop("value", patientPhone);
         $('#' + modalId).find('#emailSendAgreement').prop("value", patientEmail);
+
 
         if (modalId == "sendAgreementModal") {
             var requestTypeId = $(this).data('request-type-id');
@@ -61,6 +65,7 @@ $(document).ready(function () {
         $('#assignCaseModal').modal('hide');
         $('#transferModal').modal('hide');
         $('#sendAgreementModal').modal('hide');
+        $("#encounterModal").modal('hide');
     })
 
     /* Block Request Ajax Call */
@@ -198,6 +203,7 @@ $(document).ready(function () {
                     timer: 1500
                 }).then(function () {
                     location.reload();
+                    //$('#transferModal').modal('hide');
                 })
             },
             error: function (xhr, status, error) {

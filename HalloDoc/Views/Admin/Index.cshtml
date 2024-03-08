@@ -108,7 +108,6 @@
     </div>
 </div>
 
-
 <div class="container-fluid  mt-4  mb-10 rounded shadow p-0 w-98 pb-1">
 
     <div class="row ps-2 mb-lg-0 mb-3">
@@ -163,9 +162,6 @@
         </div>
     </div>
 
-
-
-
     <div id="spinner" class="spinner-grow text-info" role="status" style="display: none;">
         <span class="visually-hidden">Loading...</span>
     </div>
@@ -190,7 +186,26 @@
 </div>
 
 <partial name="_assignCase" model="Model.regions" />
-<partial name="_blockCase"  />
+<partial name="_blockCase" />
 <partial name="_transferCase" model="Model.regions" />
 <partial name="_cancelCase" model="Model.casetags" />
 <partial name="_sendAgreement" />
+<partial name="_encounter" />
+
+@if (@TempData["Error"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        debugger;
+            Swal.fire({
+                title: "Opps.. @TempData["Error"]",
+                icon: "info",
+                text: "For given Request Encounter form is Allready Finalize ! so you can download now ",
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: "Okay",
+                cancelButtonColor: "#01BBE7",
+            })
+        });
+    </script>
+}

@@ -12,7 +12,6 @@ using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
-
     //[CustomAuth("Admin")]
     public class AdminController : Controller
     {
@@ -119,7 +118,6 @@ namespace HalloDocAdmin.Controllers
 
         }
 
-
         public IActionResult ViewNotes()
         {
             int requestId = Int32.Parse(Request.Query["request"]);
@@ -190,8 +188,8 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-        #region DocumetnView
-        public IActionResult ViewUpload()
+          #region DocumetnView
+          public IActionResult ViewUpload()
           {
             int requestId = Int32.Parse(Request.Query["request"]);
             Request request = _requestRepository.Get(requestId);
@@ -285,9 +283,9 @@ namespace HalloDocAdmin.Controllers
             }
         }
         #endregion
-
         [HttpPost("ClearCase")]
         public IActionResult ClearCase(int requestId)
+
         {
             try
             {
@@ -301,8 +299,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
-        [HttpPost("SendAgreement")]
+         [HttpPost("SendAgreement")]
         public IActionResult SendAgreement(int requestId , string email , string phoneNumber)
         {
             string key = "770A8A65DA156D24EE2A093277530142";
@@ -339,16 +336,54 @@ namespace HalloDocAdmin.Controllers
             return Ok();
         }
 
+        [HttpGet]
         public IActionResult Encounter()
+        {
+            int requestId = Int32.Parse(Request.Query["request"]);
+            EncounterFormView view = _adminFunctionRepository.GetEncounterFormView(requestId);
+            if(view == null){
+                TempData["Error"] = "Form finalized";
+                return RedirectToAction("");
+            }
+            return View(view);
+        }
+
+        [HttpPost("encounter")]
+        public IActionResult Encounter(EncounterFormView formData)
+        {
+            try
+            {
+            _adminFunctionRepository.SubmitEncounterForm(formData);
+            return Ok();
+            }
+            catch(Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
+
+        
+        public int EcounterFormStatus(int requestId)
+        {
+
+            return _adminFunctionRepository.getEcounterFormStatus(requestId);
+            
+        }
+
+        public IActionResult ProviderLocation()
         {
             return View();
         }
 
+        public IActionResult Orders(){
+            return View();
+        }
+        
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return Redirect("/Login/index");
         }
-
     }
 }

@@ -32,7 +32,7 @@ namespace HalloDoc_BAL.Repository
                 new Claim(ClaimTypes.Name, username),
                 new Claim(ClaimTypes.Role, role)
             }),
-                Expires = DateTime.UtcNow.AddMinutes(Double.Parse(Configuration["jwt:ExpiryDays"])),
+                Expires = DateTime.UtcNow.AddMinutes(Double.Parse(Configuration["jwt:Expiry"])),
 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -64,7 +64,7 @@ namespace HalloDoc_BAL.Repository
                 {
                 return true;
                 }
-
+                
                 return false;
             }
             catch

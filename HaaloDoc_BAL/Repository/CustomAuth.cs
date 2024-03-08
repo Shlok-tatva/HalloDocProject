@@ -37,9 +37,14 @@ namespace HalloDoc_BAL.Repository
             }
 
             var token = context.HttpContext.Session.GetString("jwttoken");
-
-            if (token == null || !jwtServices.ValidateToken(token, out JwtSecurityToken jwttoken))
+            var isvalidated = jwtServices.ValidateToken(token, out JwtSecurityToken jwttoken);
+            if (token == null || !isvalidated)
             {
+                if(isvalidated == false)
+                {
+                    context.HttpContext.Session.Clear();
+                }
+
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Index" }));
                 return;
             }

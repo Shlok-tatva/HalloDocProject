@@ -1,0 +1,26 @@
+﻿@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+<partial name="_NavBar" />
+
+<div class="mt-5  m-auto mb-5 w-75">
+    <div class="mt-4 m-auto d-flex justify-content-between">
+        <div class="d-flex align-items-center justify-content-center">
+            <h3 class="me-2 mt-1 fw-bolder">Orders</h3>
+        </div>
+        <div>
+            <button class="btn btn-lg btn-outline-info hover_white ms-5" onclick="window.history.back()">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+</div>

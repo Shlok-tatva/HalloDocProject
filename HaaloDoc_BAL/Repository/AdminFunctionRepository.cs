@@ -7,6 +7,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Net.Mail;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -179,7 +180,7 @@ namespace HalloDoc_BAL.Repository
                     }
                     else if(item.Status == 4)
                     {
-                        transferNotes.Add("On " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes); ;
+                        transferNotes.Add("On " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes); 
                     }
                     else if (item.Status == 7)
                     {
@@ -195,6 +196,7 @@ namespace HalloDoc_BAL.Repository
                         {
                             transferNotes.Add("Physician Transfer to Patient on " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
                         }
+
 
                     }
                 }
@@ -527,5 +529,133 @@ namespace HalloDoc_BAL.Repository
 
             }
         }
+
+        public EncounterFormView GetEncounterFormView(int requestId)
+        {
+            EncounterFormView formView = new EncounterFormView();
+            Requestclient requestclient = _requestClientRepository.Get(requestId);
+            Encounterform encounterform = _context.Encounterforms.FirstOrDefault(r => r.Requestid == requestId);
+
+            if(encounterform != null && encounterform.Isfinalize == true){
+                return null;
+            }
+
+            if (requestclient != null)
+            {
+                formView.requestId = requestId;
+                formView.firstName = requestclient.Firstname;
+                formView.lastName = requestclient.Lastname;
+                formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
+                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate); 
+                formView.phone = requestclient.Phonenumber;
+                formView.email = requestclient.Email;
+                formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
+                if (encounterform != null)
+                {
+                    formView.historyOfPresentIllnessOrInjury = encounterform.Historyofpresentillnessorinjury;
+                    formView.medicalHistory = encounterform.Medicalhistory;
+                    formView.medications = encounterform.Medications;
+                    formView.allergies = encounterform.Allergies;
+                    formView.temp = encounterform.Temp;
+                    formView.hr = encounterform.Hr;
+                    formView.rr = encounterform.Rr;
+                    formView.bloodPressureDiastolic = encounterform.Bloodpressurediastolic;
+                    formView.bloodPressureSystolic = encounterform.Bloodpressurediastolic;
+                    formView.o2 = encounterform.O2;
+                    formView.pain = encounterform.Pain;
+                    formView.heent = encounterform.Heent;
+                    formView.pain = encounterform.Pain;
+                    formView.cv = encounterform.Cv;
+                    formView.chest = encounterform.Chest;
+                    formView.abd = encounterform.Abd;
+                    formView.extremities = encounterform.Extremities;
+                    formView.skin = encounterform.Skin;
+                    formView.neuro = encounterform.Neuro;
+                    formView.other = encounterform.Other;
+                    formView.diagnosis = encounterform.Diagnosis;
+                    formView.treatmentPlan = encounterform.TreatmentPlan;
+                    formView.followup = encounterform.Followup;
+                    formView.medicalDispensed = encounterform.Medicaldispensed;
+                    formView.procedures = encounterform.Procedures;
+                    formView.adminId = encounterform.Adminid;
+                    formView.isFinalize = encounterform.Isfinalize == false ? 0 : 1;
+                }
+
+            }
+
+            return formView;
+        }
+
+        public void SubmitEncounterForm(EncounterFormView formView)
+        {
+            if (formView != null)
+            {
+                using(var transaction = new TransactionScope())
+                {
+                    Encounterform newform = _context.Encounterforms.FirstOrDefault(f => f.Requestid == formView.requestId);
+
+                    if(newform == null)
+                    {
+                        newform = new Encounterform();
+                    }
+                    
+                    newform.Requestid = formView.requestId;
+                    newform.Historyofpresentillnessorinjury = formView.historyOfPresentIllnessOrInjury;
+                    newform.Medicalhistory = formView.medicalHistory;
+                    newform.Medications = formView.medications;
+                    newform.Allergies = formView.allergies;
+                    newform.Temp = formView.temp;
+                    newform.Hr = formView.hr;
+                    newform.Rr = formView.rr;
+                    newform.Bloodpressurediastolic = formView.bloodPressureDiastolic;
+                    newform.Bloodpressuresystolic = formView.bloodPressureSystolic;
+                    newform.O2 = formView.o2;
+                    newform.Pain = formView.pain;
+                    newform.Heent = formView.heent;
+                    newform.Pain = formView.pain;
+                    newform.Cv = formView.cv;
+                    newform.Chest = formView.chest;
+                    newform.Abd = formView.abd;
+                    newform.Extremities = formView.extremities;
+                    newform.Skin = formView.skin;
+                    newform.Neuro = formView.neuro;
+                    newform.Other = formView.other;
+                    newform.Diagnosis = formView.diagnosis;
+                    newform.TreatmentPlan = formView.treatmentPlan;
+                    newform.Followup = formView.followup;
+                    newform.Medicaldispensed = formView.medicalDispensed;
+                    newform.Procedures = formView.procedures;
+                    newform.Adminid = formView.adminId;
+                    newform.Isfinalize = formView.isFinalize == 0 ? false : true;
+
+                    if (newform == null)
+                    {
+                        _context.Encounterforms.Add(newform);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        _context.Encounterforms.Update(newform);
+                        _context.SaveChanges();
+                    }
+                    transaction.Complete();
+                }
+            }
+        }
+
+        public int getEcounterFormStatus(int requestId)
+        {
+            var form = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId);
+            if(form == null)
+            {
+                return 0;
+            }
+            else
+            {
+            bool status = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId).Isfinalize;
+            return status ? 1 : 0;
+            }
+        }
+
     }
 }

@@ -228,6 +228,16 @@ hr{
     background-blend-mode: multiply;
 }
 
+.btn-finalize{
+    background-color: purple !important;
+    color: white;
+}
+
+
+.btn-check:checked + .btn{
+    color:white !important;
+}
+
 @media (max-width: 760px) {
     .form_content {
         width: 85%;
