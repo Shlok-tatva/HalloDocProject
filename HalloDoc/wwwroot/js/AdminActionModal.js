@@ -75,8 +75,6 @@ $(document).ready(function () {
         var formData = new FormData();
         formData.append('requestId', $('#requestIdblockCase').val());
         formData.append('reason', $('#reasonForBlock').val());
-        formData.append('adminId', 4);
-
         $.ajax({
             url: "/BlockPatient",
             method: "POST",
@@ -109,8 +107,6 @@ $(document).ready(function () {
         console.log($('#requestIdcanleCase').val());
         formData.append('reason', $('#reasonForCancle').val());
         console.log($('#reasonForCancle').val());
-
-        formData.append('adminId', 4); // change to 4 for Company
         formData.append('notes', $('#additionalNotes').val());
 
         $.ajax({

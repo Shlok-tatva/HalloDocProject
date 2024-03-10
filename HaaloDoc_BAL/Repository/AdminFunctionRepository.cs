@@ -8,6 +8,8 @@ using System.Net.Mail;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Nodes;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -244,7 +246,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void transferCase(int requestId, int physicianId , string note)
+        public void transferCase(int requestId, int physicianId , int adminId , string note)
         {
             using (var transaction = new TransactionScope())
             {
@@ -258,7 +260,7 @@ namespace HalloDoc_BAL.Repository
                 log.Status = 2;
                 log.Notes = "Request Re-Assign to Physician " + physician.Firstname + " " + physician.Lastname + "(" + note + ")";
                 log.Createddate = DateTime.Now;
-                log.Adminid = 4;
+                log.Adminid = adminId;
                 log.Transtoadmin = false;
                 _context.Requeststatuslogs.Add(log);
                 _context.SaveChanges();
@@ -486,7 +488,7 @@ namespace HalloDoc_BAL.Repository
             return physicians;
         }
 
-        public void clearCase(int requestId)
+        public void clearCase(int requestId , int adminId)
         {
             using(var transaction = new TransactionScope())
             {
@@ -496,7 +498,7 @@ namespace HalloDoc_BAL.Repository
 
                 Requeststatuslog log = new Requeststatuslog();
                 log.Requestid = requestId;
-                log.Adminid = 4;
+                log.Adminid = adminId;
                 log.Status = 10; // clear the request
                 log.Notes = "Reqest Cleared";
                 log.Createddate = DateTime.Now;
@@ -509,7 +511,7 @@ namespace HalloDoc_BAL.Repository
         }
 
 
-        public void sendAgreement(int requestId , string email , string link)
+        public void sendAgreement(int requestId , int adminId , string email , string link)
         {
             using(var transaction = new TransactionScope())
             {
@@ -520,7 +522,7 @@ namespace HalloDoc_BAL.Repository
             Requeststatuslog log = new Requeststatuslog();
             log.Requestid = requestId;
             log.Createddate = DateTime.Now;
-            log.Adminid = 4;
+            log.Adminid = adminId;
             log.Status = 2;
             log.Notes = "Agreement sent to patient by Admin";
             _context.Requeststatuslogs.Add(log);
@@ -547,6 +549,59 @@ namespace HalloDoc_BAL.Repository
                 formView.lastName = requestclient.Lastname;
                 formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
                 formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate); 
+                formView.phone = requestclient.Phonenumber;
+                formView.email = requestclient.Email;
+                formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
+                if (encounterform != null)
+                {
+                    formView.historyOfPresentIllnessOrInjury = encounterform.Historyofpresentillnessorinjury;
+                    formView.medicalHistory = encounterform.Medicalhistory;
+                    formView.medications = encounterform.Medications;
+                    formView.allergies = encounterform.Allergies;
+                    formView.temp = encounterform.Temp;
+                    formView.hr = encounterform.Hr;
+                    formView.rr = encounterform.Rr;
+                    formView.bloodPressureDiastolic = encounterform.Bloodpressurediastolic;
+                    formView.bloodPressureSystolic = encounterform.Bloodpressurediastolic;
+                    formView.o2 = encounterform.O2;
+                    formView.pain = encounterform.Pain;
+                    formView.heent = encounterform.Heent;
+                    formView.pain = encounterform.Pain;
+                    formView.cv = encounterform.Cv;
+                    formView.chest = encounterform.Chest;
+                    formView.abd = encounterform.Abd;
+                    formView.extremities = encounterform.Extremities;
+                    formView.skin = encounterform.Skin;
+                    formView.neuro = encounterform.Neuro;
+                    formView.other = encounterform.Other;
+                    formView.diagnosis = encounterform.Diagnosis;
+                    formView.treatmentPlan = encounterform.TreatmentPlan;
+                    formView.followup = encounterform.Followup;
+                    formView.medicalDispensed = encounterform.Medicaldispensed;
+                    formView.procedures = encounterform.Procedures;
+                    formView.adminId = encounterform.Adminid;
+                    formView.isFinalize = encounterform.Isfinalize == false ? 0 : 1;
+                }
+
+            }
+
+            return formView;
+        }
+
+
+        public EncounterFormView GetEncounterForm(int requestId)
+        {
+            EncounterFormView formView = new EncounterFormView();
+            Requestclient requestclient = _requestClientRepository.Get(requestId);
+            Encounterform encounterform = _context.Encounterforms.FirstOrDefault(r => r.Requestid == requestId);
+
+            if (requestclient != null)
+            {
+                formView.requestId = requestId;
+                formView.firstName = requestclient.Firstname;
+                formView.lastName = requestclient.Lastname;
+                formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
+                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate);
                 formView.phone = requestclient.Phonenumber;
                 formView.email = requestclient.Email;
                 formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
@@ -657,5 +712,32 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+        public List<Healthprofessionaltype> getAllProfessions()
+        {
+            return _context.Healthprofessionaltypes.ToList();
+        }
+
+        public List<Healthprofessional> GetBusinessesByProfession(int professionId)
+        {
+            return _context.Healthprofessionals.Where(h => h.Profession == professionId).ToList();
+        }
+
+        public Healthprofessional GetBusinessDetailsById(int Vendorid)
+        {
+            return _context.Healthprofessionals.FirstOrDefault(h => h.Vendorid == Vendorid);
+        }
+
+        public void AddOrder(Orderdetail orderdetail)
+        {
+            try
+            {
+                _context.Orderdetails.Add(orderdetail);
+                _context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
     }
 }

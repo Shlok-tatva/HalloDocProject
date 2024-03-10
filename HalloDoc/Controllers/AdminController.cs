@@ -12,7 +12,7 @@ using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
-    //[CustomAuth("Admin")]
+    [CustomAuth("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -36,7 +36,8 @@ namespace HalloDocAdmin.Controllers
         public IActionResult Index()
         {
             ViewData["ViewName"] = "Dashboard";
-            AdminDashboardView view = _adminFunctionRepository.GetAdminDashboardView();
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+           AdminDashboardView view = _adminFunctionRepository.GetAdminDashboardView();
 
             return View(view);
         }
@@ -87,6 +88,8 @@ namespace HalloDocAdmin.Controllers
 
         public IActionResult ViewCase()
         {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
             int requestId = Int32.Parse(Request.Query["request"]);
             ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
             return View(view);
@@ -120,6 +123,8 @@ namespace HalloDocAdmin.Controllers
 
         public IActionResult ViewNotes()
         {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
             int requestId = Int32.Parse(Request.Query["request"]);
             ViewNotesView view = _adminFunctionRepository.GetViewNotesView(requestId);
             ViewBag.requestId = requestId;
@@ -158,8 +163,10 @@ namespace HalloDocAdmin.Controllers
         }
 
         [HttpPost("BlockPatient")]
-        public IActionResult BlockPatient(int requestId , string reason , int adminId)
+        public IActionResult BlockPatient(int requestId , string reason)
         {
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+  
             try
             {
                 _adminFunctionRepository.blockRequst(requestId, reason , adminId);
@@ -174,8 +181,10 @@ namespace HalloDocAdmin.Controllers
 
 
         [HttpPost("CancelCase")]
-        public IActionResult CancelCase(int requestId , int adminId , string reason , string notes)
+        public IActionResult CancelCase(int requestId , string reason , string notes)
         {
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+
             try
             {
                 _adminFunctionRepository.cancelCase(requestId, adminId, reason, notes);
@@ -191,21 +200,23 @@ namespace HalloDocAdmin.Controllers
           #region DocumetnView
           public IActionResult ViewUpload()
           {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+
             int requestId = Int32.Parse(Request.Query["request"]);
             Request request = _requestRepository.Get(requestId);
 
             List<ViewUploadView> documetns =  _adminFunctionRepository.GetuploadedDocuments(requestId);
             ViewBag.requestId = requestId;
             ViewBag.CFnumber = request.Confirmationnumber;
-            ViewBag.Username = request.Firstname + " " + request.Lastname;
+            ViewBag.patientName = request.Firstname + " " + request.Lastname;
             return View(documetns);
           }
 
         [HttpPost("UploadFile")]
         public IActionResult UploadFile(IFormFile file, int requestId)
         {
-            int adminId = 4;
-
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
             try
             {
                 _commonFunctionrepo.HandleFileUpload(file, requestId , adminId);
@@ -271,11 +282,13 @@ namespace HalloDocAdmin.Controllers
         [HttpPost("TransferCase")]
         public IActionResult TransferCase(int requestId , int physicianId, string note)
         {
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
             try
             {
-                _adminFunctionRepository.transferCase(requestId, physicianId, note);
+                _adminFunctionRepository.transferCase(requestId, physicianId, adminId, note);
                 return Ok();
             }
+
             catch(Exception ex)
             {
 
@@ -287,9 +300,10 @@ namespace HalloDocAdmin.Controllers
         public IActionResult ClearCase(int requestId)
 
         {
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
             try
             {
-                _adminFunctionRepository.clearCase(requestId);
+                _adminFunctionRepository.clearCase(requestId , adminId);
                 return Ok();
             }
             catch(Exception ex)
@@ -302,21 +316,26 @@ namespace HalloDocAdmin.Controllers
          [HttpPost("SendAgreement")]
         public IActionResult SendAgreement(int requestId , string email , string phoneNumber)
         {
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
             string key = "770A8A65DA156D24EE2A093277530142";
             string encryptedrequestId = _commonFunctionrepo.Encrypt(requestId.ToString(), key);
             var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/reviewagreement?&requestId={encryptedrequestId}";
-            _adminFunctionRepository.sendAgreement(requestId, email, accountCreationLink);
+            _adminFunctionRepository.sendAgreement(requestId, adminId, email ,accountCreationLink);
 
             return Ok();
         }
 
         public IActionResult Provider(){
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
             return View();
         }
 
         [HttpGet]
         public IActionResult CreateProvider(){
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
@@ -339,6 +358,9 @@ namespace HalloDocAdmin.Controllers
         [HttpGet]
         public IActionResult Encounter()
         {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+
             int requestId = Int32.Parse(Request.Query["request"]);
             EncounterFormView view = _adminFunctionRepository.GetEncounterFormView(requestId);
             if(view == null){
@@ -362,8 +384,6 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
-        
         public int EcounterFormStatus(int requestId)
         {
 
@@ -371,15 +391,68 @@ namespace HalloDocAdmin.Controllers
             
         }
 
+        [HttpGet]
+        public IActionResult GetEncounterFormDetails(int requestId)
+        {
+            var encounterFormView = _adminFunctionRepository.GetEncounterForm(requestId); // Assuming you have this method to retrieve encounter form details
+            return Json(encounterFormView); // Assuming encounterFormView is a model representing the encounter form details
+        }
+
+
         public IActionResult ProviderLocation()
         {
             return View();
         }
 
         public IActionResult Orders(){
+            var requestId = Request.Query["request"];
+            ViewData["ViewName"] = "Dashboard";
+            ViewData["requestId"] = requestId;
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+
             return View();
         }
-        
+
+        [HttpGet]
+        public IActionResult getProfessions()
+        {
+            List<Healthprofessionaltype> allProfession = _adminFunctionRepository.getAllProfessions();
+            return Json(allProfession);
+
+        }
+
+        [HttpGet]
+        public ActionResult getBusinesses(int professionId)
+        {
+            List<Healthprofessional> businesses = _adminFunctionRepository.GetBusinessesByProfession(professionId);
+            return Json(businesses);
+        }
+
+        [HttpGet]
+        public ActionResult GetBusinessDetails(int Vendorid)
+        {
+            Healthprofessional business = _adminFunctionRepository.GetBusinessDetailsById(Vendorid);
+            return Json(business);
+        }
+
+        public IActionResult Addorder(Orderdetail details)
+        {
+            try
+            {
+                if (details != null)
+                {
+                    details.Createddate = DateTime.Now; 
+                    _adminFunctionRepository.AddOrder(details);
+                 return Ok();
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

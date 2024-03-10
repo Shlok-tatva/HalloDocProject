@@ -86,7 +86,7 @@ namespace HalloDoc_BAL.Repository
                     var emailBody = Message;
                     smtpClient.UseDefaultCredentials = false;
                     //smtpClient.Credentials = new NetworkCredential("shlokjadeja177@gmail.com", "pgqv mnuc aspa cglb");
-                     //smtpClient.Credentials = new NetworkCredential("436da98810b726", "5c043668fb3765");
+                    //smtpClient.Credentials = new NetworkCredential("436da98810b726", "5c043668fb3765");
                     smtpClient.Credentials = new NetworkCredential("shlok.jadeja@etatvasoft.com", "Shlok@#177");
 
                     smtpClient.Port = 587;

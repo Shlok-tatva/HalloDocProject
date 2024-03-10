@@ -1,4 +1,4 @@
-﻿        using Azure.Core;
+﻿ using Azure.Core;
 using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.Repository;
 using HalloDoc_DAL.Models;
@@ -14,13 +14,15 @@ namespace HalloDoc.Controllers
         private readonly IAspnetuserRepository _aspnetuserrepo;
         private readonly IPatientFunctionRepository _petientfunctionrepo;
         private readonly IUserRepository _userrepo;
+        private readonly IAdminRepository _adminrepo;
         private readonly IJwtServices _jwtServices;
 
-        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , IUserRepository userrepo, IJwtServices jwtServices)
+        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , IUserRepository userrepo, IAdminRepository adminrepo , IJwtServices jwtServices)
         {
             _aspnetuserrepo = aspnetuser;
             _petientfunctionrepo = petientfunctionrepo;
             _userrepo = userrepo;
+            _adminrepo = adminrepo;
             _jwtServices = jwtServices;
         }
 
@@ -64,8 +66,10 @@ namespace HalloDoc.Controllers
                     if (role == 1)
                     {
                         string token = _jwtServices.GenerateToken(user.Email, "Admin");
+                        Admin Admin = _adminrepo.GetAdmin(logedinUser.Id);
                         HttpContext.Session.SetString("jwttoken", token);
-                        HttpContext.Session.SetString("UserId", user.Email);
+                        HttpContext.Session.SetString("Username", Admin.Firstname + " " + Admin.Lastname);
+                        HttpContext.Session.SetString("AdminId", Admin.Adminid.ToString());
                         HttpContext.Session.SetInt32("roleid", 1);
                         return Redirect("/Admin");
                     }
