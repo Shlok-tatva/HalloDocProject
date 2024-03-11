@@ -2,6 +2,7 @@ using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.DataContext;
 using HalloDoc_BAL.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
+app.UseRotativa();
 app.UseAuthorization();
 app.UseAuthentication();
 

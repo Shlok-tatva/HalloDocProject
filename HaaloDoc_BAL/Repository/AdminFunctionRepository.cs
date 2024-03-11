@@ -727,6 +727,11 @@ namespace HalloDoc_BAL.Repository
             return _context.Healthprofessionals.FirstOrDefault(h => h.Vendorid == Vendorid);
         }
 
+        public List<Physicianlocation> GetPhysicianlocations()
+        {
+            return _context.Physicianlocations.ToList();
+        }
+
         public void AddOrder(Orderdetail orderdetail)
         {
             try

@@ -64,6 +64,20 @@
 
 <partial name="_NavBar" />
 
-<div class="p-4 shadow rounded-2 my-5 w-75 m-auto">
-<div id="map"></div>
+    <div class="mt-4 w-75 m-auto mt-5 d-flex justify-content-between">
+        <div class="d-flex align-items-center justify-content-center">
+            <h3 class="me-2 mt-1 fw-bolder">Provider Location</h3>
+        </div>
+        <div>
+            <button class="btn btn-lg btn-outline-info hover_white ms-5" onclick="window.history.back()">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+
+<div class="p-4 shadow rounded-2 my-3 w-75 m-auto">
+
+    <div id="map"></div>
 </div>
+
+<partial name="_providerInfo" />

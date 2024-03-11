@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $.ajax({
-        url: '/admin/getProfessions', // replace this with your route to fetch professions
+        url: '/admin/getProfessions',
         type: 'GET',
         success: function (response) {
             var options = '<option value="" selected disabled>Select Profession</option>';
@@ -11,6 +11,7 @@ $(document).ready(function () {
         }
     });
 });
+
 
 // AJAX request to fetch businesses for selected profession
 $('#ProfessionSelect').change(function () {
@@ -40,7 +41,6 @@ $('#BusinessSelect').change(function () {
             $('#BusinessContactInput').val(response.businesscontact);
             $('#EmailInput').val(response.email);
             $('#FaxNumberInput').val(response.faxnumber);
-            // You can continue filling other inputs here
         }
     });
 });

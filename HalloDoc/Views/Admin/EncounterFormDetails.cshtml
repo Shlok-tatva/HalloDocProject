@@ -1,0 +1,97 @@
+﻿@model HalloDoc_BAL.ViewModel.Admin.EncounterFormView;
+
+
+@section Style{
+    <style>
+        body{
+            height: 100vh !important;
+            background-color: #01bbe91b;
+        }
+        .encounterForm {
+            @* background-color: lightcyan; *@
+            font-family: "poppins";
+        }
+        .encounterForm h2{
+               width:100%;
+               text-align:center;
+        }
+
+        .details{
+            margin: auto;
+            height: 100%;
+            margin-top: 20px;
+            display: grid;
+
+        }
+        h2{
+            text-decoration: underline;
+            font-weight: bold;
+            color: #01bbe9;
+        }
+        h5 {
+            height: 50px;
+            border-radius: 2px;
+            @* margin: 5px; *@
+        }
+        .data{
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        display: flex;
+        background-color: white;
+        align-items: center;
+        font-size: 16px;
+        }
+        .data >span{
+            font-weight: bolder !important;
+            margin-right: 5px;
+            font-size: 20px;
+        }
+        .followup{
+            height: 120px;
+            background-color: #01bbe958;
+            color: black;
+            display: flex;
+        }
+
+    </style>
+}
+    <div class="encounterForm h-100">
+        <h2>Encounter Form Details</h2>
+        <div class="details">
+        <h5><div class="data"><span>First Name: </span> @Model.firstName </div></h5>
+        <h5><div class="data"><span>Last Name: </span> @Model.lastName </div></h5>
+        <h5><div class="data"><span>Location: </span> @Model.location </div></h5>
+        <h5><div class="data"><span>Date of Birth: </span> @Model.dateOfBirth </div></h5>
+        <h5><div class="data"><span>Date of Request: </span> @Model.dateOfRequest </div></h5>
+        <h5><div class="data"><span>Phone: </span> @Model.phone </div></h5>
+        <h5><div class="data"><span>Email: </span> @Model.email </div></h5>
+        <h5><div class="data"><span>History of Present Illness or Injury: </span> @Model.historyOfPresentIllnessOrInjury </div></h5>
+        <h5><div class="data"><span>Medical History: </span> @Model.medicalHistory </div></h5>
+        <h5><div class="data"><span>Medications: </span> @Model.medications </div></h5>
+        <h5><div class="data"><span>Allergies: </span> @Model.allergies </div></h5>
+        <h5><div class="data"><span>Temp: </span> @Model.temp </div></h5>
+        <h5><div class="data"><span>HR: </span> @Model.hr </div></h5>
+        <h5><div class="data"><span>RR: </span> @Model.rr </div></h5>
+        <h5><div class="data"><span>Blood Pressure Diastolic: </span> @Model.bloodPressureDiastolic </div></h5>
+        <h5><div class="data"><span>Blood Pressure Systolic: </span> @Model.bloodPressureSystolic </div></h5>
+        <h5><div class="data"><span>O2: </span> @Model.o2 </div></h5>
+        <h5><div class="data"><span>Heent: </span> @Model.heent </div></h5>
+        <h5><div class="data"><span>Pain: </span> @Model.pain </div></h5>
+        <h5><div class="data"><span>CV: </span> @Model.cv </div></h5>
+        <h5><div class="data"><span>Chest: </span> @Model.chest </div></h5>
+        <h5><div class="data"><span>ABD: </span> @Model.abd </div></h5>
+        <h5><div class="data"><span>Extremities: </span> @Model.extremities </div></h5>
+        <h5><div class="data"><span>Skin: </span> @Model.skin </div></h5>
+        <h5><div class="data"><span>Neuro: </span> @Model.neuro </div></h5>
+        <h5><div class="data"><span>Other: </span> @Model.other </div></h5>
+        <h5><div class="data"><span>Diagnosis: </span> @Model.diagnosis </div></h5>
+        <h5><div class="data"><span>Treatment Plan: </span> @Model.treatmentPlan </div></h5>
+        <h5><div class="data"><span>Medical Dispensed: </span> @Model.medicalDispensed </div></h5>
+        <h5><div class="data"><span>Procedures: </span> @Model.procedures </div></h5>
+        <h5><div class="data followup"><span>FOLLOWUP: </span> @Model.followup </div></h5>
+    </div>
+    </div>
+
+

@@ -31,5 +31,6 @@ namespace HalloDoc_BAL.Repository
         public List<Healthprofessional> GetBusinessesByProfession(int professionId);
         public Healthprofessional GetBusinessDetailsById(int Vendorid);
         public void AddOrder(Orderdetail orderdetail);
+        public List<Physicianlocation> GetPhysicianlocations();
     }
 }

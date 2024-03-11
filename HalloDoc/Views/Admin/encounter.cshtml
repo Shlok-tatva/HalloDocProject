@@ -13,6 +13,7 @@
         $(document).ready(function () {
             $('#isfinalize').on('click', function (e) {
                 e.preventDefault();
+
                 const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
                         confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
@@ -142,7 +143,7 @@
                  <div class="form-floating col-md-6 my-3">
                     <input asp-for="dateOfRequest" type="date" class="form-control" id="dateofrequest">
                     <label asp-for="dateOfRequest" for="dateofrequest" class="control-label ms-3">
-                        Date 
+                        Date of Request
                      </label>
                  </div>
 

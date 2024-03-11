@@ -8,11 +8,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Rotativa.AspNetCore;
 using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
-    [CustomAuth("Admin")]
+    // [CustomAuth("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -394,14 +395,38 @@ namespace HalloDocAdmin.Controllers
         [HttpGet]
         public IActionResult GetEncounterFormDetails(int requestId)
         {
-            var encounterFormView = _adminFunctionRepository.GetEncounterForm(requestId); // Assuming you have this method to retrieve encounter form details
-            return Json(encounterFormView); // Assuming encounterFormView is a model representing the encounter form details
+            var encounterFormView = _adminFunctionRepository.GetEncounterForm(requestId);
+            return View("EncounterFormDetails" , encounterFormView); 
+        }
+
+        [HttpGet]
+        public IActionResult GeneratePDF(int requestId)
+        {
+            var encounterFormView = _adminFunctionRepository.GetEncounterForm(requestId);
+            if(encounterFormView == null)
+            {
+                return NotFound();
+            }
+            // return View("EncounterFormDetails", encounterFormView);
+            return new ViewAsPdf("EncounterFormDetails", encounterFormView)
+            {
+               FileName = "Encounter_Form.pdf"
+            };
+
         }
 
 
         public IActionResult ProviderLocation()
         {
+             ViewData["ViewName"] = "ProviderLocation";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
             return View();
+        }
+        [HttpGet]
+        public IActionResult GetPhysicianLocation()
+        {
+            var location = _adminFunctionRepository.GetPhysicianlocations();
+            return Json(location);
         }
 
         public IActionResult Orders(){
