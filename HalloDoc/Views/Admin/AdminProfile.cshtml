@@ -1,0 +1,185 @@
+﻿@model HalloDoc_BAL.ViewModel.Admin.AdminProfileView;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+
+@section Scripts {
+    <script src="~/js/AdminProfile.js"></script>
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+<partial name="_Navbar" />
+<div class=" my-5 container m-auto">
+    <div class="mt-4 m-auto form_content">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">My profile</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+        <div class="shadow p-3 mt-3 rounded-2">
+            <div>
+                <div class=" row">
+                    <!-- General Information -->
+                    <h5 class="col-12 fw-bold my-3">Account Information</h5>
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="UserName" type="text" class="form-control readonly">
+                        <label asp-for="UserName" for="floatingInput" class="control-label ms-3">
+                            User Name
+                        </label>
+                    </div>
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="Password" id="Adminpassword" type="password" placeholder=" " class="form-control">
+                        <label asp-for="Password" for="floatingInput" class="control-label ms-3">
+                            Password
+                        </label>
+                    </div>
+                    <div class="form-floating col-md-6 my-3">
+                        <select class="form-select pt-1 readonly" aria-label="Default select example " disabled>
+                            <option value="@Model.statusString" selected>@Model.statusString</option>
+                        </select>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <select class="form-select pt-1 readonly" aria-label="Default select example" disabled>
+                            <option value="@Model.role" selected hidden>@Model.role</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-1 mb-2 me-2">
+                        <button class="btn btn-outline-info hover_white" id="resetPassword">Reset Password</button>
+                    </div>
+
+                    @*Administrator Information *@
+                    <form class="row" id="adminProfile" asp-action="updateAdmin">
+                    <h5 class="col-12 fw-bold my-3">Administrator Information</h5>
+                    <input type="text" id="adminId" asp-for="adminId" class="visually-hidden"></input>
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="FirstName" type="text" class="form-control togleInputAdminInfo readonly">
+                        <label asp-for="FirstName" for="floatingInput" class="control-label ms-3">
+                            First Name
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="LastName" type="text" class="form-control togleInputAdminInfo readonly">
+                        <label asp-for="LastName" for="floatingInput" class="control-label ms-3">
+                            Last Name
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="Email" type="email" class="form-control togleInputAdminInfo readonly">
+                        <label asp-for="Email" for="floatingInput" class="control-label ms-3">
+                            Email
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="ConfirmEmail" type="text" class="form-control togleInputAdminInfo readonly">
+                        <label asp-for="ConfirmEmail" for="floatingInput" class="control-label ms-3">
+                            Confirm Email
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="Phone" id="phone" type="tel" class="form-control h-100 togleInputAdminInfo readonly"> <br />
+                        <label for="floatingInput" class="control-label ms-3">
+                        </label>
+                    </div>
+
+                    <div class="col-md-6 my-3">
+                        <div class="form-check form-check-inline d-flex flex-wrap ps-0 align-items-center">
+                            @foreach (var region in ViewBag.regions)
+                            {
+                                <div class="d-flex align-items-center">
+                                    @if (Model.AdminRegions.Contains(region.Regionid))
+                                    {
+                                        <input type="checkbox" class="checkbox" name="selectedRegions" value="@region.Regionid" checked disabled />
+                                    }
+                                    else
+                                    {
+                                    <input type="checkbox" class="checkbox" name="selectedRegions" value="@region.Regionid" disabled/>
+                                    }
+                                    <label class="fs-6">@region.Name</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-1 mb-2 me-2">
+                        <button class="btn btn-info text-white" id="editButton">Edit</button>
+                    </div>
+
+                    @*Mailing &  Billing Information *@
+
+                    <h5 class="col-12 fw-bold my-3">Mailing & Billing Information</h5>
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="Address1" type="text" class="form-control togleInputMailingInfo readonly">
+                        <label for="floatingInput" class="control-label ms-3">
+                           Address 1
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="Address2" type="text" class="form-control togleInputMailingInfo readonly">
+                        <label for="floatingInput" class="control-label ms-3">
+                            Address 2
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="City" type="text" class="form-control togleInputMailingInfo readonly">
+                        <label for="floatingInput" class="control-label ms-3">
+                            City
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <select class="form-select pt-1 togleStateMailginfo" id="StateSelect" aria-label="Default select example" disabled>
+                            <option value="" disabled>State</option>
+                            @foreach (var region in ViewBag.regions)
+                            {
+                                    if (@region.Regionid == Model.StateId)
+                                    {
+                                        <option value="@region.Regionid" selected>@region.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@region.Regionid">@region.Name</option>
+
+                                    }
+
+                            }
+                        </select>
+                    </div>
+                    <input id="stateId" type="text" asp-for="StateId" class="visually-hidden"></input>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="Zip" type="text" class="form-control readonly togleInputMailingInfo">
+                        <label for="floatingInput" class="control-label ms-3">
+                            Zip
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input asp-for="billingPhone" id="phone1" type="tel" class="form-control h-100 togleInputMailingInfo readonly"> <br />
+                        <label for="floatingInput" class="control-label ms-3">
+                        </label>
+                    </div>
+
+
+                    <div class="d-flex justify-content-end mt-1 mb-2 me-2">
+                        <button class="btn btn-info text-white" id="editButton2">Edit</button>
+                    </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

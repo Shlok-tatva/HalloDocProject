@@ -13,6 +13,35 @@
             document.getElementById('navbarHeader').classList.add("show");
         }
     </script>
+
+    @if (TempData["Success"] != null)
+{
+        <script>
+            $(document).ready(function(){
+                toastMixin.fire({
+                    animation: true,
+                    title: '@TempData["Success"]',
+                    icon: 'success'
+                });
+            })
+            var toastMixin = Swal.mixin({
+                toast: true,
+                icon: 'success',
+                title: 'General Title',
+                animation: false,
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        </script>
+   
+}
+
 }
 
 <div class="row mx-3 my-4">

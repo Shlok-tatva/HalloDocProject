@@ -71,6 +71,7 @@ namespace HalloDoc.Controllers
                         HttpContext.Session.SetString("Username", Admin.Firstname + " " + Admin.Lastname);
                         HttpContext.Session.SetString("AdminId", Admin.Adminid.ToString());
                         HttpContext.Session.SetInt32("roleid", 1);
+                        TempData["Success"] = "Login successfully";
                         return Redirect("/Admin");
                     }
                     else if(role == 2)

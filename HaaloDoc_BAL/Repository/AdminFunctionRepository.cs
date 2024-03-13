@@ -10,6 +10,7 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Identity;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -19,15 +20,17 @@ namespace HalloDoc_BAL.Repository
         public IRequestRepository _requestRepository;
         public IRequestClientRepository _requestClientRepository;
         public IRequestNotesRepository _requestNotesRepository;
+        public IAdminRepository _adminRepo;
         public ICommonFunctionRepository _commonFunctionrepo;
 
-        public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo)
+        public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo , IAdminRepository adminRepo)
         {
             _context = context;
             _requestRepository = requestRepository;
             _requestClientRepository = requestClientRepository;
             _requestNotesRepository = requestNotesRepository;
             _commonFunctionrepo = commonFunctionrepo;
+            _adminRepo = adminRepo;
         }
 
         public AdminDashboardView GetAdminDashboardView()
@@ -87,7 +90,7 @@ namespace HalloDoc_BAL.Repository
                 case 4:
                     return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders,  MenuOptionEnum.Encounter }; // Map to 'Conclude' state
                 case 5:
-                    return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.clearCase, MenuOptionEnum.Encounter };
+                    return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.closeCase , MenuOptionEnum.clearCase, MenuOptionEnum.Encounter };
                 case 6:
                     return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes };
                 default:
@@ -744,5 +747,100 @@ namespace HalloDoc_BAL.Repository
 
             }
         }
+
+        public AdminProfileView GetAdminProfileView(int adminId)
+        {
+            if(adminId != null)
+            {
+                try
+                {
+                    AdminProfileView view = new AdminProfileView();
+                    Admin admin = _adminRepo.GetAdminById(adminId);
+                    view.adminId = adminId;
+                    view.FirstName = admin.Firstname;
+                    view.LastName = admin.Lastname;
+                    view.Email = admin.Email;
+                    view.ConfirmEmail = admin.Email;
+                    view.Phone = admin.Mobile;
+                    view.Address1 = admin.Address1;
+                    view.Address2 = admin.Address2;
+                    view.City = admin.City;
+                    view.Zip = admin.Zip;
+                    view.StateId = admin.Regionid;
+                    view.billingPhone = admin.Altphone;
+                    view.Status = admin.Status;
+                    string role = _context.Roles.FirstOrDefault(r => r.Roleid == admin.Roleid).Name;
+                    view.role = role;
+                    view.UserName = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid).Username;
+                    view.AdminRegions = (from ar in _context.Adminregions.ToList()
+                                        where ar.Adminid == adminId select (int)ar.Regionid).ToList();
+                                       
+                    return view;
+                }
+                catch(Exception ex)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+            
+
+        }
+
+        public void UpdateAdminData(AdminProfileView data)
+        {
+            Admin admin = _adminRepo.GetAdminById(data.adminId);
+            if (admin != null)
+            {
+                admin.Firstname = data.FirstName;
+                admin.Lastname = data.LastName;
+                admin.Email = data.Email;
+                admin.Mobile = data.Phone;
+                admin.City = data.City;
+                admin.Address1 = data.Address1;
+                admin.Address2 = data.Address2;
+                admin.Regionid = data.StateId;
+                admin.Zip = data.Zip;
+                admin.Altphone = data.billingPhone;
+                _adminRepo.updateAdmin(admin);
+            }
+        }
+
+        public void ChagePassword(int adminId , string password)
+        {
+            Admin admin = _adminRepo.GetAdminById(adminId);
+            Aspnetuser user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
+            if (user != null)
+            {
+                var hasher = new PasswordHasher<string>();
+                string hashedPassword = hasher.HashPassword(null, password);
+                user.Passwordhash = hashedPassword;
+                _context.Aspnetusers.Update(user);
+                _context.SaveChanges();
+            }
+        }
+
+        public List<ProviderInfoAdmin> getProviderInfoView() {
+            List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
+            List<Physician> providers = _context.Physicians.ToList(); 
+
+            foreach (Physician pro in providers)
+            {
+                ProviderInfoAdmin provider = new ProviderInfoAdmin();
+                provider.providerName = pro.Firstname + " " + pro.Lastname;
+                provider.providerEmail = pro.Email;
+                provider.providerPhone = pro.Mobile;
+                provider.providerStatus = pro.Status;
+                provider.providerRole = pro.Roleid.ToString();
+                provider.stopNotification = false;
+                providerInfoAdmin.Add(provider);
+            }
+
+            return providerInfoAdmin;
+        }
+
     }
 }

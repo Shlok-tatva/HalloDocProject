@@ -59,7 +59,6 @@ $(document).ready(function () {
 
     /*Modal Click Close the Modal  */
     $('.close').on('click', function () {
-        debugger
         $('#blockPatientModal').modal('hide');
         $('#cancelCaseModal').modal('hide');
         $('#assignCaseModal').modal('hide');

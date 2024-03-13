@@ -23,14 +23,19 @@ namespace HalloDoc_BAL.Repository
         void transferCase(int requestId, int physicianId, int adminId ,string note);
         void clearCase(int requestId, int adminId);
         void sendAgreement(int requestId, int adminId , string email , string link);
-        public EncounterFormView GetEncounterFormView(int requestId);
-        public void SubmitEncounterForm(EncounterFormView formView);
-        public EncounterFormView GetEncounterForm(int requestId);
-        public int getEcounterFormStatus(int requestId);
-        public List<Healthprofessionaltype> getAllProfessions();
-        public List<Healthprofessional> GetBusinessesByProfession(int professionId);
-        public Healthprofessional GetBusinessDetailsById(int Vendorid);
-        public void AddOrder(Orderdetail orderdetail);
-        public List<Physicianlocation> GetPhysicianlocations();
-    }
+        EncounterFormView GetEncounterFormView(int requestId);
+        void SubmitEncounterForm(EncounterFormView formView);
+        EncounterFormView GetEncounterForm(int requestId);
+        int getEcounterFormStatus(int requestId);
+        List<Healthprofessionaltype> getAllProfessions();
+        List<Healthprofessional> GetBusinessesByProfession(int professionId);
+        Healthprofessional GetBusinessDetailsById(int Vendorid);
+        void AddOrder(Orderdetail orderdetail);
+        List<Physicianlocation> GetPhysicianlocations();
+        AdminProfileView GetAdminProfileView(int adminId);
+        void UpdateAdminData(AdminProfileView data);
+        void ChagePassword(int adminId, string password);
+        public List<ProviderInfoAdmin> getProviderInfoView();
+        
+        }
 }

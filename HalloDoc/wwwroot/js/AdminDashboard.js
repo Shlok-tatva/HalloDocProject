@@ -134,7 +134,7 @@ $(document).ready(function () {
             var dropdownMenu = $('<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">');
 
             request.menuOptions.forEach(function (option) {
-                var enumName = mapNumberToEnumName(option);
+                var enumName = mapNumberToEnumName(option); 
                 var imageUrl = menuOptionImageMapping[enumName];
                 var modalId = toCamelCase(enumName) + 'Modal';
 

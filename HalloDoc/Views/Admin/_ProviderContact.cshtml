@@ -1,0 +1,41 @@
+﻿
+<div class="modal fade" id="contactProviderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content border-0" id="contactProvider">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Contact your Provider</h5>
+                <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Choose communication to send message</p>
+                <input type="text" id="physicianId" value="" class="visually-hidden" />
+                  
+                 <div class="d-flex flex-column">
+                <label class="radiolabel"><input type="radio" name="channel">Email</label>
+                <label class="radiolabel"><input type="radio" name="channel">Phone</label>
+                <label class="radiolabel"><input type="radio" name="channel">Both</label>
+                 </div> 
+
+
+                <div>
+                    <div class="form-floating my-3">
+                        <input id="message" type="text" class="form-control togleInput" placeholder=" " style="height:120px;" required>
+                        <label for="floatingInput" class="control-label">
+                            Message
+                        </label>
+                    </div>
+                </div>
+                @* <p>Request ID: <span id="requestIdDisplay"></span></p> *@
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-info text-white btn-lg">Send</button>
+                <button class="btn btn-outline-info hover_white fw-100 btn-lg close">
+                    Cancle
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

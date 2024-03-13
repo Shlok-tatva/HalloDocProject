@@ -34,7 +34,7 @@ namespace HalloDoc_BAL.Repository
 
         public bool Exists(string email)
         {
-            return _context.Aspnetusers.Any(e => e.Username == email);
+            return _context.Aspnetusers.Any(e => e.Email == email);
         }
 
         public Aspnetuser GetByEmail (string email)

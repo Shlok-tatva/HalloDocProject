@@ -1,8 +1,56 @@
+@model List<HalloDoc_BAL.ViewModel.Admin.ProviderInfoAdmin>;
+
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
+    <style>
+        input[type=radio] {
+            --s: 1.5em;
+            /* control the size */
+            --c: #01BBE7;
+            /* the active color */
+
+            height: var(--s);
+            aspect-ratio: 1;
+            border: calc(var(--s)/8) solid #939393;
+
+            padding: calc(var(--s)/8);
+            margin: 7px;
+            background:
+                radial-gradient(farthest-side, var(--c) 94%, #0000) 50%/0 0 no-repeat content-box;
+            border-radius: 50%;
+            outline-offset: calc(var(--s)/10);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            font-size: inherit;
+            transition: .3s;
+        }
+
+        input[type=radio]:checked {
+            border-color: var(--c);
+            background-size: 100% 100%;
+        }
+        .radiolabel{
+            display:flex;
+            align-items: center;
+
+        }
+        
+        @@media print {
+            input[type=radio] {
+                -webkit-appearance: auto;
+                -moz-appearance: auto;
+                appearance: auto;
+                background: none;
+            }
+        }
+    
+    </style>
 }
 
 @section Scripts {
+    <script src="~/js/contactProvider.js"></script>
     <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
@@ -31,10 +79,10 @@
             <div class="col-md-5">
                 <select class="p-2 mt-3 px-4 form-control mb-3 w-100 " id="regionsearch">
                     <option value="0">All</option>
-                    <option value="0">All</option>
-                    <option value="0">All</option>
-                    <option value="0">All</option>
-                    <option value="0">All</option>
+                    @foreach (var region in @ViewBag.regions)
+                    {
+                        <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                    }
                 </select>
             </div>
 
@@ -45,38 +93,38 @@
 
         <div>
             <table class="w-100 overflow-scroll">
-                <thead >
+                <thead>
                     <tr>
-                    <th class="w-10">Stop <br /> Notification</th>
-                    <th class="w-25">Provider Name</th>
-                    <th class="w-10">Role</th>
-                    <th class="w-20">On Call Status</th>
-                    <th class="w-15">Status</th>
-                    <th class="w-25">Actions</th>
+                        <th class="w-10">Stop <br /> Notification</th>
+                        <th class="w-25">Provider Name</th>
+                        <th class="w-10">Role</th>
+                        <th class="w-20">On Call Status</th>
+                        <th class="w-15">Status</th>
+                        <th class="w-25">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td class="p-3"> <input type="checkbox" name="" id=""></td>
-                        <td class="text-black">shlok Jadeja</td>
-                        <td class="text-black">Physician</td>
-                        <td class="text-black">Un avaible</td>
-                        <td class="text-black">Active</td>
-                        <td class="text-black"> <button class="btn btn-sm hover_white btn-outline-info">Contact</button> <button class="btn btn-sm hover_white btn-outline-info">edit</button> </td>
-                    </tr>
-
-                     <tr class="">
-                        <td class="p-3"> <input type="checkbox" name="" id=""></td>
-                        <td class="text-black">shlok Jadeja</td>
-                        <td class="text-black">Physician</td>
-                        <td class="text-black">Un avaible</td>
-                        <td class="text-black">Active</td>
-                        <td> <button class="btn btn-sm hover_white btn-outline-info">Contact</button> <button class="btn btn-sm hover_white btn-outline-info">edit</button> </td>
-                    </tr>
-
+                    @foreach (var provider in Model)
+                    {
+                        <tr>
+                            <td class="p-3"> <input type="checkbox" name="" id=""></td>
+                            <td class="text-black">@provider.providerName</td>
+                            <td class="text-black">Physician</td>
+                            <td class="text-black">Un avaible</td>
+                            <td class="text-black">@provider.statusString</td>
+                            <td class="text-black">
+                                <button class="btn btn-sm hover_white btn-outline-info open-modal"
+                                    data-email="@provider.providerEmail"
+                                    data-phone="@provider.providerPhone">Contact</button>
+                                <button class="btn btn-sm hover_white btn-outline-info">edit</button>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<partial name="_ProviderContact" />

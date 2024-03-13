@@ -7,7 +7,7 @@
 @section PatientLoginStyle {
     <link rel="stylesheet" href="~/css/patient_style.css" />
 }
-@section PasswordIcon {
+@section Scripts {
     <script>
         let pass = document.getElementById('pass');
         let inpt = document.getElementById('inpt');
@@ -25,7 +25,36 @@
 
             }
         })
+
     </script>
+
+    @if (@TempData["Error"] != null)
+    {
+        <script>
+            $(document).ready(function () {
+                toastMixin.fire({
+                    animation: true,
+                    title: '@TempData["Error"]',
+                    icon: 'error'
+                });
+            })
+
+            var toastMixin = Swal.mixin({
+                toast: true,
+                icon: 'success',
+                title: 'General Title',
+                animation: false,
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        </script>
+    }
 }
 
 
@@ -45,7 +74,7 @@
                         <h2 class="text-center pb-3 mt-2 fw-bold">
                             Login To Your Account</h1>
 
-                            <span class="text-danger">@TempData["Error"]</span>
+                            @*<span class="text-danger">@TempData["Error"]</span>*@
 
                             <form asp-action="LoginUser">
                                 <input type="hidden" asp-for="Id" value="1" />

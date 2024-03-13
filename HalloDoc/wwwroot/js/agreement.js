@@ -1,4 +1,4 @@
-document.getElementById('agreeButton').addEventListener('click', function (event) {
+    document.getElementById('agreeButton').addEventListener('click', function (event) {
 
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -61,3 +61,5 @@ document.getElementById('cancelButton').addEventListener('click', function (even
         }
     });
 });
+
+

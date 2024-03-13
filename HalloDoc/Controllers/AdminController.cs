@@ -13,7 +13,7 @@ using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
-    // [CustomAuth("Admin")]
+    //[CustomAuth("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -214,6 +214,7 @@ namespace HalloDocAdmin.Controllers
             return View(documetns);
           }
 
+
         [HttpPost("UploadFile")]
         public IActionResult UploadFile(IFormFile file, int requestId)
         {
@@ -297,6 +298,71 @@ namespace HalloDocAdmin.Controllers
             }
         }
         #endregion
+
+
+        public IActionResult closeCase()
+        {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+
+            int requestId = Int32.Parse(Request.Query["request"]);
+            Request request = _requestRepository.Get(requestId);
+
+            List<ViewUploadView> documetns = _adminFunctionRepository.GetuploadedDocuments(requestId);
+            ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
+
+            var closeCaseData = new
+            {
+                Document = documetns,
+                RequestId = requestId,
+                CFnumber = request.Confirmationnumber,
+                FirstName = view.firstName, 
+                LastName = view.lastName,
+                DateOfBirth = view.dateofBirth,
+                Email = view.email,
+                PhoneNumber = view.phoneNumber,
+            };
+
+            ViewBag.requestId = requestId;
+            ViewBag.CFnumber = request.Confirmationnumber;
+            ViewBag.patientName = request.Firstname + " " + request.Lastname;
+            return View(closeCaseData);
+        }
+
+        [HttpPost("closeCaseUpdate")]
+        public IActionResult closeCaseUpdate(int requestId , string phone, string email)
+        {
+            try
+            {
+            Requestclient requestClient = _requestClientRepository.Get(requestId);
+            requestClient.Phonenumber = phone;
+            requestClient.Email = email;
+            _requestClientRepository.Update(requestClient);
+            return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("HandleCloseCase")]
+        public IActionResult HandleCloseCase(int requestId)
+        {
+            try
+            {
+                Request request = _requestRepository.Get(requestId);
+                request.Status = 9;
+                _requestRepository.Update(request);
+                return Ok();
+            }
+            catch(Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
         [HttpPost("ClearCase")]
         public IActionResult ClearCase(int requestId)
 
@@ -330,11 +396,17 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
-            return View();
+            var regions = _adminFunctionRepository.GetAllReagion();
+
+            List<ProviderInfoAdmin> view = _adminFunctionRepository.getProviderInfoView();
+            ViewBag.regions = regions;
+
+            return View(view);
         }
 
         [HttpGet]
-        public IActionResult CreateProvider(){
+        [Route("/admin/CreateProvider")]
+        public IActionResult ProviderCreate(){
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
@@ -344,8 +416,9 @@ namespace HalloDocAdmin.Controllers
         }
 
 
-        [HttpPost("CreateProvider")]
-        public IActionResult CreateProvider(CreateProviderView model , int[] selectedRegions)
+        [HttpPost("ProviderCreate")]
+        [Route("/admin/CreateProvider")]
+        public IActionResult ProviderCreate(CreateProviderView model , int[] selectedRegions)
         {
             if (ModelState.IsValid)
             {
@@ -475,6 +548,43 @@ namespace HalloDocAdmin.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult AdminProfile()
+        {
+            ViewData["ViewName"] = "AdminProfile";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+            AdminProfileView view = _adminFunctionRepository.GetAdminProfileView(adminId);
+            return View(view);
+        }
+
+        [HttpPost("changePassword")]
+        public IActionResult changePassword(int adminId , string password)
+        {
+            try
+            {
+                _adminFunctionRepository.ChagePassword(adminId, password);
+                return Ok();
+            }
+            catch(Exception ex) { 
+            
+                return BadRequest(ex.Message);
+            }
+        }
+        public IActionResult updateAdmin(AdminProfileView formData)
+        {
+            try
+            {
+             _adminFunctionRepository.UpdateAdminData(formData);
+            return Redirect("AdminProfile");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
             }
         }
 

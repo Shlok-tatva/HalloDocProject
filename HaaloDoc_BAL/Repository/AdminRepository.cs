@@ -17,9 +17,19 @@ namespace HalloDoc_BAL.Repository
             _context = context;
         }
 
+        public Admin GetAdminById(int id)
+        {
+            return _context.Admins.FirstOrDefault(a => a.Adminid == id);
+        }
         public Admin GetAdmin(string id)
         {
             return _context.Admins.FirstOrDefault(a => a.Aspnetuserid == id);
+        }
+
+        public void updateAdmin(Admin admin)
+        {
+            _context.Admins.Update(admin);
+            _context.SaveChanges();
         }
     }
 }

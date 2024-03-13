@@ -1,6 +1,7 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 let anchartag = Array.from(document.getElementsByTagName("a"));
+let blackelement = Array.from(document.getElementsByClassName("text-black"));
 
 document.getElementById('btnSwitch').addEventListener('click', () => {
     let theme_mode_button = document.getElementById("theme_mode_button");
@@ -18,6 +19,9 @@ document.getElementById('btnSwitch').addEventListener('click', () => {
         anchartag.forEach(element => {
             element.classList.remove("text-white");
         });
+        blackelement.forEach(element => {
+            element.classList.remove("text-white")
+        })
         
     } else {
         document.documentElement.setAttribute('data-bs-theme', 'dark');
@@ -26,6 +30,9 @@ document.getElementById('btnSwitch').addEventListener('click', () => {
         anchartag.forEach(element => {
             element.classList.add("text-white");
         });
+        blackelement.forEach(element => {
+            element.classList.add("text-white")
+        })
     }
 
     // Save the current theme mode to localStorage
@@ -56,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         anchartag.forEach(element => {
             element.classList.add("text-white");
         });
+        blackelement.forEach(element => {
+            element.classList.add("text-white")
+        })
     }
 });
 
@@ -81,8 +91,6 @@ initializeIntlTelInput(input);
 if(input2) { // Check if input2 is not null
     initializeIntlTelInput(input2); // Run the function only if input2 exists
 }
-
-
 
 let inputFile = document.getElementById("inputFile");
 let fileNameInput = document.getElementById('fileNameInput');

@@ -1,0 +1,129 @@
+﻿@model dynamic;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+    <script src="/js/AdminViewDocument.js"></script>
+    <script src ="/js/closeCase.js"></script>
+}
+
+
+<div class=" mt-5 container m-auto">
+    <div class="mt-4 m-auto form_content">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">Close Case</h3>
+            <button class="btn btn-lg btn-outline-info hover_white ms-5" onclick="window.history.back()">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+        <div class="shadow mt-3 rounded">
+            <div class="d-flex flex-wrap justify-content-between align-item-center text-secondary p-3">
+                <div>
+                <span>Patient Name</span>
+                <h5 class="text-info fw-bold">@Model.FirstName  @Model.LastName<span class="text-secondary fw-normal">(@Model.CFnumber)</span> </h5>
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+               <button class="btn btn-outline-info hover_white">Create Invoice Through QuickBox</button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mb-2 px-3">
+                <h5 class="fw-bold">Documents</h5>
+
+            </div>
+
+            <div class='@((Model.Document.Count == 0) ? "ps-3" : "" )'>
+
+                @{
+                    if (Model.Document.Count > 0)
+                    {
+                        <table class="w-100 table" cellspacing="15" cellspadding="15">
+                            <thead>
+                                <tr class="table-secondary border-light text-start">
+                                    <th></th>
+                                    <th>Uploaded Date <i class="bi bi-arrow-down"></i></th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in Model.Document)
+                                {
+
+                                    <tr>
+                                        <td class="text-start px-3"><img src="~/images/pdf.svg" width="20px" class="m-1" /> @item.fileName</td>
+                                        <td class="text-center">@item.uploadDate.ToString()</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-outline-info download-btn mx-1 hover_white" data-file="@item.UploadImage"><i class="bi bi-cloud-arrow-down-fill"></i></button>
+                                        </td>
+
+                                    </tr>
+
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center fs-4 " role="alert">No files Uploaded by users</div>
+                    }
+                }
+
+
+            </div>
+
+            <div class="mt-4 p-3">
+                <form id="closeCaseForm">
+                    <h5 class="fw-semibold mb-4">Patient Information</h5>
+
+                    <div class="row g-2">
+                        <div class="form-floating mb-2 col-12 col-md-6">
+                            <input value="@Model.FirstName" type="text" class="form-control notallowed" placeholder=" " readonly />
+                            <label for="floatingInput" class="input-label form-label text-muted">First Name</label>
+                        </div>
+                        <div class="form-floating mb-2 col-12 col-md-6">
+                            <input value="@Model.LastName" type="text" class="form-control notallowed" placeholder=" " readonly />
+                            <label for="floatingInput" class="input-label form-label text-muted">Last Name</label>
+                        </div>
+                        <div class="form-floating mb-2 col-12 col-md-6">
+                            <input value="@Model.DateOfBirth" type="date" class="form-control notallowed" placeholder=" " readonly />
+                            <label for="floatingInput" class="input-label form-label text-muted">Date Of Birth</label>
+                        </div>
+                        <div class="mb-2 col-12 col-md-6">
+                            <div class="d-flex h-100 gap-2">
+                                <div class="form-floating w-100">
+                                    <input value="@Model.PhoneNumber" id="phone" type="tel" class="form-control h-100  notallowed toggleInput" readonly> <br />
+                                    <label for="floatingInput" class="control-label ms-3">
+                                </div>
+                                <div class="btn btn-outline-info hover_white"><i class="bi bi-telephone fs-4 "></i></div>
+                            </div>
+                            <input id="requestId" value="@Model.RequestId" hidden />
+                        </div>
+                        <div class="form-floating mb-2 col-12 col-md-6">
+                            <input value="@Model.Email" type="text" class="form-control notallowed toggleInput" id="email" placeholder=" " readonly />
+                            <label for="floatingInput" class="input-label form-label text-muted">Email</label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <div class="d-flex gap-2 closeCaseBtns">
+                            <button class="btn btn-info text-light" id="editBtn">Edit</button>
+                            <button class="btn btn-outline-info hover_white" id="closeCaseBtn">Close Case</button>
+                        </div>
+                        <div class="d-flex gap-2 editBtns d-none">
+                            <button class="btn btn-info text-light" id="saveBtn">Save</button>
+                            <button class="btn btn-outline-info hover_white" id="cancelBtn">Cancel</button>
+                        </div>
+
+                     </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

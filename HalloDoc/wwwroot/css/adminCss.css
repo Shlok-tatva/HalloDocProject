@@ -92,11 +92,12 @@ tr {
 th {
     background-color: #6969697c;
     text-align: center;
-
+    font-weight: 500;
+    padding: 12px 0px !important;
 }
 
 .dropdown {
-    text-align: center !important;
+    text-align: center !important
 }
 
 .dropdown-toggle::after {
@@ -105,13 +106,14 @@ th {
 }
 
 .menu-icon {
-    width: 26px !important;
-    margin: 1px;
-    margin-right: 8px;
+    width: 20px !important;
+    margin-right: 5px;
 }
 
-.menu-option {
-    border-bottom: 1px solid #e3e3e3;
+.menu-option:hover {
+    background: #e3e3e3;
+    color: black;
+    /*border-bottom: 1px solid #e3e3e378;*/
 }
 
 .mb-10 {
