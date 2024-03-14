@@ -9,6 +9,9 @@
     }
 }
 
+main {
+    padding-top: 140px;
+}
 
 .navbar-toggler {
     display: none;
@@ -16,9 +19,6 @@
     box-shadow: none !important;
 }
 
-.navbar-toggler-icon {
-    color: #01BBE7;
-}
 
 .active {
     border-bottom: 2px solid #01BBE7;
@@ -297,6 +297,7 @@ th {
 
 
 @media (min-width: 980px) {
+
     #NewState.active::after {
         position: absolute;
         content: '';
@@ -377,7 +378,10 @@ th {
 }
 
 @media (max-width: 980px) {
-    
+    main {
+        padding-top: 100px;
+    }
+
     #pagination{
         display: flex;
         justify-content: center;
@@ -408,6 +412,9 @@ th {
 }
 
 @media (max-width:590px) {
+    main {
+        padding-top: 80px;
+    }
     .navbar-toggler {
         display: block;
     }
@@ -422,7 +429,6 @@ th {
         width: 50% !important;
         margin: 0px;
         z-index: 100;
-        background-color: white;
         box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     }
 

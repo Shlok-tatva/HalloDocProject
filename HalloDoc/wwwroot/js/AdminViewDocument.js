@@ -2,6 +2,11 @@
     $('.fileCheckbox').prop('checked', $(this).prop('checked'));
 });
 
+$('#selectAllCheckboxMobile').change(function () {
+    $('.fileCheckbox').prop('checked', $(this).prop('checked'));
+});
+
+
 $('.downloadAll').click(function () {
     if ($('.fileCheckbox:checked').length == 0) {
         toastMixin.fire({
@@ -48,7 +53,9 @@ $('.sendMail').click(function () {
 });
 
 function downloadFile(filePath) {
+    if (filePath != undefined) {
 
+    debugger
     $.ajax({
         url: '/Admin/DownloadFile',
         type: 'GET',
@@ -80,8 +87,9 @@ function downloadFile(filePath) {
             })
         }
     });
-}
 
+    }
+}
 function deleteFile(filePath, fileId) {
     $.ajax({
         url: '/Admin/DeleteFile',

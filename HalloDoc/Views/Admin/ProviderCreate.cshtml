@@ -103,14 +103,18 @@
 
                 <h5 class="col-12 fw-bold my-3">Select Provider's Service Region</h5>
                 <div class="col-md-12 my-3">
-                        <div class="form-check form-check-inline d-flex align-items-center">
-                    @foreach (var region in ViewBag.regions)
-                    {
-                            <input type="checkbox" name="selectedRegions" value="@region.Regionid" />
-                            <label>@region.Name</label>
-                    }
-                        </div>
+                    <div class="form-check form-check-inline d-flex flex-wrap ps-0 align-items-center">
+                        @foreach (var region in ViewBag.regions)
+                        {
+                            <div class="d-flex align-items-center">
+                                <input type="checkbox" class="checkbox" name="selectedRegions" value="@region.Regionid" />
+                                <label class="fs-6">@region.Name</label>
+                            </div>
+                        }
+                    </div>
                 </div>
+
+               
 
                 <!-- Provider Business Information -->
                 <h5 class="col-12 fw-bold my-3">Provider Business Infromation</h5>

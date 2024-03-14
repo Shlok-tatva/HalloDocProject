@@ -97,15 +97,15 @@ $(document).ready(function () {
         });
     })
 
-    /* Cancle Case Ajax Call*/
+    /* Cancel Case Ajax Call*/
     $('#cancelCase').on('submit', function (e) {
         e.preventDefault();
 
         var formData = new FormData();
         formData.append('requestId', $('#requestIdcanleCase').val());
         console.log($('#requestIdcanleCase').val());
-        formData.append('reason', $('#reasonForCancle').val());
-        console.log($('#reasonForCancle').val());
+        formData.append('reason', $('#reasonForCancel').val());
+        console.log($('#reasonForCancel').val());
         formData.append('notes', $('#additionalNotes').val());
 
         $.ajax({
@@ -229,7 +229,7 @@ $(document).ready(function () {
             iconHtml: "<div class='warning_icon'><i class='bi bi-exclamation-circle-fill'></i></div>",
             showCancelButton: true,
             confirmButtonText: "Clear",
-            cancelButtonText: "Cancle",
+            cancelButtonText: "Cancel",
         }).then((result) => {
             console.log(requestId);
             if (result.isConfirmed) {

@@ -28,7 +28,6 @@ $(document).ready(function () {
             dangerMode: true,
         }).then((willAgree) => {
             if (willAgree.isConfirmed) {
-                debugger;
                 var adminId = +$("#adminId").val();
                 var formdata = new FormData();
                 formdata.append("adminId", adminId);

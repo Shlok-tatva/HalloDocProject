@@ -12,11 +12,13 @@
             <div class="modal-body">
                 <p>Choose communication to send message</p>
                 <input type="text" id="physicianId" value="" class="visually-hidden" />
+                <input type="text" id="email" value="" class="visually-hidden" />
+                <input type="text" id="phoneNumber" value="" class="visually-hidden" />
                   
                  <div class="d-flex flex-column">
-                <label class="radiolabel"><input type="radio" name="channel">Email</label>
-                <label class="radiolabel"><input type="radio" name="channel">Phone</label>
-                <label class="radiolabel"><input type="radio" name="channel">Both</label>
+                <label class="radiolabel"><input type="radio"  name="channel" value="Email" >Email</label>
+                <label class="radiolabel"><input type="radio" name="channel" value="Phone">Phone</label>
+                <label class="radiolabel"><input type="radio" name="channel" value="Both">Both</label>
                  </div> 
 
 
@@ -33,7 +35,7 @@
             <div class="modal-footer">
                 <button type="submit" class="btn btn-info text-white btn-lg">Send</button>
                 <button class="btn btn-outline-info hover_white fw-100 btn-lg close">
-                    Cancle
+                    Cancel
                 </button>
             </div>
         </form>

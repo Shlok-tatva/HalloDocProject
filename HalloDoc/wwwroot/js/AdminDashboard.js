@@ -15,7 +15,6 @@ $(document).ready(function () {
         10: "Encounter",
         11: "Close Case",
     };
-
     // Object mapping menu options to image URLs
     const menuOptionImageMapping = {
         'Assign Case': 'assignCase.png',
@@ -31,7 +30,6 @@ $(document).ready(function () {
         'Encounter': 'encounter.png',
         'Close Case': 'closeCase.png',
     };
-
     function reloadDataTable(statusID) {
         $.ajax({
             url: '/Admin/GetRequestByStatusId',
@@ -58,7 +56,6 @@ $(document).ready(function () {
     
         });
     }
-
     function renderDesktopTable(data, statusID) {
 
         var headers = Object.keys(data[0]);
@@ -91,6 +88,7 @@ $(document).ready(function () {
             var columnName = headerMapping[header] || header;
             headerRow.append('<th class="py-4">' + columnName + '</th>');
         });
+
         $('#request-table thead').append(headerRow);
         data.forEach(function (request, index) {
             var newRow = $('<tr class="data-row">').attr('data-request-type-id', request.requestTyepid);
@@ -125,6 +123,12 @@ $(document).ready(function () {
                     } 
                     else {
                         if (request[key] == null) request[key] = '-';
+                        if (key === 'dateOfBirth') {
+                            const date = new Date(request[key]);
+                            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                            const formatter = new Intl.DateTimeFormat('en-US', options);
+                            request[key] = formatter.format(date).substring(0, 4) + " " + date.getDay() + " , " + date.getFullYear();
+                        }
                         newRow.append('<td class="' + key + '">' + request[key] + '</td>');
                     }
                 }
@@ -183,7 +187,6 @@ $(document).ready(function () {
 
         });
     }
-
     function renderMobileAccoridan(data) {
         $(".data-row").remove();
         var accordion = $('#RequestAccordion');
@@ -278,18 +281,15 @@ $(document).ready(function () {
 
         });
     }
-
     function toCamelCase(text) {
         return text.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
             if (+match === 0) return ""; // Remove spaces if it's a zero
             return index === 0 ? match.toLowerCase() : match.toUpperCase();
         });
     }
-
     function mapNumberToEnumName(number) {
         return menuOptionEnumMapping[number] || "Unknown";
     }
-
 
     $('.AdminState').click(function () {
         var statusId = $(this).data("status-id");
@@ -305,9 +305,6 @@ $(document).ready(function () {
         reloadDataTable(lastStatusID);
     }
     
-
-
-
     //get requestCount 
     $.ajax({
         url: 'Admin/getRequestCountPerStatusId',
@@ -325,7 +322,6 @@ $(document).ready(function () {
             alert("Error while fetching count");
         }
     });
-
     function getEncounterFormstatus(requestId) {
 
         var status;
@@ -344,13 +340,10 @@ $(document).ready(function () {
 
         return status;
     }
-
-
     $('.filter-btn').click(function () {
         var filterValue = $(this).data('filter-value') || null;
         showSpinnerAndFilter(filterValue);
     });
-    
     function showSpinnerAndFilter(requestTypeId) {
         $('#spinner').show();
         setTimeout(function () {
@@ -358,7 +351,6 @@ $(document).ready(function () {
             filterDataTable(requestTypeId);
         }, 500);
     }
-
     function filterDataTable(requestTypeId) {
         $('#request-table tbody tr').each(function () {
             var rowRequestTypeId = $(this).data('request-type-id');
@@ -379,27 +371,19 @@ $(document).ready(function () {
         });
 
     }
-
-
-
-function setLastState(state) {
+    function setLastState(state) {
     localStorage.setItem('lastState', state);
 }
-
-
-function getLastState() {
+    function getLastState() {
     return localStorage.getItem('lastState');
 }
-
-
-function handleStateClick(state) {
+    function handleStateClick(state) {
     $('.active').not(this).removeClass('active');
     $('#requestState').text('(' + state.toUpperCase() + ')');
     $(this).toggleClass('active');
-}
+    }
 
     var lastState = getLastState();
-
     // Set initial state based on last state or default to 'New'
     if (lastState) {
         $('#requestState').text('(' + lastState.toUpperCase() + ')');
@@ -413,27 +397,22 @@ function handleStateClick(state) {
         handleStateClick.call(this, 'New');
         setLastState('New');
     });
-
     $('#ActiveState').click(function () {
         handleStateClick.call(this, 'Active');
         setLastState('Active');
     });
-
     $('#PendingState').click(function () {
         handleStateClick.call(this, 'Pending');
         setLastState('Pending');
     });
-
     $('#ConcludeState').click(function () {
         handleStateClick.call(this, 'Conclude');
         setLastState('Conclude');
     });
-
     $('#ToCloseState').click(function () {
         handleStateClick.call(this, 'To Close');
         setLastState('ToClose');
     });
-
     $('#UnpaidState').click(function () {
         handleStateClick.call(this, 'Unpaid');
         setLastState('Unpaid');
@@ -462,7 +441,6 @@ function Search() {
         }
     }
 }
-
 function setupPagination(items) {
     const itemsPerPage = items;
     let currentPage = 1;

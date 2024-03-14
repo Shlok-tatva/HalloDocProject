@@ -4,6 +4,11 @@
     transition: all 0.2s linear;
 }
 
+main {
+    padding-top: 140px;
+}
+
+
 .active {
     border-bottom: 2px solid #01BBE7;
 }
@@ -24,9 +29,6 @@
     box-shadow: none !important;
 }
 
-.navbar-toggler-icon {
-    color: #01BBE7;
-}
 
 .w-95 {
     width: 95%;
@@ -43,6 +45,9 @@ td, th {
 }
 
 @media (max-width:530px) {
+    main {
+        padding-top: 80px;
+    }
     .navbar-toggler {
         display: block;
     }
@@ -57,7 +62,6 @@ td, th {
         width: 50%;
         margin: 0px;
         z-index: 100;
-        background-color: white;
     }
 
         .mobile_nav div {

@@ -8,6 +8,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
 {
     public class ProviderInfoAdmin
     {
+        public int providerId { get; set; }
         public bool stopNotification {get;set;}
         public string providerName { get; set; }
         public string providerRole { get; set; }

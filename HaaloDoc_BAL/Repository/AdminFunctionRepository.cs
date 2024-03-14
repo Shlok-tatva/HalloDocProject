@@ -826,10 +826,12 @@ namespace HalloDoc_BAL.Repository
         public List<ProviderInfoAdmin> getProviderInfoView() {
             List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
             List<Physician> providers = _context.Physicians.ToList(); 
+            providers.Sort((a,b) => b.Physicianid - a.Physicianid);
 
             foreach (Physician pro in providers)
             {
                 ProviderInfoAdmin provider = new ProviderInfoAdmin();
+                provider.providerId = pro.Physicianid;
                 provider.providerName = pro.Firstname + " " + pro.Lastname;
                 provider.providerEmail = pro.Email;
                 provider.providerPhone = pro.Mobile;

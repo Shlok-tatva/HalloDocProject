@@ -2,6 +2,7 @@
 // for details on configuring this project to bundle and minify static web assets.
 let anchartag = Array.from(document.getElementsByTagName("a"));
 let blackelement = Array.from(document.getElementsByClassName("text-black"));
+let bgbwhiteelement = Array.from(document.getElementsByClassName("bg-white"));
 
 document.getElementById('btnSwitch').addEventListener('click', () => {
     let theme_mode_button = document.getElementById("theme_mode_button");
@@ -22,6 +23,10 @@ document.getElementById('btnSwitch').addEventListener('click', () => {
         blackelement.forEach(element => {
             element.classList.remove("text-white")
         })
+        bgbwhiteelement.forEach(element => {
+            element.classList.remove("bg-dark");
+            element.classList.add("bg-white");
+        })
         
     } else {
         document.documentElement.setAttribute('data-bs-theme', 'dark');
@@ -32,6 +37,10 @@ document.getElementById('btnSwitch').addEventListener('click', () => {
         });
         blackelement.forEach(element => {
             element.classList.add("text-white")
+        })
+        bgbwhiteelement.forEach(element => {
+            element.classList.remove("bg-white");
+            element.classList.add("bg-dark");
         })
     }
 
@@ -65,6 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         blackelement.forEach(element => {
             element.classList.add("text-white")
+        })
+        bgbwhiteelement.forEach(element => {
+            element.classList.remove("bg-white");
+            element.classList.add("bg-dark");
         })
     }
 });

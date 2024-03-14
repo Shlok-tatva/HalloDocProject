@@ -15,7 +15,6 @@ html {
 /*.form_content {
     width: 75%;
 }*/
-
 .theame_toggle_button {
     position: absolute !important;
     z-index: 5;
@@ -23,6 +22,16 @@ html {
     top: 15px;
 }
 
+.NavbarHeader {
+    position: fixed;
+    z-index: 100;
+    width: 100vw;
+    top: 0;
+}
+
+.navbar-toggler-icon {
+    background-image: none;
+}
 .password-fields {
     display: none;
 }
@@ -285,7 +294,10 @@ input[type=checkbox] {
     opacity: 1;
   }
 
-  
+  input[type=checkbox]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
 @media (max-width: 760px) {
     .form_content {
@@ -314,4 +326,19 @@ input[type=checkbox] {
     .popup{
         width: 60%;
     }
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #01BBE7;
 }

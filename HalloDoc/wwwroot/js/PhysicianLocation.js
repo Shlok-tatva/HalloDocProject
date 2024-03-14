@@ -90,7 +90,6 @@ function populateModal(physicianData) {
     let lastlogin = "" + diffDays + " days, " + diffHrs + " hours, " + diffMins + " minutes Before";
     $('#physcianActive').text(lastlogin);
 
-
 }
 
 
