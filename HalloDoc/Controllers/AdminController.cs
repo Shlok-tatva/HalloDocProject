@@ -6,6 +6,7 @@ using HalloDoc_BAL.ViewModel.Admin;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Rotativa.AspNetCore;
@@ -22,9 +23,9 @@ namespace HalloDocAdmin.Controllers
         private readonly IRequestNotesRepository _requestNotesRepository;
         private readonly IAdminFunctionRepository _adminFunctionRepository;
         private readonly ICommonFunctionRepository _commonFunctionrepo;
+        private readonly IAdminRepository _adminrepo;
 
-
-        public AdminController(ILogger<AdminController> logger, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IAdminFunctionRepository adminFunctionRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo)
+        public AdminController(ILogger<AdminController> logger, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IAdminFunctionRepository adminFunctionRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo , IAdminRepository adminrepo)
         {
             _logger = logger;
             _requestRepository = requestRepository;
@@ -32,6 +33,7 @@ namespace HalloDocAdmin.Controllers
             _adminFunctionRepository = adminFunctionRepository;
             _requestNotesRepository = requestNotesRepository;
             _commonFunctionrepo = commonFunctionrepo;
+            _adminrepo = adminrepo;
         }
 
         public IActionResult Index()
@@ -392,42 +394,6 @@ namespace HalloDocAdmin.Controllers
             return Ok();
         }
 
-        public IActionResult Provider(){
-            ViewData["ViewName"] = "Dashboard";
-            ViewBag.Username = HttpContext.Session.GetString("Username");
-            ViewData["ViewName"] = "Providers";
-            var regions = _adminFunctionRepository.GetAllReagion();
-
-            List<ProviderInfoAdmin> view = _adminFunctionRepository.getProviderInfoView();
-            ViewBag.regions = regions;
-
-            return View(view);
-        }
-
-        [HttpGet]
-        [Route("/admin/CreateProvider")]
-        public IActionResult ProviderCreate(){
-            ViewData["ViewName"] = "Dashboard";
-            ViewBag.Username = HttpContext.Session.GetString("Username");
-            ViewData["ViewName"] = "Providers";
-            var regions = _adminFunctionRepository.GetAllReagion();
-            ViewBag.regions = regions;
-            return View();
-        }
-
-
-        [HttpPost("ProviderCreate")]
-        [Route("/admin/CreateProvider")]
-        public IActionResult ProviderCreate(CreateProviderView model , int[] selectedRegions)
-        {
-            if (ModelState.IsValid)
-            {
-                //remanign work of Physicina Add
-             _adminFunctionRepository.CreateProvider(model, selectedRegions);
-
-            }
-            return Ok();
-        }
 
         [HttpGet]
         public IActionResult Encounter()
@@ -437,12 +403,14 @@ namespace HalloDocAdmin.Controllers
 
             int requestId = Int32.Parse(Request.Query["request"]);
             EncounterFormView view = _adminFunctionRepository.GetEncounterFormView(requestId);
-            if(view == null){
+            if (view == null)
+            {
                 TempData["Error"] = "Form finalized";
                 return RedirectToAction("");
             }
             return View(view);
         }
+
 
         [HttpPost("encounter")]
         public IActionResult Encounter(EncounterFormView formData)
@@ -575,11 +543,25 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        public IActionResult updateAdmin(AdminProfileView formData)
+
+        public class AdminUpdateData
+        {
+            public List<KeyValuePair<string, string>> Formdata { get; set; }
+            public List<ChangedCheckboxData> Regions { get; set; }
+        }
+
+        public class ChangedCheckboxData
+        {
+            public string RegionId { get; set; }
+            public bool IsChecked { get; set; }
+        }
+
+        [HttpPost]
+        public IActionResult UpdateAdminInfo([FromBody] AdminUpdateData adminData)
         {
             try
             {
-             _adminFunctionRepository.UpdateAdminData(formData);
+             //_adminFunctionRepository.UpdateAdminData(formData);
             return Redirect("AdminProfile");
             }
             catch(Exception ex)
@@ -587,6 +569,114 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest();
             }
         }
+
+
+        public IActionResult Provider()
+        {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Providers";
+            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+            var regions = _adminFunctionRepository.GetAllReagion();
+
+            List<ProviderInfoAdmin> view = _adminFunctionRepository.getProviderInfoView();
+            ViewBag.regions = regions;
+            ViewBag.adminId = adminId;
+
+            return View(view);
+        }
+
+
+        [HttpGet]
+        [Route("/admin/CreateProvider")]
+        public IActionResult ProviderCreate()
+        {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Providers";
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+            return View();
+        }
+
+
+        [HttpPost("ProviderCreate")]
+        [Route("/admin/CreateProvider")]
+        public IActionResult ProviderCreate(CreateProviderView model, int[] selectedRegions)
+        {
+            if (ModelState.IsValid)
+            {
+                //remanign work of Physicina Add
+                _adminFunctionRepository.CreateProvider(model, selectedRegions);
+
+            }
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult contactProvider(int physicianId, int adminId, string selectedRadio, string email, string phone, string message)
+        {
+            try
+            {
+                var admin = _adminrepo.GetAdminById(adminId);
+                var title = admin.Firstname + " " + admin.Lastname + " (Admin) Sent Message";
+
+                if (selectedRadio == "Phone")
+                {
+
+                    return Ok(new { message = "Message sent successfully via Phone." });
+
+                }
+                else if (selectedRadio == "Email")
+                {
+
+                    _adminFunctionRepository.SendEmail(email, title, message);
+                    return Ok(new { message = "Message sent successfully via Email." });
+                }
+                else if (selectedRadio == "Both")
+                {
+                    _adminFunctionRepository.SendEmail(email, title, message);
+
+                    return Ok(new { message = "Message sent successfully via Phone and Email." });
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
+
+        public class PhysicianNotificationData
+        {
+            public int physicianId { get; set; }
+            public bool isChecked { get; set; }
+        }
+
+        [HttpPost]
+        public IActionResult ChangeProviderNotificationStatus([FromBody] List<PhysicianNotificationData> PhysicianNotificationDataList)
+        {
+            try
+            {
+                foreach (var PhysicianNotificationData in PhysicianNotificationDataList)
+                {
+                   _adminFunctionRepository.updateNotificationStatus(PhysicianNotificationData.physicianId, PhysicianNotificationData.isChecked);
+                }
+
+                return Ok(new { message = "Notification status change successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
+        }
+
+       
+
 
         public IActionResult Logout()
         {

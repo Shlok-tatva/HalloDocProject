@@ -827,7 +827,6 @@ namespace HalloDoc_BAL.Repository
             List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
             List<Physician> providers = _context.Physicians.ToList(); 
             providers.Sort((a,b) => b.Physicianid - a.Physicianid);
-
             foreach (Physician pro in providers)
             {
                 ProviderInfoAdmin provider = new ProviderInfoAdmin();
@@ -837,12 +836,32 @@ namespace HalloDoc_BAL.Repository
                 provider.providerPhone = pro.Mobile;
                 provider.providerStatus = pro.Status;
                 provider.providerRole = pro.Roleid.ToString();
-                provider.stopNotification = false;
+                provider.stopNotification = providerNotificationStatus(pro.Physicianid);
                 providerInfoAdmin.Add(provider);
             }
 
             return providerInfoAdmin;
         }
 
+        public bool providerNotificationStatus(int providerId)
+        {
+            return _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId).Isnotificationstopped;
+        }
+
+        public void updateNotificationStatus(int providerId , bool status)
+        {
+            using(var transaction = new TransactionScope())
+            {
+
+            Physiciannotification physiciannotification = _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId);
+            if (physiciannotification != null)
+            {
+                physiciannotification.Isnotificationstopped = status;
+                _context.Physiciannotifications.Update(physiciannotification);
+                _context.SaveChanges();
+                transaction.Complete();
+            }
+            }
+        }
     }
 }

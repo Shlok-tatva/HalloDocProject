@@ -97,24 +97,96 @@ $(document).ready(function () {
         $("#stateId").prop("value", $(this).val());
     })
 
-    handleSaveData("#editButton");
-    handleSaveData("#editButton2");
+    var initialCheckboxState = {}; // Object to store initial checkbox state
+
+    // Store initial checkbox state when page loads
+    $('input[type="checkbox"]').each(function () {
+        var regionId = $(this).val();
+        var isChecked = $(this).is(':checked');
+        initialCheckboxState[regionId] = isChecked;
+    });
 
 
-    function handleSaveData(buttonId) {
-        $(buttonId).on("click", function (e) {
-            e.preventDefault();
 
-            console.log($(buttonId).text());
+    $('#editButton').click(function (e) {
+        e.preventDefault();
+        handleSaveData("#adminProfile", "#editButton");
+    });
 
-            if ($(this).text() === "Edit") {
+    $('#editButton2').click(function (e) {
+        e.preventDefault();
+        handleSaveData("#adminProfile", "#editButton2");
+    });
 
-                $("#adminProfile").submit();
+
+
+    //function handleSaveData(buttonId) {
+    //    $(buttonId).on("click", function (e) {
+    //        e.preventDefault();
+
+    //        console.log($(buttonId).text());
+
+    //        if ($(this).text() === "Edit") {
+
+    //            $("#adminProfile").submit();
+    //        }
+    //    })
+    //}
+
+    function handleSaveData(formId , buttonId) {
+        debugger
+        var formData = new FormData($(formId)[0]);
+        var changedCheckboxData = [];
+
+        // Compare initial state with final state of checkboxes
+        $('input[type="checkbox"]').each(function () {
+            var regionId = $(this).val();
+            var finalIsChecked = $(this).is(':checked');
+            var initialIsChecked = initialCheckboxState[regionId];
+
+            // If checkbox state has changed, include it in changedCheckboxData
+            if (initialIsChecked !== finalIsChecked) {
+                changedCheckboxData.push({ regionId: regionId, isChecked: finalIsChecked });
             }
-        })
+        });
+
+        var formdata = $(formId).serializeArray();
+
+        var requestData = {
+            formdata: formdata,
+            regions: changedCheckboxData
+        };
+
+            console.log(requestData);
+
+        if ($(buttonId).text() === "Edit") {
+            debugger;
+             //Send form data to the server via AJAX
+            $.ajax({
+                url: 'UpdateAdminInfo',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData), // Convert requestData to JSON
+                success: function (response) {
+                    // Handle success response here
+                    alert("datasend")
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response here
+                    alert("error")
+                }
+            });
+        }
     }
 
+
 })
+
+
+
+
+
+
 
 var toastMixin = Swal.mixin({
     toast: true,

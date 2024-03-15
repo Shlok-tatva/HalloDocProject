@@ -35,7 +35,9 @@ namespace HalloDoc_BAL.Repository
         AdminProfileView GetAdminProfileView(int adminId);
         void UpdateAdminData(AdminProfileView data);
         void ChagePassword(int adminId, string password);
-        public List<ProviderInfoAdmin> getProviderInfoView();
-        
+        List<ProviderInfoAdmin> getProviderInfoView();
+        void updateNotificationStatus(int providerId, bool status);
+
+
         }
 }
