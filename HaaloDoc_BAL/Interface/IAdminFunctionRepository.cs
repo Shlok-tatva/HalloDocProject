@@ -37,6 +37,8 @@ namespace HalloDoc_BAL.Repository
         void ChagePassword(int adminId, string password);
         List<ProviderInfoAdmin> getProviderInfoView();
         void updateNotificationStatus(int providerId, bool status);
+        List<Healthprofessional> getAllVendors();
+        string GetProfessionNameById(int id);
 
 
         }

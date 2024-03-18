@@ -23,7 +23,7 @@ namespace HalloDoc_BAL.Repository
         public IAdminRepository _adminRepo;
         public ICommonFunctionRepository _commonFunctionrepo;
 
-        public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo , IAdminRepository adminRepo)
+        public AdminFunctionRepository(ApplicationDbContext context, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo, IAdminRepository adminRepo)
         {
             _context = context;
             _requestRepository = requestRepository;
@@ -45,34 +45,34 @@ namespace HalloDoc_BAL.Repository
         {
             var statusIds = GetStatus(statusId);
             var statusIdWiseRequest = from r in _context.Requests.ToList()
-                                       join rc in _context.Requestclients.ToList()
-                                       on r.Requestid equals rc.Requestid into rrc
-                                       from rc in rrc.DefaultIfEmpty()
-                                       join p in _context.Physicians.ToList()
-                                       on r.Physicianid equals p.Physicianid into rp
-                                       from p in rp.DefaultIfEmpty()
-                                       join rs in _context.Requeststatuslogs.ToList()
-                                       on r.Requestid equals rs.Requestid into rrs
-                                       from rs in rrs.OrderByDescending(x => x.Createddate).Take(1).DefaultIfEmpty()
-                                       where statusIds.Contains(r.Status)
-                                       select new RequestDataTableView
-                                       {
-                                           requestId = r.Requestid,
-                                           PatientName = rc.Firstname + " " + rc.Lastname,
-                                           PatientEmail = rc.Email,
-                                           RequesterEmail = r.Email,
-                                           DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
-                                           PhysicianName = p != null ? p.Firstname + " " + p.Lastname : "",
-                                           RequesterName = r.Firstname + " " + r.Lastname,
-                                           RequestedDate = r.Createddate.ToString(),
-                                           PatientPhoneNumber = rc.Phonenumber,
-                                           Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
-                                           RequesterPhoneNumber = r.Phonenumber,
-                                           Notes = rs != null ? rs.Notes : "-", // Store result into notes
-                                           status = r.Status,
-                                           MenuOptions = GetMenuOptionsForStatus(statusId),
-                                           RequestTyepid = r.Requesttypeid
-                                       };
+                                      join rc in _context.Requestclients.ToList()
+                                      on r.Requestid equals rc.Requestid into rrc
+                                      from rc in rrc.DefaultIfEmpty()
+                                      join p in _context.Physicians.ToList()
+                                      on r.Physicianid equals p.Physicianid into rp
+                                      from p in rp.DefaultIfEmpty()
+                                      join rs in _context.Requeststatuslogs.ToList()
+                                      on r.Requestid equals rs.Requestid into rrs
+                                      from rs in rrs.OrderByDescending(x => x.Createddate).Take(1).DefaultIfEmpty()
+                                      where statusIds.Contains(r.Status)
+                                      select new RequestDataTableView
+                                      {
+                                          requestId = r.Requestid,
+                                          PatientName = rc.Firstname + " " + rc.Lastname,
+                                          PatientEmail = rc.Email,
+                                          RequesterEmail = r.Email,
+                                          DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
+                                          PhysicianName = p != null ? p.Firstname + " " + p.Lastname : "",
+                                          RequesterName = r.Firstname + " " + r.Lastname,
+                                          RequestedDate = r.Createddate.ToString(),
+                                          PatientPhoneNumber = rc.Phonenumber,
+                                          Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
+                                          RequesterPhoneNumber = r.Phonenumber,
+                                          Notes = rs != null ? rs.Notes : "-", // Store result into notes
+                                          status = r.Status,
+                                          MenuOptions = GetMenuOptionsForStatus(statusId),
+                                          RequestTyepid = r.Requesttypeid
+                                      };
 
             return statusIdWiseRequest;
         }
@@ -88,9 +88,9 @@ namespace HalloDoc_BAL.Repository
                 case 3:
                     return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.Encounter }; // Map to 'Active' state
                 case 4:
-                    return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders,  MenuOptionEnum.Encounter }; // Map to 'Conclude' state
+                    return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.Encounter }; // Map to 'Conclude' state
                 case 5:
-                    return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.closeCase , MenuOptionEnum.clearCase, MenuOptionEnum.Encounter };
+                    return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.closeCase, MenuOptionEnum.clearCase, MenuOptionEnum.Encounter };
                 case 6:
                     return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes };
                 default:
@@ -183,9 +183,9 @@ namespace HalloDoc_BAL.Repository
                     {
                         view.physicianCancelationNote = item.Notes;
                     }
-                    else if(item.Status == 4)
+                    else if (item.Status == 4)
                     {
-                        transferNotes.Add("On " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes); 
+                        transferNotes.Add("On " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);
                     }
                     else if (item.Status == 7)
                     {
@@ -195,7 +195,7 @@ namespace HalloDoc_BAL.Repository
                     {
                         if (item.Adminid != null && item.Physicianid == null)
                         {
-                            transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes);;
+                            transferNotes.Add("Admin Transfer to Patient on " + item.Createddate.ToLongDateString() + " at " + item.Createddate.ToString("h:mm:ss tt") + " :- " + item.Notes); ;
                         }
                         else if (item.Adminid == null && item.Physicianid != null)
                         {
@@ -215,19 +215,10 @@ namespace HalloDoc_BAL.Repository
             return view;
 
         }
-
-
-        public List<Region> GetAllReagion()
+        public void assignCase(int requestId, int physicianId)
         {
-            return _context.Regions.ToList();
-        }
-        public List<Casetag> GetAllCaseTag()
-        {
-            return _context.Casetags.ToList();
-        }
-        public void assignCase(int requestId , int physicianId)
-        {
-            using(var transaction = new TransactionScope()) {
+            using (var transaction = new TransactionScope())
+            {
                 Request request = _requestRepository.Get(requestId);
                 request.Physicianid = physicianId;
                 Physician physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == physicianId);
@@ -249,7 +240,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void transferCase(int requestId, int physicianId , int adminId , string note)
+        public void transferCase(int requestId, int physicianId, int adminId, string note)
         {
             using (var transaction = new TransactionScope())
             {
@@ -491,9 +482,9 @@ namespace HalloDoc_BAL.Repository
             return physicians;
         }
 
-        public void clearCase(int requestId , int adminId)
+        public void clearCase(int requestId, int adminId)
         {
-            using(var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope())
             {
                 Request request = _requestRepository.Get(requestId);
                 request.Status = 10;
@@ -514,23 +505,23 @@ namespace HalloDoc_BAL.Repository
         }
 
 
-        public void sendAgreement(int requestId , int adminId , string email , string link)
+        public void sendAgreement(int requestId, int adminId, string email, string link)
         {
-            using(var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope())
             {
 
-            var title = "Accept the Agreement for your request";
-            var message = $"Please click <a href=\"{link}\">here</a> to accept your agreement for request you created on HalloDoc.";
-            SendEmail(email, title, message);
-            Requeststatuslog log = new Requeststatuslog();
-            log.Requestid = requestId;
-            log.Createddate = DateTime.Now;
-            log.Adminid = adminId;
-            log.Status = 2;
-            log.Notes = "Agreement sent to patient by Admin";
-            _context.Requeststatuslogs.Add(log);
-            _context.SaveChanges();
-             transaction.Complete();
+                var title = "Accept the Agreement for your request";
+                var message = $"Please click <a href=\"{link}\">here</a> to accept your agreement for request you created on HalloDoc.";
+                SendEmail(email, title, message);
+                Requeststatuslog log = new Requeststatuslog();
+                log.Requestid = requestId;
+                log.Createddate = DateTime.Now;
+                log.Adminid = adminId;
+                log.Status = 2;
+                log.Notes = "Agreement sent to patient by Admin";
+                _context.Requeststatuslogs.Add(log);
+                _context.SaveChanges();
+                transaction.Complete();
 
             }
         }
@@ -541,7 +532,8 @@ namespace HalloDoc_BAL.Repository
             Requestclient requestclient = _requestClientRepository.Get(requestId);
             Encounterform encounterform = _context.Encounterforms.FirstOrDefault(r => r.Requestid == requestId);
 
-            if(encounterform != null && encounterform.Isfinalize == true){
+            if (encounterform != null && encounterform.Isfinalize == true)
+            {
                 return null;
             }
 
@@ -551,7 +543,7 @@ namespace HalloDoc_BAL.Repository
                 formView.firstName = requestclient.Firstname;
                 formView.lastName = requestclient.Lastname;
                 formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
-                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate); 
+                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate);
                 formView.phone = requestclient.Phonenumber;
                 formView.email = requestclient.Email;
                 formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
@@ -648,15 +640,15 @@ namespace HalloDoc_BAL.Repository
         {
             if (formView != null)
             {
-                using(var transaction = new TransactionScope())
+                using (var transaction = new TransactionScope())
                 {
                     Encounterform newform = _context.Encounterforms.FirstOrDefault(f => f.Requestid == formView.requestId);
 
-                    if(newform == null)
+                    if (newform == null)
                     {
                         newform = new Encounterform();
                     }
-                    
+
                     newform.Requestid = formView.requestId;
                     newform.Historyofpresentillnessorinjury = formView.historyOfPresentIllnessOrInjury;
                     newform.Medicalhistory = formView.medicalHistory;
@@ -704,14 +696,14 @@ namespace HalloDoc_BAL.Repository
         public int getEcounterFormStatus(int requestId)
         {
             var form = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId);
-            if(form == null)
+            if (form == null)
             {
                 return 0;
             }
             else
             {
-            bool status = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId).Isfinalize;
-            return status ? 1 : 0;
+                bool status = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId).Isfinalize;
+                return status ? 1 : 0;
             }
         }
 
@@ -742,7 +734,7 @@ namespace HalloDoc_BAL.Repository
                 _context.Orderdetails.Add(orderdetail);
                 _context.SaveChanges();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
@@ -750,7 +742,7 @@ namespace HalloDoc_BAL.Repository
 
         public AdminProfileView GetAdminProfileView(int adminId)
         {
-            if(adminId != null)
+            if (adminId != null)
             {
                 try
                 {
@@ -773,11 +765,12 @@ namespace HalloDoc_BAL.Repository
                     view.role = role;
                     view.UserName = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid).Username;
                     view.AdminRegions = (from ar in _context.Adminregions.ToList()
-                                        where ar.Adminid == adminId select (int)ar.Regionid).ToList();
-                                       
+                                         where ar.Adminid == adminId
+                                         select (int)ar.Regionid).ToList();
+
                     return view;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return null;
                 }
@@ -786,7 +779,7 @@ namespace HalloDoc_BAL.Repository
             {
                 return null;
             }
-            
+
 
         }
 
@@ -809,7 +802,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void ChagePassword(int adminId , string password)
+        public void ChagePassword(int adminId, string password)
         {
             Admin admin = _adminRepo.GetAdminById(adminId);
             Aspnetuser user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
@@ -823,10 +816,11 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public List<ProviderInfoAdmin> getProviderInfoView() {
+        public List<ProviderInfoAdmin> getProviderInfoView()
+        {
             List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
-            List<Physician> providers = _context.Physicians.ToList(); 
-            providers.Sort((a,b) => b.Physicianid - a.Physicianid);
+            List<Physician> providers = _context.Physicians.ToList();
+            providers.Sort((a, b) => b.Physicianid - a.Physicianid);
             foreach (Physician pro in providers)
             {
                 ProviderInfoAdmin provider = new ProviderInfoAdmin();
@@ -848,20 +842,39 @@ namespace HalloDoc_BAL.Repository
             return _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId).Isnotificationstopped;
         }
 
-        public void updateNotificationStatus(int providerId , bool status)
+        public void updateNotificationStatus(int providerId, bool status)
         {
-            using(var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope())
             {
 
-            Physiciannotification physiciannotification = _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId);
-            if (physiciannotification != null)
-            {
-                physiciannotification.Isnotificationstopped = status;
-                _context.Physiciannotifications.Update(physiciannotification);
-                _context.SaveChanges();
-                transaction.Complete();
+                Physiciannotification physiciannotification = _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId);
+                if (physiciannotification != null)
+                {
+                    physiciannotification.Isnotificationstopped = status;
+                    _context.Physiciannotifications.Update(physiciannotification);
+                    _context.SaveChanges();
+                    transaction.Complete();
+                }
             }
-            }
+        }
+
+        public List<Healthprofessional> getAllVendors()
+        {
+            return _context.Healthprofessionals.Where(vendor => vendor.Isdeleted == false).ToList();
+        }
+        public string GetProfessionNameById(int id)
+        {
+            return _context.Healthprofessionaltypes.FirstOrDefault(pt => pt.Healthprofessionalid == id).Professionname;
+        }
+
+
+        public List<Region> GetAllReagion()
+        {
+            return _context.Regions.ToList();
+        }
+        public List<Casetag> GetAllCaseTag()
+        {
+            return _context.Casetags.ToList();
         }
     }
 }

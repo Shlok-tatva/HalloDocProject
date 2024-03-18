@@ -1,0 +1,143 @@
+﻿@{
+    ViewData["Title"] = "Edit Partner";
+}
+
+@model HalloDoc_DAL.Models.Healthprofessional;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+
+        $(document).ready(function () {
+            $("#EditPartner").on('submit', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr("action"),
+                    data: $(this).serialize(), // Serialize form data
+                    success: function (response) {
+                        Swal.fire({
+                            title: "Done",
+                            text: "Vendor Data Updated Succesfully",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            title: "Error",
+                            text: "Error while Updating the Data!",
+                            icon: "error",
+                            showConfirmButton: false,
+                            timer: 1000
+                        }).then(function () {
+                            location.reload();
+                        })
+                    }
+                });
+            })
+        })
+
+
+    </script>
+}
+
+<partial name="_NavBar" />
+
+<div class="mt-5  m-auto mb-5 form_content">
+    <div class="mt-4 m-auto d-flex justify-content-between">
+        <div class="d-flex align-items-center justify-content-center">
+            <h3 class="me-2 mt-1 fw-bolder">Update Business</h3>
+        </div>
+        <div>
+            <button class="btn btn-lg btn-outline-info hover_white ms-5" onclick="window.history.back()">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+
+    <form id="EditPartner" asp-action="EditPartner" class="mt-4 m-auto">
+
+        <input type="text" asp-for="Vendorid" class="visually-hidden"></input>
+        <div class="row p-4 shadow rounded-3">
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="Vendorname" type="text" class="form-control" id="BusinessContactInput" placeholder=" ">
+                <label asp-for="Vendorname" for="BusinessContactInput" class="control-label ms-3">Business Name</label>
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <select asp-for="Profession" class="form-select pt-1" id="BusinessSelect" aria-label="Select Business">
+                    <option disabled>Select Business</option>
+                    @foreach (var profession in @ViewBag.professionType)
+                    {
+                        if (@profession.Healthprofessionalid == Model.Profession)
+                        {
+                            <option value="@profession.Healthprofessionalid" selected> @profession.Professionname</option>
+                        }
+                        else
+                        {
+                        <option value="@profession.Healthprofessionalid"> @profession.Professionname</option>
+                        }
+
+                    }
+                </select>
+
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="Faxnumber" type="text" class="form-control" id="BusinessContactInput" placeholder="Fax Number">
+                <label asp-for="Faxnumber" for="BusinessContactInput" class="control-label ms-3">Fax Number </label>
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="Phonenumber" id="phone" type="tel" class="form-control">
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="Email" type="email" class="form-control" placeholder=" " id="EmailInput">
+                <label asp-for="Email" for="EmailInput" class="control-label ms-3">Email</label>
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="Businesscontact" type="text" class="form-control" id="Businesscontact" placeholder=" ">
+                <label asp-for="Businesscontact" for="Businesscontact" class="control-label ms-3">Business Contact</label>
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="Address" type="text" class="form-control" id="Street" placeholder=" ">
+                <label asp-for="Address" for="Street" class="control-label ms-3">Street</label>
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="City" type="text" class="form-control" id="City" placeholder=" ">
+                <label asp-for="City" for="City" class="control-label ms-3">City</label>
+            </div>
+
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="State" type="text" class="form-control" id="State" placeholder="">
+                <label asp-for="State" for="State" class="control-label ms-3">State</label>
+            </div>
+            <div class="form-floating col-md-6 my-3">
+                <input asp-for="Zip" type="text" class="form-control" id="Zip" placeholder=" ">
+                <label asp-for="Zip" for="Zip" class="control-label ms-3">Zip/Postal</label>
+            </div>
+
+
+            <div class="form-floating col-md-6 my-3">
+            </div>
+
+            <div class="my-3 d-flex justify-content-end ">
+                <button class="btn btn-outline-info hover_white hover_primary mx-2 btn-lg" type="submit">Update</button>
+                <button class="btn btn-outline-info hover_white hover_primary btn-lg" type="reset">Cancel</button>
+            </div>
+        </div>
+    </form>
+
+</div>

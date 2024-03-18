@@ -22,6 +22,7 @@ builder.Services.AddScoped<IPatientFunctionRepository, PatientFunctionRepository
 builder.Services.AddScoped<IAdminFunctionRepository, AdminFunctionRepository>();
 builder.Services.AddScoped<IRequestNotesRepository, RequestNotesRepository>();
 builder.Services.AddScoped<ICommonFunctionRepository, CommonFunctionRepository>();
+builder.Services.AddScoped<IHealthProfessionalRepository, HealthProfessionalRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IJwtServices, JwtServices>();
 
@@ -60,4 +61,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Patient}/{action=Index}/{id?}");
 
-    app.Run();
+app.Run();

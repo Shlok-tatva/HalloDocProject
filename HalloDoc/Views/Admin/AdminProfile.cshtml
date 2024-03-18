@@ -1,4 +1,9 @@
-﻿@model HalloDoc_BAL.ViewModel.Admin.AdminProfileView;
+﻿@{
+    ViewData["Title"] = "Admin Profile";
+}
+
+
+@model HalloDoc_BAL.ViewModel.Admin.AdminProfileView;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -57,7 +62,7 @@
                     @*Administrator Information *@
                     <form class="row" id="adminProfile" asp-action="updateAdmin">
                     <h5 class="col-12 fw-bold my-3">Administrator Information</h5>
-                    <input type="text" id="adminId" asp-for="adminId" class="visually-hidden"></input>
+                    <input type="text" id="adminId" asp-for="adminId" name="adminId" class="visually-hidden"></input>
                     <div class="form-floating col-md-6 my-3">
                         <input asp-for="FirstName" type="text" class="form-control togleInputAdminInfo readonly">
                         <label asp-for="FirstName" for="floatingInput" class="control-label ms-3">

@@ -97,7 +97,7 @@ $(document).ready(function () {
         $("#stateId").prop("value", $(this).val());
     })
 
-    var initialCheckboxState = {}; // Object to store initial checkbox state
+    var initialCheckboxState = {};
 
     // Store initial checkbox state when page loads
     $('input[type="checkbox"]').each(function () {
@@ -138,42 +138,52 @@ $(document).ready(function () {
         var formData = new FormData($(formId)[0]);
         var changedCheckboxData = [];
 
-        // Compare initial state with final state of checkboxes
+
         $('input[type="checkbox"]').each(function () {
             var regionId = $(this).val();
             var finalIsChecked = $(this).is(':checked');
             var initialIsChecked = initialCheckboxState[regionId];
 
-            // If checkbox state has changed, include it in changedCheckboxData
+          
             if (initialIsChecked !== finalIsChecked) {
                 changedCheckboxData.push({ regionId: regionId, isChecked: finalIsChecked });
             }
         });
 
         var formdata = $(formId).serializeArray();
+        var formdataObject = {};
+        formdata.forEach(function (item) {
+            formdataObject[item.name] = item.value;
+        })
+
+        console.log(formdataObject);
 
         var requestData = {
-            formdata: formdata,
+            formdata: formdataObject,
             regions: changedCheckboxData
         };
 
             console.log(requestData);
 
         if ($(buttonId).text() === "Edit") {
-            debugger;
-             //Send form data to the server via AJAX
             $.ajax({
                 url: 'UpdateAdminInfo',
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(requestData), // Convert requestData to JSON
+                data: JSON.stringify(requestData),
                 success: function (response) {
-                    // Handle success response here
-                    alert("datasend")
+                    toastMixin.fire({
+                        animation: true,
+                        title: 'Profile Data change successfully!',
+                        icon: 'success'
+                    });
                 },
                 error: function (xhr, status, error) {
-                    // Handle error response here
-                    alert("error")
+                    toastMixin.fire({
+                        animation: true,
+                        title: 'Error While changing Data!',
+                        icon: 'error'
+                    });
                 }
             });
         }

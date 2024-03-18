@@ -1,4 +1,9 @@
-﻿@model HalloDoc_BAL.ViewModel.Admin.EncounterFormView;
+﻿@{
+    ViewData["Title"] = "Encounter Form";
+}
+
+
+@model HalloDoc_BAL.ViewModel.Admin.EncounterFormView;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -41,7 +46,6 @@
             // Form submission handling
             $('#encounterForm').submit(function (event) {
                 event.preventDefault(); // Prevent default form submission
-                // Submit form via AJAX
                 $.ajax({
                     type: "POST",
                     url: $(this).attr("action"),

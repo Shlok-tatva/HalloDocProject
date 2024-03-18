@@ -3,6 +3,7 @@ using HalloDoc_BAL.ViewModel.Admin;
 using HalloDoc_DAL.DataContext;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,8 +126,36 @@ namespace HalloDoc_BAL.Repository
 
         }
 
+        public void updateServiceRegion(List<ChangeRegionData> regionsData, int adminId)
+        {
+            try
+            {
+                regionsData.ForEach(region =>
+                {
+                   int regionId = Int32.Parse(region.RegionId);
+                    if (region.IsChecked == true)
+                    {
+                        Adminregion adminregion = new Adminregion();
+                        adminregion.Adminid = adminId;
+                        adminregion.Regionid = regionId;
+                        _context.Adminregions.Add(adminregion);
+                       
 
-     
+                    }
+                    else if (region.IsChecked == false)
+                    {
+                        _context.Adminregions.Where(r => r.Adminid == adminId && r.Regionid == regionId).ExecuteDelete();
+                    }
+                    _context.SaveChanges();
+
+                });
+
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
 
         private int GetCountOfTodayRequests()
         {
@@ -134,6 +163,8 @@ namespace HalloDoc_BAL.Repository
 
             return _context.Requests.Where(u => u.Createddate.Date == currentDate).Count();
         }
+
+
 
 
     }
