@@ -34,5 +34,6 @@ namespace HalloDoc_BAL.ViewModel.Admin
         }
         public string providerEmail { get;set;}
         public string providerPhone { get;set;}
+
     }
 }

@@ -31,12 +31,14 @@ $(document).ready(function () {
         'Close Case': 'closeCase.png',
     };
     function reloadDataTable(statusID) {
+        var tableData;
         $.ajax({
             url: '/Admin/GetRequestByStatusId',
             type: "GET",
             data: { status_id: statusID },
+            async: false,
             success: function (data) {
-   
+                tableData = data;
                 $('#request-table tbody').empty();
                 $('#request-table thead').empty();
                 $('#RequestAccordion').empty();
@@ -53,8 +55,9 @@ $(document).ready(function () {
             error: function () {
                 alert("Error while fetching Data");
             }
-    
         });
+        return tableData;
+
     }
     function renderDesktopTable(data, statusID) {
 
@@ -297,6 +300,12 @@ $(document).ready(function () {
         reloadDataTable(statusId);
     });
 
+    $('#exportAll').click(function () {
+        var lastStatusID = localStorage.getItem("lastStatusID")
+        let data = reloadDataTable(lastStatusID);
+        //console.log(data);
+        exportDataToCSV(data, "data.csv");
+    })
 
     var lastStatusID = localStorage.getItem("lastStatusID")
     if (lastStatusID == null) {

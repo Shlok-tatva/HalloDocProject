@@ -24,9 +24,10 @@ main {
     border-bottom: 2.5px solid #01BBE7;
 }
 
-.active a {
+.active > a {
     color: #01BBE7 !important;
 }
+
 
 .links a {
     text-decoration: none;

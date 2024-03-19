@@ -33,7 +33,7 @@ namespace HalloDoc.Controllers
             {
                 return Redirect("/admin");
             }
-            else if(role == 2)
+            else if(role == 3)
             {
                 return Redirect("/dashboard");
             }
@@ -74,12 +74,12 @@ namespace HalloDoc.Controllers
                         TempData["Success"] = "Login successfully";
                         return Redirect("/Admin");
                     }
-                    else if(role == 2)
+                    else if(role == 3)
                     {
                         string token = _jwtServices.GenerateToken(user.Email, "User");
                         HttpContext.Session.SetString("jwttoken", token);
                         HttpContext.Session.SetString("UserId", user.Email);
-                        HttpContext.Session.SetInt32("roleid", 2);
+                        HttpContext.Session.SetInt32("roleid", 3);
                         return Redirect("/dashboard/index");
                     }
                     else

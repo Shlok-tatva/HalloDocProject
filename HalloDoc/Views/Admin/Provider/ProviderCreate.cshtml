@@ -1,0 +1,310 @@
+@{
+    ViewData["Title"] = "Create Provider";
+}
+
+@model HalloDoc_BAL.ViewModel.Admin.CreateProviderView;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+
+
+<partial name="_NavBar" />
+
+<div class=" mt-5 container-sm m-auto">
+    <div class="mt-4 w-75 m-auto">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="fw-bold">Create Provider</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+
+    <!-- Form start  -->
+    <form asp-action="ProviderCreate" method="post" enctype="multipart/form-data">
+        <div class="mt-4 m-auto form_content">
+            <div class="row p-4 shadow rounded-3">
+                <!-- Provider Information -->
+
+                <h5 class="col-12 fw-bold my-3">Provider Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="firstName" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Provider's First Name
+                    </label>
+                    <span asp-validation-for="firstName" class="text-danger"></span>
+
+                </div>
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="lastName" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Provider's Last Name
+                    </label>
+                    <span asp-validation-for="lastName" class="text-danger"></span>
+
+                </div>
+                <!-- Patient Contact Information -->
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="email" type="email" id="email" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Provider's Email
+                    </label>
+                    <span asp-validation-for="email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="password" type="password" id="password" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Passsword
+                    </label>
+                    <span asp-validation-for="password" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="phoneNumber" id="phone" type="tel" class="form-control"> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                    <span asp-validation-for="phoneNumber" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="medicalLicence" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Medical Licence #
+                    </label>
+                    <span asp-validation-for="medicalLicence" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="NPInumber" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        NPI Number
+                    </label>
+                    <span asp-validation-for="NPInumber" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Syncemailaddress" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Synchronization Email Address
+                    </label>
+                    <span asp-validation-for="Syncemailaddress" class="text-danger"></span>
+                </div>
+
+                <!-- Mailing & Billing Information -->
+                <h5 class="col-12 fw-bold my-3">Mailing & Billing Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Address1" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Address1
+                    </label>
+                    <span asp-validation-for="Address1" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Address2" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Address2
+                    </label>
+                    <span asp-validation-for="Address2" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="city" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        City
+                    </label>
+                    <span asp-validation-for="city" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <select asp-for="regionId" class="p-2 px-4 form-control w-100 " id="regionsearch">
+                        <option value="0" selected hidden>State</option>
+                        @foreach (var region in ViewBag.regions)
+                        {
+                            <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                        }
+                    </select>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Zip" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Zip
+                    </label>
+                    <span asp-validation-for="Zip" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Altphone" id="phone1" type="tel" class="form-control"> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                    <span asp-validation-for="Altphone" class="text-danger"></span>
+                </div>
+
+                <h5 class="col-12 fw-bold my-3">Select Provider's Service Region</h5>
+                <div class="col-md-12 my-3">
+                    <div class="form-check form-check-inline d-flex flex-wrap ps-0 align-items-center">
+                        @foreach (var region in ViewBag.regions)
+                        {
+                            <div class="d-flex align-items-center">
+                                <input type="checkbox" class="checkbox" name="selectedRegions" value="@region.Regionid" />
+                                <label class="fs-6">@region.Name</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+
+                <!-- Provider Business Information -->
+                <h5 class="col-12 fw-bold my-3">Provider Profile Infromation</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="businessName" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Business Name
+                    </label>
+                    <span asp-validation-for="businessName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="businessWebsite" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Business Website
+                    </label>
+                    <span asp-validation-for="businessWebsite" class="text-danger"></span>
+                </div>
+
+
+                <div class="col-md-6 form-floating ">
+                    <input asp-for="PhotoFile" id="photofile" class="form-control form-control-disable rounded provider-prof file-upload-wrapper-1" name="PhotoFile" type="file" accept="image/*">
+                    <label for="floatingInput">Photo</label>
+                </div>
+
+                <div class="col-md-6 form-floating d-flex">
+                    <input asp-for="SignatureFile" class="form-control form-control-disable rounded provider-prof file-upload-wrapper-1" id="signature" name="SignatureFile" type="file">
+                    <button class="btn btn-info mx-1 text-white" type="button" id="create-signature-button">Create</button>
+                    <label for="floatingInput">Signature</label>
+                </div>
+
+                <div class="col-md-5">
+                <div id="uploadPreview" class=""></div>
+                </div>
+
+                <div class="col-md-5">
+                    <div class=" d-flex flex-wrap justify-content-center my-3">
+                        <canvas class="border border-1 bnorder-light my-2" id="signature-pad" width="300" height="200" style="display:none;"></canvas>
+                        <input type="image" id="saved" alt="Signature" class="border border-1 border-success-subtle mx-3 my-2" style="display:none;" />
+
+                    </div>
+                    <div class="text-end mt-2">
+                        <div id="clear-button" class="btn btn-danger mt-0" style="display:none;">Clear</div>
+                        <div id="save-button" class="btn btn-success" style="display:none;" disabled>Save</div>
+                    </div>
+                </div>
+
+                <div class="form-floating col-md-12 my-3">
+                    <input asp-for="Adminnotes" type="text" class="form-control" placeholder=" " />
+                    <label for="floatingInput" class="control-label ms-3">
+                        Admin Notes
+                    </label>
+                    <span asp-validation-for="Adminnotes" class="text-danger"></span>
+                </div>
+
+                <hr />
+
+                @*On boarding *@
+                <h5 class="col-12 fw-bold my-3">Onbording</h5>
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="istrainginDoc" name="istrainginDoc" type="checkbox" id="flexCheckDefault" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Independent Contractor Agreement
+                        </label>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <input class="fileInput" asp-for="Agreementdoc" type="file" name="Agreementdoc" disabled />
+                            <span class="btn btn-info text-white upload-button">Upload</span>
+                        </div>
+                        <a class="btn btn-info mx-2 text-white view-button" style="display:none;">View</a>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="isbackgroundDoc" name="isbackgroundDoc" type="checkbox" id="flexCheckDefault" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Background Check
+                        </label>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <input class="fileInput" asp-for="BackGrounddoc" type="file" name="BackGrounddoc" disabled />
+                            <span class="btn btn-info text-white upload-button">Upload</span>
+                        </div>
+                        <a class="btn btn-info mx-2 text-white view-button" style="display:none;">View</a>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="istrainginDoc" name="istrainginDoc" type="checkbox" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            HIPAA Complinace
+                        </label>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <input class="fileInput" asp-for="Trainingdoc" type="file" name="Trainingdoc" disabled />
+                            <span class="btn btn-info text-white upload-button">Upload</span>
+                        </div>
+                        <a class="btn btn-info mx-2 text-white view-button" style="display:none;">View</a>
+                    </div>
+
+                </div>
+
+
+
+                <div class="my-3 d-flex justify-content-end ">
+                    <input class="btn btn-outline-info hover_white hover_primary mx-2 btn-lg" type="submit"></input>
+                    <input class="btn btn-outline-info hover_white hover_primary btn-lg" type="reset"></input>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+
+    <script src="~/js/CreateProvider.js"></script>
+
+
+        }
+
+

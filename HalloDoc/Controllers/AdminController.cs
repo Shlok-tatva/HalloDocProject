@@ -465,7 +465,7 @@ namespace HalloDocAdmin.Controllers
         {
             ViewData["ViewName"] = "ProviderLocation";
             ViewBag.Username = HttpContext.Session.GetString("Username");
-            return View();
+            return View("Provider/ProviderLocation");
         }
         [HttpGet]
         public IActionResult GetPhysicianLocation()
@@ -586,7 +586,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.regions = regions;
             ViewBag.adminId = adminId;
 
-            return View(view);
+            return View("provider/index" , view);
         }
 
 
@@ -599,7 +599,7 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Providers";
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
-            return View();
+            return View("provider/ProviderCreate");
         }
 
 
@@ -652,8 +652,6 @@ namespace HalloDocAdmin.Controllers
 
         }
 
-
-
         public class PhysicianNotificationData
         {
             public int physicianId { get; set; }
@@ -699,7 +697,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.ProfessionNames = professionNames;
 
 
-            return View(view);
+            return View("Partners/index" , view);
         }
 
 
@@ -723,7 +721,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewBag.professionType = _adminFunctionRepository.getAllProfessions();
 
-            return View();
+            return View("Partners/AddPartner");
         }
 
         [HttpPost("AddPartner")]
@@ -772,17 +770,19 @@ namespace HalloDocAdmin.Controllers
             int id = Int32.Parse(Request.Query["vendorid"]);
             ViewBag.professionType = _adminFunctionRepository.getAllProfessions();
             Healthprofessional view = _healthprofessionalRepository.get(id);
-            return View(view);
+            return View("Partners/EditPartner" , view);
         }
 
         [HttpPost]
         public IActionResult EditPartner(Healthprofessional formData)
         {
+
             try
             {
                 if (ModelState.IsValid)
                 {
-
+                    formData.Isdeleted = false;
+                    formData.Modifieddate = DateTime.Now;
                     _healthprofessionalRepository.Update(formData);
                     return Ok(new { message = "Vendor Update Sucessfully" });
                 }
@@ -814,6 +814,31 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        public IActionResult Access()
+        {
+            ViewData["ViewName"] = "Access";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            List<Role> view = _adminFunctionRepository.GetAllRole();
+            Dictionary<int, string> AccountTypeNames = new Dictionary<int, string>();
+            foreach (var Role in view)
+            {
+                if (Role.Accounttype != null && !AccountTypeNames.ContainsKey((int)Role.Accounttype))
+                {
+                    string AccountTypeName = _adminFunctionRepository.GetAccountTypeNameById((int)Role.Accounttype);
+                    AccountTypeNames.Add((int)Role.Accounttype, AccountTypeName);
+                }
+            }
+            ViewBag.AccountTypeNames = AccountTypeNames;
+
+            return View("Access/index" , view);
+        }
+
+        [HttpGet]
+        public IActionResult CreateAccess()
+        {
+            ViewData["ViewName"] = "Access";
+            return View("Access/CreateAccess");
+        }
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

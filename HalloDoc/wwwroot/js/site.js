@@ -257,3 +257,36 @@ function setupPagination(items) {
     updateButtonStates();
 }
 
+
+function exportDataToCSV(arrayOfObjects, filename) {
+    const csv = [];
+
+    const headers = Object.keys(arrayOfObjects[0]).filter(header => header !== "menuOptions");
+    csv.push(headers.join(','));
+
+    // Extract values for each object
+    arrayOfObjects.forEach(obj => {
+        const values = headers.map(header => {
+            // Fix the date of birth format
+            if (header === "dateOfBirth") {
+                return obj[header].replace(/,/g, ''); // Remove commas
+            } else {
+                return obj[header];
+            }
+        });
+        csv.push(values.join(','));
+    });
+
+    // Download CSV file
+    downloadCSV(csv.join('\n'), filename);
+}
+
+function downloadCSV(csv, filename) {
+    const csvFile = new Blob([csv], { type: 'text/csv' });
+    const downloadLink = document.createElement('a');
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}

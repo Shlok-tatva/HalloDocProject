@@ -39,6 +39,8 @@ namespace HalloDoc_BAL.Repository
         void updateNotificationStatus(int providerId, bool status);
         List<Healthprofessional> getAllVendors();
         string GetProfessionNameById(int id);
+        string GetAccountTypeNameById(int id);
+        List<Role> GetAllRole();
 
 
         }

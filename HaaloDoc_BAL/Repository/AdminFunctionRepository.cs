@@ -867,6 +867,11 @@ namespace HalloDoc_BAL.Repository
             return _context.Healthprofessionaltypes.FirstOrDefault(pt => pt.Healthprofessionalid == id).Professionname;
         }
 
+        public string GetAccountTypeNameById(int id)
+        {
+            return _context.Aspnetroles.FirstOrDefault(r => r.Id == id).Name;
+        }
+
 
         public List<Region> GetAllReagion()
         {
@@ -875,6 +880,10 @@ namespace HalloDoc_BAL.Repository
         public List<Casetag> GetAllCaseTag()
         {
             return _context.Casetags.ToList();
+        }
+        public List<Role> GetAllRole()
+        {
+            return _context.Roles.ToList();
         }
     }
 }
