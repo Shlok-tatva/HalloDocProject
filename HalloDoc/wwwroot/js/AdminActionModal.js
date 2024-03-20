@@ -132,41 +132,54 @@ $(document).ready(function () {
     })
 
     /*Assign Case Ajax Call */
-    $('#assignCaseModal').on("submit", function (e) {
-        e.preventDefault();
-
-        var formData = new FormData();
-        formData.append('requestId', $('#requestIdassignCase').val());
-        formData.append('physicianId', $('#physicianSelect').val());
-
-        console.log($('#requestIdassignCase').val());
-        console.log($('#physicianSelect').val());
-
-        $.ajax({
-            url: "/AssignCase",
-            method: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                Swal.fire({
-                    title: "Done",
-                    text: "Case assign to physcian Successfully",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(function () {
-                    location.reload();
-                })
+    $('#assignCaseModal').validate({
+        rules: {
+            selectregion: {
+                required: true
             },
-            error: function (xhr, status, error) {
-                showToaster("Error While assign Case to Physician" , "error");
-
+            physicianSelect: {
+                required: true
             }
-        });
-
-
+        },
+        messages: {
+            selectregion: {
+                required: "Please select a Region"
+            },
+            physicianSelect: {
+                required: "Please select a physician"
+            }
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element.parent());
+            error.addClass('text-danger');
+        },
+        submitHandler: function (form) {
+            var formData = new FormData(form);
+            debugger
+            $.ajax({
+                url: "/AssignCase",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.fire({
+                        title: "Done",
+                        text: "Case assigned to physician successfully",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(function () {
+                        location.reload();
+                    });
+                },
+                error: function (xhr, status, error) {
+                    showToaster("Error while assigning case to physician", "error");
+                }
+            });
+        }
     });
+
 
     /* Transfer Case Ajax Call */
     $('#transferModal').on("submit", function (e) {

@@ -17,8 +17,8 @@
                     <input type="text" id="requestIdassignCase" class="visually-hidden"></input>
 
                     <div class="form-floating">
-                        <select class="form-select" id="selectregion" aria-label="Floating label select example">
-                            <option value="Select Region" selected hidden>Select Region</option>
+                        <select class="form-select" id="selectregion" name="selectregion" aria-label="Floating label select example">
+                            <option value="" selected disabled>Select Region</option>
                             @foreach (var region in Model)
                             {
                                 <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
@@ -27,12 +27,13 @@
                         <label for="floatingSelect">Narrow Search by Region</label>
                     </div>
 
-                    <div class="form-floating my-4">
-                        <select class="form-select pt-1" id="physicianSelect" aria-label="Default select example">
-                            <option>Select Physician</option>
 
+                    <div class="form-floating mt-4">
+                        <select class="form-select pt-1" id="physicianSelect" name="physicianSelect" aria-label="Default select example">
+                            <option value="" selected disabled>Select Physician</option>
                         </select>
                     </div>
+
                 </div>
             </div>
             <div class="modal-footer">
