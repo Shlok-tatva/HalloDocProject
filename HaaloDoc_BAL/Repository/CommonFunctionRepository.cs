@@ -105,6 +105,8 @@ namespace HalloDoc_BAL.Repository
             _context.SaveChanges();
         }
 
+
+
         public string GetConfirmationNumber(string state, string lastname, string firstname)
         {
 

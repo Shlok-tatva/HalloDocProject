@@ -7,6 +7,23 @@
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
 }
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+
+    <script src="~/js/CreateProvider.js"></script>
+
+        @if (@TempData["Error"] != null)
+    {
+        <script>
+            showToaster("@TempData["Error"]" , "error");
+        </script>
+    }
+
+}
 
 
 <partial name="_NavBar" />
@@ -184,29 +201,33 @@
 
 
                 <div class="col-md-6 form-floating ">
-                    <input asp-for="PhotoFile" id="photofile" class="form-control form-control-disable rounded provider-prof file-upload-wrapper-1" name="PhotoFile" type="file" accept="image/*">
-                    <label for="floatingInput">Photo</label>
+                    <input asp-for="PhotoFile" id="photofile" name="PhotoFile" class="form-control form-control-disable rounded provider-prof file-upload-wrapper-1" type="file" accept="image/*">
+                    <label for="photofile">Photo</label>
+                    <div>
+                    <span asp-validation-for="PhotoFile" class="text-danger"></span>
+                    </div>
                 </div>
 
-                <div class="col-md-6 form-floating d-flex">
+
+                <div class="col-md-6">
+                    <div class="form-floating d-flex">
                     <input asp-for="SignatureFile" class="form-control form-control-disable rounded provider-prof file-upload-wrapper-1" id="signature" name="SignatureFile" type="file">
-                    <button class="btn btn-info mx-1 text-white" type="button" id="create-signature-button">Create</button>
+                    <div>
+                    <button class="btn btn-info mx-1 text-white h-100" type="button" id="create-signature-button">Create</button>
+                    </div>
+
                     <label for="floatingInput">Signature</label>
+                    </div>
+                    <span asp-validation-for="SignatureFile" class="text-danger"></span>
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-md-6 my-3">
                 <div id="uploadPreview" class=""></div>
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-md-6 my-3">
                     <div class=" d-flex flex-wrap justify-content-center my-3">
-                        <canvas class="border border-1 bnorder-light my-2" id="signature-pad" width="300" height="200" style="display:none;"></canvas>
                         <input type="image" id="saved" alt="Signature" class="border border-1 border-success-subtle mx-3 my-2" style="display:none;" />
-
-                    </div>
-                    <div class="text-end mt-2">
-                        <div id="clear-button" class="btn btn-danger mt-0" style="display:none;">Clear</div>
-                        <div id="save-button" class="btn btn-success" style="display:none;" disabled>Save</div>
                     </div>
                 </div>
 
@@ -226,7 +247,7 @@
                 <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
 
                     <div class="form-check mx-2 d-flex align-items-center">
-                        <input class="form-check-input agreement-checkbox" asp-for="istrainginDoc" name="istrainginDoc" type="checkbox" id="flexCheckDefault" />
+                        <input class="form-check-input agreement-checkbox" asp-for="istrainginDoc" name="istrainginDoc" type="checkbox" />
                         <label class="form-check-label" for="flexCheckDefault">
                             Independent Contractor Agreement
                         </label>
@@ -234,10 +255,9 @@
 
                     <div class="d-flex">
                         <div class="inputWrapper">
-                            <input class="fileInput" asp-for="Agreementdoc" type="file" name="Agreementdoc" disabled />
-                            <span class="btn btn-info text-white upload-button">Upload</span>
+                            <input class="fileInput" asp-for="Trainingdoc" type="file" name="Trainingdoc" disabled />
+                            
                         </div>
-                        <a class="btn btn-info mx-2 text-white view-button" style="display:none;">View</a>
                     </div>
 
                 </div>
@@ -246,7 +266,7 @@
                 <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
 
                     <div class="form-check mx-2 d-flex align-items-center">
-                        <input class="form-check-input agreement-checkbox" asp-for="isbackgroundDoc" name="isbackgroundDoc" type="checkbox" id="flexCheckDefault" />
+                        <input class="form-check-input agreement-checkbox" asp-for="isbackgroundDoc" name="isbackgroundDoc" type="checkbox"  />
                         <label class="form-check-label" for="flexCheckDefault">
                             Background Check
                         </label>
@@ -255,9 +275,8 @@
                     <div class="d-flex">
                         <div class="inputWrapper">
                             <input class="fileInput" asp-for="BackGrounddoc" type="file" name="BackGrounddoc" disabled />
-                            <span class="btn btn-info text-white upload-button">Upload</span>
+                            
                         </div>
-                        <a class="btn btn-info mx-2 text-white view-button" style="display:none;">View</a>
                     </div>
 
                 </div>
@@ -266,7 +285,7 @@
                 <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
 
                     <div class="form-check mx-2 d-flex align-items-center">
-                        <input class="form-check-input agreement-checkbox" asp-for="istrainginDoc" name="istrainginDoc" type="checkbox" id="flexCheckDefault">
+                        <input class="form-check-input agreement-checkbox" asp-for="isAggrementDoc" name="isAggrementDoc" type="checkbox">
                         <label class="form-check-label" for="flexCheckDefault">
                             HIPAA Complinace
                         </label>
@@ -274,15 +293,45 @@
 
                     <div class="d-flex">
                         <div class="inputWrapper">
-                            <input class="fileInput" asp-for="Trainingdoc" type="file" name="Trainingdoc" disabled />
-                            <span class="btn btn-info text-white upload-button">Upload</span>
+                            <input class="fileInput" asp-for="Agreementdoc" type="file" name="Agreementdoc" disabled />
+                           
                         </div>
-                        <a class="btn btn-info mx-2 text-white view-button" style="display:none;">View</a>
                     </div>
 
                 </div>
 
 
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="isnondisclosuredoc" name="isnondisclosuredoc" type="checkbox">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Non-Disclosure Aggremwnt
+                        </label>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <input class="fileInput" asp-for="NonDisclosuredoc" type="file" name="NonDisclosuredoc" disabled />
+                       
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="islicensedoc" name="islicensedoc" type="checkbox">
+                        <label class="form-check-label" for="flexCheckDefault">
+                             license Document
+                        </label>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <input class="fileInput" asp-for="Licensedoc" type="file" name="Licensedoc" disabled />
+                        </div>
+                    </div>
+                </div>
 
                 <div class="my-3 d-flex justify-content-end ">
                     <input class="btn btn-outline-info hover_white hover_primary mx-2 btn-lg" type="submit"></input>
@@ -295,16 +344,26 @@
     </form>
 </div>
 
-@section Scripts {
-    <script>
-        if (window.innerWidth > 530) {
-            document.getElementById('navbarHeader').classList.add("show");
-        }
-    </script>
-
-    <script src="~/js/CreateProvider.js"></script>
 
 
-        }
-
+<div class="modal fade" id="drawModal" tabindex="-1" role="dialog" aria-labelledby="drawModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0" id="">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="drawModalLabel">Draw Your Signature</h5>
+                <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <div class="modal-body d-flex align-items-center justify-content-center">
+                <canvas id="drawCanvas" class="border border-1 bnorder-light my-2"></canvas>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info text-white" id="clearDrawingBtn">Clear</button>
+                <button type="button" class="btn btn-outline-info hover_white" id="saveDrawingBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 

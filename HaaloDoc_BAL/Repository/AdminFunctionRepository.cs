@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -71,7 +72,8 @@ namespace HalloDoc_BAL.Repository
                                           Notes = rs != null ? rs.Notes : "-", // Store result into notes
                                           status = r.Status,
                                           MenuOptions = GetMenuOptionsForStatus(statusId),
-                                          RequestTyepid = r.Requesttypeid
+                                          RequestTyepid = r.Requesttypeid,
+                                          regionId = rc.Regionid
                                       };
 
             return statusIdWiseRequest;
@@ -447,13 +449,69 @@ namespace HalloDoc_BAL.Repository
                     physician.Lastname = model.lastName;
                     physician.Mobile = model.phoneNumber;
                     physician.Regionid = model.regionId;
-                    physician.Createdby = "faeb647e-a0fe-4b31-a87d-4a2c9693242b";
+                    physician.Createdby = model.Createdby;
                     physician.Createddate = DateTime.Now;
                     physician.Status = 1;
                     physician.Businessname = model.businessName;
                     physician.Businesswebsite = model.businessWebsite;
+                    physician.Address1 = model.Address1;
+                    physician.Address2 = model.Address2;
+                    physician.City = model.city;
+                    physician.Zip = model.Zip;
+                    physician.Adminnotes = model.Adminnotes;
+                    physician.Isagreementdoc = model.isAggrementDoc;
+                    physician.Isbackgrounddoc = model.isbackgroundDoc;
+                    physician.Islicensedoc = model.islicensedoc;
+                    physician.Istrainingdoc = model.istrainginDoc;
+                    physician.Isnondisclosuredoc = model.isnondisclosuredoc;
+                    physician.Isdeleted = false;
+                    physician.Npinumber = model.NPInumber;
+                    physician.Medicallicense = model.medicalLicence;
+                    physician.Altphone = model.Altphone;
+                    physician.Photo = model.PhotoFile.FileName;
+                    physician.Signature = model.SignatureFile.FileName;
+
                     _context.Physicians.Add(physician);
                     _context.SaveChanges();
+
+                    string physicianFolder = Path.Combine("wwwroot\\", "Upload", "physician", physician.Physicianid.ToString());
+
+                    // Create the physician folder if it doesn't exist
+                    if (!Directory.Exists(physicianFolder))
+                    {
+                        Directory.CreateDirectory(physicianFolder);
+                    }
+
+                    if (model.PhotoFile.Length > 0)
+                    {
+                        UploadFile(model.PhotoFile, physicianFolder, "photo");
+                    }
+                    if(model.SignatureFile.Length > 0)
+                    {
+                        UploadFile(model.SignatureFile, physicianFolder, "Signature");
+
+                    }
+                    if(model.isAggrementDoc != false && model.Agreementdoc.Length > 0)
+                    {
+                        UploadFile(model.Agreementdoc, physicianFolder, "Aggrementdoc");
+
+                    }
+                    if (model.islicensedoc != false && model.Licensedoc.Length > 0)
+                    {
+                        UploadFile(model.Licensedoc, physicianFolder, "licensedoc");
+                    }
+                    if (model.isbackgroundDoc != false && model.BackGrounddoc.Length > 0)
+                    {
+                        UploadFile(model.BackGrounddoc, physicianFolder, "backgrounddoc");
+                    }
+                    if (model.istrainginDoc != false && model.Trainingdoc.Length > 0)
+                    {
+                        UploadFile(model.Trainingdoc, physicianFolder, "trainginDoc");
+                    }
+                    if(model.isnondisclosuredoc != false && model.NonDisclosuredoc.Length > 0)
+                    {
+                        UploadFile(model.NonDisclosuredoc, physicianFolder, "nondisclosuredoc");
+                    }
 
                     foreach (int regionId in selectedRegions)
                     {
@@ -466,12 +524,34 @@ namespace HalloDoc_BAL.Repository
                     _context.Physicianregions.AddRange(physicianRegions);
                     _context.SaveChanges();
 
+
+                    Physiciannotification notification = new Physiciannotification();
+                    notification.Physicianid = physician.Physicianid;
+                    notification.Isnotificationstopped = false;
+                    _context.Physiciannotifications.Add(notification);
+                    _context.SaveChanges();
+
+
                     transaction.Complete();
 
                 }
 
             }
         }
+
+
+        private void UploadFile(IFormFile file, string folderPath, string fileName)
+        {
+            string filePath = Path.Combine(folderPath, fileName + Path.GetExtension(file.FileName));
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+        }
+
+
+
+
 
         public List<Physician> GetPhysiciansByRegion(int regionId)
         {
@@ -503,6 +583,8 @@ namespace HalloDoc_BAL.Repository
 
             }
         }
+
+
 
 
         public void sendAgreement(int requestId, int adminId, string email, string link)

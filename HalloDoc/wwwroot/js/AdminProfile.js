@@ -3,11 +3,7 @@ $(document).ready(function () {
     $("#resetPassword").on("click", function () {
         var password = $("#Adminpassword").val();
         if (password.length < 5) {
-            toastMixin.fire({
-                animation: true,
-                title: 'minimum length of password should be 5',
-                icon: 'error'
-            });
+            showToaster("minimum length of password should be 5" , "error");
             return;
         }
 
@@ -41,20 +37,12 @@ $(document).ready(function () {
                     success: function (response) {
                         debugger
                         console.log(response);
-                        toastMixin.fire({
-                            animation: true,
-                            title: 'Password change successfully!',
-                            icon: 'success'
-                        });
+                        showToaster("Password change successfully!" , "success");
                     },
                     error: function (error) {
                         debugger
                         console.log(error)
-                        toastMixin.fire({
-                            animation: true,
-                            title: 'Failed to change Password',
-                            icon: 'error'
-                        });
+                        showToaster("Failed to change Password" , "error");
                     }
                 });
 
@@ -72,24 +60,26 @@ $(document).ready(function () {
 
     function EditSaveToggle(buttonId, toggleClass) {
         $(buttonId).click(function () {
-            $(toggleClass).toggleClass("readonly").prop('readonly', function (i, readonly) {
-                return !readonly;
-            });
-
-            if ($(".togleStateMailginfo") && toggleClass === ".togleInputMailingInfo") {
-                $(".togleStateMailginfo").prop('disabled', function (i, disabled) {
-                    return !disabled;
+            if ($('#adminProfile').valid()) {
+                $(toggleClass).toggleClass("readonly").prop('readonly', function (i, readonly) {
+                    return !readonly;
                 });
-            }
 
-            if (toggleClass === ".togleInputAdminInfo") {
-                $(".checkbox").prop('disabled', function (i, disabled) {
-                    return !disabled;
-                });
-            }
+                if ($(".togleStateMailginfo") && toggleClass === ".togleInputMailingInfo") {
+                    $(".togleStateMailginfo").prop('disabled', function (i, disabled) {
+                        return !disabled;
+                    });
+                }
 
-            var buttonText = $(this).text();
-            $(this).text(buttonText === "Edit" ? "Save" : "Edit");
+                if (toggleClass === ".togleInputAdminInfo") {
+                    $(".checkbox").prop('disabled', function (i, disabled) {
+                        return !disabled;
+                    });
+                }
+
+                var buttonText = $(this).text();
+                $(this).text(buttonText === "Edit" ? "Save" : "Edit");
+            }
         });
     }
 
@@ -110,34 +100,23 @@ $(document).ready(function () {
 
     $('#editButton').click(function (e) {
         e.preventDefault();
-        handleSaveData("#adminProfile", "#editButton");
+        if ($('#adminProfile').valid()) { 
+            handleSaveData("#adminProfile", "#editButton");
+        }
     });
 
     $('#editButton2').click(function (e) {
         e.preventDefault();
-        handleSaveData("#adminProfile", "#editButton2");
+        if ($('#adminProfile').valid()) { 
+            handleSaveData("#adminProfile", "#editButton2");
+        }
     });
+ 
 
-
-
-    //function handleSaveData(buttonId) {
-    //    $(buttonId).on("click", function (e) {
-    //        e.preventDefault();
-
-    //        console.log($(buttonId).text());
-
-    //        if ($(this).text() === "Edit") {
-
-    //            $("#adminProfile").submit();
-    //        }
-    //    })
-    //}
 
     function handleSaveData(formId , buttonId) {
         debugger
-        var formData = new FormData($(formId)[0]);
         var changedCheckboxData = [];
-
 
         $('input[type="checkbox"]').each(function () {
             var regionId = $(this).val();
@@ -148,7 +127,7 @@ $(document).ready(function () {
             if (initialIsChecked !== finalIsChecked) {
                 changedCheckboxData.push({ regionId: regionId, isChecked: finalIsChecked });
             }
-        });
+        }); 
 
         var formdata = $(formId).serializeArray();
         var formdataObject = {};
@@ -172,18 +151,10 @@ $(document).ready(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(requestData),
                 success: function (response) {
-                    toastMixin.fire({
-                        animation: true,
-                        title: 'Profile Data change successfully!',
-                        icon: 'success'
-                    });
+                    showToaster("Profile Data change successfully!" , "success");
                 },
                 error: function (xhr, status, error) {
-                    toastMixin.fire({
-                        animation: true,
-                        title: 'Error While changing Data!',
-                        icon: 'error'
-                    });
+                    showToaster("Error While changing Data!" , "error");
                 }
             });
         }
@@ -191,24 +162,3 @@ $(document).ready(function () {
 
 
 })
-
-
-
-
-
-
-
-var toastMixin = Swal.mixin({
-    toast: true,
-    icon: 'success',
-    title: 'General Title',
-    animation: false,
-    position: 'top-right',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-});

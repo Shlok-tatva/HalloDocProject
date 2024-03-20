@@ -1,14 +1,4 @@
 $(document).ready(function () {
-    $('.agreement-checkbox').on('change', function () {
-        var isChecked = $(this).prop('checked');
-        var $fileInput = $(this).closest('.document').find('.fileInput');
-
-        console.log($fileInput);
-
-        $fileInput.prop('disabled', !isChecked);
-    });
-
-
     var _URL = window.URL || window.webkitURL;
 
     $("#photofile").change(function (e) {
@@ -33,76 +23,57 @@ $(document).ready(function () {
 
         if (file) {
             $viewButton.show();
-            $fileDetails.find('.file-name').text(file.name);
         }
     });
-
-
-
-
-    var canvas = $('#signature-pad')[0];
-    var ctx = canvas.getContext('2d');
-    var drawing = false;
-    var strokes = [];
-    var saveButton = $('#save-button');
-    var signatureFileInput = $('#signature');
 
 
     $('#create-signature-button').on('click', function () {
-        $('#create-signature-button').hide();
-        $('#clear-button').show();
-        $('#undo-button').show();
-        $('#save-button').show();
-
-        canvas.style.display = 'block';
+        $('#drawModal').modal('show');
     });
 
-    $('#signature-pad').on('mousedown', function (e) {
+    var drawCanvas = $('#drawCanvas')[0];
+    var drawCtx = drawCanvas.getContext('2d');
+    var drawing = false;
+    var signatureFileInput = $('#signature');
+
+    // Event listeners for drawing on the canvas
+    $('#drawCanvas').on('mousedown', function (e) {
         drawing = true;
-        ctx.beginPath();
-        ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+        drawCtx.beginPath();
+        drawCtx.moveTo(e.clientX - drawCanvas.getBoundingClientRect().left, e.clientY - drawCanvas.getBoundingClientRect().top);
     });
 
-    $('#signature-pad').on('mousemove', function (e) {
+    $('#drawCanvas').on('mousemove', function (e) {
         if (drawing) {
-            ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
-            ctx.stroke();
+            drawCtx.lineTo(e.clientX - drawCanvas.getBoundingClientRect().left, e.clientY - drawCanvas.getBoundingClientRect().top);
+            drawCtx.stroke();
         }
     });
 
-    $('#signature-pad').on('mouseup', function () {
-        if (drawing) {
-            drawing = false;
-            strokes.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-            updateSaveButtonState();
-        }
+    $('#drawCanvas').on('mouseup', function () {
+        drawing = false;
     });
 
-    $('#clear-button').on('click', function () {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        strokes = [];
-        updateSaveButtonState();
+    // Event listener for clearing the canvas
+    $('#clearDrawingBtn').on('click', function () {
+        drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
     });
 
-    $('#save-button').on('click', function () {
+
+
+    // Event listener for saving the drawn image
+    $('#saveDrawingBtn').on('click', function () {
+        var dataURL = drawCanvas.toDataURL("image/png");
         $('#saved').show();
-        scaleUp(canvas, 1);
-        var dataURL = canvas.toDataURL("image/png");
+        $('#saved').attr('src', dataURL);
+        var blob = dataURLToBlob(dataURL);
+        var file = new File([blob], "signature.png", { type: "image/png" });
+        var dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        signatureFileInput.prop('files', dataTransfer.files);
         $('#signature-data').val(dataURL); // Set the value of the hidden input field
-        // $('#save-form').submit(); // Submit the form
+        $('#drawModal').modal('hide');
     });
-
-    function updateSignatureFileInput() {
-        if (strokes.length > 0) {
-            var dataURL = canvas.toDataURL("image/png");
-            var blob = dataURLToBlob(dataURL);
-            var file = new File([blob], "signature.png", { type: "image/png" });
-            signatureFileInput.prop('files', [file]);
-            saveButton.prop('disabled', false);
-        } else {
-            saveButton.prop('disabled', true);
-        }
-    }
 
     function dataURLToBlob(dataURL) {
         var byteString = atob(dataURL.split(',')[1]);
@@ -114,34 +85,56 @@ $(document).ready(function () {
         return new Blob([ab], { type: 'image/png' });
     }
 
-    function updateSaveButtonState() {
-        if (strokes.length > 0) {
-            var dataURL = canvas.toDataURL("image/png");
-            var blob = dataURLToBlob(dataURL);
-            var file = new File([blob], "signature.png", { type: "image/png" });
-            var dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            signatureFileInput.prop('files', dataTransfer.files);
-            saveButton.prop('disabled', false);
-        } else {
-            saveButton.prop('disabled', true);
+
+
+
+
+    $('.agreement-checkbox').on('change', function () {
+        var isChecked = $(this).prop('checked');
+        var $fileInput = $(this).closest('.document').find('.fileInput');
+        $fileInput.prop('disabled', !isChecked);
+    });
+
+    $("form").validate({
+        rules: {
+            PhotoFile: {
+                required: true
+            },
+            SignatureFile: {
+                required: true
+            }
+        },
+        messages: {
+            PhotoFile: {
+                required: "Please upload a photo."
+            },
+            SignatureFile: {
+                required: "Please upload a Singature"
+            }
         }
-    }
+    });
 
-    function scaleUp(c, scale) {
 
-        var newCanvas = $("<canvas>")
-            .attr("width", c.width * scale)
-            .attr("height", c.height * scale)[0];
+    const form = $('form');
+    form.on('submit', function (event) {
+        const checkboxes = $('.agreement-checkbox');
+        checkboxes.each(function () {
+            // Check if the checkbox is checked
+            if ($(this).is(':checked')) {
+                const fileInput = $(this).closest('.document').find('input[type="file"]');
+                if (!fileInput[0].files.length) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'You have selected a checkbox but did not provide a file!',
+                    });
+                    return false;
+                }
+            }
+        });
+    });
 
-        var ctx2 = newCanvas.getContext("2d");
-        ctx2.imageSmoothingEnabled = false;
-        ctx2.drawImage(c, 0, 0, newCanvas.width, newCanvas.height);
-
-        var dataURL = newCanvas.toDataURL("image/png");
-        document.getElementById("saved").src = dataURL;
-
-    }
 
 });
 

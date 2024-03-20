@@ -68,6 +68,7 @@
                         <label asp-for="FirstName" for="floatingInput" class="control-label ms-3">
                             First Name
                         </label>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
@@ -75,6 +76,7 @@
                         <label asp-for="LastName" for="floatingInput" class="control-label ms-3">
                             Last Name
                         </label>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
@@ -82,6 +84,7 @@
                         <label asp-for="Email" for="floatingInput" class="control-label ms-3">
                             Email
                         </label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
@@ -89,12 +92,14 @@
                         <label asp-for="ConfirmEmail" for="floatingInput" class="control-label ms-3">
                             Confirm Email
                         </label>
+                            <span asp-validation-for="ConfirmEmail" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
                         <input asp-for="Phone" id="phone" type="tel" class="form-control h-100 togleInputAdminInfo readonly"> <br />
                         <label for="floatingInput" class="control-label ms-3">
                         </label>
+                            <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 my-3">
@@ -128,6 +133,7 @@
                         <label for="floatingInput" class="control-label ms-3">
                            Address 1
                         </label>
+                            <span asp-validation-for="Address1" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
@@ -135,6 +141,7 @@
                         <label for="floatingInput" class="control-label ms-3">
                             Address 2
                         </label>
+
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
@@ -142,6 +149,7 @@
                         <label for="floatingInput" class="control-label ms-3">
                             City
                         </label>
+                            <span asp-validation-for="City" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
@@ -169,12 +177,14 @@
                         <label for="floatingInput" class="control-label ms-3">
                             Zip
                         </label>
+                            <span asp-validation-for="Zip" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating col-md-6 my-3">
                         <input asp-for="billingPhone" id="phone1" type="tel" class="form-control h-100 togleInputMailingInfo readonly"> <br />
                         <label for="floatingInput" class="control-label ms-3">
                         </label>
+                            <span asp-validation-for="billingPhone" class="text-danger"></span>
                     </div>
 
 

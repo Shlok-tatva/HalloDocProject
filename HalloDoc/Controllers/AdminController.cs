@@ -43,16 +43,32 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             AdminDashboardView view = _adminFunctionRepository.GetAdminDashboardView();
-
             return View(view);
         }
 
         [HttpGet]
-        public IActionResult GetRequestByStatusId(int status_id)
+        public IActionResult GetRequestByStatusId(int statusID, int reqtype, int regionFilter)
         {
-            var statusIdWiseRequest = _adminFunctionRepository.GetRequestsByStatusID(status_id);
+            var statusIdWiseRequest = _adminFunctionRepository.GetRequestsByStatusID(statusID);
+
+            if (reqtype != 0 && regionFilter != 0)
+            {
+                return Ok(statusIdWiseRequest.Where(x => x.RequestTyepid == reqtype && x.regionId == regionFilter).ToList());
+            }
+            else if (reqtype == 0 && regionFilter != 0)
+            {
+                return Ok(statusIdWiseRequest.Where(x => x.regionId == regionFilter).ToList());
+
+            }
+            else if (reqtype != 0 && regionFilter == 0)
+            {
+                return Ok(statusIdWiseRequest.Where(x => x.RequestTyepid == reqtype).ToList());
+            } 
+           
             return Ok(statusIdWiseRequest.ToList());
         }
+
+
 
         [HttpPost("AssignCase")]
         public IActionResult AssignCase(int requestId, int physicianId)
@@ -607,13 +623,24 @@ namespace HalloDocAdmin.Controllers
         [Route("/admin/CreateProvider")]
         public IActionResult ProviderCreate(CreateProviderView model, int[] selectedRegions)
         {
-            if (ModelState.IsValid)
+            try
             {
-                //remanign work of Physicina Add
-                _adminFunctionRepository.CreateProvider(model, selectedRegions);
-
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                Admin admin = _adminrepo.GetAdminById(adminId);
+                model.Createdby = admin.Aspnetuserid;
+                if (ModelState.IsValid)
+                {
+                    _adminFunctionRepository.CreateProvider(model, selectedRegions);
+                }
+                TempData["Success"] = "Provider Created Successfully !";
+                return Redirect("/admin/Provider");
             }
-            return Ok();
+            catch(Exception ex)
+            {
+                TempData["Error"] = "Error while Creating Physician";
+                return Redirect("/admin/CreateProvider");
+            }
+
         }
 
         [HttpPost]
@@ -650,6 +677,20 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+        [HttpPost]
+        public IActionResult uploadProviderDocument(IFormFile file , string filename)
+        {
+            try
+            {
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         public class PhysicianNotificationData

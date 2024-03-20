@@ -9,11 +9,7 @@ $('#selectAllCheckboxMobile').change(function () {
 
 $('.downloadAll').click(function () {
     if ($('.fileCheckbox:checked').length == 0) {
-        toastMixin.fire({
-            animation: true,
-            title: 'Please Select At least One File!',
-            icon: 'error'
-        });
+        showToaster("Please Select At least One File!" , "error");
     } else {
     $('.fileCheckbox:checked').each(function () {
         var filePath = $(this).closest('tr').find('.download-btn').data('file');
@@ -25,11 +21,8 @@ $('.downloadAll').click(function () {
 
 $('.deleteAll').click(function () {
     if ($('.fileCheckbox:checked').length == 0) {
-        toastMixin.fire({
-            animation: true,
-            title: 'Please Select At least One File!',
-            icon: 'error'
-        });
+        showToaster("Please Select At least One File!" , "error");
+
     }
     else {
     $('.fileCheckbox:checked').each(function () {
@@ -193,11 +186,8 @@ function getEmailDataAndSend() {
     console.log(toEmail);
     console.log(attachmentFilePaths);
     if (attachmentFilePaths.length == 0) {
-        toastMixin.fire({
-            animation: true,
-            title: 'Please Select At least One File!',
-            icon: 'error'
-        });
+        showToaster("Please Select At least One File!" , "error");
+
         return;
     }
     else {
@@ -222,34 +212,10 @@ function sendEmail(toEmail, attachmentFilePaths) {
         data: data,
         success: function (response) {
             console.log(response);
-            toastMixin.fire({
-                animation: true,
-                title: 'Email sent successfully!',
-                icon: 'success'
-            });
+            showToaster("Email sent successfully!" , "success");
         },
         error: function (error) {
-            toastMixin.fire({
-                animation: true,
-                title: 'Failed to send email',
-                icon: 'error'
-            });
+            showToaster("Failed to send email" , "error");
         }
     });
 }
-
-
-var toastMixin = Swal.mixin({
-    toast: true,
-    icon: 'success',
-    title: 'General Title',
-    animation: false,
-    position: 'top-right',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-});

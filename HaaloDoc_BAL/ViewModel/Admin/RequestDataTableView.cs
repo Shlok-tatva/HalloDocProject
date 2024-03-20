@@ -36,6 +36,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required]
         public string RequesterPhoneNumber { get; set; }
 
+        public int? regionId { get; set; }
+
         [Required]
         public string Address { get; set; }
 

@@ -21,27 +21,7 @@
     @if (TempData["Success"] != null)
 {
         <script>
-            $(document).ready(function(){
-                toastMixin.fire({
-                    animation: true,
-                    title: '@TempData["Success"]',
-                    icon: 'success'
-                });
-            })
-            var toastMixin = Swal.mixin({
-                toast: true,
-                icon: 'success',
-                title: 'General Title',
-                animation: false,
-                position: 'top-right',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
+            showToaster("@TempData["Success"]" , "success");
         </script>
    
 }
@@ -165,8 +145,8 @@
 
         @*Filter Buttons *@
         <div class="col-xl-6 d-flex flex-wrap justify-content-end filterbuttons">
-            <div class="d-flex align-items-center filter-btn">
-                <button class="btn btn-all">All</button>
+            <div class="d-flex align-items-center ">
+                <button class="btn btn-all filter-btn">All</button>
             </div>
             <div class="d-flex align-items-center">
                 <button class=" btn d-flex gap-1 align-items-center justify-content-center filter-btn"

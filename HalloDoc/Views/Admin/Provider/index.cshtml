@@ -61,6 +61,13 @@
             document.getElementById('navbarHeader').classList.add("show");
         }
     </script>
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            showToaster("@TempData["Success"]", "success");
+        </script>
+
+    }
 }
 
 <partial name="_NavBar" />

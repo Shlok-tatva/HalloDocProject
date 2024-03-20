@@ -13,9 +13,6 @@
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
         }
-
-        
-
     </script>
 }
 
@@ -39,6 +36,7 @@
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="Vendorname" type="text" class="form-control" id="BusinessContactInput" placeholder=" ">
                 <label asp-for="Vendorname" for="BusinessContactInput" class="control-label ms-3">Business Name</label>
+                <span asp-validation-for="Vendorname" class="text-danger"></span>
             </div>
 
             <div class="form-floating col-md-6 my-3">
@@ -49,36 +47,50 @@
                         <option value="@profession.Healthprofessionalid "> @profession.Professionname</option>
                     }
                 </select>
+                <span asp-validation-for="Profession" class="text-danger"></span>
+
 
             </div>
 
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="Faxnumber" type="text" class="form-control" id="BusinessContactInput" placeholder="Fax Number">
                 <label asp-for="Faxnumber" for="BusinessContactInput" class="control-label ms-3">Fax Number </label>
+                <span asp-validation-for="Faxnumber" class="text-danger"></span>
+
             </div>
 
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="Phonenumber" id="phone" type="tel" class="form-control">
+                <span asp-validation-for="Phonenumber" class="text-danger"></span>
+
             </div>
 
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="Email" type="email" class="form-control" placeholder=" " id="EmailInput">
                 <label asp-for="Email" for="EmailInput" class="control-label ms-3">Email</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+
             </div>
 
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="Businesscontact" type="text" class="form-control" id="Businesscontact" placeholder=" ">
                 <label asp-for="Businesscontact" for="Businesscontact" class="control-label ms-3">Business Contact</label>
+                <span asp-validation-for="Businesscontact" class="text-danger"></span>
+
             </div>
 
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="Address" type="text" class="form-control" id="Street" placeholder=" ">
                 <label asp-for="Address" for="Street" class="control-label ms-3">Street</label>
+                <span asp-validation-for="Address" class="text-danger"></span>
+
             </div>
 
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="City" type="text" class="form-control" id="City" placeholder=" ">
                 <label asp-for="City" for="City" class="control-label ms-3">City</label>
+                <span asp-validation-for="City" class="text-danger"></span>
+
             </div>
 
             <div class="form-floating col-md-6 my-3">
@@ -88,6 +100,8 @@
             <div class="form-floating col-md-6 my-3">
                 <input asp-for="Zip" type="text" class="form-control" id="Zip" placeholder=" ">
                 <label asp-for="Zip" for="Zip" class="control-label ms-3">Zip/Postal</label>
+                <span asp-validation-for="Zip" class="text-danger"></span>
+
             </div>
 
 

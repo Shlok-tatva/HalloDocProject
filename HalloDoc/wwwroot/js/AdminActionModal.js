@@ -92,7 +92,7 @@ $(document).ready(function () {
                 })
             },
             error: function (xhr, status, error) {
-                Swal.fire("Error While Save Changes!", "", "error");
+                showToaster("Error While Save Changes!" , "error");
             }
         });
     })
@@ -126,11 +126,7 @@ $(document).ready(function () {
                 })
             },
             error: function (xhr, status, error) {
-                toastMixin.fire({
-                    animation: true,
-                    title: 'Error While Save Changes!',
-                    icon: 'error'
-                });
+                showToaster("Error While Save Changes!" , "error");
             }
         });
     })
@@ -164,11 +160,8 @@ $(document).ready(function () {
                 })
             },
             error: function (xhr, status, error) {
-                toastMixin.fire({
-                    animation: true,
-                    title: 'Error While assign Case to Physician',
-                    icon: 'error'
-                });
+                showToaster("Error While assign Case to Physician" , "error");
+
             }
         });
 
@@ -202,11 +195,7 @@ $(document).ready(function () {
                 })
             },
             error: function (xhr, status, error) {
-                toastMixin.fire({
-                    animation: true,
-                    title: 'Error While Trasnfer Case to Physician',
-                    icon: 'error'
-                });
+                showToaster("Error While Trasnfer Case to Physician" , "error");
             }
         });
 
@@ -249,11 +238,7 @@ $(document).ready(function () {
                         })
                     },
                     error: function (xhr, status, error) {
-                        toastMixin.fire({
-                            animation: true,
-                            title: 'Error While Clear Request',
-                            icon: 'error'
-                        });
+                        showToaster("Error While Clear Request" , "error");
                     }
                 });
             }
@@ -287,31 +272,9 @@ $(document).ready(function () {
                 })
             },
             error: function (xhr, status, error) {
-                toastMixin.fire({
-                    animation: true,
-                    title: 'Error While sending Agreement to Patient',
-                    icon: 'error'
-                });
+                showToaster("Error While sending Agreement to Patient" , "error");
             }
         });
-    });
-
-
-
-
-    var toastMixin = Swal.mixin({
-        toast: true,
-        icon: 'success',
-        title: 'General Title',
-        animation: false,
-        position: 'top-right',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
     });
 
 });

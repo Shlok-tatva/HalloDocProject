@@ -1,6 +1,28 @@
 
 $(document).ready(function () {
 
+
+    var lastFilter;
+    var lastregion;
+
+    //get requestCount 
+    $.ajax({
+        url: 'Admin/getRequestCountPerStatusId',
+        type: "GET",
+        success: function (data) {
+            $('#newCount').text(data[1]);
+            $('#pandingCount').text(data[2]);
+            $('#activeCount').text(data[3]);
+            $('#concludeCount').text(data[4]);
+            $('#closeCount').text(data[5]);
+            $('#unpaidCount').text(data[6]);
+
+        },
+        error: function () {
+            alert("Error while fetching count");
+        }
+    });
+
     const menuOptionEnumMapping = {
         0: 'Assign Case',
         1: "Cancel Case",
@@ -30,12 +52,13 @@ $(document).ready(function () {
         'Encounter': 'encounter.png',
         'Close Case': 'closeCase.png',
     };
-    function reloadDataTable(statusID) {
+    function reloadDataTable(statusID, reqtype, filter) {
         var tableData;
+        debugger
         $.ajax({
             url: '/Admin/GetRequestByStatusId',
             type: "GET",
-            data: { status_id: statusID },
+            data: { statusID: statusID, reqtype: reqtype, regionFilter: filter },
             async: false,
             success: function (data) {
                 tableData = data;
@@ -85,7 +108,7 @@ $(document).ready(function () {
                 return;
             }
 
-            if (["requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId"].includes(header)) {
+            if (["requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId"].includes(header)) {
                 return;
             }
             var columnName = headerMapping[header] || header;
@@ -101,7 +124,7 @@ $(document).ready(function () {
             for (var key in request) {
                 /* For Desktop View Insert table*/
 
-                if (!["menuOptions", "requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId"].includes(key)) {
+                if (!["menuOptions", "requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId"].includes(key)) {
                     if (statusID == 1 && key === 'physicianName') {
 
                     }
@@ -294,43 +317,31 @@ $(document).ready(function () {
         return menuOptionEnumMapping[number] || "Unknown";
     }
 
+
     $('.AdminState').click(function () {
         var statusId = $(this).data("status-id");
-        localStorage.setItem("lastStatusID" , statusId);
-        reloadDataTable(statusId);
+        localStorage.setItem("lastStatusID", statusId);
+        reloadDataTable(statusId, 0, 0);
+        $('.filter-btn').css("border", "none");
+        $('.filter-btn:first').css("border", "1px solid gray");
     });
 
     $('#exportAll').click(function () {
         var lastStatusID = localStorage.getItem("lastStatusID")
-        let data = reloadDataTable(lastStatusID);
+        let data = reloadDataTable(lastStatusID , 0 , 0);
         //console.log(data);
         exportDataToCSV(data, "data.csv");
     })
 
     var lastStatusID = localStorage.getItem("lastStatusID")
     if (lastStatusID == null) {
-        reloadDataTable(1)
+        reloadDataTable(1, 0, 0)
+        $('.filter-btn:first').css("border", "1px solid gray");
     } else {
-        reloadDataTable(lastStatusID);
+        reloadDataTable(lastStatusID, 0, 0);
+        $('.filter-btn:first').css("border", "1px solid gray");
     }
-    
-    //get requestCount 
-    $.ajax({
-        url: 'Admin/getRequestCountPerStatusId',
-        type: "GET",
-        success: function (data) {
-            $('#newCount').text(data[1]);
-            $('#pandingCount').text(data[2]);
-            $('#activeCount').text(data[3]);
-            $('#concludeCount').text(data[4]);
-            $('#closeCount').text(data[5]);
-            $('#unpaidCount').text(data[6]);
 
-        },
-        error: function () {
-            alert("Error while fetching count");
-        }
-    });
     function getEncounterFormstatus(requestId) {
 
         var status;
@@ -349,10 +360,17 @@ $(document).ready(function () {
 
         return status;
     }
+
+
     $('.filter-btn').click(function () {
-        var filterValue = $(this).data('filter-value') || null;
+        debugger
+        var filterValue = +$(this).data('filter-value') || 0;
+        $('.filter-btn').css("border", "none");
+        $(this).css("border", "1px solid gray");
+        lastFilter = filterValue;
         showSpinnerAndFilter(filterValue);
     });
+
     function showSpinnerAndFilter(requestTypeId) {
         $('#spinner').show();
         setTimeout(function () {
@@ -361,31 +379,28 @@ $(document).ready(function () {
         }, 500);
     }
     function filterDataTable(requestTypeId) {
-        $('#request-table tbody tr').each(function () {
-            var rowRequestTypeId = $(this).data('request-type-id');
-            if (requestTypeId === null || rowRequestTypeId === requestTypeId) {
-                $(this).show(); // Show row if it matches the requestTypeId or if requestTypeId is null (show all)
-            } else {
-                $(this).hide();
-            }
-        });
-
-        $('#RequestAccordion .accordion-item').each(function () {
-            var accordionRequestTypeId = $(this).data('request-type-id');
-            if (requestTypeId === null || accordionRequestTypeId === requestTypeId) {
-                $(this).show(); // Show accordion item if it matches the requestTypeId or if requestTypeId is null (show all)
-            } else {
-                $(this).hide();
-            }
-        });
-
+        var lastState = localStorage.getItem("lastStatusID");
+        reloadDataTable(lastState, requestTypeId, lastregion);
     }
+
+    $('#regionsearch').on("change", function () {
+        let reigonId = +$(this).val();
+        lastregion = reigonId;
+        var lastState = localStorage.getItem("lastStatusID");
+        reloadDataTable(lastState, lastFilter, reigonId);
+    })
+
+
+
+
     function setLastState(state) {
     localStorage.setItem('lastState', state);
 }
     function getLastState() {
     return localStorage.getItem('lastState');
-}
+    }
+
+
     function handleStateClick(state) {
     $('.active').not(this).removeClass('active');
     $('#requestState').text('(' + state.toUpperCase() + ')');
@@ -426,6 +441,7 @@ $(document).ready(function () {
         handleStateClick.call(this, 'Unpaid');
         setLastState('Unpaid');
     });
+
 
 });
 
