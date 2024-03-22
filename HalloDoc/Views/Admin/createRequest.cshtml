@@ -1,32 +1,34 @@
 ﻿@{
-    ViewData["Title"] = "Create Role Access";
+    ViewData["Title"] = "Create Request";
 }
+
+@model PatientFormData;
 
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
 }
+
 @section Scripts {
-    @*<script src="~/js/Partners.js"></script>*@
+    <script src="~/js/AdminProfile.js"></script>
     <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
         }
     </script>
-    <script src="~/js/Access/CreateEditAccess.js"></script>
+
 }
 
-<partial name="_NavBar" />
+<partial name="_Navbar" />
 
-<div class=" my-5 w-75 m-auto">
-    <div class="mt-4 m-auto form_content">
 
+<div class=" mt-5 container-sm m-auto">
+    <div class="mt-4 w-75 m-auto">
         <div class="d-flex justify-content-between">
-            <h3 class="fw-bold">Create Role</h3>
+            <h3>Submit Information</h3>
             <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
                 <i class="fa-solid fa-chevron-left"></i> Back
             </button>
         </div>
-        <partial name="~/Views/Admin/Access/_CreateEditAccess.cshtml" />
     </div>
 </div>

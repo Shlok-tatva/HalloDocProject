@@ -63,6 +63,7 @@ $(document).ready(function () {
 
     // Event listener for saving the drawn image
     $('#saveDrawingBtn').on('click', function () {
+        debugger;
         var dataURL = drawCanvas.toDataURL("image/png");
         $('#saved').show();
         $('#saved').attr('src', dataURL);
@@ -92,49 +93,15 @@ $(document).ready(function () {
     $('.agreement-checkbox').on('change', function () {
         var isChecked = $(this).prop('checked');
         var $fileInput = $(this).closest('.document').find('.fileInput');
+        var $button = $(this).closest('.document').find('.btn-info');
         $fileInput.prop('disabled', !isChecked);
-    });
 
-    $("form").validate({
-        rules: {
-            PhotoFile: {
-                required: true
-            },
-            SignatureFile: {
-                required: true
-            }
-        },
-        messages: {
-            PhotoFile: {
-                required: "Please upload a photo."
-            },
-            SignatureFile: {
-                required: "Please upload a Singature"
-            }
+        if (isChecked) {
+            $button.removeClass('o-1');
+        } else {
+            $button.addClass('o-1');
         }
+
     });
-
-
-    const form = $('form');
-    form.on('submit', function (event) {
-        const checkboxes = $('.agreement-checkbox');
-        checkboxes.each(function () {
-            // Check if the checkbox is checked
-            if ($(this).is(':checked')) {
-                const fileInput = $(this).closest('.document').find('input[type="file"]');
-                if (!fileInput[0].files.length) {
-                    event.preventDefault();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'You have selected a checkbox but did not provide a file!',
-                    });
-                    return false;
-                }
-            }
-        });
-    });
-
-
 });
 

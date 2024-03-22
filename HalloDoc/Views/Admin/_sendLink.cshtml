@@ -1,0 +1,51 @@
+﻿
+<div class="modal fade" id="sendLinktModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <form class="modal-content border-0" id="sendLink">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Send Mail to patient for submitting Request</h5>
+                <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="form-floating my-3">
+                        <input id="firstNameSendLink" name="firstNameSendLink" type="tel" class="form-control" placeholder=" " >
+                        <label for="floatingInput" class="control-label">
+                            First Name
+                        </label>
+                    </div>
+                    
+                    <div class="form-floating my-3">
+                        <input id="lastNameSendLink" name="lastNameSendLink" type="tel" class="form-control" placeholder=" " required>
+                        <label for="floatingInput" class="control-label">
+                            Last Name
+                        </label>
+                    </div>
+
+                    <div class="form-floating my-3">
+                        <input id="phoneSendLink" name="phoneSendLink" type="tel" class="form-control" placeholder=" " required>
+                        <label for="floatingInput" class="control-label">
+                            Phone Number
+                        </label>
+                    </div>
+
+                    <div class="form-floating my-3">
+                        <input id="emailSendLink" name="emailSendLink" type="email" class="form-control" placeholder=" " required>
+                        <label for="floatingInput" class="control-label">
+                            Email
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-info text-white btn-lg">send</button>
+                <div class="btn btn-outline-info hover_white fw-100 btn-lg close">
+                    Cancel
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

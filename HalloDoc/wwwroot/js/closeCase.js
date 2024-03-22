@@ -64,7 +64,7 @@
                     method: 'POST',
                     data: { requestId: requestId },
                     success: function () {
-                        window.location.href = '/admin'
+                        window.location.href = '/Admin/Dashboard'
                     }
 
                 })

@@ -299,6 +299,11 @@ input[type=checkbox] {
     cursor: not-allowed;
   }
 
+.o-1{
+    opacity:0.5;
+    cursor:not-allowed;
+}
+
 @media (max-width: 760px) {
     .form_content {
         width: 85%;
@@ -326,23 +331,5 @@ input[type=checkbox] {
     .popup{
         width: 60%;
     }
-}
-
-
-.dropdown-menu {
-    display: none;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-.dropdown:hover .dropbtn {
-    background-color: #3e8e41;
 }
 

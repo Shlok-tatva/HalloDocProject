@@ -9,9 +9,9 @@
 }
 
 @section Scripts {
-    <script src="./js/AdminDashboard.js"></script>
     <script src="~/js/AdminActionModal.js"></script>
-    <script src="~/js//EncounterForm.js"></script>
+    <script src="~/js/AdminDashboard.js"></script>
+    <script src="~/js/EncounterForm.js"></script>
     <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
@@ -97,15 +97,15 @@
     <div class="d-flex justify-content-between mx-3">
         <h4>Patients <span id="requestState" class="">(New)</span></h4>
         <div>
-            <button class="btn btn-info text-white">
+            <button id="open-sendLinkModal" class="btn btn-info text-white">
                 <i class="bi bi-send"></i>
                 <span class="mobile_d_none">Send Link</span>
             </button>
-            <button class="btn btn-info text-white">
+            <a href="/admin/createRequest" class="btn btn-info text-white">
                 <i class="fa-solid fa-hospital-user"></i>
                 <span class="mobile_d_none">Create Request</span>
-            </button>
-            <button class="btn btn-info text-white">
+            </a>
+            <button id="export" class="btn btn-info text-white">
                 <img src="~/images/export-all-ic.svg" width="20px" height="20px" />
                 <span class="mobile_d_none">Export</span>
             </button>
@@ -205,6 +205,7 @@
 <partial name="_cancelCase" model="Model.casetags" />
 <partial name="_sendAgreement" />
 <partial name="_encounter" />
+<partial name="_sendLink" />
 
 @if (@TempData["Error"] != null)
 {

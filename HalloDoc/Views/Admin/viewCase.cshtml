@@ -82,9 +82,9 @@
         
         </div>
         <div>
-            <a href="/admin" class="btn btn-lg btn-outline-info hover_white ms-5">
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
                 <i class="fa-solid fa-chevron-left"></i> Back
-            </a>
+            </button>
         </div>
     </div>
 
@@ -203,7 +203,7 @@
                         <a class="btn btn-success text-white mx-2 open-modal" data-option="Assign Case" data-request-id="@Model.requestId" data-toggle="modal" data-modal-id="assignCaseModal">Assign Case</a>
                     }
                     <a href="./viewNotes/?request=@Model.requestId" class="btn btn-info text-white hover_primary mx-2">View Notes</a>
-                    <button class="btn btn-danger hover_white"> Cancel</button>
+                    <button class="btn btn-danger hover_white open-modal" data-option="Cancel Case" data-request-id="@Model.requestId" data-toggle="modal" data-modal-id="cancelCaseModal"> Cancel</button>
                 </div>
 
             </div>
@@ -215,3 +215,5 @@
 {
 <partial name="_assignCase" model="Model.ListofRegion" />
 }
+
+<partial name="_cancelCase" model="@ViewData["casetag"]" />

@@ -1,0 +1,447 @@
+﻿@{
+    ViewData["Title"] = "Edit Provider";
+}
+
+@model HalloDoc_BAL.ViewModel.Admin.CreateProviderView;
+
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+    <script src="~/js/CreateProvider.js"></script>
+    <script src="~/js/EditProvider.js"></script>
+    @if (@TempData["Error"] != null)
+    {
+        <script>
+            showToaster("@TempData["Error"]", "error");
+        </script>
+    }
+    @if (@TempData["Success"] != null)
+    {
+        <script>
+            showToaster("@TempData["Success"]", "success");
+        </script>
+    }
+}
+
+
+<partial name="_NavBar" />
+
+<div class=" mt-5 container-sm m-auto">
+    <div class="mt-4 w-75 m-auto">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="fw-bold">Edit Provider</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+
+    <!-- Form start  -->
+    <form asp-action="EditProvider" method="post" enctype="multipart/form-data">
+        <input type="text" asp-for="ProviderId" class="visually-hidden" />
+
+        <div class="mt-4 m-auto form_content">
+            <div class="row p-4 shadow rounded-3">
+
+                <h5 class="col-12 fw-bold my-3">Account Information</h5>
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="UserName" type="text" class="form-control readonly">
+                    <label asp-for="UserName" for="floatingInput" class="control-label ms-3">
+                        User Name
+                    </label>
+                </div>
+                <div class="form-floating col-md-6 my-3">
+                    <input id="providerPassword" type="password" placeholder=" " class="form-control">
+                    <label  for="floatingInput" class="control-label ms-3">
+                        Password
+                    </label>
+                </div>
+
+                @{
+                  
+                    var availableStatusOptions = new List<SelectListItem>
+                {
+                new SelectListItem { Value = "1", Text = "Active" },
+                new SelectListItem { Value = "2", Text = "Pending" },
+                new SelectListItem { Value = "3", Text = "InActive" }
+                };
+                }
+
+                <div class="form-floating col-md-6 my-3">
+                    <select asp-for="Status" class="form-select pt-1" aria-label="Default select example">
+                        @foreach (var statusOption in availableStatusOptions)
+                        {
+                            if(Model.Status.ToString() == statusOption.Value){
+                            <option value="@statusOption.Value" selected>@statusOption.Text</option>
+                            }
+                            else{
+                            <option value="@statusOption.Value">@statusOption.Text</option>
+
+                            }
+                        }
+                    </select>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <select class="form-select pt-1" aria-label="Default select example">
+                        <option value="1" selected hidden>Role</option>
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-end mt-1 mb-2 me-2">
+                    <button class="btn btn-outline-info hover_white" id="resetPassword">Reset Password</button>
+                </div>
+
+                <!-- Provider Information -->
+
+                <h5 class="col-12 fw-bold my-3">Provider Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="firstName" type="text" class="form-control readonly" placeholder=" " data-section="provider-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Provider's First Name
+                    </label>
+                    <span asp-validation-for="firstName" class="text-danger"></span>
+
+                </div>
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="lastName" type="text" class="form-control readonly" placeholder=" " data-section="provider-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Provider's Last Name
+                    </label>
+                    <span asp-validation-for="lastName" class="text-danger"></span>
+
+                </div>
+                <!-- Provider Contact Information -->
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="email" type="email" id="email" class="form-control readonly" placeholder=" " data-section="provider-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Provider's Email
+                    </label>
+                    <span asp-validation-for="email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="phoneNumber" id="phone" type="tel" class="form-control readonly" data-section="provider-info" readonly> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                    <span asp-validation-for="phoneNumber" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="medicalLicence" type="text" class="form-control readonly" placeholder=" " data-section="provider-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Medical Licence #
+                    </label>
+                    <span asp-validation-for="medicalLicence" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="NPInumber" type="text" class="form-control readonly" placeholder=" " data-section="provider-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        NPI Number
+                    </label>
+                    <span asp-validation-for="NPInumber" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Syncemailaddress" type="email\" class="form-control readonly" placeholder="" data-section="provider-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Synchronization Email Address
+                    </label>
+                    <span asp-validation-for="Syncemailaddress" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 my-3">
+                    <div class="form-check form-check-inline d-flex flex-wrap ps-0 align-items-center">
+                        @foreach (var region in ViewBag.regions)
+                        {
+                            bool ischecked = Model.regionOfservice.Any(id => id == region.Regionid);
+                            if (ischecked)
+                            {
+                                <div class="d-flex align-items-center">
+                                    <input type="checkbox" class="checkbox" name="selectedRegions" value="@region.Regionid" checked />
+                                    <label class="fs-6">@region.Name</label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center">
+                                    <input type="checkbox" class="checkbox" name="selectedRegions" value="@region.Regionid" />
+                                    <label class="fs-6">@region.Name</label>
+                                </div>
+                            }
+
+                        }
+                    </div>
+                </div>
+
+
+                <div class="form-floating col-md-12 text-end">
+                    <button type="button" class="btn btn-info text-white btn-lg edit-button" data-section="provider-info">Edit</button>
+                    <button type="button" class="btn btn-outline-info btn-lg hover_white save-button" data-section="provider-info" style="display:none;">Save</button>
+                </div>
+
+                <!-- Mailing & Billing Information -->
+                <h5 class="col-12 fw-bold my-3">Mailing & Billing Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Address1" type="text" class="form-control readonly" placeholder=" " data-section="mailing-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Address1
+                    </label>
+                    <span asp-validation-for="Address1" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Address2" type="text" class="form-control readonly" placeholder=" " data-section="mailing-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Address2
+                    </label>
+                    <span asp-validation-for="Address2" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="city" type="text" class="form-control readonly" placeholder=" " data-section="mailing-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        City
+                    </label>
+                    <span asp-validation-for="city" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <select class="p-2 px-4 form-control w-100 readonly" id="regionsearch" data-section="mailing-info" disabled>
+                        <option value="0" selected hidden>State</option>
+                        @foreach (var region in ViewBag.regions)
+                        {
+
+                            if (Model.regionId == @region.Regionid)
+                            {
+                                <option value="@region.Regionid" selected>@region.Name - (@region.Abbreviation)</option>
+                            }
+                            else
+                            {
+                                <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <input type="text" asp-for="regionId" id="regionid" class="visually-hidden"></input>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Zip" type="text" class="form-control readonly" placeholder=" " data-section="mailing-info" readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        Zip
+                    </label>
+                    <span asp-validation-for="Zip" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Altphone" id="phone1" type="tel" class="form-control readonly" data-section="mailing-info" readonly> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                    <span asp-validation-for="Altphone" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-12 text-end">
+                    <button type="button" class="btn btn-info text-white btn-lg edit-button" data-section="mailing-info">Edit</button>
+                    <button type="button" class="btn btn-outline-info btn-lg hover_white save-button" data-section="mailing-info" style="display:none;">Save</button>
+                </div>
+
+
+                <!-- Provider Profile Information -->
+                <h5 class="col-12 fw-bold my-3">Provider Profile Infromation</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="businessName" type="text" class="form-control readonly" placeholder=" " readonly data-section="profile-info">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Business Name
+                    </label>
+                    <span asp-validation-for="businessName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="businessWebsite" type="text" class="form-control readonly" placeholder=" " readonly data-section="profile-info">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Business Website
+                    </label>
+                    <span asp-validation-for="businessWebsite" class="text-danger"></span>
+                </div>
+
+
+                <div class="col-md-6 form-floating">
+                    <input asp-for="PhotoFile" id="photofile" name="PhotoFile" class="form-control form-control-disable rounded provider-prof file-upload-wrapper-1" type="file" accept="image/png" data-section="profile-info">
+                    <label for="photofile">Photo</label>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-floating d-flex">
+                        <input asp-for="SignatureFile" class="form-control form-control-disable rounded provider-prof file-upload-wrapper-1" id="signature" name="SignatureFile" type="file" accept="image/png" data-section="profile-info">
+                        <div>
+                            <button class="btn btn-info mx-1 text-white h-100" type="button" id="create-signature-button">Create</button>
+                        </div>
+                        <label for="floatingInput">Signature</label>
+                    </div>
+                </div>
+
+                @if (Model.photo != null)
+                {
+                    <div class="col-md-6 my-3" id="photoPreview">
+                        <img src="~/Upload/physician/@Model.ProviderId.ToString()/Photo.png" alt="Photo" class="img-thumbnail" style="max-width: 100%;">
+                    </div>
+                }
+
+                @if (Model.signature != null)
+                {
+                    <div class="col-md-6 my-3" id="signaturePreview">
+                        <img src="~/Upload/physician/@Model.ProviderId.ToString()/signature.png" alt="Signature" class="img-thumbnail" style="max-width: 100%;">
+                    </div>
+                }
+                <div class="col-md-6 my-3">
+                    <div id="uploadPreview" class=""></div>
+                </div>
+
+                <div class="col-md-6 my-3">
+                    <div class=" d-flex flex-wrap justify-content-center my-3">
+                        <input type="image" id="saved" alt="Signature" class="border border-1 border-success-subtle mx-3 my-2 bg-light" style="display:none;" />
+                    </div>
+                </div>
+
+                <div class="form-floating col-md-12 my-3">
+                    <input asp-for="Adminnotes" type="text" class="form-control readonly" placeholder=" " data-section="profile-info" readonly />
+                    <label for="floatingInput" class="control-label ms-3">
+                        Admin Notes
+                    </label>
+                    <span asp-validation-for="Adminnotes" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-12 text-end mb-5">
+                    <button type="button" class="btn btn-info text-white btn-lg edit-button" data-section="profile-info">Edit</button>
+                    <button type="button" class="btn btn-outline-info btn-lg hover_white save-button" data-section="profile-info" style="display:none;">Save</button>
+                </div>
+
+                <hr />
+
+                @*On boarding *@
+                <h5 class="col-12 fw-bold my-3">Onbording</h5>
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="istrainginDoc" name="istrainginDoc" type="checkbox" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Independent Contractor Agreement
+                        </label>
+                    </div>
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <label class="btn btn-info text-white mx-3" for="Trainingdoc">Upload</label>
+                            <input class="fileInput d-none" asp-for="Trainingdoc" type="file" name="Trainingdoc" />
+                        </div>
+                        @if (Model.istrainginDoc)
+                        {
+                            <a class="btn btn-info text-light" href="~/Upload/physician/@Model.ProviderId.ToString()/trainginDoc.pdf" download>Download</a>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="isbackgroundDoc" name="isbackgroundDoc" type="checkbox" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Background Check
+                        </label>
+                    </div>
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <label class="btn btn-info text-white mx-3" for="BackGrounddoc">Upload</label>
+                            <input class="fileInput d-none" asp-for="BackGrounddoc" type="file" name="BackGrounddoc" />
+                        </div>
+                        @if (Model.isbackgroundDoc)
+                        {
+                            <a class="btn btn-info text-light" href="~/Upload/physician/@Model.ProviderId.ToString()/backgroundDoc.pdf" download>Download</a>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="isAggrementDoc" name="isAggrementDoc" type="checkbox">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            HIPAA Compliance
+                        </label>
+                    </div>
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <label class="btn btn-info text-white mx-3" for="Agreementdoc">Upload</label>
+                            <input class="fileInput d-none" asp-for="Agreementdoc" type="file" name="Agreementdoc" />
+                        </div>
+                        @if (Model.isAggrementDoc)
+                        {
+                            <a class="btn btn-info text-light" href="~/Upload/physician/@Model.ProviderId.ToString()/AggrementDoc.pdf" download>Download</a>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="isnondisclosuredoc" name="isnondisclosuredoc" type="checkbox">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Non-Disclosure Agreement
+                        </label>
+                    </div>
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <label class="btn btn-info text-white mx-3" for="NonDisclosuredoc">Upload</label>
+                            <input class="fileInput d-none" asp-for="NonDisclosuredoc" type="file" name="NonDisclosuredoc" />
+                        </div>
+                        @if (Model.isnondisclosuredoc)
+                        {
+                            <a class="btn btn-info text-light" href="~/Upload/physician/@Model.ProviderId.ToString()/nondisclosureDoc.pdf" download>Download</a>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-12 d-flex align-item-center justify-content-between my-3 document">
+                    <div class="form-check mx-2 d-flex align-items-center">
+                        <input class="form-check-input agreement-checkbox" asp-for="islicensedoc" name="islicensedoc" type="checkbox">
+                        <label class="form-check-label" for="flexCheckDefault">
+                            License Document
+                        </label>
+                    </div>
+                    <div class="d-flex">
+                        <div class="inputWrapper">
+                            <label class="btn btn-info text-white mx-3" for="Licensedoc">Upload</label>
+                            <input class="fileInput d-none" asp-for="Licensedoc" type="file" name="Licensedoc" />
+                        </div>
+                        @if (Model.islicensedoc)
+                        {
+                            <a class="btn btn-info text-light" href="~/Upload/physician/@Model.ProviderId.ToString()/licenseDoc.pdf" download>Download</a>
+                        }
+                    </div>
+                </div>
+
+
+                <div class="my-3 d-flex justify-content-end ">
+                    <button class="btn btn-info text-white mx-2 " type="submit"> Save </button>
+                    <div class="btn btn-danger text-white "> Delete Account </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<partial name="~/Views/Admin/Provider/_signatureModal.cshtml" />
+

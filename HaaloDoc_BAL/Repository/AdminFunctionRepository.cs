@@ -217,7 +217,7 @@ namespace HalloDoc_BAL.Repository
             return view;
 
         }
-        public void assignCase(int requestId, int physicianId)
+        public void assignCase(int requestId, int physicianId, int adminId)
         {
             using (var transaction = new TransactionScope())
             {
@@ -232,7 +232,7 @@ namespace HalloDoc_BAL.Repository
                 log.Status = 2;
                 log.Notes = "Request Assign to Physician " + physician.Firstname + " " + physician.Lastname;
                 log.Createddate = DateTime.Now;
-                log.Adminid = 4;
+                log.Adminid = adminId;
                 log.Transtoadmin = false;
                 _context.Requeststatuslogs.Add(log);
                 _context.SaveChanges();
@@ -417,7 +417,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void CreateProvider(CreateProviderView model, int[] selectedRegions)
+        public void CreateOrUpdateProvider(CreateProviderView model, int[] selectedRegions, bool isEditing)
         {
             model.regionOfservice = selectedRegions;
 
@@ -427,92 +427,130 @@ namespace HalloDoc_BAL.Repository
                 Physician physician = new Physician();
                 List<Physicianregion> physicianRegions = new List<Physicianregion>();
 
-                if (aspnetuser == null)
+                if (!isEditing || aspnetuser == null)
                 {
-                    aspnetuser = new Aspnetuser();
-                    Guid guid = Guid.NewGuid();
-                    string str = guid.ToString();
-                    string username = "MD." + model.firstName.Substring(0, 3) + "." + model.lastName.Substring(0, 2);
+                    if (aspnetuser == null)
+                    {
+                        aspnetuser = new Aspnetuser();
+                        Guid guid = Guid.NewGuid();
+                        string str = guid.ToString();
+                        string username = "MD." + model.firstName.Substring(0, 3) + "." + model.lastName.Substring(0, 2);
 
-                    aspnetuser.Id = str;
-                    aspnetuser.Username = username;
+                        aspnetuser.Id = str;
+                        aspnetuser.Username = username;
+                        aspnetuser.Createddate = DateTime.Now;
+                        _context.Aspnetusers.Add(aspnetuser);
+                    }
+
                     aspnetuser.Email = model.email;
                     aspnetuser.Phonenumber = model.phoneNumber;
                     aspnetuser.Passwordhash = model.password;
-                    aspnetuser.Createddate = DateTime.Now;
-                    _context.Aspnetusers.Add(aspnetuser);
+
                     _context.SaveChanges();
 
                     physician.Email = model.email;
                     physician.Aspnetuserid = aspnetuser.Id;
-                    physician.Firstname = model.firstName;
-                    physician.Lastname = model.lastName;
-                    physician.Mobile = model.phoneNumber;
-                    physician.Regionid = model.regionId;
                     physician.Createdby = model.Createdby;
                     physician.Createddate = DateTime.Now;
                     physician.Status = 1;
-                    physician.Businessname = model.businessName;
-                    physician.Businesswebsite = model.businessWebsite;
-                    physician.Address1 = model.Address1;
-                    physician.Address2 = model.Address2;
-                    physician.City = model.city;
-                    physician.Zip = model.Zip;
-                    physician.Adminnotes = model.Adminnotes;
-                    physician.Isagreementdoc = model.isAggrementDoc;
-                    physician.Isbackgrounddoc = model.isbackgroundDoc;
-                    physician.Islicensedoc = model.islicensedoc;
-                    physician.Istrainingdoc = model.istrainginDoc;
-                    physician.Isnondisclosuredoc = model.isnondisclosuredoc;
-                    physician.Isdeleted = false;
-                    physician.Npinumber = model.NPInumber;
-                    physician.Medicallicense = model.medicalLicence;
-                    physician.Altphone = model.Altphone;
-                    physician.Photo = model.PhotoFile.FileName;
-                    physician.Signature = model.SignatureFile.FileName;
+                }
+                else
+                {
+                    physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == model.ProviderId);
+                    if (physician == null)
+                    {
+                        // Handle the case where the physician to edit is not found
+                        // You can throw an exception or handle it based on your requirements
+                        return;
+                    }
+                    physician.Modifieddate = DateTime.Now;
+                    physician.Modifiedby = model.Modifiedby;
+                    physician.Status = model.Status;
+                }
 
+                physician.Firstname = model.firstName;
+                physician.Lastname = model.lastName;
+                physician.Mobile = model.phoneNumber;
+                physician.Regionid = model.regionId;
+                physician.Businessname = model.businessName;
+                physician.Businesswebsite = model.businessWebsite;
+                physician.Address1 = model.Address1;
+                physician.Address2 = model.Address2;
+                physician.City = model.city;
+                physician.Zip = model.Zip;
+                physician.Syncemailaddress = model.Syncemailaddress;
+                physician.Adminnotes = model.Adminnotes;
+                physician.Isagreementdoc = model.isAggrementDoc;
+                physician.Isbackgrounddoc = model.isbackgroundDoc;
+                physician.Islicensedoc = model.islicensedoc;
+                physician.Istrainingdoc = model.istrainginDoc;
+                physician.Isnondisclosuredoc = model.isnondisclosuredoc;
+                physician.Isdeleted = false;
+                physician.Npinumber = model.NPInumber;
+                physician.Medicallicense = model.medicalLicence;
+                physician.Altphone = model.Altphone;
+
+                if (model.PhotoFile != null && model.PhotoFile.Length > 0)
+                {
+                physician.Photo = model.PhotoFile.FileName;
+                }
+                if(model.SignatureFile != null && model.SignatureFile.Length > 0)
+                {
+                physician.Signature = model.SignatureFile.FileName;
+                }
+
+                if (!isEditing)
+                {
                     _context.Physicians.Add(physician);
-                    _context.SaveChanges();
+                }
+                else
+                {
+                    _context.Physicians.Update(physician);
+                }
 
-                    string physicianFolder = Path.Combine("wwwroot\\", "Upload", "physician", physician.Physicianid.ToString());
+                _context.SaveChanges();
 
-                    // Create the physician folder if it doesn't exist
-                    if (!Directory.Exists(physicianFolder))
-                    {
-                        Directory.CreateDirectory(physicianFolder);
-                    }
+                string physicianFolder = Path.Combine("wwwroot\\", "Upload", "physician", physician.Physicianid.ToString());
 
-                    if (model.PhotoFile.Length > 0)
-                    {
-                        UploadFile(model.PhotoFile, physicianFolder, "photo");
-                    }
-                    if(model.SignatureFile.Length > 0)
-                    {
-                        UploadFile(model.SignatureFile, physicianFolder, "Signature");
+                // Create the physician folder if it doesn't exist
+                if (!Directory.Exists(physicianFolder))
+                {
+                    Directory.CreateDirectory(physicianFolder);
+                }
 
-                    }
-                    if(model.isAggrementDoc != false && model.Agreementdoc.Length > 0)
-                    {
-                        UploadFile(model.Agreementdoc, physicianFolder, "Aggrementdoc");
+                if (model.PhotoFile != null && model.PhotoFile.Length > 0)
+                {
+                    UploadFile(model.PhotoFile, physicianFolder, "photo");
+                }
+                if (model.SignatureFile != null && model.SignatureFile.Length > 0)
+                {
+                    UploadFile(model.SignatureFile, physicianFolder, "Signature");
+                }
+                if (model.isAggrementDoc && model.Agreementdoc != null && model.Agreementdoc.Length > 0)
+                {
+                    UploadFile(model.Agreementdoc, physicianFolder, "Aggrementdoc");
+                }
+                if (model.islicensedoc && model.Licensedoc != null && model.Licensedoc.Length > 0)
+                {
+                    UploadFile(model.Licensedoc, physicianFolder, "licensedoc");
+                }
+                if (model.isbackgroundDoc && model.BackGrounddoc != null && model.BackGrounddoc.Length > 0)
+                {
+                    UploadFile(model.BackGrounddoc, physicianFolder, "backgrounddoc");
+                }
+                if (model.istrainginDoc && model.Trainingdoc != null && model.Trainingdoc.Length > 0)
+                {
+                    UploadFile(model.Trainingdoc, physicianFolder, "trainginDoc");
+                }
+                if (model.isnondisclosuredoc && model.NonDisclosuredoc != null && model.NonDisclosuredoc.Length > 0)
+                {
+                    UploadFile(model.NonDisclosuredoc, physicianFolder, "nondisclosuredoc");
+                }
 
-                    }
-                    if (model.islicensedoc != false && model.Licensedoc.Length > 0)
-                    {
-                        UploadFile(model.Licensedoc, physicianFolder, "licensedoc");
-                    }
-                    if (model.isbackgroundDoc != false && model.BackGrounddoc.Length > 0)
-                    {
-                        UploadFile(model.BackGrounddoc, physicianFolder, "backgrounddoc");
-                    }
-                    if (model.istrainginDoc != false && model.Trainingdoc.Length > 0)
-                    {
-                        UploadFile(model.Trainingdoc, physicianFolder, "trainginDoc");
-                    }
-                    if(model.isnondisclosuredoc != false && model.NonDisclosuredoc.Length > 0)
-                    {
-                        UploadFile(model.NonDisclosuredoc, physicianFolder, "nondisclosuredoc");
-                    }
 
+                if (!isEditing)
+                {
+                    // If it's a new provider, add regions directly
                     foreach (int regionId in selectedRegions)
                     {
                         physicianRegions.Add(new Physicianregion
@@ -522,20 +560,31 @@ namespace HalloDoc_BAL.Repository
                         });
                     }
                     _context.Physicianregions.AddRange(physicianRegions);
-                    _context.SaveChanges();
-
-
                     Physiciannotification notification = new Physiciannotification();
                     notification.Physicianid = physician.Physicianid;
                     notification.Isnotificationstopped = false;
                     _context.Physiciannotifications.Add(notification);
-                    _context.SaveChanges();
+                }
+                else
+                {
+                    // If it's an edit operation, remove existing regions and add the new ones
+                    var existingRegions = _context.Physicianregions.Where(pr => pr.Physicianid == physician.Physicianid).ToList();
+                    _context.Physicianregions.RemoveRange(existingRegions);
 
-
-                    transaction.Complete();
-
+                    // Add new regions
+                    foreach (int regionId in selectedRegions)
+                    {
+                        physicianRegions.Add(new Physicianregion
+                        {
+                            Regionid = regionId,
+                            Physicianid = physician.Physicianid
+                        });
+                    }
+                    _context.Physicianregions.AddRange(physicianRegions);
                 }
 
+                _context.SaveChanges();
+                transaction.Complete();
             }
         }
 
@@ -549,7 +598,48 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+        public CreateProviderView getProviderView(int providerId)
+        {
+            CreateProviderView view = new CreateProviderView();
+            Physician phy = _context.Physicians.FirstOrDefault(ph => ph.Physicianid == providerId);
 
+            if (phy != null)
+            {
+                Aspnetuser user = _context.Aspnetusers.FirstOrDefault(user => user.Id == phy.Aspnetuserid);
+                view.UserName = user.Username;
+                view.ProviderId = phy.Physicianid;
+                view.Status = phy.Status;
+                view.roleid = user.Roleid;
+                view.firstName = phy.Firstname;
+                view.lastName = phy.Lastname;
+                view.email = phy.Email;
+                view.phoneNumber = phy.Mobile;
+                view.medicalLicence = phy.Medicallicense;
+                view.NPInumber = phy.Npinumber;
+                view.Syncemailaddress = phy.Syncemailaddress;
+                view.Address1 = phy.Address1;
+                view.Address2 = phy.Address2;
+                view.Altphone = phy.Altphone;
+                view.city = phy.City;
+                view.regionId = (int)phy.Regionid;
+                view.Zip = phy.Zip;
+                view.businessName = phy.Businessname;
+                view.businessWebsite = phy.Businesswebsite;
+                view.Adminnotes = phy.Adminnotes;
+                view.isAggrementDoc = (bool)phy.Isagreementdoc;
+                view.isbackgroundDoc = (bool)phy.Isbackgrounddoc;
+                view.islicensedoc = (bool)phy.Islicensedoc;
+                view.isnondisclosuredoc = (bool)phy.Isnondisclosuredoc;
+                view.istrainginDoc = (bool)phy.Istrainingdoc;
+                view.photo = phy.Photo;
+                view.signature = phy.Signature;
+                List<Physicianregion> regions = _context.Physicianregions.Where(ph => ph.Physicianid == phy.Physicianid).ToList();
+                int[] regionIds = regions.Select(pr => pr.Regionid).ToArray();
+                view.regionOfservice = regionIds;
+            }
+
+            return view;
+        }
 
 
 
@@ -884,10 +974,21 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void ChagePassword(int adminId, string password)
+        public void ChagePassword(int adminId, int providerId , string password)
         {
+            Aspnetuser user = new Aspnetuser();
+
+            if(adminId != 0)
+            {
             Admin admin = _adminRepo.GetAdminById(adminId);
-            Aspnetuser user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
+            user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
+            }
+            if(providerId != 0)
+            {
+                Physician physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == providerId);
+                user = _context.Aspnetusers.FirstOrDefault(u => u.Id == physician.Aspnetuserid);
+
+            }
             if (user != null)
             {
                 var hasher = new PasswordHasher<string>();
@@ -940,6 +1041,33 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+        public void CreateRole(int adminId, string roleName, int accountType, int[] selectedMenu)
+        {
+            using (var transaction = new TransactionScope())
+            {
+
+            Role newRole = new Role();
+            Admin admin = _adminRepo.GetAdminById(adminId);
+            newRole.Name = roleName;
+            newRole.Accounttype = (short?)accountType;
+            newRole.Isdeleted = false;
+            newRole.Createddate = DateTime.Now;
+            newRole.Createdby = admin.Aspnetuserid;
+            _context.Roles.Add(newRole);    
+            _context.SaveChanges();
+
+            foreach (var menuId in selectedMenu)
+                {
+                    Rolemenu roleMenu = new Rolemenu();
+                    roleMenu.Roleid = newRole.Roleid;
+                    roleMenu.Menuid = menuId;
+                    _context.Rolemenus.Add(roleMenu);
+                }
+                _context.SaveChanges();
+                 transaction.Complete();
+            }
+        }
+
         public List<Healthprofessional> getAllVendors()
         {
             return _context.Healthprofessionals.Where(vendor => vendor.Isdeleted == false).ToList();
@@ -954,7 +1082,6 @@ namespace HalloDoc_BAL.Repository
             return _context.Aspnetroles.FirstOrDefault(r => r.Id == id).Name;
         }
 
-
         public List<Region> GetAllReagion()
         {
             return _context.Regions.ToList();
@@ -967,5 +1094,19 @@ namespace HalloDoc_BAL.Repository
         {
             return _context.Roles.ToList();
         }
+
+        public List<Menu> GetAllMenu()
+        {
+            return _context.Menus.ToList();
+        }
+        public List<Aspnetrole> getAllRoleType()
+        {
+            return _context.Aspnetroles.ToList();
+        }
+        public List<Rolemenu> GetMenuByRole(int roleID)
+        {
+            return _context.Rolemenus.Where(rm=> rm.Roleid == roleID).ToList();
+        }
+
     }
 }

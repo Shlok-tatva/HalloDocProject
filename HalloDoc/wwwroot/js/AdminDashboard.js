@@ -7,7 +7,7 @@ $(document).ready(function () {
 
     //get requestCount 
     $.ajax({
-        url: 'Admin/getRequestCountPerStatusId',
+        url: 'getRequestCountPerStatusId',
         type: "GET",
         success: function (data) {
             $('#newCount').text(data[1]);
@@ -54,7 +54,6 @@ $(document).ready(function () {
     };
     function reloadDataTable(statusID, reqtype, filter) {
         var tableData;
-        debugger
         $.ajax({
             url: '/Admin/GetRequestByStatusId',
             type: "GET",
@@ -170,23 +169,23 @@ $(document).ready(function () {
 
                 if ([2, 3, 5, 9, 11, 12].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
                 }
                 else if (option == 10) {
                     let status = getEncounterFormstatus(request.requestId);
                     console.log(status);
                     if (status == 1) {
                         var id = toCamelCase(enumName);
-                        dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
+                        dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
                     }
                     else {
                         var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
                     }
                 }
                 else {
                     var id = toCamelCase(enumName);
-                    dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="./images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
+                    dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
                    
                 }
 
@@ -326,13 +325,6 @@ $(document).ready(function () {
         $('.filter-btn:first').css("border", "1px solid gray");
     });
 
-    $('#exportAll').click(function () {
-        var lastStatusID = localStorage.getItem("lastStatusID")
-        let data = reloadDataTable(lastStatusID , 0 , 0);
-        //console.log(data);
-        exportDataToCSV(data, "data.csv");
-    })
-
     var lastStatusID = localStorage.getItem("lastStatusID")
     if (lastStatusID == null) {
         reloadDataTable(1, 0, 0)
@@ -346,7 +338,7 @@ $(document).ready(function () {
 
         var status;
         $.ajax({
-            url: 'Admin/EcounterFormStatus',
+            url: 'EcounterFormStatus',
             type: "GET",
             data: { requestId },
             async: false,
@@ -362,8 +354,99 @@ $(document).ready(function () {
     }
 
 
-    $('.filter-btn').click(function () {
+
+
+    /* Export Data to CSV */
+    $("#export").on("click", function () {
+        var lastStatusID = localStorage.getItem("lastStatusID");
+        let data = reloadDataTable(lastStatusID, lastFilter, lastregion);
+        exportDataToCSV(data, "data.csv");
+    })
+
+    /* Export All Data to CSV */
+    $('#exportAll').click(function () {
         debugger
+        var lastStatusID = localStorage.getItem("lastStatusID")
+        let data = reloadDataTable(lastStatusID, 0, 0);
+        $('.filter-btn').css("border", "none");
+        $('.filter-btn:first').css("border", "1px solid gray");
+        exportDataToCSV(data, "data.csv");
+    })
+
+    /* Send Link Modal*/
+    $('#open-sendLinkModal').on("click", function () {
+        $("#sendLinktModal").modal('show');
+    })
+
+    $('#sendLink').validate({
+        rules: {
+            firstNameSendLink: {
+                required: true,
+            },
+            lastNameSendLink: {
+                required: true,
+            },
+            phoneSendLink: {
+                required: true,
+                digits: true,
+            },
+            emailSendLink: {
+                required: true,
+                email: true
+            }
+        },
+        messages: {
+            firstNameSendLink: {
+                required: "Please enter a First Name",
+            },
+            lastNameSendLink: {
+                required: "Please enter a Last Name",
+            },
+            phoneSendLink: {
+                required: "Please enter a Phone Number",
+                digits: "Please enter a valid phone number."
+            },
+            emailSendLink: {
+                required: "Please enter an email address.",
+                email: "Please enter a valid email address."
+            }
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element.parent());
+            error.addClass('text-danger');
+        },
+        submitHandler: function (form) {
+            var formData = new FormData(form);
+            $.ajax({
+                url: "/SendLink",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.fire({
+                        title: "Done",
+                        text: "Link sent to patient successfully",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(function () {
+                        location.reload();
+                    })
+                },
+                error: function (xhr, status, error) {
+                    showToaster("Error while sending Link to patient", "error");
+                }
+            });
+        }
+    });
+
+  
+
+
+
+    /* RequestType ID Filter */
+    $('.filter-btn').click(function () {
         var filterValue = +$(this).data('filter-value') || 0;
         $('.filter-btn').css("border", "none");
         $(this).css("border", "1px solid gray");
@@ -383,6 +466,7 @@ $(document).ready(function () {
         reloadDataTable(lastState, requestTypeId, lastregion);
     }
 
+    /*Region Filter */
     $('#regionsearch').on("change", function () {
         let reigonId = +$(this).val();
         lastregion = reigonId;

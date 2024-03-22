@@ -29,7 +29,7 @@ $(document).ready(function () {
                 formdata.append("adminId", adminId);
                 formdata.append("password", $("#Adminpassword").val());
                 $.ajax({
-                    url: "/changePassword",
+                    url: "/changeAdminPassword",
                     type: 'POST',
                     data: formdata,
                     processData: false,

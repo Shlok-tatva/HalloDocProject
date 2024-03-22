@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Rotativa.AspNetCore;
 using System.Transactions;
 
@@ -38,7 +39,7 @@ namespace HalloDocAdmin.Controllers
             _healthprofessionalRepository = healthprofessionalRepository;
         }
 
-        public IActionResult Index()
+        public IActionResult Dashboard()
         {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -70,12 +71,14 @@ namespace HalloDocAdmin.Controllers
 
 
 
-        [HttpPost("AssignCase")]
+        [HttpPost]
         public IActionResult AssignCase(int requestId, int physicianId)
         {
+
             if (requestId != null && physicianId != null)
             {
-                _adminFunctionRepository.assignCase(requestId, physicianId);
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.assignCase(requestId, physicianId , adminId);
                 return Ok();
             }
             else
@@ -107,12 +110,39 @@ namespace HalloDocAdmin.Controllers
             return Ok(statusCounts);
         }
 
+
+        [HttpPost("SendLink")]
+        public IActionResult SendLink(string firstNameSendLink, string lastNameSendLink, string phoneSendLink, string emailSendLink)
+        {
+            try
+            {
+                var title = "Create Request Link";
+                var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/PatientRequest";
+
+                var message = "Please use this link to create Request " + accountCreationLink;
+                _adminFunctionRepository.SendEmail(emailSendLink, title, message);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult createRequest()
+        {
+            return View();
+        }
+
+
         public IActionResult ViewCase()
         {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             int requestId = Int32.Parse(Request.Query["request"]);
             ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
+            var castag = _adminFunctionRepository.GetAllCaseTag();
+            ViewData["casetag"] = castag;
             return View(view);
         }
 
@@ -201,7 +231,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
-        [HttpPost("CancelCase")]
+        [HttpPost]
         public IActionResult CancelCase(int requestId, string reason, string notes)
         {
             int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
@@ -551,12 +581,12 @@ namespace HalloDocAdmin.Controllers
             return View(view);
         }
 
-        [HttpPost("changePassword")]
-        public IActionResult changePassword(int adminId, string password)
+        [HttpPost("changeAdminPassword")]
+        public IActionResult changeAdminPassword(int adminId, string password)
         {
             try
             {
-                _adminFunctionRepository.ChagePassword(adminId, password);
+                _adminFunctionRepository.ChagePassword(adminId, 0 , password);
                 return Ok();
             }
             catch (Exception ex)
@@ -607,21 +637,19 @@ namespace HalloDocAdmin.Controllers
 
 
         [HttpGet]
-        [Route("/admin/CreateProvider")]
-        public IActionResult ProviderCreate()
+        public IActionResult CreateProvider()
         {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
-            return View("provider/ProviderCreate");
+            return View("provider/CreateProvider");
         }
 
 
-        [HttpPost("ProviderCreate")]
-        [Route("/admin/CreateProvider")]
-        public IActionResult ProviderCreate(CreateProviderView model, int[] selectedRegions)
+        [HttpPost("CreateProvider")]
+        public IActionResult CreateProvider(CreateProviderView model, int[] selectedRegions)
         {
             try
             {
@@ -630,7 +658,7 @@ namespace HalloDocAdmin.Controllers
                 model.Createdby = admin.Aspnetuserid;
                 if (ModelState.IsValid)
                 {
-                    _adminFunctionRepository.CreateProvider(model, selectedRegions);
+                    _adminFunctionRepository.CreateOrUpdateProvider(model, selectedRegions , false);
                 }
                 TempData["Success"] = "Provider Created Successfully !";
                 return Redirect("/admin/Provider");
@@ -641,6 +669,53 @@ namespace HalloDocAdmin.Controllers
                 return Redirect("/admin/CreateProvider");
             }
 
+        }
+
+        [HttpGet]
+        public IActionResult EditProvider()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Providers";
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+            int providerId = Int32.Parse(Request.Query["providerId"]);
+            var view = _adminFunctionRepository.getProviderView(providerId);
+            return View("provider/EditProvider" , view);
+        }
+
+        [HttpPost]
+        public IActionResult EditProvider(CreateProviderView formData, int[] selectedRegions)
+        {
+            try
+            {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                Admin admin = _adminrepo.GetAdminById(adminId);
+                formData.Modifiedby = admin.Aspnetuserid;
+                _adminFunctionRepository.CreateOrUpdateProvider(formData, selectedRegions, true);
+                TempData["Success"] = "Provider Edited Successfully !";
+                return RedirectToAction("EditProvider", "Admin", new { providerID = formData.ProviderId });
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "Something went wrong Try after some times!";
+                return RedirectToAction("EditProvider", "Admin", new { providerID = formData.ProviderId });
+            }
+        }
+
+
+        [HttpPost("changeProviderPassword")]
+        public IActionResult changeProviderPassword(int providerId, string password)
+        {
+            try
+            {
+                _adminFunctionRepository.ChagePassword(0, providerId, password);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -678,6 +753,7 @@ namespace HalloDocAdmin.Controllers
             }
 
         }
+
 
         [HttpPost]
         public IActionResult uploadProviderDocument(IFormFile file , string filename)
@@ -878,8 +954,76 @@ namespace HalloDocAdmin.Controllers
         public IActionResult CreateAccess()
         {
             ViewData["ViewName"] = "Access";
+            var allRoles = _adminFunctionRepository.getAllRoleType();
+            ViewBag.roles = allRoles;
             return View("Access/CreateAccess");
         }
+        [HttpGet]
+        public IActionResult GetMenuByRole(int roleId)
+        {
+            if(roleId != null)
+            {
+                var menus = _adminFunctionRepository.GetAllMenu().Where(m => m.Accounttype == roleId).ToList();
+                return Ok(menus);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        public IActionResult CreateRole(string roleName, int accountType, int[] selectedMenu)
+        {
+            try
+            {
+             int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+            _adminFunctionRepository.CreateRole(adminId ,roleName, accountType, selectedMenu);
+            return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        public IActionResult EditAccess()
+        {
+            ViewData["ViewName"] = "Access";
+            int roleId = Int32.Parse(Request.Query["roleId"]);
+            var allRoles = _adminFunctionRepository.getAllRoleType();
+            ViewBag.roles = allRoles;
+            return View("Access/EditAccess", roleId);
+        }
+
+
+        [HttpGet]
+        public IActionResult getRole(int roleId)
+        {
+            try
+            {
+                Role role = _adminFunctionRepository.GetAllRole().Where(r => r.Roleid == roleId).First();
+                string roleName = role.Name;
+                int roleType = (int)role.Accounttype;
+                List<Rolemenu> menulist = _adminFunctionRepository.GetMenuByRole(roleId);
+                int[] menuIds = menulist.Select(rm => rm.Menuid).Where(id => id.HasValue).Select(id => id.Value).ToArray();
+                var menus = String.Join(",", menuIds);
+                var responseData = new
+                {
+                    name = roleName,
+                    Accounttype =  roleType,
+                    MenuIds = menus
+                };
+               
+                return Ok(responseData);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

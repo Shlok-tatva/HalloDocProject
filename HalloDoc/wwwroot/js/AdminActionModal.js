@@ -65,71 +65,105 @@ $(document).ready(function () {
         $('#transferModal').modal('hide');
         $('#sendAgreementModal').modal('hide');
         $("#encounterModal").modal('hide');
+        $("#sendLinktModal").modal('hide');
+
     })
 
     /* Block Request Ajax Call */
-    $('#blockRequest').on('submit', function (e) {
-        e.preventDefault();
-
-        var formData = new FormData();
-        formData.append('requestId', $('#requestIdblockCase').val());
-        formData.append('reason', $('#reasonForBlock').val());
-        $.ajax({
-            url: "/BlockPatient",
-            method: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                Swal.fire({
-                    title: "Done",
-                    text: "Patient block Sucessfully",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(function () {
-                    location.reload();
-                })
+    $('#blockRequest').validate({
+            rules: {
+                reasonForBlock: {
+                    required: true
+                }
             },
-            error: function (xhr, status, error) {
-                showToaster("Error While Save Changes!" , "error");
+            messages: {
+                reasonForBlock: {
+                    required: "Please provide a reason for blocking."
+                }
+            },
+            errorPlacement: function (error, element) {
+                // Custom error placement for Bootstrap floating labels
+                error.insertAfter(element.parent());
+                // Add text-danger class to error message
+                error.addClass('text-danger');
+            },
+            submitHandler: function (form) {
+                var formData = new FormData();
+                formData.append('requestId', $('#requestIdblockCase').val());
+                formData.append('reason', $('#reasonForBlock').val());
+                $.ajax({
+                    url: "/BlockPatient",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.fire({
+                            title: "Done",
+                            text: "Patient blocked successfully",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1000
+                        }).then(function () {
+                            location.reload();
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        showToaster("Error while blocking patient", "error");
+                    }
+                });
             }
         });
-    })
 
-    /* Cancel Case Ajax Call*/
-    $('#cancelCase').on('submit', function (e) {
-        e.preventDefault();
-
-        var formData = new FormData();
-        formData.append('requestId', $('#requestIdcanleCase').val());
-        console.log($('#requestIdcanleCase').val());
-        formData.append('reason', $('#reasonForCancel').val());
-        console.log($('#reasonForCancel').val());
-        formData.append('notes', $('#additionalNotes').val());
-
-        $.ajax({
-            url: "/CancelCase",
-            method: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                Swal.fire({
-                    title: "Done",
-                    text: "Case Cancel Successfully",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(function () {
-                    location.reload();
-                })
+    /* Cancel Case Ajax Call */
+    $('#cancelCase').validate({
+            rules: {
+                reasonForCancel: {
+                    required: true
+                }
             },
-            error: function (xhr, status, error) {
-                showToaster("Error While Save Changes!" , "error");
+            messages: {
+                reasonForCancel: {
+                    required: "Please provide a reason for cancellation."
+                }
+            },
+            errorPlacement: function (error, element) {
+                // Custom error placement for Bootstrap floating labels
+                error.insertAfter(element.parent());
+                // Add text-danger class to error message
+                error.addClass('text-danger');
+            },
+            submitHandler: function (form) {
+                var formData = new FormData();
+                formData.append('requestId', $('#requestIdcanleCase').val());
+                console.log($('#requestIdcanleCase').val());
+                formData.append('reason', $('#reasonForCancel').val());
+                console.log($('#reasonForCancel').val());
+                formData.append('notes', $('#additionalNotes').val());
+
+                $.ajax({
+                    url: "CancelCase",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.fire({
+                            title: "Done",
+                            text: "Case canceled successfully",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1000
+                        }).then(function () {
+                            location.reload();
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        showToaster("Error while canceling case", "error");
+                    }
+                });
             }
         });
-    })
 
     /*Assign Case Ajax Call */
     $('#assignCaseModal').validate({
@@ -154,10 +188,12 @@ $(document).ready(function () {
             error.addClass('text-danger');
         },
         submitHandler: function (form) {
-            var formData = new FormData(form);
             debugger
+            var formData = new FormData();
+            formData.append('requestId', $('#requestIdassignCase').val());
+            formData.append('physicianId', $('#physicianSelect').val());
             $.ajax({
-                url: "/AssignCase",
+                url: "AssignCase",
                 method: "POST",
                 data: formData,
                 processData: false,
@@ -180,40 +216,114 @@ $(document).ready(function () {
         }
     });
 
-
     /* Transfer Case Ajax Call */
-    $('#transferModal').on("submit", function (e) {
-        e.preventDefault();
-        var formData = new FormData();
-        formData.append('requestId', $('#requestIdTransferCase').val());
-        formData.append('physicianId', $('#physicianSelectTransfer').val());
-        formData.append('note', $('#Description').val());
-
-        $.ajax({
-            url: "/TransferCase",
-            method: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                Swal.fire({
-                    title: "Done",
-                    text: "Case Transfer to physcian Successfully",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(function () {
-                    location.reload();
-                    //$('#transferModal').modal('hide');
-                })
+    $('#transferModal').validate({
+            rules: {
+                selectregionTransfer: {
+                    required: true
+                },
+                Description: {
+                    required: true
+                }
             },
-            error: function (xhr, status, error) {
-                showToaster("Error While Trasnfer Case to Physician" , "error");
+            messages: {
+                selectregionTransfer: {
+                    required: "Please select one region."
+                },
+                Description: {
+                    required: "Please provide a description."
+                }
+            },
+            errorPlacement: function (error, element) {
+                error.insertAfter(element.parent());
+                error.addClass('text-danger');
+            },
+            submitHandler: function (form) {
+                var formData = new FormData();
+                formData.append('requestId', $('#requestIdTransferCase').val());
+                formData.append('physicianId', $('#physicianSelectTransfer').val());
+                formData.append('note', $('#Description').val());
+                $.ajax({
+                    url: "/TransferCase",
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.fire({
+                            title: "Done",
+                            text: "Case transferred to physician successfully",
+                            icon: "success",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            location.reload();
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        showToaster("Error while transferring case to physician", "error");
+                    }
+                });
             }
         });
 
+    /*Send Agreement Ajax Call */
 
+    $('#sendAgreement').validate({
+        rules: {
+            phoneNumberSendAgreement: {
+                required: true,
+                digits: true
+            },
+            emailSendAgreement: {
+                required: true,
+                email: true
+            }
+        },
+        messages: {
+            phoneNumberSendAgreement: {
+                required: "Please enter a phone number.",
+                digits: "Please enter a valid phone number."
+            },
+            emailSendAgreement: {
+                required: "Please enter an email address.",
+                email: "Please enter a valid email address."
+            }
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element.parent());
+            error.addClass('text-danger');
+        },
+        submitHandler: function (form) {
+            var formData = new FormData();
+            formData.append('requestId', $('#requestIdsendAgreement').val());
+            formData.append('phoneNumber', $('#phoneNumberSendAgreement').val());
+            formData.append('email', $('#emailSendAgreement').val());
+
+            $.ajax({
+                url: "/SendAgreement",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.fire({
+                        title: "Done",
+                        text: "Agreement sent to patient successfully",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(function () {
+                        location.reload();
+                    })
+                },
+                error: function (xhr, status, error) {
+                    showToaster("Error while sending agreement to patient", "error");
+                }
+            });
+        }
     });
+
 
     /* Clear Case Function*/
     function clearCase(requestId) {
@@ -258,37 +368,7 @@ $(document).ready(function () {
         });
     }
 
-    /* Send Agreement Ajax Call*/
-    $('#sendAgreementModal').on("submit", function (e) {
-        e.preventDefault();
 
-        var formData = new FormData();
-        formData.append('requestId', $('#requestIdsendAgreement').val());
-        formData.append('phoneNumber', $('#phoneNumberSendAgreement').val());
-        formData.append('email', $('#emailSendAgreement').val());
-
-        $.ajax({
-            url: "/SendAgreement",
-            method: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                Swal.fire({
-                    title: "Done",
-                    text: "Agreement Sent to Patient Successfully",
-                    icon: "success",
-                    showConfirmButton: false,
-                    timer: 1000
-                }).then(function () {
-                    location.reload();
-                })
-            },
-            error: function (xhr, status, error) {
-                showToaster("Error While sending Agreement to Patient" , "error");
-            }
-        });
-    });
 
 });
 

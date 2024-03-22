@@ -52,7 +52,7 @@
                                 <td class="ps-5">@role.Name</td>
                                 <td class="text-center">@ViewBag.AccountTypeNames[(int)role.Accounttype]</td>
                                 <td class="text-end pe-4">
-                                    <a href="" class="btn btn-sm hover_white btn-outline-info">Edit</a>
+                                    <a href="/Admin/EditAccess/?roleId=@role.Roleid" class="btn btn-sm hover_white btn-outline-info">Edit</a>
                                     <button class="btn btn-sm hover_white btn-outline-info open-modal">
                                         Delete
                                     </button>

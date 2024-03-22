@@ -139,7 +139,7 @@
                                     data-email="@provider.providerEmail"
                                     data-adminid = "@ViewBag.adminId"
                                     data-phone="@provider.providerPhone">Contact</button>
-                                <button class="btn btn-sm hover_white btn-outline-info">edit</button>
+                                <a href="EditProvider?providerId=@provider.providerId" class="btn btn-sm hover_white btn-outline-info">edit</a>
                             </td>
                         </tr>
                     }
@@ -149,4 +149,4 @@
     </div>
 </div>
 
-<partial name="_ProviderContact" />
+<partial name="~/Views/Admin/Provider/_ProviderContact.cshtml" />

@@ -2,7 +2,7 @@
 <div class="modal fade" id="sendAgreementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <form class="modal-content border-0" id="blockRequest">
+        <form class="modal-content border-0" id="sendAgreement">
             <div class="modal-header bg-info text-white">
                 <h5 class="modal-title" id="exampleModalLongTitle">Send Agreement</h5>
                 <button type="button" class="close btn " data-dismiss="modal" aria-label="Close">
@@ -16,14 +16,14 @@
                 <input type="text" id="requestIdsendAgreement" value="" class="visually-hidden" />
                 <div>
                     <div class="form-floating my-3">
-                        <input id="phoneNumberSendAgreement" type="tel" class="form-control" placeholder=" " required>
+                        <input id="phoneNumberSendAgreement" name="phoneNumberSendAgreement" type="tel" class="form-control" placeholder=" ">
                         <label for="floatingInput" class="control-label">
                             Phone Number
                         </label>
                     </div>
 
                     <div class="form-floating my-3">
-                        <input id="emailSendAgreement" type="email" class="form-control" placeholder=" " required>
+                        <input id="emailSendAgreement" name="emailSendAgreement" type="email" class="form-control" placeholder=" ">
                         <label for="floatingInput" class="control-label">
                            Email
                         </label>

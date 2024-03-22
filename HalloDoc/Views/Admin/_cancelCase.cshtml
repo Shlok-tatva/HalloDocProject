@@ -15,8 +15,8 @@
                 <input type="text" id="requestIdcanleCase" class="visually-hidden" />
                 <div>
                      <div class="form-floating ">
-                        <select class="form-select pt-1" aria-label="Default select example" id="reasonForCancel">
-                            <option>Reasons of Cancellation</option>
+                        <select class="form-select pt-1" aria-label="Default select example" name="reasonForCancel" id="reasonForCancel">
+                            <option value="" selected disabled>Reasons of Cancellation</option>
                             @foreach (var reason in Model)
                             {
                                 <option value="@reason.Name">@reason.Name</option>
@@ -25,7 +25,7 @@
                     </div>
 
                     <div class="form-floating my-3">
-                        <input id="additionalNotes" type="text" class="form-control togleInput" placeholder=" " style="height:120px;" required>
+                        <input id="additionalNotes" type="text" class="form-control togleInput" placeholder=" " style="height:120px;">
                         <label for="floatingInput" class="control-label">
                             Provide Additional Notes
                         </label>

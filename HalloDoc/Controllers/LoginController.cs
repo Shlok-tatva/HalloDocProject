@@ -31,7 +31,7 @@ namespace HalloDoc.Controllers
             var role = HttpContext.Session.GetInt32("roleid");
             if (role == 1)
             {
-                return Redirect("/admin");
+                return Redirect("/Admin/Dashboard");
             }
             else if(role == 3)
             {
@@ -72,7 +72,7 @@ namespace HalloDoc.Controllers
                         HttpContext.Session.SetString("AdminId", Admin.Adminid.ToString());
                         HttpContext.Session.SetInt32("roleid", 1);
                         TempData["Success"] = "Login successfully";
-                        return Redirect("/Admin");
+                        return Redirect("/Admin/Dashboard");
                     }
                     else if(role == 3)
                     {

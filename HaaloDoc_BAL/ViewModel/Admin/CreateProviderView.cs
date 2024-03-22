@@ -11,6 +11,36 @@ namespace HalloDoc_BAL.ViewModel.Admin
             regionOfservice = new int[0]; // Initialize as an empty array
         }
 
+        public int? ProviderId { get; set; }
+        public string? UserName { get; set; }
+
+        public string? Password { get; set; }
+
+        public short? Status { get; set; }
+
+        public string? statusString
+        {
+            get
+            {
+                switch (Status)
+                {
+                    case 1:
+                        return "Active";
+                    case 2:
+                        return "Pending";
+                    case 3:
+                        return "Inactive";
+                    default:
+                        return "None";
+                }
+            }
+        }
+
+        public int? roleid { get; set; }
+
+        public string? photo { get; set; }
+        public string? signature { get; set; }
+
         [Required(ErrorMessage = "First Name is required")]
         public string firstName { get; set; }
 
@@ -28,11 +58,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required(ErrorMessage = "Phone Number is required")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid Phone Number")]
         public string phoneNumber { get; set; }
-
         public string? NPInumber { get; set; }
         public string? medicalLicence { get; set; }
-        public IFormFile PhotoFile { get; set; }
-        public IFormFile SignatureFile { get; set; }
         public string? Adminnotes { get; set; }
         public bool isAggrementDoc { get; set; }
         public bool isbackgroundDoc { get; set; }
@@ -53,7 +80,6 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required(ErrorMessage = "Region is required")]
         public int regionId { get; set; }
         public int[] regionOfservice { get; set; }
-        public string? status { get; set; }
 
         [Required(ErrorMessage = "Business Name is required")]
         public string businessName { get; set; }
@@ -66,6 +92,9 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public string? Modifiedby { get; set; }
         public DateTime? Modifieddate { get; set; }
         public string? Syncemailaddress { get; set; }
+
+        public IFormFile? PhotoFile { get; set; }
+        public IFormFile? SignatureFile { get; set; }
         public IFormFile? Agreementdoc { get; set; }
         public IFormFile? NonDisclosuredoc { get; set; }
         public IFormFile? Trainingdoc { get; set; }
