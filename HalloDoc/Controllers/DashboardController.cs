@@ -8,7 +8,7 @@ using System.Transactions;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuth("User")]
+    [CustomAuthFilterFactory("User")]
     public class DashboardController : Controller
     {
         private readonly IAspnetuserRepository _aspnetuserrepo;

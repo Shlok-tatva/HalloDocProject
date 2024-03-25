@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Schudling";
+}
+@model HalloDoc_BAL.ViewModel.Admin.CalendarViewModel;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script src="~/js/Partners.js"></script>
+
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var shifts = @Html.Raw(Json.Serialize(Model));
+
+            var events = shifts.shifts.map(function (shift) {
+                return {
+                    title: shift.providerName,
+                    start: new Date(shift.startDate),
+                    backgroundColor: shift.isPending ? 'red' : 'green',
+                    // display: 'background',
+                };
+            });
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                dayMaxEvents: true,
+                events: events,
+                eventClick: function (info) {
+                    $('#shiftDetailsModal').modal('show');
+                    $('#shiftDetailsModalTitle').text('Shift Details');
+                    $('#shiftDetailsModalBody').html('<p>Start Date: ' + info.event.start + '</p><p>Status: ' + (info.event.backgroundColor === 'red' ? 'Pending' : 'Approved') + '</p>');
+                },
+                views: {
+                    timeGridWeek: {
+                        type: 'timeGridWeek',
+                        columnHeaderFormat: { weekday: 'long' }
+                    }
+                },
+                headerToolbar: {
+                    left: 'prev,icon,next',
+                    center: 'title',
+                    right: ''
+                },               
+            });
+
+            calendar.render();
+
+            $('#monthButton').click(function () {
+                calendar.changeView('dayGridMonth');
+            });
+
+            $('#dateButton').click(function () {
+                calendar.changeView('timeGridDay');
+            });
+
+            $('#weekButton').click(function () {
+                calendar.changeView('timeGridWeek');
+            });
+        });
+    </script>
+
+}
+
+<partial name="_NavBar" />
+
+<h1>Schudling</h1>
+
+<div class="w-75 m-auto mt-5">
+    <div class="d-flex justify-content-end">
+        <button type="button" id="dateButton" class="btn btn-outline-info hover_white"> Day </button>
+        <button type="button" id="weekButton" class="btn btn-outline-info hover_white mx-2"> Week </button>
+        <button type="button" id="monthButton" class="btn btn-outline-info hover_white"> Month </button>
+    </div>
+
+<div class="mt-5" id="calendar"></div>
+</div>
+
+
+
+<div class="modal fade" id="shiftDetailsModal" tabindex="-1" role="dialog" aria-labelledby="shiftDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shiftDetailsModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5 id="shiftDetailsModalTitle"></h5>
+                <div id="shiftDetailsModalBody"></div>
+                <!-- Shift details will be inserted here dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </di

@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -492,11 +494,11 @@ namespace HalloDoc_BAL.Repository
 
                 if (model.PhotoFile != null && model.PhotoFile.Length > 0)
                 {
-                physician.Photo = model.PhotoFile.FileName;
+                    physician.Photo = model.PhotoFile.FileName;
                 }
-                if(model.SignatureFile != null && model.SignatureFile.Length > 0)
+                if (model.SignatureFile != null && model.SignatureFile.Length > 0)
                 {
-                physician.Signature = model.SignatureFile.FileName;
+                    physician.Signature = model.SignatureFile.FileName;
                 }
 
                 if (!isEditing)
@@ -974,16 +976,16 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void ChagePassword(int adminId, int providerId , string password)
+        public void ChagePassword(int adminId, int providerId, string password)
         {
             Aspnetuser user = new Aspnetuser();
 
-            if(adminId != 0)
+            if (adminId != 0)
             {
-            Admin admin = _adminRepo.GetAdminById(adminId);
-            user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
+                Admin admin = _adminRepo.GetAdminById(adminId);
+                user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
             }
-            if(providerId != 0)
+            if (providerId != 0)
             {
                 Physician physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == providerId);
                 user = _context.Aspnetusers.FirstOrDefault(u => u.Id == physician.Aspnetuserid);
@@ -1041,32 +1043,64 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void CreateRole(int adminId, string roleName, int accountType, int[] selectedMenu)
+        public void CreateOrUpdateRole(int adminId, string roleName, int accountType, int[] selectedMenu, int? roleId = null)
         {
             using (var transaction = new TransactionScope())
             {
+                Admin admin = _adminRepo.GetAdminById(adminId);
 
-            Role newRole = new Role();
-            Admin admin = _adminRepo.GetAdminById(adminId);
-            newRole.Name = roleName;
-            newRole.Accounttype = (short?)accountType;
-            newRole.Isdeleted = false;
-            newRole.Createddate = DateTime.Now;
-            newRole.Createdby = admin.Aspnetuserid;
-            _context.Roles.Add(newRole);    
-            _context.SaveChanges();
-
-            foreach (var menuId in selectedMenu)
+                if (roleId.HasValue)
                 {
-                    Rolemenu roleMenu = new Rolemenu();
-                    roleMenu.Roleid = newRole.Roleid;
-                    roleMenu.Menuid = menuId;
-                    _context.Rolemenus.Add(roleMenu);
+                    // Update existing role
+                    var existingRole = _context.Roles.Include(r => r.Rolemenus).FirstOrDefault(r => r.Roleid == roleId.Value);
+                    if (existingRole != null)
+                    {
+                        existingRole.Name = roleName;
+                        existingRole.Accounttype = (short?)accountType;
+                        existingRole.Modifieddate = DateTime.Now;
+                        existingRole.Modifiedby = admin.Aspnetuserid;
+
+                        // Delete existing menu associations
+                        _context.Rolemenus.RemoveRange(existingRole.Rolemenus);
+
+                        // Add new menu associations
+                        foreach (var menuId in selectedMenu)
+                        {
+                            Rolemenu roleMenu = new Rolemenu();
+                            roleMenu.Roleid = roleId.Value;
+                            roleMenu.Menuid = menuId;
+                            _context.Rolemenus.Add(roleMenu);
+                        }
+                    }
                 }
+                else
+                {
+                    // Create new role
+                    Role newRole = new Role();
+                    newRole.Name = roleName;
+                    newRole.Accounttype = (short?)accountType;
+                    newRole.Isdeleted = false;
+                    newRole.Createddate = DateTime.Now;
+                    newRole.Createdby = admin.Aspnetuserid;
+                    _context.Roles.Add(newRole);
+                    _context.SaveChanges();
+
+
+                    // Add the selected menus to the Rolemenus table
+                    foreach (var menuId in selectedMenu)
+                    {
+                        Rolemenu roleMenu = new Rolemenu();
+                        roleMenu.Roleid = newRole.Roleid;
+                        roleMenu.Menuid = menuId;
+                        _context.Rolemenus.Add(roleMenu);
+                    }
+                }
+
                 _context.SaveChanges();
-                 transaction.Complete();
+                transaction.Complete();
             }
         }
+
 
         public List<Healthprofessional> getAllVendors()
         {
@@ -1105,7 +1139,11 @@ namespace HalloDoc_BAL.Repository
         }
         public List<Rolemenu> GetMenuByRole(int roleID)
         {
-            return _context.Rolemenus.Where(rm=> rm.Roleid == roleID).ToList();
+            return _context.Rolemenus.Where(rm => rm.Roleid == roleID).ToList();
+        }
+        public string GetMenuNameById(int menuid)
+        {
+            return _context.Menus.Where(m => m.Menuid == menuid).First().Name;
         }
 
     }

@@ -43,9 +43,11 @@ namespace HalloDoc_BAL.Repository
         string GetAccountTypeNameById(int id);
         List<Role> GetAllRole();
         List<Menu> GetAllMenu();
+        
         List<Aspnetrole> getAllRoleType();
-        void CreateRole(int adminId , string roleName, int accountType, int[] selectedMenu);
+        void CreateOrUpdateRole(int adminId, string roleName, int accountType, int[] selectedMenu, int? roleId = null);
         List<Rolemenu> GetMenuByRole(int roleID);
+        string GetMenuNameById(int menuid);
 
         }
 }

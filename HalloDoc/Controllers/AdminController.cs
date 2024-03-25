@@ -15,7 +15,7 @@ using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
-    //[CustomAuth("Admin")]
+    //[CustomAuthFilterFactory("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -956,8 +956,10 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Access";
             var allRoles = _adminFunctionRepository.getAllRoleType();
             ViewBag.roles = allRoles;
-            return View("Access/CreateAccess");
+            CreateEditAccessView view = new CreateEditAccessView();
+            return View("Access/CreateAccess" , view);
         }
+
         [HttpGet]
         public IActionResult GetMenuByRole(int roleId)
         {
@@ -972,13 +974,13 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-        public IActionResult CreateRole(string roleName, int accountType, int[] selectedMenu)
+        public IActionResult CreateRole(string roleName , int accountType , int[] selectedMenu) 
         {
             try
             {
              int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
-            _adminFunctionRepository.CreateRole(adminId ,roleName, accountType, selectedMenu);
-            return Ok();
+                _adminFunctionRepository.CreateOrUpdateRole(adminId, roleName, accountType, selectedMenu);
+                return Ok();
             }
             catch(Exception ex)
             {
@@ -986,43 +988,73 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
+        [HttpGet]
         public IActionResult EditAccess()
         {
             ViewData["ViewName"] = "Access";
             int roleId = Int32.Parse(Request.Query["roleId"]);
             var allRoles = _adminFunctionRepository.getAllRoleType();
             ViewBag.roles = allRoles;
-            return View("Access/EditAccess", roleId);
+            Role role = _adminFunctionRepository.GetAllRole().Where(r=>r.Roleid == roleId).First();
+            CreateEditAccessView view = new CreateEditAccessView();
+            view.roleId = role.Roleid;
+            view.allmenus = _adminFunctionRepository.GetAllMenu().Where(r => r.Accounttype == role.Accounttype).ToList();
+            view.roleName = role.Name;
+            view.accoutType = (int)role.Accounttype;
+            view.menusforRole = _adminFunctionRepository.GetMenuByRole(roleId).Select(rm => rm.Menuid).Where(id => id.HasValue).Select(id => id.Value).ToArray();
+            return View("Access/EditAccess", view);
         }
 
-
-        [HttpGet]
-        public IActionResult getRole(int roleId)
+        public IActionResult EditRole(int roleId , string roleName, int accountType, int[] selectedMenu)
         {
             try
             {
-                Role role = _adminFunctionRepository.GetAllRole().Where(r => r.Roleid == roleId).First();
-                string roleName = role.Name;
-                int roleType = (int)role.Accounttype;
-                List<Rolemenu> menulist = _adminFunctionRepository.GetMenuByRole(roleId);
-                int[] menuIds = menulist.Select(rm => rm.Menuid).Where(id => id.HasValue).Select(id => id.Value).ToArray();
-                var menus = String.Join(",", menuIds);
-                var responseData = new
-                {
-                    name = roleName,
-                    Accounttype =  roleType,
-                    MenuIds = menus
-                };
-               
-                return Ok(responseData);
-
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.CreateOrUpdateRole(adminId, roleName, accountType, selectedMenu, roleId);
+                return Ok();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+
+        public IActionResult Scheduling()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Providers";
+            var model = GetDummyShiftData();
+            return View("Scheduling/index" , model);
+        }
+
+        private CalendarViewModel GetDummyShiftData()
+        {
+            var shifts = new List<ShiftView>();
+
+            for (int i = 1; i <= 20; i++)
+            {
+                shifts.Add(new ShiftView
+                {
+                    Id = i,
+                    StartDate = DateTime.Today.AddDays(i % 5),
+                    IsPending = i % 2 == 0,
+                    ProviderId = i, // Just for demonstration, replace with actual provider IDs
+                    ProviderName = "Provider " + i, // Just for demonstration, replace with actual provider names
+                    ImagePath = "/upload/provider/" + i + "/photo.png" // Just for demonstration, replace with actual image paths
+                });
+            }
+
+            var model = new CalendarViewModel
+            {
+                Shifts = shifts
+            };
+
+            return model;
+        }
+
+
+
 
         public IActionResult Logout()
         {

@@ -1,8 +1,6 @@
 ﻿$(document).ready(function () {
 
-
-    function getmenu() {
-        $("#AccountType").on("change", function () {
+    $("#AccountType").on("change", function () {
             var roleId = $(this).val();
 
             $.ajax({
@@ -28,20 +26,15 @@
             });
 
         })
-    }
-    
 
-
-    $("#createRole").on("click" , function(){
+    $("#createRole").on("submit", function (e) {
+        e.preventDefault();
         var roleName = $('#roleName').val(); 
-        var accountType = $('#AccountType').val(); 
+        var accountType = +$('#AccountType').val(); 
         var selectedMenu = [];
         $('input[type="checkbox"]:checked').each(function () {
             selectedMenu.push(+$(this).attr('id'));
         });
-        console.log(selectedMenu);
-        console.log(roleName);
-        console.log(accountType);
 
         $.ajax({
             url: '/Admin/CreateRole',
@@ -54,6 +47,7 @@
             success: function (response) {
                 console.log(response);
                 showToaster("Role Created Successfully !", "success");
+                window.location.href = "/Admin/Access";
 
             },
             error: function () {
@@ -62,32 +56,37 @@
         });
 
 
-    })
+    })    
 
 
-    let roleId = +$("#roleId").val();
-    if (roleId != undefined) {
-
-        debugger
-    $.ajax({
-        url: '/Admin/getRole',
-        type: "GET",
-        data: { roleId: roleId },
-        success: function (data) {
-            console.log(data);
-            $('#roleName').val(data.name);
-            $('#AccountType').val(data.accounttype);
-            var menuIds = data.menuIds.split(',').map(Number); 
-            menuIds.forEach(function (menuId) {
-                $('#' + menuId).prop('checked', true);
-            });
-        },
-        error: function (error) {
-            debugger
-            showToaster("Error while fetching menu", "error");
-        }
-    })
-
-    }
 
 })
+
+$(document).on("submit", "#EditRole", function (e) {
+    e.preventDefault();
+    debugger
+    var roleId = $('#roleId').val();
+    var roleName = $('#roleName').val();
+    var accountType = +$('#AccountType').val();
+    var selectedMenu = [];
+    $('input[type="checkbox"]:checked').each(function () {
+        selectedMenu.push(+$(this).attr('id'));
+    });
+
+    $.ajax({
+        url: '/Admin/EditRole',
+        type: "POST",
+        data: {
+            roleId: roleId,
+            roleName: roleName,
+            accountType: accountType,
+            selectedMenu: selectedMenu
+        },
+        success: function (response) {
+            showToaster("Role Edited Successfully !", "success");
+        },
+        error: function () {
+            showToaster("Error while editing role", "error");
+        }
+    });
+});

@@ -333,3 +333,33 @@ input[type=checkbox] {
     }
 }
 
+
+
+
+/*Calender CSS*/
+.fc-icon-button{
+    margin: 0px 10px !important;
+    /*background-color: transparent !important;*/
+    border : none !important;
+    box-shadow: none;
+    background-image: url('/images/hero_img.jpg') !important;
+}
+.fc-prev-button, .fc-next-button {
+    border-radius: 50px !important;
+    height: 50px !important;
+    width: 50px !important;
+    background: #0dcaf0 !important;
+    border: 0px !important;
+    
+}
+.fc-col-header-cell-cushion {
+    text-decoration: none;
+    color: white;
+}
+.fc-daygrid-day-number {
+    /* display: block; */
+    background: #ff8af2;
+    width: 100%;
+    text-decoration: none;
+    color: black;
+}

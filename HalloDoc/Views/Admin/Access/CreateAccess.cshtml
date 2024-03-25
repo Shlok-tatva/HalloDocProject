@@ -2,6 +2,7 @@
     ViewData["Title"] = "Create Role Access";
 }
 
+@model HalloDoc_BAL.ViewModel.Admin.CreateEditAccessView;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -27,6 +28,8 @@
                 <i class="fa-solid fa-chevron-left"></i> Back
             </button>
         </div>
-        <partial name="~/Views/Admin/Access/_CreateEditAccess.cshtml" />
+        <form id="createRole" asp-action="CreateRole">
+        <partial name="~/Views/Admin/Access/_CreateEditAccess.cshtml" model="Model" />
+        </form>
     </div>
 </div>
