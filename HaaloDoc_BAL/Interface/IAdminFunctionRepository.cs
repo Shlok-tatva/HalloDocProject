@@ -19,6 +19,7 @@ namespace HalloDoc_BAL.Repository
         void DeletefileFromDatabase(int fileId);
         void SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null);
         void CreateOrUpdateProvider(CreateProviderView model, int[] selectedRegions, bool isEditing);
+        void DeleteProvider(int adminId, int providerId);
         List<Physician> GetPhysiciansByRegion(int regionId);
         void transferCase(int requestId, int physicianId, int adminId ,string note);
         void clearCase(int requestId, int adminId);
@@ -43,9 +44,9 @@ namespace HalloDoc_BAL.Repository
         string GetAccountTypeNameById(int id);
         List<Role> GetAllRole();
         List<Menu> GetAllMenu();
-        
         List<Aspnetrole> getAllRoleType();
         void CreateOrUpdateRole(int adminId, string roleName, int accountType, int[] selectedMenu, int? roleId = null);
+        void DeleteRole(int adminId, int roleId);
         List<Rolemenu> GetMenuByRole(int roleID);
         string GetMenuNameById(int menuid);
 

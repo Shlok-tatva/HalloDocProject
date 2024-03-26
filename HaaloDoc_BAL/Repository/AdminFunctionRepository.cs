@@ -445,6 +445,7 @@ namespace HalloDoc_BAL.Repository
                     }
 
                     aspnetuser.Email = model.email;
+                    aspnetuser.Roleid = 2;
                     aspnetuser.Phonenumber = model.phoneNumber;
                     aspnetuser.Passwordhash = model.password;
 
@@ -473,6 +474,7 @@ namespace HalloDoc_BAL.Repository
                 physician.Firstname = model.firstName;
                 physician.Lastname = model.lastName;
                 physician.Mobile = model.phoneNumber;
+                physician.Roleid = model.roleid;
                 physician.Regionid = model.regionId;
                 physician.Businessname = model.businessName;
                 physician.Businesswebsite = model.businessWebsite;
@@ -590,6 +592,16 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+        public void DeleteProvider(int adminId, int providerId)
+        {
+            Admin admin = _adminRepo.GetAdminById(adminId);
+            Physician pro = _context.Physicians.FirstOrDefault(p => p.Physicianid == providerId);
+            pro.Isdeleted = true;
+            pro.Modifiedby = admin.Aspnetuserid;
+            pro.Modifieddate = DateTime.Now;
+            _context.Physicians.Update(pro);
+            _context.SaveChanges();
+        }
 
         private void UploadFile(IFormFile file, string folderPath, string fileName)
         {
@@ -608,10 +620,12 @@ namespace HalloDoc_BAL.Repository
             if (phy != null)
             {
                 Aspnetuser user = _context.Aspnetusers.FirstOrDefault(user => user.Id == phy.Aspnetuserid);
+
                 view.UserName = user.Username;
                 view.ProviderId = phy.Physicianid;
                 view.Status = phy.Status;
-                view.roleid = user.Roleid;
+                view.allRoles = GetAllRole();
+                view.roleid = phy.Roleid;
                 view.firstName = phy.Firstname;
                 view.lastName = phy.Lastname;
                 view.email = phy.Email;
@@ -1004,7 +1018,7 @@ namespace HalloDoc_BAL.Repository
         public List<ProviderInfoAdmin> getProviderInfoView()
         {
             List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
-            List<Physician> providers = _context.Physicians.ToList();
+            List<Physician> providers = _context.Physicians.Where(p=>p.Isdeleted == false).ToList();
             providers.Sort((a, b) => b.Physicianid - a.Physicianid);
             foreach (Physician pro in providers)
             {
@@ -1014,7 +1028,8 @@ namespace HalloDoc_BAL.Repository
                 provider.providerEmail = pro.Email;
                 provider.providerPhone = pro.Mobile;
                 provider.providerStatus = pro.Status;
-                provider.providerRole = pro.Roleid.ToString();
+
+                provider.providerRole = _context.Roles.FirstOrDefault(r=>r.Roleid == pro.Roleid).Name;
                 provider.stopNotification = providerNotificationStatus(pro.Physicianid);
                 providerInfoAdmin.Add(provider);
             }
@@ -1101,6 +1116,16 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+        public void DeleteRole(int adminId , int roleId)
+        {
+            Admin admin = _context.Admins.FirstOrDefault(a => a.Adminid == adminId);
+            Role role = _context.Roles.FirstOrDefault(r => r.Roleid == roleId);
+            role.Isdeleted = true;
+            role.Modifieddate = DateTime.Now;
+            role.Modifiedby = admin.Aspnetuserid;
+            _context.Roles.Update(role);
+            _context.SaveChanges();
+        }
 
         public List<Healthprofessional> getAllVendors()
         {
@@ -1126,7 +1151,7 @@ namespace HalloDoc_BAL.Repository
         }
         public List<Role> GetAllRole()
         {
-            return _context.Roles.ToList();
+            return _context.Roles.Where(r => r.Isdeleted == false).ToList();
         }
 
         public List<Menu> GetAllMenu()

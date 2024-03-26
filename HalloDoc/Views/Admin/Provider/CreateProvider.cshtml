@@ -94,6 +94,16 @@
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
+                    <select asp-for="roleid" class="form-select pt-1" aria-label="Default select example">
+                        <option value="" selected disabled>Role</option>
+                        @foreach (var role in @ViewBag.allRoles)
+                        {
+                           <option value="@role.Roleid">@role.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
                     <input asp-for="password" type="password" id="password" class="form-control" placeholder=" ">
                     <label for="floatingInput" class="control-label ms-3">
                         Passsword

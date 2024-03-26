@@ -24,6 +24,7 @@ builder.Services.AddScoped<IRequestNotesRepository, RequestNotesRepository>();
 builder.Services.AddScoped<ICommonFunctionRepository, CommonFunctionRepository>();
 builder.Services.AddScoped<IHealthProfessionalRepository, HealthProfessionalRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
 builder.Services.AddScoped<IJwtServices, JwtServices>();
 
 

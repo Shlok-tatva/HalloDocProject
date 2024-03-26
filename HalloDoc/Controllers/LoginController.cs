@@ -15,14 +15,16 @@ namespace HalloDoc.Controllers
         private readonly IPatientFunctionRepository _petientfunctionrepo;
         private readonly IUserRepository _userrepo;
         private readonly IAdminRepository _adminrepo;
+        private readonly IPhysicianRepository _physicianrepo;
         private readonly IJwtServices _jwtServices;
 
-        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , IUserRepository userrepo, IAdminRepository adminrepo , IJwtServices jwtServices)
+        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , IUserRepository userrepo, IAdminRepository adminrepo , IPhysicianRepository physicianrepo , IJwtServices jwtServices)
         {
             _aspnetuserrepo = aspnetuser;
             _petientfunctionrepo = petientfunctionrepo;
             _userrepo = userrepo;
             _adminrepo = adminrepo;
+            _physicianrepo = physicianrepo;
             _jwtServices = jwtServices;
         }
 
@@ -61,22 +63,11 @@ namespace HalloDoc.Controllers
                 if (result == PasswordVerificationResult.Success)
                 {
                     var logedinUser = _aspnetuserrepo.GetByEmail(user.Email);
-                    var role = logedinUser.Roleid;
+                    var roleid = logedinUser.Roleid;
 
-                    if (role == 1)
+                    if(roleid == 3)
                     {
-                        string token = _jwtServices.GenerateToken(user.Email, "Admin");
-                        Admin Admin = _adminrepo.GetAdmin(logedinUser.Id);
-                        HttpContext.Session.SetString("jwttoken", token);
-                        HttpContext.Session.SetString("Username", Admin.Firstname + " " + Admin.Lastname);
-                        HttpContext.Session.SetString("AdminId", Admin.Adminid.ToString());
-                        HttpContext.Session.SetInt32("roleid", 1);
-                        TempData["Success"] = "Login successfully";
-                        return Redirect("/Admin/Dashboard");
-                    }
-                    else if(role == 3)
-                    {
-                        string token = _jwtServices.GenerateToken(user.Email, "User");
+                        string token = _jwtServices.GenerateToken(user.Email, "User" , 3);
                         HttpContext.Session.SetString("jwttoken", token);
                         HttpContext.Session.SetString("UserId", user.Email);
                         HttpContext.Session.SetInt32("roleid", 3);
@@ -84,6 +75,7 @@ namespace HalloDoc.Controllers
                     }
                     else
                     {
+                        TempData["Error"] = "Patient account does not exists";
                         return Redirect("/login");
                     }
 
@@ -107,6 +99,75 @@ namespace HalloDoc.Controllers
             
         }
 
+        [HttpGet]
+        public IActionResult PhysicianLogin()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult PhysicianLogin(Aspnetuser user)
+        {
+            if (user.Email == null || user.Passwordhash == null)
+            {
+                TempData["Error"] = "Username and password cannot be empty.";
+                return Redirect("/login/PhysicianLogin");
+            }
+            if (_aspnetuserrepo.Exists(user.Email))
+            {
+                var storedPassword = _aspnetuserrepo.GetUserPassword(user.Email);
+
+                var hasher = new PasswordHasher<string>();
+                PasswordVerificationResult result = hasher.VerifyHashedPassword(null, storedPassword, user.Passwordhash);
+
+                if (result == PasswordVerificationResult.Success)
+                {
+                    var logedinUser = _aspnetuserrepo.GetByEmail(user.Email);
+                    var aspnetroleid = logedinUser.Roleid; // for check either admin or Physician
+
+                    if (aspnetroleid == 1)
+                    {
+                        Admin Admin = _adminrepo.GetAdmin(logedinUser.Id);
+                        string token = _jwtServices.GenerateToken(user.Email, "Admin" , Admin.Roleid);
+                        HttpContext.Session.SetString("jwttoken", token);
+                        HttpContext.Session.SetString("Username", Admin.Firstname + " " + Admin.Lastname);
+                        HttpContext.Session.SetString("AdminId", Admin.Adminid.ToString());
+                        HttpContext.Session.SetInt32("roleid", (int)Admin.Roleid);
+                        TempData["Success"] = "Login successfully";
+                        return Redirect("/Admin/Dashboard");
+                    }
+                    else if (aspnetroleid == 2)
+                    {
+                        Physician physician = _physicianrepo.GetPhysician(user.Id);
+                        string token = _jwtServices.GenerateToken(user.Email, "User" , physician.Roleid);
+                        HttpContext.Session.SetString("jwttoken", token);
+                        HttpContext.Session.SetString("UserId", user.Email);
+                        HttpContext.Session.SetInt32("roleid", (int)physician.Roleid);
+                        return Redirect("/Physician/Dashboard");
+                    }
+                    else
+                    {
+                        return Redirect("/login/PhysicianLogin");
+                    }
+
+                }
+                else if (result == PasswordVerificationResult.SuccessRehashNeeded)
+                {
+                    TempData["Error"] = "Please Change your Password";
+                    return Redirect("/login/PhysicianLogin");
+                }
+                else
+                {
+                    TempData["Error"] = "Wrong Credentials";
+                    return Redirect("/login/PhysicianLogin");
+                }
+            }
+            else
+            {
+                TempData["Error"] = "User Dose not Exists";
+                return Redirect("/login/PhysicianLogin");
+            }
+        }
 
         public IActionResult ForgetPassword()
         {

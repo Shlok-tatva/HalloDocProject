@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="~/css/adminCss.css" />
 }
 @section Scripts {
-    @*<script src="~/js/Partners.js"></script>*@
+    <script src="~/js/Access/CreateEditAccess.js"></script>
     <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
@@ -53,7 +53,8 @@
                                 <td class="text-center">@ViewBag.AccountTypeNames[(int)role.Accounttype]</td>
                                 <td class="text-end pe-4">
                                     <a href="/Admin/EditAccess/?roleId=@role.Roleid" class="btn btn-sm hover_white btn-outline-info">Edit</a>
-                                    <button class="btn btn-sm hover_white btn-outline-info open-modal">
+
+                                    <button data-roleid="@role.Roleid" data-rolename="@role.Name" class="btn btn-sm hover_white btn-outline-info open-modal">
                                         Delete
                                     </button>
                                 </td>

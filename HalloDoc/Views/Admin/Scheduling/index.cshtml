@@ -5,6 +5,70 @@
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
+    <style>
+        tr{
+            border-bottom: none !important;
+        }
+        th{
+            background: #3c3c3c !important;
+            border:none !important;
+            border-left: 1px solid gray !important;
+            padding: 5px 0px !important;
+        }
+        /*Calender CSS*/
+        .fc-today-button {
+            margin: 0px 10px !important;
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none;
+            background-image: url(../../../images/calendar.png) !important;
+            background-size: contain;
+            background-repeat: no-repeat;
+            width: 45px;
+            /* Hide the text. */
+            text-indent: 100%;
+            white-space: nowrap;
+            overflow: hidden !important;
+        }
+        .fc-today-button:hover{
+                /* Hide the text. */
+                text-indent: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+        }
+
+        .fc-prev-button, .fc-next-button {
+            border-radius: 50px !important;
+            height: 50px !important;
+            width: 50px !important;
+            background: #0dcaf0 !important;
+            border: 0px !important;
+        }
+
+        .fc-col-header-cell-cushion {
+            text-decoration: none;
+            color: white;
+        }
+
+        .fc-daygrid-day-number {
+            /* display: block; */
+            background: #ff8af2;
+            width: 100%;
+            text-decoration: none;
+            color: black;
+        }
+
+        .fc-daygrid-more-link {
+            text-decoration: none;
+            background: #444444;
+            color: white;
+            width: 100%;
+        }
+        .fc-daygrid-more-link:hover{
+            color:black;
+           background: #444444;            
+        }
+            </style>
 }
 @section Scripts {
     <script src="~/js/Partners.js"></script>
@@ -45,7 +109,7 @@
                     }
                 },
                 headerToolbar: {
-                    left: 'prev,icon,next',
+                    left: 'prev,today,next',
                     center: 'title',
                     right: ''
                 },               
@@ -73,7 +137,7 @@
 
 <h1>Schudling</h1>
 
-<div class="w-75 m-auto mt-5">
+<div class=" form_content m-auto mt-5">
     <div class="d-flex justify-content-end">
         <button type="button" id="dateButton" class="btn btn-outline-info hover_white"> Day </button>
         <button type="button" id="weekButton" class="btn btn-outline-info hover_white mx-2"> Week </button>

@@ -20,18 +20,22 @@ namespace HalloDoc_BAL.Repository
         {
             Configuration = configuration;
         }
-        public string GenerateToken(string username, string role)
+        public string GenerateToken(string username, string role , int? roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(Configuration["jwt:key"]);
+
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("roleId" , roleId.ToString())
             }),
+
+
                 Expires = DateTime.UtcNow.AddMinutes(Double.Parse(Configuration["jwt:Expiry"])),
 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

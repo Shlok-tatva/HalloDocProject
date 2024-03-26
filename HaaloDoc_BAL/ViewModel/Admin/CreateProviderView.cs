@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace HalloDoc_BAL.ViewModel.Admin
@@ -35,6 +36,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
                 }
             }
         }
+
+        public List<Role?> allRoles { get; set; }
 
         public int? roleid { get; set; }
 

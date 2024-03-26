@@ -1,5 +1,55 @@
 ﻿$(document).ready(function () {
 
+    $(document).ready(function () {
+
+
+        $(".open-modal").on("click", function () {
+            let roleId = +$(this).data("roleid");
+            let rolename = $(this).data("rolename");
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
+                    cancelButton: "btn btn-outline-info btn-lg hover_white"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Confirmation of Delete Role",
+                text: `Are you sure you want to Delete this Role :- ${rolename} ?`,
+                iconHtml: "<div class='warning_icon'><i class='bi bi-exclamation-circle-fill'></i></div>",
+                showCancelButton: true,
+                confirmButtonText: "Delete",
+                cancelButtonText: "Cancel",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "DeleteRole",
+                        method: "POST",
+                        data: { roleId },
+                        success: function (response) {
+                            Swal.fire({
+                                title: "Deleted",
+                                text: "Role Delete Successfully",
+                                icon: "success",
+                                timer: 1500,
+                                showConfirmButton: false,
+                            }).then(function () {
+                                location.reload();
+                            })
+                        },
+                        error: function (xhr, status, error) {
+                            showToaster("Error While Delete Role", "error");
+                        }
+                    });
+                }
+            });
+        })
+
+
+    })
+
     $("#AccountType").on("change", function () {
             var roleId = $(this).val();
 

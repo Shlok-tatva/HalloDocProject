@@ -91,8 +91,19 @@
 
 
                 <div class="form-floating col-md-6 my-3">
-                    <select class="form-select pt-1" aria-label="Default select example">
-                        <option value="1" selected hidden>Role</option>
+                    <select asp-for="roleid" class="form-select pt-1" aria-label="Default select example">
+                        <option value="" disabled>Role</option>
+                        @foreach(var role in Model.allRoles)
+                        {
+                            if(role.Roleid == Model.roleid){
+                                <option value="@role.Roleid" selected>@role.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@role.Roleid">@role.Name</option>
+                            }
+
+                        }
                     </select>
                 </div>
 
@@ -435,7 +446,7 @@
 
                 <div class="my-3 d-flex justify-content-end ">
                     <button class="btn btn-info text-white mx-2 " type="submit"> Save </button>
-                    <div class="btn btn-danger text-white "> Delete Account </div>
+                    <div class="btn btn-danger text-white open-modal" data-providerid="@Model.ProviderId"> Delete Account </div>
                 </div>
             </div>
         </div>

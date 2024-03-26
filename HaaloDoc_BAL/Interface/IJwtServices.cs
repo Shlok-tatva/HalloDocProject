@@ -7,7 +7,7 @@ namespace HalloDoc_BAL.Interface
     {
         IConfiguration Configuration { get; }
 
-        string GenerateToken(string username , string role);
+        string GenerateToken(string username , string role , int? roleId);
         bool ValidateToken(string token, out JwtSecurityToken jwtToken);
     }
 }

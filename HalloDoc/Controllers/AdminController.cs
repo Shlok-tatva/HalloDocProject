@@ -15,7 +15,7 @@ using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
-    //[CustomAuthFilterFactory("Admin")]
+    [CustomAuth("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -39,6 +39,7 @@ namespace HalloDocAdmin.Controllers
             _healthprofessionalRepository = healthprofessionalRepository;
         }
 
+        [RouteAuthFilter]
         public IActionResult Dashboard()
         {
             ViewData["ViewName"] = "Dashboard";
@@ -506,13 +507,14 @@ namespace HalloDocAdmin.Controllers
 
         }
 
-
+        [RouteAuthFilter]
         public IActionResult ProviderLocation()
         {
             ViewData["ViewName"] = "ProviderLocation";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             return View("Provider/ProviderLocation");
         }
+
         [HttpGet]
         public IActionResult GetPhysicianLocation()
         {
@@ -570,6 +572,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [RouteAuthFilter]
         public IActionResult AdminProfile()
         {
             ViewData["ViewName"] = "AdminProfile";
@@ -621,6 +624,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
+        [RouteAuthFilter]
         public IActionResult Provider()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -635,15 +639,16 @@ namespace HalloDocAdmin.Controllers
             return View("provider/index" , view);
         }
 
-
+        [RouteAuthFilter]
         [HttpGet]
         public IActionResult CreateProvider()
         {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
-            var regions = _adminFunctionRepository.GetAllReagion();
-            ViewBag.regions = regions;
+            ViewBag.regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.allRoles = _adminFunctionRepository.GetAllRole();
+            
             return View("provider/CreateProvider");
         }
 
@@ -656,10 +661,8 @@ namespace HalloDocAdmin.Controllers
                 int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
                 Admin admin = _adminrepo.GetAdminById(adminId);
                 model.Createdby = admin.Aspnetuserid;
-                if (ModelState.IsValid)
-                {
-                    _adminFunctionRepository.CreateOrUpdateProvider(model, selectedRegions , false);
-                }
+                model.allRoles = _adminFunctionRepository.GetAllRole();
+                _adminFunctionRepository.CreateOrUpdateProvider(model, selectedRegions , false);
                 TempData["Success"] = "Provider Created Successfully !";
                 return Redirect("/admin/Provider");
             }
@@ -671,6 +674,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [RouteAuthFilter]
         [HttpGet]
         public IActionResult EditProvider()
         {
@@ -702,6 +706,19 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        public IActionResult DeleteProvider(int providerId)
+        {
+            try
+            {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.DeleteProvider(adminId, providerId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPost("changeProviderPassword")]
         public IActionResult changeProviderPassword(int providerId, string password)
@@ -793,7 +810,8 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
+        [RouteAuthFilter]
+        [HttpGet]
         public IActionResult Partners()
         {
             ViewData["ViewName"] = "Partners";
@@ -831,6 +849,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [RouteAuthFilter]
         [HttpGet]
         public IActionResult AddPartner()
         {
@@ -879,6 +898,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [RouteAuthFilter]
         [HttpGet]
         public IActionResult EditPartner()
         {
@@ -1018,6 +1038,21 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        public IActionResult DeleteRole(int roleId)
+        {
+            try
+            {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.DeleteRole(adminId, roleId);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
 
         public IActionResult Scheduling()
