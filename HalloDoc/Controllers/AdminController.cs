@@ -1053,6 +1053,15 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        public IActionResult UserAccess()
+        {
+            ViewData["ViewName"] = "Access";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewBag.accoutType = _adminFunctionRepository.getAllRoleType();
+
+            return View("Access/UserAccess");
+        }
+
 
 
         public IActionResult Scheduling()

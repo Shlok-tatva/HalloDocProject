@@ -59,7 +59,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" asp-controller="Admin" asp-action="Access">Account Access</a></li>
-                            <li><a class="dropdown-item" href="#">User Access</a></li>
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="UserAccess">User Access</a></li>
                         </ul>
                 </div>
                 <div class="p-3 links @(ViewData["ViewName"] == "Records" ? "active" : "")">

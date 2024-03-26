@@ -7,14 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\access\UserAccess.js" />
     <Content Remove="wwwroot\js\scheduling\scheduling.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\access\UserAccess.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\scheduling\scheduling.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\access\UserAccess.js" />
     <None Include="wwwroot\js\scheduling\scheduling.js" />
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
