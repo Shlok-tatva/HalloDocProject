@@ -643,7 +643,6 @@ namespace HalloDocAdmin.Controllers
         [HttpGet]
         public IActionResult CreateProvider()
         {
-            ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
             ViewBag.regions = _adminFunctionRepository.GetAllReagion();
@@ -1055,11 +1054,97 @@ namespace HalloDocAdmin.Controllers
 
         public IActionResult UserAccess()
         {
-            ViewData["ViewName"] = "Access";
-            ViewBag.Username = HttpContext.Session.GetString("Username");
-            ViewBag.accoutType = _adminFunctionRepository.getAllRoleType();
+                List<UserAccessView> view = new List<UserAccessView>();
+            try
+            {
+                ViewData["ViewName"] = "Access";
+                ViewBag.Username = HttpContext.Session.GetString("Username");
+                ViewBag.accoutType = _adminFunctionRepository.getAllRoleType();
+                view = _adminFunctionRepository.GetUserAccessView(0);
+                return View("Access/UserAccess" , view);
+            }catch(Exception ex)
+            {
+                TempData["Error"] = "Cannot Get Data";
+                return View("Access/UserAccess", view);
+            }
 
-            return View("Access/UserAccess");
+        }
+
+        [HttpGet]
+        public IActionResult EditAdmin()
+        {
+            try
+            {
+                ViewData["ViewName"] = "Access";
+                ViewBag.Username = HttpContext.Session.GetString("Username");
+                var regions = _adminFunctionRepository.GetAllReagion();
+                ViewBag.regions = regions;
+                int adminId = Int32.Parse(Request.Query["adminId"]);
+                AdminProfileView view = _adminFunctionRepository.GetAdminProfileView(adminId);
+                return View("AdminProfile", view);
+            }
+            catch(Exception ex)
+            {
+                TempData["Error"] = "Try after sometime";
+                return Redirect("Access/UserAccess");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult EditPhysician()
+        {
+            try
+            {
+                ViewData["ViewName"] = "Access";
+                ViewBag.Username = HttpContext.Session.GetString("Username");
+                var regions = _adminFunctionRepository.GetAllReagion();
+                ViewBag.regions = regions;
+                int physicianId = Int32.Parse(Request.Query["physicianId"]);
+                var view = _adminFunctionRepository.getProviderView(physicianId);
+                return View("provider/EditProvider", view);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Try after sometime";
+                return Redirect("UserAccess");
+            }
+        }
+
+        //[RouteAuthFilter]
+        [HttpGet]
+        public IActionResult CreateAdmin()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Access";
+            ViewBag.regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.allRoles = _adminFunctionRepository.GetAllRole();
+
+            return View("Access/CreateAdmin");
+        }
+
+        [HttpPost]
+        public ActionResult CheckUsernameAvailability(string username)
+        {
+          
+            bool isAvailable  = _adminFunctionRepository.IsUsernameAvailable(username);
+            return Json(new { available = isAvailable });
+            
+        }
+
+        [HttpPost]
+        public IActionResult CreateAdmin(CreateAdminView formData , int[] selectedRegions)
+        {
+            try
+            {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.createAdmin(formData, selectedRegions, adminId);
+                return Redirect("Access/UserAccess");
+            }
+            catch(Exception ex)
+            {
+                TempData["Error"] = "Error while Creating Admin";
+                return Redirect("UserAccess");
+            }
         }
 
 

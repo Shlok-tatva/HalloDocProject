@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "User Access";
 }
+@model List<HalloDoc_BAL.ViewModel.Admin.UserAccessView>;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -12,7 +13,14 @@
             document.getElementById('navbarHeader').classList.add("show");
         }
     </script>
-    
+
+    @if(TempData["Error"] != null)
+    {
+        <script>
+            showToaster("@TempData["Error"]" , "error");
+        </script>
+    }
+
 }
 
 <partial name="_NavBar" />
@@ -35,45 +43,67 @@
                         <option value="0">All</option>
                         @foreach (var type in @ViewBag.accoutType)
                         {
-                            if(type.Id != 3)
+                            if (type.Id != 3)
                             {
-                            <option value="@type.Id">@type.Name</option>
+                                <option value="@type.Id">@type.Name</option>
                             }
                         }
                     </select>
                 </div>
-               <div class="col-md-8 d-flex justify-content-end align-items-center">
-                <button id="adminbtn" class="btn btn-outline-info hover_white mx-2">Create Admin</button>
-                <button id="physicianbtn" class="btn btn-outline-info hover_white">Create Physician</button>
-               </div>
+                <div class="col-md-8 d-flex justify-content-end align-items-center">
+                    <a href="/Admin/CreateAdmin" id="adminbtn" class="btn btn-outline-info hover_white mx-2">Create Admin</a>
+                    <a href="/Admin/CreateProvider" id="physicianbtn" class="btn btn-outline-info hover_white">Create Physician</a>
+                </div>
 
             </div>
 
             <div>
                 <table class="w-100 table table-hover overflow-scroll">
+                    <colgroup>
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 8%;">
+                        <col span="1" style="width: 15%;">
+
+                    </colgroup>
                     <thead>
-                        <tr>
-                            <th class="text-start ps-5 w-25">Name</th>
-                            <th class="text-center ps-5 w-10">Account Type</th>
-                            <th class="text-end pe-5 w-25">Actions</th>
+                        <tr class="text-start">
+                            <th class="text-start ps-4">Account Type</th>
+                            <th class="text-start ps-4">Account POC</th>
+                            <th class="text-start ps-4">Phone</th>
+                            <th class="text-center pe-4">Status</th>
+                            <th class="text-center">Open Request</th>
+                            <th class="text-end pe-5">Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                       @* @foreach (var role in Model)
+                        @if (Model.Count > 0)
                         {
-                            <tr class="text-start">
-                                <td class="ps-5">@role.Name</td>
-                                <td class="text-center">@ViewBag.AccountTypeNames[(int)role.Accounttype]</td>
-                                <td class="text-end pe-4">
-                                    <a href="/Admin/EditAccess/?roleId=@role.Roleid" class="btn btn-sm hover_white btn-outline-info">Edit</a>
+                            @foreach (var user in Model)
+                            {
+                                <tr class="text-start user-data" data-accounttype ="@user.accountType">
+                                    <td class="ps-4">@user.accountType</td>
+                                    <td class="ps-4">@user.accountPOC</td>
+                                    <td class="ps-4">@user.phoneNumber</td>
+                                    <td class="text-start ps-5">@user.statusString</td>
+                                    <td class="text-center">@user.openRequest</td>
+                                    <td class="text-end pe-5">
+                                        @if (user.accountTypeId == 1)
+                                        {
+                                            <a href="/Admin/EditAdmin?adminId=@user.adminId" class="btn btn-sm hover_white btn-outline-info">Edit a</a>
+                                        }
+                                        else if(user.accountTypeId == 2)
+                                        {
+                                            <a href="/Admin/EditPhysician?physicianId=@user.physicianId" class="btn btn-sm hover_white btn-outline-info">Edit p</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
 
-                                    <button data-roleid="@role.Roleid" data-rolename="@role.Name" class="btn btn-sm hover_white btn-outline-info open-modal">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        }*@
                     </tbody>
                 </table>
             </div>

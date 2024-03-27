@@ -1127,6 +1127,123 @@ namespace HalloDoc_BAL.Repository
             _context.SaveChanges();
         }
 
+        public List<UserAccessView> GetUserAccessView(int roleId)
+        {
+            IQueryable<Aspnetuser> usersQuery = _context.Aspnetusers;
+
+            if (roleId == 1 || roleId == 2)
+            {
+                usersQuery = usersQuery.Where(user => user.Roleid == roleId);
+            }
+            else if (roleId != 0)
+            {
+                return new List<UserAccessView>(); // If an invalid roleId is passed, return empty list
+            }
+
+            List<Aspnetuser> allUser = usersQuery.Where(u=>u.Roleid == 1 || u.Roleid == 2).ToList();
+            List<UserAccessView> viewlist = new List<UserAccessView>();
+
+            foreach (var item in allUser)
+            {
+                UserAccessView view = new UserAccessView();
+                view.aspnetUserId = item.Id;
+                view.phoneNumber = item.Phonenumber;
+                view.accountTypeId = (int)item.Roleid;
+                view.accountType = _context.Aspnetroles.Where(type => type.Id == item.Roleid).FirstOrDefault().Name;
+
+                if (item.Roleid == 1)
+                {
+                    Admin admin = _adminRepo.GetAdmin(item.Id);
+                    view.accountPOC = admin.Firstname + " " + admin.Lastname;
+                    view.adminId = admin.Adminid;
+                    view.statusId = (int)admin.Status;
+                    view.openRequest = _requestRepository.GetAll().Count();
+                }
+                else if (item.Roleid == 2)
+                {
+                    Physician phy = _context.Physicians.FirstOrDefault(p => p.Aspnetuserid == item.Id);
+                    view.accountPOC = phy.Firstname + " " + phy.Lastname;
+                    view.physicianId = phy.Physicianid;
+                    view.statusId = (int)phy.Status;
+                    view.openRequest = _requestRepository.GetAll().Where(r => r.Physicianid == phy.Physicianid).Count();
+                }
+                viewlist.Add(view);
+            }
+
+            return viewlist;
+        }
+
+        public bool IsUsernameAvailable(string username)
+        {
+            try
+            {
+                bool userExists = _context.Aspnetusers.Any(user => user.Username == username);
+                return !userExists;
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions here
+                return false;
+            }
+        }
+
+        public void createAdmin(CreateAdminView data , int[] regions , int adminId)
+        {
+            using(var transaction  = new TransactionScope())
+            {
+                Aspnetuser user = new Aspnetuser();
+                Guid guid = Guid.NewGuid();
+                string str = guid.ToString();
+                var hasher = new PasswordHasher<string>();
+                string hashedPassword = hasher.HashPassword(null, data.Password);
+
+                user.Id = str;
+                user.Username = data.UserName;
+                user.Createddate = DateTime.Now;
+                user.Phonenumber = data.PhoneNumber;
+                user.Email = data.Email;
+                user.Passwordhash = hashedPassword;
+                user.Roleid = 1;
+                _context.Aspnetusers.Add(user);
+                _context.SaveChanges();
+
+                Admin admin = new Admin();
+                Admin accountcreatedAdmin = _adminRepo.GetAdminById(adminId);
+                
+                admin.Aspnetuserid = user.Id;
+                admin.Firstname = data.FirstName;
+                admin.Lastname = data.LastName;
+                admin.Email = data.Email;
+                admin.Mobile = data.PhoneNumber;
+                admin.Address1 = data.Address1;
+                admin.Address2 = data.Address2;
+                admin.City = data.City;
+                admin.Altphone = data.Altphone;
+                admin.Createddate = DateTime.Now;
+                admin.Createdby = accountcreatedAdmin.Aspnetuserid;
+                admin.Status = 2;
+                admin.Isdeleted = false;
+                admin.Roleid = data.RoleId;
+                _context.Admins.Add(admin);
+                _context.SaveChanges();
+
+                List<Adminregion> adminRegions = new List<Adminregion>();
+
+                foreach (int regionId in regions)
+                {
+                    adminRegions.Add(new Adminregion
+                    {
+                        Regionid = regionId,
+                        Adminid = admin.Adminid
+                    });
+                }
+                _context.Adminregions.AddRange(adminRegions);
+                _context.SaveChanges();
+
+                transaction.Complete();
+            }
+        }
+
         public List<Healthprofessional> getAllVendors()
         {
             return _context.Healthprofessionals.Where(vendor => vendor.Isdeleted == false).ToList();

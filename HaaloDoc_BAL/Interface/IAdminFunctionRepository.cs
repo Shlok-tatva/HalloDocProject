@@ -42,6 +42,8 @@ namespace HalloDoc_BAL.Repository
         List<Healthprofessional> getAllVendors();
         string GetProfessionNameById(int id);
         string GetAccountTypeNameById(int id);
+        bool IsUsernameAvailable(string username);
+        void createAdmin(CreateAdminView data, int[] regions , int adminId);
         List<Role> GetAllRole();
         List<Menu> GetAllMenu();
         List<Aspnetrole> getAllRoleType();
@@ -49,6 +51,7 @@ namespace HalloDoc_BAL.Repository
         void DeleteRole(int adminId, int roleId);
         List<Rolemenu> GetMenuByRole(int roleID);
         string GetMenuNameById(int menuid);
+        List<UserAccessView> GetUserAccessView(int roleId);
 
         }
 }

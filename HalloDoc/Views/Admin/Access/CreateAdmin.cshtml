@@ -1,0 +1,198 @@
+﻿@{
+    ViewData["Title"] = "Create Provider";
+}
+
+@model HalloDoc_BAL.ViewModel.Admin.CreateAdminView;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+
+    <script src="~/js/Access/CreateAdmin.js"></script>
+
+
+    @if (@TempData["Error"] != null)
+    {
+        <script>
+            showToaster("@TempData["Error"]", "error");
+        </script>
+    }
+
+}
+
+
+<partial name="_NavBar" />
+
+<div class=" mt-5 container-sm m-auto">
+    <div class="mt-4 w-75 m-auto">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="fw-bold">Create Admin Account</h3>
+            <a href="/Admin/UserAccess" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Form start  -->
+    <form asp-action="CreateAdmin" method="post" enctype="multipart/form-data">
+        <div class="mt-4 m-auto form_content">
+            <div class="row p-4 shadow rounded-3">
+                <!-- Provider Information -->
+
+                <h5 class="col-12 fw-bold my-3">Account Information</h5>
+
+                <div class="form-floating col-md-4 my-3">
+                    <input asp-for="UserName" type="text" id="UserName" class="form-control readonly" placeholder=" " readonly>
+                    <label for="floatingInput" class="control-label ms-3">
+                        UserName
+                    </label>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-4 my-3">
+                    <input asp-for="Password" type="password" id="password" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Passsword
+                    </label>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-4 my-3">
+                    <select asp-for="RoleId" class="form-select pt-1" aria-label="Default select example">
+                        <option value="" selected disabled>Role</option>
+                        @foreach (var role in @ViewBag.allRoles)
+                        {
+                            <option value="@role.Roleid">@role.Name</option>
+                        }
+                    </select>
+                </div>
+
+
+
+                <h5 class="col-12 fw-bold my-3">Administrator Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="FirstName" id="FirstName" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        First Name
+                    </label>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+
+                </div>
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="LastName" id="LastName" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                         Last Name
+                    </label>
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+
+                </div>
+                <!-- Patient Contact Information -->
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Email" type="email" id="email" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                         Email
+                    </label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="ConfirmEmail" type="email" id="email" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Confirm Email
+                    </label>
+                    <span asp-validation-for="ConfirmEmail" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="PhoneNumber" id="phone" type="tel" class="form-control"> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 my-3">
+                    <div class="form-check form-check-inline d-flex flex-wrap ps-0 align-items-center">
+                        @foreach (var region in ViewBag.regions)
+                        {
+                            <div class="d-flex align-items-center">
+                                <input type="checkbox" class="checkbox" name="selectedRegions" value="@region.Regionid" />
+                                <label class="fs-6">@region.Name</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Mailing & Billing Information -->
+                <h5 class="col-12 fw-bold my-3">Mailing & Billing Information</h5>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Address1" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Address1
+                    </label>
+                    <span asp-validation-for="Address1" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Address2" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Address2
+                    </label>
+                    <span asp-validation-for="Address2" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="City" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        City
+                    </label>
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <select asp-for="RegionId" class="p-2 px-4 form-control w-100 " id="regions">
+                        <option value="0" selected hidden>State</option>
+                        @foreach (var region in ViewBag.regions)
+                        {
+                            <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                        }
+                    </select>
+                </div>
+
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Zip" type="text" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Zip
+                    </label>
+                    <span asp-validation-for="Zip" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating col-md-6 my-3">
+                    <input asp-for="Altphone" id="phone1" type="tel" class="form-control"> <br />
+                    <label for="floatingInput" class="control-label ms-3">
+                    </label>
+                </div>
+
+                <div class="mt-5 mb-3 d-flex justify-content-end ">
+                    <button class="btn btn-success mx-2" type="submit">Create Admin</button>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<partial name="~/Views/Admin/Provider/_signatureModal.cshtml" />
+
