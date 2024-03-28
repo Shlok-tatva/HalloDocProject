@@ -1,4 +1,5 @@
 ﻿using HalloDoc_BAL.ViewModel.Admin;
+using HalloDoc_BAL.ViewModel.Schedule;
 using HalloDoc_DAL.Models;
 
 namespace HalloDoc_BAL.Repository
@@ -44,6 +45,13 @@ namespace HalloDoc_BAL.Repository
         string GetAccountTypeNameById(int id);
         bool IsUsernameAvailable(string username);
         void createAdmin(CreateAdminView data, int[] regions , int adminId);
+        void CreateShift(ScheduleModel data, int adminId);
+        List<ScheduleModel> PhysicianAll();
+        List<ScheduleModel> PhysicianByRegion(int? region);
+        List<ScheduleModel> GetShift(int month, int? regionId);
+
+
+
         List<Role> GetAllRole();
         List<Menu> GetAllMenu();
         List<Aspnetrole> getAllRoleType();

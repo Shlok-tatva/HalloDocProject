@@ -99,6 +99,8 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Aspnetuser).WithMany(p => p.AdminAspnetusers).HasConstraintName("admin_aspnetuserid_fkey");
 
             entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.AdminModifiedbyNavigations).HasConstraintName("admin_modifiedby_fkey");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Admins).HasConstraintName("admin_rolid_fkey");
         });
 
         modelBuilder.Entity<Adminregion>(entity =>
@@ -120,6 +122,8 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<Aspnetuser>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("aspnetusers_pkey");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Aspnetusers).HasConstraintName("aspnetusers_roleid_aspnetroles_fkey");
         });
 
         modelBuilder.Entity<Blockrequest>(entity =>
@@ -185,6 +189,8 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("physician_createdby_fkey");
 
             entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.PhysicianModifiedbyNavigations).HasConstraintName("physician_modifiedby_fkey");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Physicians).HasConstraintName("physician_rolid_fkey");
         });
 
         modelBuilder.Entity<Physicianlocation>(entity =>
@@ -360,7 +366,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Shiftid).HasName("shift_pkey");
 
-            entity.Property(e => e.Shiftid).ValueGeneratedNever();
+            entity.Property(e => e.Shiftid).HasDefaultValueSql("nextval('shift_id_seq'::regclass)");
             entity.Property(e => e.Weekdays).IsFixedLength();
 
             entity.HasOne(d => d.CreatedbyNavigation).WithMany(p => p.Shifts)
@@ -376,7 +382,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Shiftdetailid).HasName("shiftdetail_pkey");
 
-            entity.Property(e => e.Shiftdetailid).ValueGeneratedNever();
+            entity.Property(e => e.Shiftdetailid).HasDefaultValueSql("nextval('shiftdetails_id_seq'::regclass)");
 
             entity.HasOne(d => d.ModifiedbyNavigation).WithMany(p => p.Shiftdetails).HasConstraintName("shiftdetail_modifiedby_fkey");
 
@@ -391,7 +397,7 @@ public partial class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Shiftdetailregionid).HasName("shiftdetailregion_pkey");
 
-            entity.Property(e => e.Shiftdetailregionid).ValueGeneratedNever();
+            entity.Property(e => e.Shiftdetailregionid).HasDefaultValueSql("nextval('shiftdetailregion_id_seq'::regclass)");
 
             entity.HasOne(d => d.Region).WithMany(p => p.Shiftdetailregions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -419,6 +425,9 @@ public partial class ApplicationDbContext : DbContext
         });
         modelBuilder.HasSequence("requestconcierge_id_seq");
         modelBuilder.HasSequence("requestnotes_id_seq");
+        modelBuilder.HasSequence("shift_id_seq");
+        modelBuilder.HasSequence("shiftdetailregion_id_seq");
+        modelBuilder.HasSequence("shiftdetails_id_seq");
         modelBuilder.HasSequence("user_id_seq");
 
         OnModelCreatingPartial(modelBuilder);

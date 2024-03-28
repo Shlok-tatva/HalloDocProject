@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HalloDoc_DAL.Models;
 
 [Table("admin")]
+[Index("Roleid", Name = "fki_admin_rolid_fkey")]
 public partial class Admin
 {
     [Key]
@@ -101,4 +102,8 @@ public partial class Admin
 
     [InverseProperty("Admin")]
     public virtual ICollection<Requestwisefile> Requestwisefiles { get; set; } = new List<Requestwisefile>();
+
+    [ForeignKey("Roleid")]
+    [InverseProperty("Admins")]
+    public virtual Role? Role { get; set; }
 }

@@ -62,6 +62,10 @@ public partial class Aspnetuser
     [InverseProperty("ModifiedbyNavigation")]
     public virtual ICollection<RBusinessdatum> RBusinessdatumModifiedbyNavigations { get; set; } = new List<RBusinessdatum>();
 
+    [ForeignKey("Roleid")]
+    [InverseProperty("Aspnetusers")]
+    public virtual Aspnetrole? Role { get; set; }
+
     [InverseProperty("ModifiedbyNavigation")]
     public virtual ICollection<Shiftdetail> Shiftdetails { get; set; } = new List<Shiftdetail>();
 

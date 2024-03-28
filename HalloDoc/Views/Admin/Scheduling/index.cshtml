@@ -1,4 +1,4 @@
-﻿@{
+﻿@*@{
     ViewData["Title"] = "Schudling";
 }
 @model HalloDoc_BAL.ViewModel.Admin.CalendarViewModel;
@@ -167,4 +167,242 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
-    </di
+    </div>*@
+
+
+@model HalloDoc_BAL.ViewModel.Schedule.ScheduleModel;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+    <link rel="stylesheet" href="~/css/Calender.css" />
+}
+
+@section Scripts
+    {
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            showToaster("@TempData["Success"]", "success");
+        </script>
+
+    }
+    @if (TempData["Error"] != null)
+    {
+        <script>
+            showToaster("@TempData["Error"]", "error");
+        </script>
+
+    }
+
+    <script src="~/js/Scheduling/scheduling.js"></script>
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+
+<partial name="_NavBar" />
+<div class="form_content m-auto mt-5 mb-5">
+    <div class="justify-content-between d-flex container-fluid  position-relative mt-5">
+        <div class="">
+            <h3 class="fw-bolder">
+                Scheduling
+            </h3>
+        </div>
+        <div class="">
+            <a href="history.back()" class="btn btn-outline-info"> ❮  Back </a>
+        </div>
+    </div>
+    <div class=" border-0  py-1 mx-3 mt-3 rounded">
+        <div class="row">
+            <div class="col-md-3 mt-2">
+                    <select class="p-2 mt-3 px-4 form-control mb-3 w-100 " id="fregion">
+                        <option value="0">All</option>
+                        @foreach (var region in @ViewBag.regions)
+                        {
+                            <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                        }
+                    </select>
+            </div>
+
+            <div class="col-md-9 mt-2 d-flex justify-content-end align-items-center">
+                    <a class="btn btn-info text-white mx-2">
+                        Provider On Call
+                    </a>
+                    <a class="btn btn-info text-white  mx-2">
+                        Shift Review
+                    </a>
+                <button class="btn btn-info text-white mx-2 open-modal">Add New Shift  </button>
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-md-7 mt-2">
+                <div class="calendar-current-date fs-4 fw-bolder"></div>
+                <div class="text-start my-3 calendar-navigation">
+                    <span id="calendar-prev" class="btn btn-info text-white rounded-circle">❮</span>
+                    <span class="mx-3"><i class="fa-regular fa-calendar-days"></i></span>
+                    <span id="calendar-next" class="btn btn-info text-white rounded-circle">❯</span>
+                </div>
+            </div>
+            <div class="col-md-5 mt-3">
+                <div class="d-flex justify-content-end">
+                    <div class="alert alert-panding mx-1 px-4" role="alert">
+                    </div>
+                    <span class="m-1">Panding Shifts</span>
+                    <div class="alert alert-success mx-1 px-4" role="alert">
+                    </div>
+                    <span class="m-1">Appoved Shifts</span>
+
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div id="day" class="btn btn-outline-info hover_white mx-2">
+                        Day
+                    </div>
+                    <div id="week" class="btn btn-outline-info hover_white mx-2">
+                        Week
+                    </div>
+                    <div id="month" class="btn btn-outline-info hover_white mx-2">
+                        Month
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="monthcontainer" class="calendar-body  calendar-container">
+        <table class="calendar-table w-100 ">
+            <thead>
+                <tr class="calendar-weekdays">
+                    <!-- Weekday headers will be populated dynamically -->
+                </tr>
+            </thead>
+            <tbody class="calendar-dates">
+                <!-- Calendar dates will be populated dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+
+    <div style="display:none" id="weekviewcontainer" class="active">
+
+        <table style="width:100%;">
+            <thead>
+                <tr class="weekhead">
+                    <td>Staf</td>
+                    <td class="title" data-name="Sun">Sun</td>
+                    <td class="title" data-name="Mon">Mon</td>
+                    <td class="title" data-name="Tue">Tue</td>
+                    <td class="title" data-name="Wed">Wed</td>
+                    <td class="title" data-name="Thu">Thu</td>
+                    <td class="title" data-name="Fri">Fri</td>
+                    <td class="title" data-name="Sat">Sat</td>
+                </tr>
+
+                <tr class="Converage">
+                    <td>Converage</td>
+                    <td class="" data-name="Sun">0/24</td>
+                    <td class="" data-name="Mon">0/24</td>
+                    <td class="" data-name="Tue">0/24</td>
+                    <td class="" data-name="Wed">0/24</td>
+                    <td class="" data-name="Thu">0/24</td>
+                    <td class="" data-name="Fri">0/24</td>
+                    <td class="" data-name="Sat">0/24</td>
+                </tr>
+            </thead>
+
+            <tbody class="main">
+            </tbody>
+        </table>
+    </div>
+
+    <div id="daycontainer" style="display:none;">
+        <div class="schedule">
+            <table class="employee-schedules w-100">
+                <thead class="employee-schedules-thead">
+                    <tr>
+                        <td>Staff</td>
+                        <td>12 A</td>
+                        <td>1 A</td>
+                        <td>2 A</td>
+                        <td>3 A</td>
+                        <td>4 A</td>
+                        <td>5 A</td>
+                        <td>6 A</td>
+                        <td>7 A</td>
+                        <td>8 A</td>
+                        <td>9 A</td>
+                        <td>10 A</td>
+                        <td>11 A</td>
+                        <td>12 P</td>
+                        <td>1 P</td>
+                        <td>2 P</td>
+                        <td>3 P</td>
+                        <td>4 P</td>
+                        <td>5 P</td>
+                        <td>6 P</td>
+                        <td>7 P</td>
+                        <td>8 P</td>
+                        <td>9 P</td>
+                        <td>10 P</td>
+                        <td>11 P</td>
+                    </tr>
+                    <tr class="Converage">
+                        <td>Converage</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+
+                    </tr>
+                </thead>
+                <tbody class="employee-schedules-table">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-center text-white">
+                <h1 class="modal-title fs-5" id="model-head"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="~/Views/Admin/Scheduling/_createShift.cshtml" model="Model" />

@@ -3,6 +3,7 @@
 using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.Repository;
 using HalloDoc_BAL.ViewModel.Admin;
+using HalloDoc_BAL.ViewModel.Schedule;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -1153,36 +1154,53 @@ namespace HalloDocAdmin.Controllers
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
-            var model = GetDummyShiftData();
-            return View("Scheduling/index" , model);
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+            return View("Scheduling/index");
         }
 
-        private CalendarViewModel GetDummyShiftData()
-        {
-            var shifts = new List<ShiftView>();
 
-            for (int i = 1; i <= 20; i++)
+        public IActionResult CreateShift(ScheduleModel data)
+        {
+            try
             {
-                shifts.Add(new ShiftView
-                {
-                    Id = i,
-                    StartDate = DateTime.Today.AddDays(i % 5),
-                    IsPending = i % 2 == 0,
-                    ProviderId = i, // Just for demonstration, replace with actual provider IDs
-                    ProviderName = "Provider " + i, // Just for demonstration, replace with actual provider names
-                    ImagePath = "/upload/provider/" + i + "/photo.png" // Just for demonstration, replace with actual image paths
-                });
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.CreateShift(data, adminId);
+                TempData["Success"] = "Shift created successfully";
+                return Redirect("Scheduling/index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error while shift creation";
+                return Redirect("Scheduling/index");
+            }
+        }
+
+
+
+        /*For week wise Data*/
+
+        public IActionResult GetShiftByMonth(int? month, int? regionId)
+        {
+            var data = _adminFunctionRepository.GetShift((int)month, regionId);
+            return Json(data);
+        }
+
+        [HttpGet]
+        public IActionResult GetPhyscianDataForShift(int? region)
+        {
+            TempData["Status"] = TempData["Status"];
+
+            var data =  _adminFunctionRepository.PhysicianAll();
+
+            if (region != 0)
+            {
+                data = _adminFunctionRepository.PhysicianByRegion(region);
+
             }
 
-            var model = new CalendarViewModel
-            {
-                Shifts = shifts
-            };
-
-            return model;
+            return Json(data);
         }
-
-
 
 
         public IActionResult Logout()

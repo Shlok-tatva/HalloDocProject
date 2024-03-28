@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections;
+using HalloDoc_BAL.ViewModel.Schedule;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -1243,6 +1245,298 @@ namespace HalloDoc_BAL.Repository
                 transaction.Complete();
             }
         }
+
+
+
+        #region Scheduling
+        public void CreateShift(ScheduleModel data , int adminId)
+        {
+
+                using(var transaction = new TransactionScope())
+                {
+                Shift shift = new Shift();
+                shift.Physicianid = data.Physicianid;
+                shift.Repeatupto = data.Repeatupto;
+                shift.Startdate = data.Startdate;
+                shift.Createdby = _adminRepo.GetAdminById(adminId).Aspnetuserid;
+                shift.Createddate = DateTime.Now;
+                shift.Isrepeat = data.Isrepeat;
+                shift.Repeatupto = data.Repeatupto;
+                _context.Shifts.Add(shift);
+                _context.SaveChanges();
+
+                Shiftdetail sd = new Shiftdetail();
+                sd.Shiftid = shift.Shiftid;
+                sd.Shiftdate = new DateTime(data.Startdate.Year, data.Startdate.Month, data.Startdate.Day);
+                sd.Starttime = data.Starttime;
+                sd.Endtime = data.Endtime;
+                sd.Regionid = data.Regionid;
+                sd.Status = data.Status;
+                sd.Isdeleted= false;
+                _context.Shiftdetails.Add(sd);
+                _context.SaveChanges();
+
+                Shiftdetailregion sr = new Shiftdetailregion();
+                sr.Shiftdetailid = sd.Shiftdetailid;
+                sr.Regionid = data.Regionid;
+                sr.Isdeleted = false;
+                _context.Shiftdetailregions.Add(sr);
+                _context.SaveChanges();
+
+                List<int> day = data.checkWeekday.Split(',').Select(int.Parse).ToList();
+
+                foreach (int d in day)
+                {
+                    DayOfWeek desiredDayOfWeek = (DayOfWeek)d;
+                    DateTime today = DateTime.Today;
+                    DateTime nextOccurrence = new DateTime(data.Startdate.Year, data.Startdate.Month, data.Startdate.Day);
+                    int occurrencesFound = 0;
+                    while (occurrencesFound < data.Repeatupto)
+                    {
+                        if (nextOccurrence.DayOfWeek == desiredDayOfWeek)
+                        {
+
+                            Shiftdetail sdd = new Shiftdetail();
+                            sdd.Shiftid = shift.Shiftid;
+                            sdd.Shiftdate = nextOccurrence;
+                            sdd.Starttime = data.Starttime;
+                            sdd.Endtime = data.Endtime;
+                            sdd.Regionid = data.Regionid;
+                            sdd.Status = data.Status;
+                            sdd.Isdeleted = false;
+                            _context.Shiftdetails.Add(sdd);
+                            _context.SaveChanges();
+
+                            Shiftdetailregion srr = new Shiftdetailregion();
+                            srr.Shiftdetailid = sdd.Shiftdetailid;
+                            srr.Regionid = data.Regionid;
+                            srr.Isdeleted =  false;
+                            _context.Shiftdetailregions.Add(srr);
+                            _context.SaveChanges();
+                            occurrencesFound++;
+                        }
+                        nextOccurrence = nextOccurrence.AddDays(1);
+                    }
+                }
+
+                    transaction.Complete();
+             }
+
+
+        }
+
+
+        public List<ScheduleModel> PhysicianAll()
+        {
+
+            List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
+
+            List<CreateProviderView> pl = (from r in _context.Physicians
+                                         join Notifications in _context.Physiciannotifications
+                                         on r.Physicianid equals Notifications.Physicianid into aspGroup
+                                         from nof in aspGroup.DefaultIfEmpty()
+                                         join role in _context.Roles
+                                         on r.Roleid equals role.Roleid into roleGroup
+                                         from roles in roleGroup.DefaultIfEmpty()
+                                         where r.Isdeleted == false
+                                         select new CreateProviderView
+                                         {
+                                             Createddate = r.Createddate,
+                                             ProviderId = r.Physicianid,
+                                             Address1 = r.Address1,
+                                             Address2 = r.Address2,
+                                             Adminnotes = r.Adminnotes,
+                                             Altphone = r.Altphone,
+                                             businessName = r.Businessname,
+                                             businessWebsite = r.Businesswebsite,
+                                             city = r.City,
+                                             firstName = r.Firstname,
+                                             lastName = r.Lastname,
+                                             roleid = r.Roleid,
+                                             Status = r.Status,
+                                             email = r.Email,
+                                             photo = r.Photo
+                                         }).ToList();
+
+            foreach (CreateProviderView schedule in pl)
+            {
+                List<ScheduleModel> ss = (from s in _context.Shifts
+                                           join pd in _context.Physicians
+                                           on s.Physicianid equals pd.Physicianid
+                                           join sd in _context.Shiftdetails
+                                           on s.Shiftid equals sd.Shiftid into shiftGroup
+                                           from sd in shiftGroup.DefaultIfEmpty()
+                                           join rg in _context.Regions
+                                           on sd.Regionid equals rg.Regionid
+                                           where s.Physicianid == schedule.ProviderId && sd.Isdeleted == false
+                                           select new ScheduleModel
+                                           {
+                                               RegionName = rg.Name,
+                                               Shiftid = sd.Shiftdetailid,
+                                               Status = sd.Status,
+                                               Starttime = sd.Starttime,
+                                               Shiftdate = sd.Shiftdate,
+                                               Endtime = sd.Endtime,
+                                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+
+                                           }).ToList();
+
+                ScheduleModel temp = new ScheduleModel();
+                temp.PhysicianName = schedule.firstName + ' ' + schedule.lastName;
+                temp.PhysicianPhoto = schedule.photo;
+                temp.Physicianid = (int)schedule.ProviderId;
+                temp.DayList = ss;
+                ScheduleDetails.Add(temp);
+            }
+
+            return ScheduleDetails;
+
+
+        }
+
+        public List<ScheduleModel> PhysicianByRegion(int? region)
+        {
+            List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
+            List<CreateProviderView> pl = (
+                                        from pr in _context.Physicianregions
+
+                                        join ph in _context.Physicians
+                                         on pr.Physicianid equals ph.Physicianid into rGroup
+                                        from r in rGroup.DefaultIfEmpty()
+
+                                        join Notifications in _context.Physiciannotifications
+                                         on r.Physicianid equals Notifications.Physicianid into aspGroup
+                                        from nof in aspGroup.DefaultIfEmpty()
+
+                                        join role in _context.Roles
+                                        on r.Roleid equals role.Roleid into roleGroup
+                                        from roles in roleGroup.DefaultIfEmpty()
+
+                                        where pr.Regionid == region && r.Isdeleted == false
+                                        select new CreateProviderView
+                                        {
+                                            Createddate = r.Createddate,
+                                            ProviderId = r.Physicianid,
+                                            Address1 = r.Address1,
+                                            Address2 = r.Address2,
+                                            Adminnotes = r.Adminnotes,
+                                            Altphone = r.Altphone,
+                                            businessName = r.Businessname,
+                                            businessWebsite = r.Businesswebsite,
+                                            city = r.City,
+                                            firstName = r.Firstname,
+                                            lastName = r.Lastname,
+                                            roleid = r.Roleid,
+                                            Status = r.Status,
+                                            email = r.Email,
+                                            photo = r.Photo
+
+                                        }).ToList();
+
+
+            foreach (CreateProviderView schedule in pl)
+            {
+                List<ScheduleModel> ss = (from s in _context.Shifts
+                                           join pd in _context.Physicians
+                                           on s.Physicianid equals pd.Physicianid
+                                           join sd in _context.Shiftdetails
+                                           on s.Shiftid equals sd.Shiftid into shiftGroup
+                                           from sd in shiftGroup.DefaultIfEmpty()
+                                           join rg in _context.Regions
+                                           on sd.Regionid equals rg.Regionid
+                                           where s.Physicianid == schedule.ProviderId && sd.Isdeleted == false
+                                           select new ScheduleModel
+                                           {
+                                               RegionName = rg.Abbreviation,
+                                               Shiftid = sd.Shiftdetailid,
+                                               Status = sd.Status,
+                                               Starttime = sd.Starttime,
+                                               Shiftdate = sd.Shiftdate,
+                                               Endtime = sd.Endtime,
+                                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                                           }).ToList();
+
+                ScheduleModel temp = new ScheduleModel();
+                temp.PhysicianName = schedule.firstName + ' ' + schedule.lastName;
+                temp.PhysicianPhoto = schedule.photo;
+                temp.Physicianid = (int)schedule.ProviderId;
+                temp.DayList = ss;
+                ScheduleDetails.Add(temp);
+            }
+
+            return ScheduleDetails;
+
+        }
+
+        public List<ScheduleModel> GetShift(int month, int? regionId)
+        {
+            List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
+
+            var uniqueDates = _context.Shiftdetails
+                            .Where(sd => sd.Shiftdate.Month == month && sd.Isdeleted == false && (regionId == null || regionId == 0 || sd.Regionid == regionId))
+                            .Select(sd => sd.Shiftdate.Date) // Select the date part of Shiftdate
+                            .Distinct() // Get distinct dates
+                            .ToList();
+
+
+            foreach (DateTime schedule in uniqueDates)
+            {
+                List<ScheduleModel> ss = (from s in _context.Shifts
+                                           join pd in _context.Physicians
+                                           on s.Physicianid equals pd.Physicianid
+                                           join sd in _context.Shiftdetails
+                                           on s.Shiftid equals sd.Shiftid into shiftGroup
+                                           from sd in shiftGroup.DefaultIfEmpty()
+                                           where sd.Shiftdate == schedule && sd.Isdeleted == false
+                                           select new ScheduleModel
+                                           {
+                                               Shiftid = sd.Shiftdetailid,
+                                               Status = sd.Status,
+                                               Starttime = sd.Starttime,
+                                               Endtime = sd.Endtime,
+                                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                                           }).ToList();
+
+                ScheduleModel temp = new ScheduleModel();
+                temp.Shiftdate = schedule;
+                temp.DayList = ss;
+                ScheduleDetails.Add(temp);
+            }
+
+
+            return ScheduleDetails;
+
+        }
+
+
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public List<Healthprofessional> getAllVendors()
         {
