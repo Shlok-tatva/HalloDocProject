@@ -49,6 +49,9 @@ namespace HalloDoc_BAL.Repository
         List<ScheduleModel> PhysicianAll();
         List<ScheduleModel> PhysicianByRegion(int? region);
         List<ScheduleModel> GetShift(int month, int? regionId);
+        ScheduleModel GetShiftByShiftdetailId(int Shiftdetailid);
+        void EditShift(ScheduleModel shift, int adminId);
+        void Updateshiftstatus(int shiftId, int adminId);
 
 
 

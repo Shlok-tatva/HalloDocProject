@@ -1325,38 +1325,38 @@ namespace HalloDoc_BAL.Repository
 
         }
 
-
         public List<ScheduleModel> PhysicianAll()
         {
 
             List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
 
             List<CreateProviderView> pl = (from r in _context.Physicians
-                                         join Notifications in _context.Physiciannotifications
-                                         on r.Physicianid equals Notifications.Physicianid into aspGroup
-                                         from nof in aspGroup.DefaultIfEmpty()
-                                         join role in _context.Roles
-                                         on r.Roleid equals role.Roleid into roleGroup
-                                         from roles in roleGroup.DefaultIfEmpty()
-                                         where r.Isdeleted == false
-                                         select new CreateProviderView
-                                         {
-                                             Createddate = r.Createddate,
-                                             ProviderId = r.Physicianid,
-                                             Address1 = r.Address1,
-                                             Address2 = r.Address2,
-                                             Adminnotes = r.Adminnotes,
-                                             Altphone = r.Altphone,
-                                             businessName = r.Businessname,
-                                             businessWebsite = r.Businesswebsite,
-                                             city = r.City,
-                                             firstName = r.Firstname,
-                                             lastName = r.Lastname,
-                                             roleid = r.Roleid,
-                                             Status = r.Status,
-                                             email = r.Email,
-                                             photo = r.Photo
-                                         }).ToList();
+                                           join Notifications in _context.Physiciannotifications
+                                           on r.Physicianid equals Notifications.Physicianid into aspGroup
+                                           from nof in aspGroup.DefaultIfEmpty()
+                                           join role in _context.Roles
+                                           on r.Roleid equals role.Roleid into roleGroup
+                                           from roles in roleGroup.DefaultIfEmpty()
+                                           where r.Isdeleted == false
+                                           select new CreateProviderView
+                                           {
+                                               Createddate = r.Createddate,
+                                               ProviderId = r.Physicianid,
+                                               Address1 = r.Address1,
+                                               Address2 = r.Address2,
+                                               Adminnotes = r.Adminnotes,
+                                               Altphone = r.Altphone,
+                                               businessName = r.Businessname,
+                                               businessWebsite = r.Businesswebsite,
+                                               city = r.City,
+                                               firstName = r.Firstname,
+                                               lastName = r.Lastname,
+                                               roleid = r.Roleid,
+                                               regionName = _context.Regions.FirstOrDefault(r => r.Regionid  == (int)r.Regionid).Name,
+                                               Status = r.Status,
+                                               email = r.Email,
+                                               photo = r.Photo
+                                           }).ToList();
 
             foreach (CreateProviderView schedule in pl)
             {
@@ -1376,6 +1376,7 @@ namespace HalloDoc_BAL.Repository
                                                Status = sd.Status,
                                                Starttime = sd.Starttime,
                                                Shiftdate = sd.Shiftdate,
+
                                                Endtime = sd.Endtime,
                                                PhysicianName = pd.Firstname + ' ' + pd.Lastname,
 
@@ -1384,16 +1385,18 @@ namespace HalloDoc_BAL.Repository
                 ScheduleModel temp = new ScheduleModel();
                 temp.PhysicianName = schedule.firstName + ' ' + schedule.lastName;
                 temp.PhysicianPhoto = schedule.photo;
+                temp.RegionName = schedule.regionName;
                 temp.Physicianid = (int)schedule.ProviderId;
                 temp.DayList = ss;
                 ScheduleDetails.Add(temp);
+
             }
 
             return ScheduleDetails;
 
 
         }
-
+        
         public List<ScheduleModel> PhysicianByRegion(int? region)
         {
             List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
@@ -1427,6 +1430,7 @@ namespace HalloDoc_BAL.Repository
                                             firstName = r.Firstname,
                                             lastName = r.Lastname,
                                             roleid = r.Roleid,
+                                            regionName = _context.Regions.FirstOrDefault(r => r.Regionid == (int)r.Regionid).Name,
                                             Status = r.Status,
                                             email = r.Email,
                                             photo = r.Photo
@@ -1459,6 +1463,7 @@ namespace HalloDoc_BAL.Repository
                 ScheduleModel temp = new ScheduleModel();
                 temp.PhysicianName = schedule.firstName + ' ' + schedule.lastName;
                 temp.PhysicianPhoto = schedule.photo;
+                temp.RegionName = schedule.regionName; 
                 temp.Physicianid = (int)schedule.ProviderId;
                 temp.DayList = ss;
                 ScheduleDetails.Add(temp);
@@ -1508,6 +1513,58 @@ namespace HalloDoc_BAL.Repository
 
         }
 
+        public ScheduleModel GetShiftByShiftdetailId(int Shiftdetailid)
+        {
+
+            ScheduleModel shiftdata = (from s in _context.Shifts
+                           join pd in _context.Physicians
+                           on s.Physicianid equals pd.Physicianid
+                           join sd in _context.Shiftdetails
+                           on s.Shiftid equals sd.Shiftid into shiftGroup
+                           from sd in shiftGroup.DefaultIfEmpty()
+                           join rg in _context.Regions
+                           on sd.Regionid equals rg.Regionid
+                           where sd.Shiftdetailid == Shiftdetailid
+                           select new ScheduleModel
+                           {
+                               Regionid = (int)sd.Regionid,
+                               Shiftid = sd.Shiftdetailid,
+                               Status = sd.Status,
+                               Starttime = sd.Starttime,
+                               Endtime = sd.Endtime,
+                               Physicianid = s.Physicianid,
+                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                               Shiftdate = sd.Shiftdate
+                           })
+                                          .FirstOrDefault();
+
+            return shiftdata;
+        }
+
+        public void EditShift(ScheduleModel shift, int adminId)
+        {
+                Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shift.Shiftid);
+                    sd.Shiftdate = (DateTime)shift.Shiftdate;
+                    sd.Starttime = shift.Starttime;
+                    sd.Endtime = shift.Endtime;
+                    sd.Modifiedby = _adminRepo.GetAdminById(adminId).Aspnetuserid;
+                    sd.Modifieddate = DateTime.Now;
+                    _context.Shiftdetails.Update(sd);
+                    _context.SaveChanges();
+        }
+
+        public void Updateshiftstatus(int shiftId , int adminId)
+        {
+            Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shiftId);
+            var temp = sd.Status;
+            sd.Status = (temp == 0) ? (short)1 : (short)0;
+            var admin = _adminRepo.GetAdminById(adminId);
+            sd.Modifiedby = admin?.Aspnetuserid;
+            sd.Modifieddate = DateTime.Now;
+            _context.Shiftdetails.Update(sd);
+            _context.SaveChanges();
+
+        }
 
 
         #endregion

@@ -212,7 +212,7 @@
             </h3>
         </div>
         <div class="">
-            <a href="history.back()" class="btn btn-outline-info"> ❮  Back </a>
+            <button onclick="history.back()" class="btn btn-outline-info hover_white"> ❮  Back </button>
         </div>
     </div>
     <div class=" border-0  py-1 mx-3 mt-3 rounded">
@@ -228,13 +228,13 @@
             </div>
 
             <div class="col-md-9 mt-2 d-flex justify-content-end align-items-center">
-                    <a class="btn btn-info text-white mx-2">
+                    <a class="btn btn-info text-light mx-2">
                         Provider On Call
                     </a>
-                    <a class="btn btn-info text-white  mx-2">
+                    <a class="btn btn-info text-light  mx-2">
                         Shift Review
                     </a>
-                <button class="btn btn-info text-white mx-2 open-modal">Add New Shift  </button>
+                <button class="btn btn-info text-light mx-2 open-modal">Add New Shift  </button>
             </div>
         </div>
 
@@ -273,7 +273,7 @@
     </div>
 
 
-    <div id="monthcontainer" class="calendar-body  calendar-container">
+    <div style="display: block;" id="monthcontainer" class="calendar-body  calendar-container">
         <table class="calendar-table w-100 ">
             <thead>
                 <tr class="calendar-weekdays">
@@ -287,9 +287,9 @@
     </div>
 
 
-    <div style="display:none" id="weekviewcontainer" class="active">
+    <div style="display: none;" id="weekviewcontainer">
 
-        <table style="width:100%;">
+        <table class="w-100">
             <thead>
                 <tr class="weekhead">
                     <td>Staf</td>
@@ -319,7 +319,7 @@
         </table>
     </div>
 
-    <div id="daycontainer" style="display:none;">
+    <div style="display: none;"  id="daycontainer">
         <div class="schedule">
             <table class="employee-schedules w-100">
                 <thead class="employee-schedules-thead">
@@ -387,16 +387,16 @@
 
 </div>
 
-<!-- Modal -->
+<!-- All shift Modal Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered ">
         <div class="modal-content">
             <div class="modal-header bg-info text-center text-white">
                 <h1 class="modal-title fs-5" id="model-head"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Close</button>
@@ -406,3 +406,5 @@
 </div>
 
 <partial name="~/Views/Admin/Scheduling/_createShift.cshtml" model="Model" />
+<partial name="~/Views/Admin/Scheduling/_editShift.cshtml" model="Model" />
+

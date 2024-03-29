@@ -1,0 +1,175 @@
+﻿@model HalloDoc_BAL.ViewModel.Schedule.ScheduleModel;
+
+<div class="modal fade" id="editShiftModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content border-0">
+            <div class="modal-header  bg-info text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">View Shift</h1>
+                <button type="button" class="btn btn-transparent btn-icon btn-lg text-light" data-bs-dismiss="modal" aria-label="Close">
+                   <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
+                </button>
+            </div>
+
+            <div class=" modal-body container-fluid">
+                <form id="editShift" asp-action="EditShiftData" method="post" class="row">
+                    <input type="hidden" id="shiftid" asp-for="Shiftid" />
+                    <div class="form-floating my-3">
+                        <select asp-for="Regionid" class="p-2 px-3 form-select w-100 "  aria-label="Default select example" id="regioneditshift" disabled>
+                            <option value="" selected disabled>Regions</option>
+                            @foreach (var region in ViewBag.regions)
+                            {
+                                <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select class="form-select pt-1" asp-for="Physicianid" id="phyiscianeditshift" aria-label="Default select example" disabled>
+                            <option value="" selected disabled>Physician</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12 form-floating my-2">
+                        <input id="StartDateEdit" asp-for="Shiftdate" disabled class="form-control rounded vcs" name="Shiftdate" type="date" placeholder=Suchtext autocomplete>
+                        <label for="floatingInput">Starting Date</label>
+                        <span asp-validation-for="Shiftdate" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-floating my-2">
+                        <input id="StartTimeEdit" asp-for="Starttime" disabled class="form-control rounded vcs" name="Starttime" type="time" placeholder=Suchtext autocomplete=off>
+                        <label for="floatingInput">Start</label>
+                        <span asp-validation-for="Starttime" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-floating my-2">
+                        <input id="EndTimeEdit" asp-for="Endtime" disabled class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off>
+                        <label for="floatingInput">End</label>
+                        <span asp-validation-for="Endtime" class="text-danger"></span>
+                    </div>
+                    <input type="hidden" asp-for="Status" id="status" />
+
+                    <div class="row my-3">
+                        <div class="text-end col-md-12">
+                            <div class="btn btn-info text-white " onclick="updateShiftData()" id="retunrcall">Return</div>
+                            <input id="save" style="display:none" type="submit" value="Save" class="btn btn-info text-white js-btn-modal-form-submit" />
+                            <div id="edit" onclick="toggleDisabled()" class="btn btn-info text-white">Edit</div>
+                            <div id="delete" class="btn btn-danger">Delete</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function updateShiftData() {
+        var shiftid = $("#shiftid").val();
+        $.ajax({
+            type: "POST",
+            url: 'UpdateshiftStatus?shiftId=' + shiftid,
+            cache: false,
+            success: function (response) {
+                location.reload();
+            },
+            error: function () {
+                showToaster("Error while change status", "error");
+            }
+        });
+    }
+
+    //function deleteshift() {
+    //    var shiftid = $("#shiftid").val();
+    //    $.ajax({
+    //        type: "POST",
+    //        url: '@Url.Action("_DeleteShiftPost","Scheduling")?id=' + shiftid,
+    //        cache: false,
+    //        success: function (response) {
+
+    //            console.log(response);
+    //            location.reload();
+    //        },
+    //        error: function () {
+    //            alert("Error while checking email.");
+    //        }
+    //    });
+    //}
+
+
+    //document.getElementById('delete').addEventListener('click', (event) => {
+    //    event.preventDefault();
+
+    //    Swal.fire({
+    //        title: "Do you want delete shift ?",
+    //        showDenyButton: false,
+    //        showCancelButton: true,
+    //        confirmButtonText: "Yes",
+    //        denyButtonText: `Don't delete`
+    //    }).then((result) => {
+    //        if (result.isConfirmed) {
+    //            deleteshift();
+    //        }
+    //        console.log(result);
+    //        /* Read more about isConfirmed, isDenied below */
+    //        if (result.isConfirmed) {
+    //            Swal.fire("Save Changes!", "", "success");
+    //        } else if (result.isDenied) {
+    //            Swal.fire("Changes are not saved", "", "info");
+    //        }
+    //    });
+    //});
+    //var today = new Date();
+    //var formattedDate = today.toISOString().split('T')[0];
+    //document.getElementById('StartDate').min = formattedDate;
+    //document.getElementById('StartTime').addEventListener('change', function () {
+    //    var startTime = this.value;
+    //    document.getElementById('EndTime').min = startTime;
+    //    if (document.getElementById('EndTime').value < startTime) {
+    //        document.getElementById('EndTime').value = startTime;
+    //    }
+    //});
+
+    //document.getElementById('EndTime').addEventListener('change', function () {
+    //    const startTimeInput = document.getElementById('StartTime');
+    //    const endTimeInput = document.getElementById('EndTime');
+    //    const startTime = startTimeInput.value; // Get the value of start time
+    //    const endTime = endTimeInput.value; // Get the value of end time
+
+    //    // Convert start and end time strings to Date objects for comparison
+    //    const startDate = new Date('2000-01-01T' + startTime + ':00');
+    //    const endDate = new Date('2000-01-01T' + endTime + ':00');
+
+    //    // Check if end time is earlier than start time
+    //    if (endDate < startDate) {
+    //        Swal.fire({
+    //            icon: "error",
+    //            title: "Wrong End time...",
+    //            text: "End time cannot be earlier than start time!"
+    //        });
+    //        endTimeInput.value = ''; // Clear the end time input
+    //    }
+    //});
+
+    function toggleDisabled() {
+        var StartDate = document.getElementById('StartDateEdit');
+        var StartTime = document.getElementById('StartTimeEdit');
+        var EndTime = document.getElementById('EndTimeEdit');
+        var save = document.getElementById('save');
+        var edit = document.getElementById('edit');
+
+        if (StartDate.disabled) {
+            // Show the Save button and enable input fields
+            save.style.display = 'inline-block';
+            edit.style.display = 'none';
+            StartDate.disabled = false;
+            StartTime.disabled = false;
+            EndTime.disabled = false;
+        } else {
+            // Hide the Save button and disable input fields
+            edit.style.display = 'inline-block';
+            save.style.display = 'none';
+            StartDate.disabled = true;
+            StartTime.disabled = true;
+            EndTime.disabled = true;
+        }
+    }
+
+</script>

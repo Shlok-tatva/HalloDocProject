@@ -1165,17 +1165,17 @@ namespace HalloDocAdmin.Controllers
             try
             {
                 int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                data.Status = 1;
                 _adminFunctionRepository.CreateShift(data, adminId);
                 TempData["Success"] = "Shift created successfully";
-                return Redirect("Scheduling/index");
+                return Redirect("Scheduling");
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Error while shift creation";
-                return Redirect("Scheduling/index");
+                return Redirect("Scheduling");
             }
         }
-
 
 
         /*For week wise Data*/
@@ -1202,6 +1202,51 @@ namespace HalloDocAdmin.Controllers
             return Json(data);
         }
 
+        [HttpGet]
+        public IActionResult getShiftData(int shiftId)
+        {
+            try
+            {
+                var data = _adminFunctionRepository.GetShiftByShiftdetailId(shiftId);
+                return Ok(data);
+            }
+            catch(Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult EditShiftData(ScheduleModel data)
+        {
+            try
+            {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.EditShift(data, adminId);
+                TempData["Success"] = "Shift Edited successfully";
+                return Redirect("Scheduling");
+            }
+            catch(Exception ex )
+            {
+                TempData["Error"] = "Error While Shift Edit";
+                return Redirect("Scheduling");
+            }
+        }
+
+        public IActionResult UpdateshiftStatus(int shiftId)
+        {
+            try
+            {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.Updateshiftstatus(shiftId, adminId);
+                TempData["Success"] = "Shift Status Change Successful";
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         public IActionResult Logout()
         {

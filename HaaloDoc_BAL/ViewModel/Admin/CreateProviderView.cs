@@ -82,6 +82,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
 
         [Required(ErrorMessage = "Region is required")]
         public int regionId { get; set; }
+        public string? regionName { get; set; } // only for scheduling
         public int[] regionOfservice { get; set; }
 
         [Required(ErrorMessage = "Business Name is required")]

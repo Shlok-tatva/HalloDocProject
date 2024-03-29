@@ -1,19 +1,103 @@
 $(document).ready(function () {
 
-    $(".open-modal").on("click", function () {
+
+    $(document).on('click', '.open-modal', function () {
+        debugger;
+        var modalId = $(this).data("modal-id");
+
+        if (modalId == "editShiftModal") {
+
+            var shiftId = $(this).data("shiftid");
+            var data = getShiftData(shiftId);
+            console.log(data);
+
+            $("#shiftid").val(shiftId);
+            $("#regioneditshift").val(data.regionid);
+            $('#StartDateEdit').val(data.shiftdate.split('T')[0]); // Extracting date part only
+            $('#StartTimeEdit').val(data.starttime); 
+            $('#EndTimeEdit').val(data.endtime); 
+            $("#status").val(data.status);
+
+
+            getPhysicians(data.regionid, 'phyiscianeditshift', function () {
+                $("#phyiscianeditshift").val(data.physicianid);
+                $("#editShiftModal").modal("show");
+            });
+
+
+            $("#editShiftModal").modal("show");
+        }
+
+        else if (modalId == "#exampleModal") {
+            let index = parseInt($(this).data('index'));
+            let month = parseInt($(this).data('month'));
+            let shiftdate = new Date($(this).data('shiftdate'));
+
+            if (!isNaN(month)) {
+                $('#exampleModal').find('.model-head').empty();
+                $('#model-head').html(index + ' / ' + months[month] + ' / ' + year);
+                // Retrieve the corresponding dayDataArrayfinal
+                let foundItem = extractedDataArray.find(o => parseInt(o.date) === index);
+                let dayDataArrayfinal = foundItem ? foundItem.dayDataArray : [];
+
+                // Clear previous modal content
+                $('#exampleModal').find('.modal-body').empty();
+
+                // Populate modal with shift details
+                dayDataArrayfinal.forEach(item => {
+                    let shiftDetails = `
+                            <div class=" curser-pointer my-1 p-2 ${'Status-' + item.status} open-modal"  data-modal-id="editShiftModal" data-shiftid="${item.shiftid}">
+                            <div>Physician Name: ${item.physicianName}</div>
+                            <div>Start Time: ${item.startTime}</div>
+                            <div>End Time: ${item.endTime}</div>
+                            <div>
+                            `;
+                    $('#exampleModal .modal-body').append(shiftDetails);
+                });
+                    $(modalId).modal("show");
+            }
+
+            if (shiftdate != undefined) {
+                $('#exampleModal').find('.model-head').empty();
+                $('#model-head').html(shiftdate.getDate() + ' / ' + months[shiftdate.getMonth()] + ' / ' + shiftdate.getFullYear());
+                const matchingDates = providerList[index].dayList.filter(item => {
+                    const rshiftdate = new Date(item.shiftdate);
+                    return shiftdate.getDate() == rshiftdate.getDate() && shiftdate.getMonth() == rshiftdate.getMonth() + 1 && shiftdate.getFullYear() == rshiftdate.getFullYear();
+                });
+
+                $('#exampleModal').find('.modal-body').empty();
+
+                matchingDates.forEach((item, index) => {
+                    // Construct HTML for request details
+                    const requestHTML = `<div class=" my-1 p-2 ${'Status-' + item.status} open-modal" data-modal-id="editShiftModal" data-shiftid="${item.shiftid}" >
+                                    <div>Physician Name: ${item.physicianName}</div>
+                                            <div>Start Time: ${item.starttime}</div>
+                                    <div>End Time: ${item.endtime}</div>
+                                    <div>`;
+
+                    // Append request details to modal body
+                    $('#exampleModal .modal-body').append(requestHTML);
+                });
+
+                // Open the modal
+                $('#exampleModal').modal('show');
+            }
+
+        }
+
+        else {
         $("#createShiftModal").modal("show");
+        }
     })
 
 
 
-
-
-    var x = 1;
+    var x = 1; // for check either featch Provider by region or month 
     var providerList = [];
     var extractedDataArray = [];
+
     //Get Provider List in array
     function getProviderList() {
-        debugger;
         var regionId = $('#fregion').val();
         $.ajax({
             type: "GET",
@@ -39,6 +123,7 @@ $(document).ready(function () {
                                 starttime: dayItem.starttime,
                                 endtime: dayItem.endtime,
                                 isrepeat: dayItem.isrepeat,
+                                regionname : dayItem.regionName,
                                 checkWeekday: dayItem.checkWeekday,
                                 repeatupto: dayItem.repeatupto,
                                 status: dayItem.status,
@@ -58,6 +143,7 @@ $(document).ready(function () {
                         shiftdate: item.shiftdate,
                         starttime: item.starttime,
                         endtime: item.endtime,
+                        regionname: item.regionName,
                         isrepeat: item.isrepeat,
                         checkWeekday: item.checkWeekday,
                         repeatupto: item.repeatupto,
@@ -76,6 +162,9 @@ $(document).ready(function () {
             }
         });
     }
+    // Call the function to get provider list initially
+    getProviderList();
+
 
     function GetShiftForMonth(month) {
         var regionId = $('#fregion').val();
@@ -107,6 +196,7 @@ $(document).ready(function () {
                     if (Array.isArray(shift.dayList)) {
                         // Create an array to store day data
                         var dayDataArray = [];
+
                         // Iterate over dayList and store data
                         shift.dayList.forEach(function (day) {
                             var dayData = {
@@ -138,14 +228,11 @@ $(document).ready(function () {
             }
         });
     }
-
-    // Call the function to get provider list initially
-    getProviderList();
-
     let date = new Date();
     let year = date.getFullYear();
     let month = date.getMonth();
     console.log(month);
+
     GetShiftForMonth(month + 1);
 
     const day = document.querySelector(".calendar-dates");
@@ -218,17 +305,10 @@ $(document).ready(function () {
             lit += `<td class="table-text ${isToday} p-0"> 
                             <div class="first">${i}</div>
 
-                                    <div class="js-stkModal-btn ${Status.length > 0 ? 'Status-' + Status[0] : ''}"  data-form-id="formEdit_UMS"
-                                   data-url='@Url.Action("_EditShift", "Scheduling")?id=${ProviderNames.length > 0 ? ProviderNames[0].shiftid : ''}'
-                                           >${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
-
-                                            <div class="${Status.length > 1 ? 'Status-' + Status[1] : ''}" ><a data-form-id="formEdit_UMS"
-                                   data-url='@Url.Action("_EditShift", "Scheduling")?id=${ProviderNames.length > 1 ? ProviderNames[1].shiftid : ''}'
-                                           class="js-stkModal-btn ">${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</a></div>
-                                            <div class="${Status.length > 2 ? 'Status-' + Status[2] : ''}"><a data-form-id="formEdit_UMS"
-                                   data-url='@Url.Action("_EditShift", "Scheduling")?id=${ProviderNames.length > 2 ? ProviderNames[2].shiftid : ''}'
-                                           class="js-stkModal-btn ${Status.length > 2 ? 'Status-' + Status[2] : ''}">${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</a></div>
-                                    <div type="button"  id="${buttonId}" data-bs-toggle="modal" data-bs-target="${ProviderNames.length > 3 ? '#exampleModal' : ''}" data-month="${month}" data-index="${i}" class="${Status.length > 3 ? 'btn btn-info w-100 text-white rounded-0 view-all-btn' : ''}">${ProviderNames.length > 3 ? 'View All' : ''}</div>
+                                    <div class="${Status.length > 0 ? 'Status-' + Status[0] + ' open-modal' : ''}" data-modal-id="editShiftModal" data-shiftid = '${ProviderNames.length > 0 ? ProviderNames[0].shiftid : ''}'>${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
+                                    <div class="${Status.length > 1 ? 'Status-' + Status[1] + ' open-modal' : ''}" data-modal-id="editShiftModal" data-shiftid = '${ProviderNames.length > 1 ? ProviderNames[1].shiftid : ''}' >${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</div>
+                                    <div class="${Status.length > 2 ? 'Status-' + Status[2] + ' open-modal' : ''}" data-modal-id="editShiftModal" data-shiftid = '${ProviderNames.length > 2 ? ProviderNames[2].shiftid : ''}' >${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</div>
+                                    <div type="button" id="${buttonId}" data-modal-id="${ProviderNames.length > 3 ? '#exampleModal' : ''}" data-month="${month}" data-index="${i}" class="${Status.length > 3 ? 'btn btn-info w-100 text-white rounded-0 open-modal' : ''}">${ProviderNames.length > 3 ? 'View All' : ''}</div>
                         </td>`;
             dayCount++;
         }
@@ -246,36 +326,10 @@ $(document).ready(function () {
         // Update the HTML of the dates element with the generated calendar
         day.innerHTML = lit;
     };
-
-
-    $(document).on('click', '.view-all-btn', function () {
-
-        // Get the index associated with the clicked button
-        let index = parseInt($(this).data('index'));
-        let month = parseInt($(this).data('month'));
-        $('#model-head').html(index + ' / ' + months[month] + ' / ' + year);
-        // Retrieve the corresponding dayDataArrayfinal
-        let foundItem = extractedDataArray.find(o => parseInt(o.date) === index);
-        let dayDataArrayfinal = foundItem ? foundItem.dayDataArray : [];
-
-        // Clear previous modal content
-        $('.modal-body').empty();
-
-        // Populate modal with shift details
-        dayDataArrayfinal.forEach(item => {
-            let shiftDetails = `
-                                                            <div class=" my-1 p-2 ${'model-Status-' + item.status}" >
-                            <div>Physician Name: ${item.physicianName}</div>
-                            <div>Start Time: ${item.startTime}</div>
-                            <div>End Time: ${item.endTime}</div>
-                            <div>
-                            `;
-            $('.modal-body').append(shiftDetails);
-        });
-    });
-
-
     manipulate();
+
+
+
 
     // Attach a click event listener to each icon
     prenexIcons.forEach(icon => {
@@ -308,7 +362,8 @@ $(document).ready(function () {
     });
 
    // Event listener for the "Day" button
-    document.getElementById("day").addEventListener("click", () => {
+    $("#day").click(function (){
+        debugger
         $('#monthcontainer').hide();
         $('#weekviewcontainer').hide();
         $('#daycontainer').show();
@@ -445,7 +500,8 @@ $(document).ready(function () {
     });
 
     // Event listener for the "Week" button
-    document.getElementById("week").addEventListener("click", () => {
+    $("#week").click(function(){
+        debugger;
         x = 2;
         $('#monthcontainer').hide();
         $('#weekviewcontainer').show();
@@ -524,38 +580,6 @@ $(document).ready(function () {
 
             });
 
-            $(document).on('click', '.view-all-btn-week', function () {
-                // Clear modal body content
-                $('.modal-body').empty();
-
-                // Set modal title
-                // Get the index associated with the clicked button
-                let shiftdate = new Date($(this).data('shiftdate'));
-                let index = parseInt($(this).data('index'));
-
-                $('#model-head').html(shiftdate.getDate() + ' / ' + months[shiftdate.getMonth()] + ' / ' + shiftdate.getFullYear());
-
-                const matchingDates = providerList[index].dayList.filter(item => {
-                    const rshiftdate = new Date(item.shiftdate);
-                    return shiftdate.getDate() == rshiftdate.getDate() && shiftdate.getMonth() == rshiftdate.getMonth() + 1 && shiftdate.getFullYear() == rshiftdate.getFullYear();
-                });
-
-                matchingDates.forEach((item, index) => {
-                    // Construct HTML for request details
-                    const requestHTML = `<div class=" my-1 p-2 ${'model-Status-' + item.status}" >
-                                    <div>Physician Name: ${item.physicianName}</div>
-                                            <div>Start Time: ${item.starttime}</div>
-                                    <div>End Time: ${item.endtime}</div>
-                                    <div>`;
-
-                    // Append request details to modal body
-                    $('.modal-body').append(requestHTML);
-                });
-
-                // Open the modal
-                $('#exampleModal').modal('show');
-            });
-
             // Define function to load the week calendar--------------------------WEEk-------------------------TABLE-----------------------------------------------
             function loadWeekCalendar() {
                 x = 2;
@@ -598,18 +622,18 @@ $(document).ready(function () {
                                     if (matchingDates.length <= 2) {
                                         matchingDates.forEach((item, index) => {
                                             cell.classList.add('p-0');
-                                            cell.innerHTML += `<a data-form-id="formEdit_UMS" data-url="@Url.Action("_EditShift", "Scheduling")?id=${item.shiftid}" class="mt-1 d-block text-dark js-stkModal-btn w-Status-${item.status}">${item.starttime} - ${item.endtime}</a>`;
+                                            cell.innerHTML += `<div class="mt-1 d-block text-dark p-1 Status-${item.status} open-modal" data-modal-id="editShiftModal" data-shiftid = "${item.shiftid}" >  ${item.regionname} <br/> ${item.starttime} - ${item.endtime}</div>`;
                                         });
                                     } else {
                                         let buttonId = `viewAllButton_${i}${j}`;
                                         for (let i = 0; i < 2; i++) {
                                             const item = matchingDates[i];
                                             cell.classList.add('p-0');
-                                            cell.innerHTML += `<a data-form-id="formEdit_UMS" data-url="@Url.Action("_EditShift", "Scheduling")?id=${item.shiftid}" class="mt-1 d-block text-dark js-stkModal-btn w-Status-${item.status}">${item.starttime} - ${item.endtime}</a>`;
+                                            cell.innerHTML += `<div class="mt-1 d-block text-dark p-1 Status-${item.status} open-modal" data-modal-id="editShiftModal" data-shiftid = "${item.shiftid}" >  ${item.regionname} <br/> ${item.starttime} - ${item.endtime}</div>`;
                                         }
                                         const newdate = new Date(fdweek.getFullYear(), fdweek.getMonth() + 1, fdweek.getDate() + j - 2);
 
-                                        cell.innerHTML += `<div type="button" id="${buttonId}" data-bs-toggle="modal" data-bs-target="#exampleModal" data-shiftdate="${newdate}" data-index="${i}" class="btn btn-info w-100 text-white rounded-0 view-all-btn-week">View All</div>`;
+                                        cell.innerHTML += `<div type="button" id="${buttonId}" data-modal-id="#exampleModal"" data-shiftdate="${newdate}" data-index="${i}" class="btn btn-info w-100 text-white rounded-0 open-modal">View All</div>`;
                                     }
                                     const count = matchingDates.length;
                                 }
@@ -703,7 +727,8 @@ $(document).ready(function () {
     });
 
     // Event listener for the "Month" button
-    document.getElementById("month").addEventListener("click", () => {
+    $("#month").click(function(){
+        debugger;
         $('#monthcontainer').show();
         $('#weekviewcontainer').hide();
         $('#daycontainer').hide();
@@ -720,11 +745,23 @@ $(document).ready(function () {
             // Handle other cases if needed
         }
     });
-
+    /* function for get one Shift data and return it  */
 });
 
-window.onload = function () {
-    $('#monthcontainer').show();
-    $('#weekviewcontainer').hide();
-    $('#daycontainer').hide();
-};
+
+function getShiftData(shiftid) {
+    var shiftdata;
+    $.ajax({
+        url: '/Admin/getShiftData',
+        type: "GET",
+        data: { shiftid },
+        async: false,
+        success: function (data) {
+            shiftdata = data;
+        },
+        error: function () {
+            alert("Error while fetching Shift");
+        }
+    });
+    return shiftdata;
+}

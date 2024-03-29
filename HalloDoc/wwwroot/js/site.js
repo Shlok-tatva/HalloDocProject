@@ -142,39 +142,21 @@ function getRequest(requestId) {
 
 $(document).ready(function () {
     $('#selectregion').on('change', function () {
-        debugger
         var regionId = document.getElementById("selectregion").value;
         getPhysicians(regionId, "physicianSelect");
     })
 
     $('#selectregionTransfer').on('change', function () {
-        debugger
         var regionId = document.getElementById("selectregionTransfer").value;
         getPhysicians(regionId, "physicianSelectTransfer");
     })
 
-    function getPhysicians(regionId, physiciandropId) {
-        $.ajax({
-            url: '/Admin/GetPhysiciansByRegion', // Replace with your actual controller and action method
-            type: 'GET',
-            data: { regionId: regionId },
-            success: function (data) {
-                // Update the physician select dropdown with fetched data
-                console.log(data);
-                var physicianDropdown = document.getElementById(physiciandropId);
-                physicianDropdown.innerHTML = '';
-                data.forEach(function (physician) {
-                    var option = document.createElement("option");
-                    option.value = physician.id;
-                    option.text = physician.name;
-                    physicianDropdown.appendChild(option);
-                });
-            },
-            error: function () {
-                console.error('Failed to fetch physicians.');
-            }
-        });
-    }
+    $('#regioneditshift').on('change', function () {
+        var regionId = document.getElementById("regioneditshift").value;
+        getPhysicians(regionId, "phyiscianeditshift");
+    })
+
+   
 })
 
 
@@ -313,6 +295,34 @@ function showToaster(msg , icon) {
         didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+}
+
+function getPhysicians(regionId, physiciandropId, callback) {
+    $.ajax({
+        url: '/Admin/GetPhysiciansByRegion', // Replace with your actual controller and action method
+        type: 'GET',
+        data: { regionId: regionId },
+        success: function (data) {
+            // Update the physician select dropdown with fetched data
+            console.log(data);
+            var physicianDropdown = document.getElementById(physiciandropId);
+            physicianDropdown.innerHTML = '';
+            data.forEach(function (physician) {
+                var option = document.createElement("option");
+                option.value = physician.id;
+                option.text = physician.name;
+                physicianDropdown.appendChild(option);
+            });
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+
+        },
+        error: function () {
+            console.error('Failed to fetch physicians.');
         }
     });
 }
