@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Rotativa.AspNetCore;
@@ -72,6 +73,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
+        #region All-Options-requests
 
         [HttpPost]
         public IActionResult AssignCase(int requestId, int physicianId)
@@ -445,7 +447,9 @@ namespace HalloDocAdmin.Controllers
 
             return Ok();
         }
+        #endregion
 
+        #region Encounter-Page-and-PDFGenration
 
         [HttpGet]
         public IActionResult Encounter()
@@ -507,6 +511,9 @@ namespace HalloDocAdmin.Controllers
             };
 
         }
+        #endregion
+
+        #region Physician-location-page
 
         [RouteAuthFilter]
         public IActionResult ProviderLocation()
@@ -522,7 +529,9 @@ namespace HalloDocAdmin.Controllers
             var location = _adminFunctionRepository.GetPhysicianlocations();
             return Json(location);
         }
+        #endregion
 
+        #region Order-Page
         public IActionResult Orders()
         {
             var requestId = Request.Query["request"];
@@ -572,7 +581,9 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        #endregion
 
+        #region AdminProfile-page
         [RouteAuthFilter]
         public IActionResult AdminProfile()
         {
@@ -623,8 +634,9 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest();
             }
         }
+        #endregion
 
-
+        #region Provider-Page
         [RouteAuthFilter]
         public IActionResult Provider()
         {
@@ -809,6 +821,9 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
+#endregion
+
+        #region Partner-Page
 
         [RouteAuthFilter]
         [HttpGet]
@@ -950,7 +965,9 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        #endregion
 
+        #region UserAccess-And-RoleAccess
         public IActionResult Access()
         {
             ViewData["ViewName"] = "Access";
@@ -1148,8 +1165,9 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        #endregion
 
-
+        #region Scheduling
         public IActionResult Scheduling()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1247,6 +1265,52 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        public IActionResult DeleteShift(int shiftId)
+        {
+            try
+            {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                _adminFunctionRepository.DeleteShift(shiftId, adminId);
+                TempData["Success"] = "Shift Deleted Successful";
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        #endregion
+
+        #region MDs-on-Call
+
+        public IActionResult ProviderOnCall(int? regionId)
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Providers";
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+
+            List<CreateProviderView> data = _adminFunctionRepository.PhysicianOnCall(regionId);
+            if (regionId != null)
+            {
+                var filteredData = data.Select(d => new CreateProviderView
+                {
+                    ProviderId = d.ProviderId,
+                    onCallStatus = d.onCallStatus,
+                    firstName = d.firstName,
+                    lastName = d.lastName
+                }).ToList();
+
+                return Ok(filteredData);
+
+            }
+            return View("Scheduling/ProviderOnCall" , data);
+        }
+        #endregion
+
+
 
         public IActionResult Logout()
         {

@@ -10,14 +10,7 @@ label {
     top: -4px !important;
 }
 
-.ph-img {
-    width: 55px;
-    height: 55px;
-    border: 1px solid #0dcaf0;
-    border-radius: 65px;
-    padding: 2px;
-    margin: 2px 5px;
-}
+
 .alert-panding {
     background: lightcoral !important;
 }

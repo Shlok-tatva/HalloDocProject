@@ -326,3 +326,23 @@ function getPhysicians(regionId, physiciandropId, callback) {
         }
     });
 }
+
+
+$(document).ready(function () {
+    $('#regionProviderOncall').on('change', function () {
+        debugger;
+        var regionId = $(this).val();
+        $.ajax({
+            type: "GET",
+            url: 'ProviderOnCall?regionId=' + regionId,
+            cache: false,
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (error) {
+                console.log(error);
+                alert("Error while checking email.");
+            }
+        });
+    })
+})

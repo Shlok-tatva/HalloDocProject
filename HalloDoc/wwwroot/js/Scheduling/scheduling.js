@@ -14,8 +14,8 @@ $(document).ready(function () {
             $("#shiftid").val(shiftId);
             $("#regioneditshift").val(data.regionid);
             $('#StartDateEdit').val(data.shiftdate.split('T')[0]); // Extracting date part only
-            $('#StartTimeEdit').val(data.starttime); 
-            $('#EndTimeEdit').val(data.endtime); 
+            $('#StartTimeEdit').val(data.starttime);
+            $('#EndTimeEdit').val(data.endtime);
             $("#status").val(data.status);
 
 
@@ -46,7 +46,7 @@ $(document).ready(function () {
                 // Populate modal with shift details
                 dayDataArrayfinal.forEach(item => {
                     let shiftDetails = `
-                            <div class=" curser-pointer my-1 p-2 ${'Status-' + item.status} open-modal"  data-modal-id="editShiftModal" data-shiftid="${item.shiftid}">
+                            <div class=" curser-pointer my-1 p-2 ${'Status-' + item.status} open-modal text-black"  data-modal-id="editShiftModal" data-shiftid="${item.shiftid}">
                             <div>Physician Name: ${item.physicianName}</div>
                             <div>Start Time: ${item.startTime}</div>
                             <div>End Time: ${item.endTime}</div>
@@ -54,7 +54,7 @@ $(document).ready(function () {
                             `;
                     $('#exampleModal .modal-body').append(shiftDetails);
                 });
-                    $(modalId).modal("show");
+                $(modalId).modal("show");
             }
 
             if (shiftdate != undefined) {
@@ -69,7 +69,7 @@ $(document).ready(function () {
 
                 matchingDates.forEach((item, index) => {
                     // Construct HTML for request details
-                    const requestHTML = `<div class=" my-1 p-2 ${'Status-' + item.status} open-modal" data-modal-id="editShiftModal" data-shiftid="${item.shiftid}" >
+                    const requestHTML = `<div class=" my-1 p-2 ${'Status-' + item.status} open-modal text-black" data-modal-id="editShiftModal" data-shiftid="${item.shiftid}" >
                                     <div>Physician Name: ${item.physicianName}</div>
                                             <div>Start Time: ${item.starttime}</div>
                                     <div>End Time: ${item.endtime}</div>
@@ -86,7 +86,7 @@ $(document).ready(function () {
         }
 
         else {
-        $("#createShiftModal").modal("show");
+            $("#createShiftModal").modal("show");
         }
     })
 
@@ -153,8 +153,6 @@ $(document).ready(function () {
                     };
                     providerList.push(providerObj);
                 });
-                $('#week').click();
-                console.log('dd ' + x);
             },
             error: function () {
                 // Handle error
@@ -327,10 +325,6 @@ $(document).ready(function () {
         day.innerHTML = lit;
     };
     manipulate();
-
-
-
-
     // Attach a click event listener to each icon
     prenexIcons.forEach(icon => {
         // When an icon is clicked
@@ -360,6 +354,8 @@ $(document).ready(function () {
 
         });
     });
+
+
 
    // Event listener for the "Day" button
     $("#day").click(function (){
@@ -472,25 +468,41 @@ $(document).ready(function () {
 
                 shiftArrays.push(shiftArray);
 
-                for (let i = 0; i < 24; i++) {
+                        console.log(shiftidArray);
+                        console.log(regionArray);  
 
-                    const hour = i < 12 ? i === 0 ? 12 : i : i === 12 ? 12 : i - 12;
-                    const amPm = i < 12 ? 'AM' : 'PM';
+                for (let i = 0; i < 24; i++) {
                     const timeSlot = document.createElement('td');
 
-                    if (hoursArray[i] === 1) {
-                        timeSlot.innerHTML += `<a data-form-id="formEdit_UMS" data-url="@Url.Action("_EditShift", "Scheduling")?id=${shiftidArray[i]}" class="mt-1 d-block text-dark js-stkModal-btn fs-5 Status-1">${regionArray[i]}</a>`;
-                        timeSlot.classList.add('p-0');
-                    } else if (hoursArray[i] === 0.5) {
-                        timeSlot.innerHTML += `<a data-form-id="formEdit_UMS" data-url="@Url.Action("_EditShift", "Scheduling")?id=${shiftidArray[i]}" class="mt-1 d-block text-dark js-stkModal-btn fs-5 Status-0">${regionArray[i]}</a>`;
-                        timeSlot.classList.add('p-0');
-                    }
-                    else {
+                    if (hoursArray[i] === 1 || hoursArray[i] === 0.5) {
+                        const startTime = i;
+                        let endTime = i;
+                        const currentShiftId = shiftidArray[i];
+
+                        // Find the end time for the continuous slot
+                        while (endTime < 23 && (hoursArray[endTime + 1] === 1 || hoursArray[endTime + 1] === 0.5) && shiftidArray[endTime + 1] === currentShiftId) {
+                            endTime++;
+                        }
+
+                        const colspan = endTime - startTime + 1;
+                        timeSlot.colSpan = colspan;
+
+                        // Use start time for the link to edit shift
+                        (hoursArray[i] == 0.5) ? hoursArray[i] = 0 : hoursArray[i]; // just for color of the shift change the class name for that !
+                        timeSlot.innerHTML += `<div data-modal-id="editShiftModal"  data-shiftid="${currentShiftId}" class="mt-1 d-block text-dark text-center fs-5 open-modal">${regionArray[i]}</div>`;
+                        timeSlot.classList.add("p-2");
+                        timeSlot.classList.add(`Status-${hoursArray[i]}`);
+                        (hoursArray[i] == 0) ? hoursArray[i] = 0.5 : hoursArray[i];
+                        // Skip the next cells as they are merged
+                        i = endTime;
+                    } else {
                         timeSlot.textContent = '';
                         timeSlot.classList.add('shift');
                     }
                     employeeRow.appendChild(timeSlot);
                 }
+
+
                 employeeSchedulesContainer.appendChild(employeeRow);
             }
         }
@@ -745,9 +757,10 @@ $(document).ready(function () {
             // Handle other cases if needed
         }
     });
-    /* function for get one Shift data and return it  */
 });
 
+
+/* function for get one Shift data and return it  */
 
 function getShiftData(shiftid) {
     var shiftdata;

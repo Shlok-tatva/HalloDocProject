@@ -76,77 +76,73 @@
         });
     }
 
-    //function deleteshift() {
-    //    var shiftid = $("#shiftid").val();
-    //    $.ajax({
-    //        type: "POST",
-    //        url: '@Url.Action("_DeleteShiftPost","Scheduling")?id=' + shiftid,
-    //        cache: false,
-    //        success: function (response) {
-
-    //            console.log(response);
-    //            location.reload();
-    //        },
-    //        error: function () {
-    //            alert("Error while checking email.");
-    //        }
-    //    });
-    //}
+    function deleteshift() {
+       var shiftid = $("#shiftid").val();
+       $.ajax({
+           type: "POST",
+           url: 'DeleteShift?shiftid=' + shiftid,
+           cache: false,
+           success: function (response) {
+               location.reload();
+           },
+           error: function () {
+               alert("Error while checking email.");
+           }
+       });
+    }
 
 
-    //document.getElementById('delete').addEventListener('click', (event) => {
-    //    event.preventDefault();
+    document.getElementById('delete').addEventListener('click', (event) => {
+       event.preventDefault();
 
-    //    Swal.fire({
-    //        title: "Do you want delete shift ?",
-    //        showDenyButton: false,
-    //        showCancelButton: true,
-    //        confirmButtonText: "Yes",
-    //        denyButtonText: `Don't delete`
-    //    }).then((result) => {
-    //        if (result.isConfirmed) {
-    //            deleteshift();
-    //        }
-    //        console.log(result);
-    //        /* Read more about isConfirmed, isDenied below */
-    //        if (result.isConfirmed) {
-    //            Swal.fire("Save Changes!", "", "success");
-    //        } else if (result.isDenied) {
-    //            Swal.fire("Changes are not saved", "", "info");
-    //        }
-    //    });
-    //});
-    //var today = new Date();
-    //var formattedDate = today.toISOString().split('T')[0];
-    //document.getElementById('StartDate').min = formattedDate;
-    //document.getElementById('StartTime').addEventListener('change', function () {
-    //    var startTime = this.value;
-    //    document.getElementById('EndTime').min = startTime;
-    //    if (document.getElementById('EndTime').value < startTime) {
-    //        document.getElementById('EndTime').value = startTime;
-    //    }
-    //});
+       Swal.fire({
+            icon: "warning",
+           title: "Do you want delete shift ?",
+           showDenyButton: false,
+           showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#01BBE7",
+           confirmButtonText: "Yes",
+           cancelButtonText: `Don't delete`
+       }).then((result) => {
+           if (result.isConfirmed) {
+               deleteshift();
+           }
+       });
+    });
 
-    //document.getElementById('EndTime').addEventListener('change', function () {
-    //    const startTimeInput = document.getElementById('StartTime');
-    //    const endTimeInput = document.getElementById('EndTime');
-    //    const startTime = startTimeInput.value; // Get the value of start time
-    //    const endTime = endTimeInput.value; // Get the value of end time
+    var today = new Date();
+    var formattedDate = today.toISOString().split('T')[0];
+    document.getElementById('StartDateEdit').min = formattedDate;
+    document.getElementById('StartTimeEdit').addEventListener('change', function () {
+       var startTime = this.value;
+       document.getElementById('EndTimeEdit').min = startTime;
+       if (document.getElementById('EndTimeEdit').value < startTime) {
+           document.getElementById('EndTimeEdit').value = startTime;
+       }
+    });
 
-    //    // Convert start and end time strings to Date objects for comparison
-    //    const startDate = new Date('2000-01-01T' + startTime + ':00');
-    //    const endDate = new Date('2000-01-01T' + endTime + ':00');
+    document.getElementById('EndTimeEdit').addEventListener('change', function () {
+        debugger;
+       const startTimeInput = document.getElementById('StartTimeEdit');
+       const endTimeInput = document.getElementById('EndTimeEdit');
+       const startTime = startTimeInput.value; // Get the value of start time
+       const endTime = endTimeInput.value; // Get the value of end time
 
-    //    // Check if end time is earlier than start time
-    //    if (endDate < startDate) {
-    //        Swal.fire({
-    //            icon: "error",
-    //            title: "Wrong End time...",
-    //            text: "End time cannot be earlier than start time!"
-    //        });
-    //        endTimeInput.value = ''; // Clear the end time input
-    //    }
-    //});
+       // Convert start and end time strings to Date objects for comparison
+       const startDate = new Date('2000-01-01T' + startTime + ':00');
+       const endDate = new Date('2000-01-01T' + endTime + ':00');
+
+       // Check if end time is earlier than start time
+       if (endDate < startDate) {
+           Swal.fire({
+               icon: "error",
+               title: "Wrong End time...",
+               text: "End time cannot be earlier than start time!"
+           });
+           endTimeInput.value = ''; // Clear the end time input
+       }
+    });
 
     function toggleDisabled() {
         var StartDate = document.getElementById('StartDateEdit');

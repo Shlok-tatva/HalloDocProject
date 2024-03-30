@@ -1,176 +1,4 @@
-﻿@*@{
-    ViewData["Title"] = "Schudling";
-}
-@model HalloDoc_BAL.ViewModel.Admin.CalendarViewModel;
-
-@section Style {
-    <link rel="stylesheet" href="~/css/adminCss.css" />
-    <style>
-        tr{
-            border-bottom: none !important;
-        }
-        th{
-            background: #3c3c3c !important;
-            border:none !important;
-            border-left: 1px solid gray !important;
-            padding: 5px 0px !important;
-        }
-        /*Calender CSS*/
-        .fc-today-button {
-            margin: 0px 10px !important;
-            background-color: transparent !important;
-            border: none !important;
-            box-shadow: none;
-            background-image: url(../../../images/calendar.png) !important;
-            background-size: contain;
-            background-repeat: no-repeat;
-            width: 45px;
-            /* Hide the text. */
-            text-indent: 100%;
-            white-space: nowrap;
-            overflow: hidden !important;
-        }
-        .fc-today-button:hover{
-                /* Hide the text. */
-                text-indent: 100%;
-                white-space: nowrap;
-                overflow: hidden;
-        }
-
-        .fc-prev-button, .fc-next-button {
-            border-radius: 50px !important;
-            height: 50px !important;
-            width: 50px !important;
-            background: #0dcaf0 !important;
-            border: 0px !important;
-        }
-
-        .fc-col-header-cell-cushion {
-            text-decoration: none;
-            color: white;
-        }
-
-        .fc-daygrid-day-number {
-            /* display: block; */
-            background: #ff8af2;
-            width: 100%;
-            text-decoration: none;
-            color: black;
-        }
-
-        .fc-daygrid-more-link {
-            text-decoration: none;
-            background: #444444;
-            color: white;
-            width: 100%;
-        }
-        .fc-daygrid-more-link:hover{
-            color:black;
-           background: #444444;            
-        }
-            </style>
-}
-@section Scripts {
-    <script src="~/js/Partners.js"></script>
-
-    <script>
-        if (window.innerWidth > 530) {
-            document.getElementById('navbarHeader').classList.add("show");
-        }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-
-            var shifts = @Html.Raw(Json.Serialize(Model));
-
-            var events = shifts.shifts.map(function (shift) {
-                return {
-                    title: shift.providerName,
-                    start: new Date(shift.startDate),
-                    backgroundColor: shift.isPending ? 'red' : 'green',
-                    // display: 'background',
-                };
-            });
-
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                dayMaxEvents: true,
-                events: events,
-                eventClick: function (info) {
-                    $('#shiftDetailsModal').modal('show');
-                    $('#shiftDetailsModalTitle').text('Shift Details');
-                    $('#shiftDetailsModalBody').html('<p>Start Date: ' + info.event.start + '</p><p>Status: ' + (info.event.backgroundColor === 'red' ? 'Pending' : 'Approved') + '</p>');
-                },
-                views: {
-                    timeGridWeek: {
-                        type: 'timeGridWeek',
-                        columnHeaderFormat: { weekday: 'long' }
-                    }
-                },
-                headerToolbar: {
-                    left: 'prev,today,next',
-                    center: 'title',
-                    right: ''
-                },               
-            });
-
-            calendar.render();
-
-            $('#monthButton').click(function () {
-                calendar.changeView('dayGridMonth');
-            });
-
-            $('#dateButton').click(function () {
-                calendar.changeView('timeGridDay');
-            });
-
-            $('#weekButton').click(function () {
-                calendar.changeView('timeGridWeek');
-            });
-        });
-    </script>
-
-}
-
-<partial name="_NavBar" />
-
-<h1>Schudling</h1>
-
-<div class=" form_content m-auto mt-5">
-    <div class="d-flex justify-content-end">
-        <button type="button" id="dateButton" class="btn btn-outline-info hover_white"> Day </button>
-        <button type="button" id="weekButton" class="btn btn-outline-info hover_white mx-2"> Week </button>
-        <button type="button" id="monthButton" class="btn btn-outline-info hover_white"> Month </button>
-    </div>
-
-<div class="mt-5" id="calendar"></div>
-</div>
-
-
-
-<div class="modal fade" id="shiftDetailsModal" tabindex="-1" role="dialog" aria-labelledby="shiftDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="shiftDetailsModalLabel"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h5 id="shiftDetailsModalTitle"></h5>
-                <div id="shiftDetailsModalBody"></div>
-                <!-- Shift details will be inserted here dynamically -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>*@
-
-
-@model HalloDoc_BAL.ViewModel.Schedule.ScheduleModel;
+﻿@model HalloDoc_BAL.ViewModel.Schedule.ScheduleModel;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -228,7 +56,7 @@
             </div>
 
             <div class="col-md-9 mt-2 d-flex justify-content-end align-items-center">
-                    <a class="btn btn-info text-light mx-2">
+                    <a href="ProviderOnCall" class="btn btn-info text-light mx-2">
                         Provider On Call
                     </a>
                     <a class="btn btn-info text-light  mx-2">
@@ -325,30 +153,30 @@
                 <thead class="employee-schedules-thead">
                     <tr>
                         <td>Staff</td>
-                        <td>12 A</td>
-                        <td>1 A</td>
-                        <td>2 A</td>
-                        <td>3 A</td>
-                        <td>4 A</td>
-                        <td>5 A</td>
-                        <td>6 A</td>
-                        <td>7 A</td>
-                        <td>8 A</td>
-                        <td>9 A</td>
-                        <td>10 A</td>
-                        <td>11 A</td>
-                        <td>12 P</td>
-                        <td>1 P</td>
-                        <td>2 P</td>
-                        <td>3 P</td>
-                        <td>4 P</td>
-                        <td>5 P</td>
-                        <td>6 P</td>
-                        <td>7 P</td>
-                        <td>8 P</td>
-                        <td>9 P</td>
-                        <td>10 P</td>
-                        <td>11 P</td>
+                        <td>12A</td>
+                        <td>1A</td>
+                        <td>2A</td>
+                        <td>3A</td>
+                        <td>4A</td>
+                        <td>5A</td>
+                        <td>6A</td>
+                        <td>7A</td>
+                        <td>8A</td>
+                        <td>9A</td>
+                        <td>10A</td>
+                        <td>11A</td>
+                        <td>12P</td>
+                        <td>1P</td>
+                        <td>2P</td>
+                        <td>3P</td>
+                        <td>4P</td>
+                        <td>5P</td>
+                        <td>6P</td>
+                        <td>7P</td>
+                        <td>8P</td>
+                        <td>9P</td>
+                        <td>10P</td>
+                        <td>11P</td>
                     </tr>
                     <tr class="Converage">
                         <td>Converage</td>
@@ -395,7 +223,7 @@
                 <h1 class="modal-title fs-5" id="model-head"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div style="height: 350px !important" class="modal-body overflow-y-scroll">
                 
             </div>
             <div class="modal-footer">

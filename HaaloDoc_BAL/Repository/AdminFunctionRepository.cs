@@ -1566,10 +1566,73 @@ namespace HalloDoc_BAL.Repository
 
         }
 
+        public void DeleteShift(int shiftId, int adminId)
+        {
+            Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shiftId);
+            sd.Isdeleted = true;
+            var admin = _adminRepo.GetAdminById(adminId);
+            sd.Modifiedby = admin?.Aspnetuserid;
+            sd.Modifieddate = DateTime.Now;
+            _context.Shiftdetails.Update(sd);
+            _context.SaveChanges();
+        }
+
 
         #endregion
 
 
+        #region Provider-on-call
+        public List<CreateProviderView> PhysicianOnCall(int? region)
+        {
+            DateTime currentDateTime = DateTime.Now;
+            TimeOnly currentTimeOfDay = TimeOnly.FromDateTime(DateTime.Now);
+            List<CreateProviderView> providerList = (from r in _context.Physicians
+                                                     where r.Isdeleted == false && (region == null || region == 0 || r.Regionid == region)
+                                                     select new CreateProviderView
+                                                     {
+                                                         Createddate = r.Createddate,
+                                                         ProviderId = r.Physicianid,
+                                                         Address1 = r.Address1,
+                                                         Address2 = r.Address2,
+                                                         Adminnotes = r.Adminnotes,
+                                                         Altphone = r.Altphone,
+                                                         businessName = r.Businessname,
+                                                         businessWebsite = r.Businesswebsite,
+                                                         city = r.City,
+                                                         firstName = r.Firstname,
+                                                         lastName = r.Lastname,
+                                                         Status = r.Status,
+                                                         email = r.Email,
+                                                         photo = r.Photo
+                                                     }).ToList();
+
+            foreach (var item in providerList)
+            {
+                List<int> shiftIds = (from s in _context.Shifts
+                                            where s.Physicianid == item.ProviderId
+                                            select s.Shiftid).ToList();
+
+                foreach (var shift in shiftIds)
+                {
+                    var shiftDetail = (from sd in _context.Shiftdetails
+                                       where sd.Shiftid == shift &&
+                                             sd.Shiftdate.Date == currentDateTime.Date &&
+                                             sd.Starttime <= currentTimeOfDay &&
+                                             currentTimeOfDay <= sd.Endtime
+                                       select sd).FirstOrDefault();
+
+                    if (shiftDetail != null)
+                    {
+                        item.onCallStatus = 1;
+                    }
+                }
+            }
+
+            return providerList;
+
+
+        }
+        #endregion
 
 
 

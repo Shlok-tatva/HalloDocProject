@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Physician On Call Status";
+}
+@model List<HalloDoc_BAL.ViewModel.Admin.CreateProviderView>;
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+
+       
+
+    </script>
+
+
+}
+
+<partial name="_NavBar" />
+<div class=" my-5 container m-auto">
+    <div class="mt-4 m-auto form_content">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">MD's On Call</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-md-4">
+                <select class="form-control mb-3 w-100" id="regionProviderOncall">
+                    <option value="0">All</option>
+                    @foreach (var region in @ViewBag.regions)
+                    {
+                        <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-8 text-end">
+                <a href="/admin/Scheduling" class="btn btn-info text-light mx-2"> Calender View</a>
+                <a href="/admin/Scheduling" class="btn btn-info text-light"> Shift for Review</a>
+            </div>
+        </div>
+
+        <div class="shadow p-3 mt-3 rounded-2">
+            <div class="m-auto p-4 rounded-3">
+                <div class="mb-4">
+                    <h5 class="fw-semibold">MD's On Call</h5>
+                    <div class="mt-2 row ">
+                        @foreach (var provider in Model)
+                        {
+                            if (provider.onCallStatus == 1)
+                            {
+                                <div class="col-md-4 my-2">
+                                    <img class="img-fluid ph-img" src="/Upload/physician/@provider.ProviderId/photo.png" alt="@provider.firstName @provider.lastName" /> <spam>@provider.firstName @provider.lastName</spam>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <h5 class="fw-semibold">Physician Off Duty</h5>
+                    <div class="mt-2 row">
+                        @foreach (var provider in Model)
+                        {
+                            if (provider.onCallStatus == null)
+                            {
+                                <div class="col-md-4 my-2">
+                                    <img class="img-fluid ph-img" src="/Upload/physician/@provider.ProviderId/photo.png" alt="@provider.firstName @provider.lastName" /> <spam>@provider.firstName @provider.lastName</spam>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

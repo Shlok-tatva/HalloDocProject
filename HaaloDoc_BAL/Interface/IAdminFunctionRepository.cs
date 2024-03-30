@@ -52,6 +52,10 @@ namespace HalloDoc_BAL.Repository
         ScheduleModel GetShiftByShiftdetailId(int Shiftdetailid);
         void EditShift(ScheduleModel shift, int adminId);
         void Updateshiftstatus(int shiftId, int adminId);
+        void DeleteShift(int shiftId, int adminId);
+
+
+        List<CreateProviderView> PhysicianOnCall(int? region);
 
 
 
