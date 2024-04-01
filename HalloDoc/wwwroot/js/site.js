@@ -328,6 +328,8 @@ function getPhysicians(regionId, physiciandropId, callback) {
 }
 
 
+
+/*provider On Call*/
 $(document).ready(function () {
     $('#regionProviderOncall').on('change', function () {
         debugger;
@@ -337,7 +339,27 @@ $(document).ready(function () {
             url: 'ProviderOnCall?regionId=' + regionId,
             cache: false,
             success: function (response) {
+                $(".oncalldiv").empty();
+                $(".offcalldiv").empty();
+
                 console.log(response);
+                response.forEach(function (item) {
+                    var div = document.createElement('div');
+                    div.className = 'col-md-4 my-2';
+                    var img = document.createElement('img');
+                    img.src = '/Upload/physician/' + item.providerId + '/photo.png';
+                    img.classList.add("ph-img");
+                    var span = document.createElement('span');
+                    span.textContent = item.firstName + ' ' + item.lastName;
+                    div.appendChild(img);
+                    div.appendChild(span);
+
+                    if (item.onCallStatus === 1) {
+                        $(".oncalldiv").append(div);
+                    } else if (item.onCallStatus === null) {
+                        $(".offcalldiv").append(div);
+                    }
+                });
             },
             error: function (error) {
                 console.log(error);

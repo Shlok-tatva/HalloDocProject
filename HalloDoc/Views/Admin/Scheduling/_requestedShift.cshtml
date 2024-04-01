@@ -1,0 +1,17 @@
+﻿@model List<HalloDoc_BAL.ViewModel.Schedule.ScheduleModel>;
+
+
+
+    @foreach (var shift in Model)
+    {
+        <tr data-shiftid="@shift.Shiftid">
+            <td><input type="checkbox" class="shiftcheckBox"></td>
+            <td>@shift.PhysicianName</td>
+            @{
+                DateTime date = (DateTime)shift.Shiftdate;
+            }
+            <td>@date.ToString("MMM d, yyyy")</td>
+            <td>@shift.Starttime.ToString("hh:mm tt") - @shift.Endtime.ToString("hh:mm tt")</td>
+            <td>@shift.RegionName</td>
+        </tr>
+    }

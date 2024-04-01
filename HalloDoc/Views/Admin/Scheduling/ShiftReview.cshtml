@@ -1,0 +1,68 @@
+﻿@using System.Globalization;
+@{
+    ViewData["Title"] = "Shift For Review";
+}
+@model List<HalloDoc_BAL.ViewModel.Schedule.ScheduleModel>;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+    <script src="~/js/Scheduling/RequestedShift.js"></script>
+
+
+}
+
+<partial name="_NavBar" />
+<div class=" my-5 container m-auto">
+    <div class="mt-4 m-auto form_content">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">Requested Shift</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+
+        <div class="row mt-4 shadow ">
+            <div class="col-md-4">
+                <select class="form-control mb-3 w-100" id="regionRequestedShift">
+                    <option value="0">All</option>
+                    @foreach (var region in @ViewBag.regions)
+                    {
+                        <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-8 text-end">
+                <button class="btn btn-success text-light mx-2">View Current Month Shifts</button>
+                <button id="approvedShift" class="btn btn-success text-light">Approved Selected</button>
+                <button id="deleteShift" class="btn btn-danger text-light">Deleted Selected</button>
+            </div>
+
+            <div class="col-12">
+                <table class="w-100 table" cellspacing="15" cellspadding="15">
+                    <thead>
+                        <tr class="table-light">
+                            <th><input type="checkbox" id="selectAllCheckbox" class="border-black border-opacity-50"></th>
+                            <th>Staff <i class="bi bi-arrow-up"></i> </th>
+                            <th>Day</th>
+                            <th>Time</th>
+                            <th>Region</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestedShiftTbody">
+                    <partial name="~/Views/Admin/Scheduling/_requestedShift.cshtml" model="Model" />
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>

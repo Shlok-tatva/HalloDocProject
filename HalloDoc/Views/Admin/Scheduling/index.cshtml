@@ -46,8 +46,8 @@
     <div class=" border-0  py-1 mx-3 mt-3 rounded">
         <div class="row">
             <div class="col-md-3 mt-2">
-                    <select class="p-2 mt-3 px-4 form-control mb-3 w-100 " id="fregion">
-                        <option value="0">All</option>
+                <select class="p-2 mt-3 px-4 form-control mb-3 w-100 " id="fregion">
+                    <option value="0">All Regions</option>
                         @foreach (var region in @ViewBag.regions)
                         {
                             <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
@@ -59,7 +59,7 @@
                     <a href="ProviderOnCall" class="btn btn-info text-light mx-2">
                         Provider On Call
                     </a>
-                    <a class="btn btn-info text-light  mx-2">
+                    <a href="ShiftReview" class="btn btn-info text-light  mx-2">
                         Shift Review
                     </a>
                 <button class="btn btn-info text-light mx-2 open-modal">Add New Shift  </button>
@@ -232,6 +232,7 @@
         </div>
     </div>
 </div>
+
 
 <partial name="~/Views/Admin/Scheduling/_createShift.cshtml" model="Model" />
 <partial name="~/Views/Admin/Scheduling/_editShift.cshtml" model="Model" />

@@ -1295,7 +1295,7 @@ namespace HalloDocAdmin.Controllers
             List<CreateProviderView> data = _adminFunctionRepository.PhysicianOnCall(regionId);
             if (regionId != null)
             {
-                var filteredData = data.Select(d => new CreateProviderView
+                var filteredData = data.Select(d => new 
                 {
                     ProviderId = d.ProviderId,
                     onCallStatus = d.onCallStatus,
@@ -1303,14 +1303,27 @@ namespace HalloDocAdmin.Controllers
                     lastName = d.lastName
                 }).ToList();
 
-                return Ok(filteredData);
+                return Json(filteredData);
 
             }
             return View("Scheduling/ProviderOnCall" , data);
         }
         #endregion
 
-
+        public IActionResult ShiftReview(int? regionId)
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Providers";
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+            List<ScheduleModel> data = _adminFunctionRepository.GetAllNotApprovedShift(null);
+            if (regionId != null)
+            {
+                data = _adminFunctionRepository.GetAllNotApprovedShift(regionId);
+                return PartialView("Scheduling/_requestedShift", data);
+            }
+            return View("Scheduling/ShiftReview" , data);
+        }
 
         public IActionResult Logout()
         {

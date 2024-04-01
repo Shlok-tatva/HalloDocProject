@@ -52,14 +52,15 @@ $(document).ready(function () {
                             <div>End Time: ${item.endTime}</div>
                             <div>
                             `;
-                    $('#exampleModal .modal-body').append(shiftDetails);
+                    console.log(shiftDetails);
+                    console.log($('#exampleModal').find('.modal-body'));
+                    $('#exampleModal').find('.modal-body').append(shiftDetails);
                 });
                 $(modalId).modal("show");
             }
-
-            if (shiftdate != undefined) {
+            if ($(this).data('shiftdate') != undefined) {
                 $('#exampleModal').find('.model-head').empty();
-                $('#model-head').html(shiftdate.getDate() + ' / ' + months[shiftdate.getMonth()] + ' / ' + shiftdate.getFullYear());
+                $('#model-head').html(shiftdate.getDate() + ' / ' + months[shiftdate.getMonth() - 1] + ' / ' + shiftdate.getFullYear());
                 const matchingDates = providerList[index].dayList.filter(item => {
                     const rshiftdate = new Date(item.shiftdate);
                     return shiftdate.getDate() == rshiftdate.getDate() && shiftdate.getMonth() == rshiftdate.getMonth() + 1 && shiftdate.getFullYear() == rshiftdate.getFullYear();
@@ -99,13 +100,14 @@ $(document).ready(function () {
     //Get Provider List in array
     function getProviderList() {
         var regionId = $('#fregion').val();
+        console.log(regionId);
         $.ajax({
             type: "GET",
             url: 'GetPhyscianDataForShift',
             data: { region: regionId },
             dataType: "json",
             success: function (response) {
-
+                debugger
                 providerList = [];
                 // Array to store converted objects
                 response.forEach(function (item) {
@@ -153,16 +155,20 @@ $(document).ready(function () {
                     };
                     providerList.push(providerObj);
                 });
+                if (x == 2) {
+                    $("#week").click();
+                }
+                else if (x == 3) {
+                    $("#day").click();
+                }
             },
             error: function () {
+                debugger
                 // Handle error
                 console.error("Error fetching provider list");
             }
         });
     }
-    // Call the function to get provider list initially
-    getProviderList();
-
 
     function GetShiftForMonth(month) {
         var regionId = $('#fregion').val();
@@ -214,6 +220,7 @@ $(document).ready(function () {
                     // Push extracted data into the array
                     extractedDataArray.push(extractedData);
                 });
+                debugger
                 console.log(extractedDataArray);
                 $('#month').click();
                 manipulate();
@@ -226,6 +233,7 @@ $(document).ready(function () {
             }
         });
     }
+
     let date = new Date();
     let year = date.getFullYear();
     let month = date.getMonth();
@@ -324,7 +332,9 @@ $(document).ready(function () {
         // Update the HTML of the dates element with the generated calendar
         day.innerHTML = lit;
     };
+
     manipulate();
+
     // Attach a click event listener to each icon
     prenexIcons.forEach(icon => {
         // When an icon is clicked
@@ -356,15 +366,16 @@ $(document).ready(function () {
     });
 
 
+    getProviderList();
 
    // Event listener for the "Day" button
-    $("#day").click(function (){
+    $("#day").click(function () {
+        x = 3;
         debugger
         $('#monthcontainer').hide();
         $('#weekviewcontainer').hide();
         $('#daycontainer').show();
 
-        x = 3;
         // Define variables for current date and month
         let currentDate = new Date();
         let currentMonth = currentDate.getMonth();
@@ -512,7 +523,7 @@ $(document).ready(function () {
     });
 
     // Event listener for the "Week" button
-    $("#week").click(function(){
+    $("#week").click(function () {
         debugger;
         x = 2;
         $('#monthcontainer').hide();
@@ -738,6 +749,11 @@ $(document).ready(function () {
         }
     });
 
+
+
+
+
+
     // Event listener for the "Month" button
     $("#month").click(function(){
         debugger;
@@ -749,12 +765,12 @@ $(document).ready(function () {
     });
 
     $('#fregion').on('change', function () {
+        debugger
         if (x == 1) {
             GetShiftForMonth(month + 1);
-        } else if (x == 2) {
+        } else if (x == 2 || x == 3) {
             getProviderList();
         } else {
-            // Handle other cases if needed
         }
     });
 });

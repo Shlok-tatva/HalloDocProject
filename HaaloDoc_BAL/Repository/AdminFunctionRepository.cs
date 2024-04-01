@@ -1020,7 +1020,7 @@ namespace HalloDoc_BAL.Repository
         public List<ProviderInfoAdmin> getProviderInfoView()
         {
             List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
-            List<Physician> providers = _context.Physicians.Where(p=>p.Isdeleted == false).ToList();
+            List<Physician> providers = _context.Physicians.Where(p => p.Isdeleted == false).ToList();
             providers.Sort((a, b) => b.Physicianid - a.Physicianid);
             foreach (Physician pro in providers)
             {
@@ -1031,7 +1031,7 @@ namespace HalloDoc_BAL.Repository
                 provider.providerPhone = pro.Mobile;
                 provider.providerStatus = pro.Status;
 
-                provider.providerRole = _context.Roles.FirstOrDefault(r=>r.Roleid == pro.Roleid).Name;
+                provider.providerRole = _context.Roles.FirstOrDefault(r => r.Roleid == pro.Roleid).Name;
                 provider.stopNotification = providerNotificationStatus(pro.Physicianid);
                 providerInfoAdmin.Add(provider);
             }
@@ -1118,7 +1118,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void DeleteRole(int adminId , int roleId)
+        public void DeleteRole(int adminId, int roleId)
         {
             Admin admin = _context.Admins.FirstOrDefault(a => a.Adminid == adminId);
             Role role = _context.Roles.FirstOrDefault(r => r.Roleid == roleId);
@@ -1142,7 +1142,7 @@ namespace HalloDoc_BAL.Repository
                 return new List<UserAccessView>(); // If an invalid roleId is passed, return empty list
             }
 
-            List<Aspnetuser> allUser = usersQuery.Where(u=>u.Roleid == 1 || u.Roleid == 2).ToList();
+            List<Aspnetuser> allUser = usersQuery.Where(u => u.Roleid == 1 || u.Roleid == 2).ToList();
             List<UserAccessView> viewlist = new List<UserAccessView>();
 
             foreach (var item in allUser)
@@ -1189,9 +1189,9 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void createAdmin(CreateAdminView data , int[] regions , int adminId)
+        public void createAdmin(CreateAdminView data, int[] regions, int adminId)
         {
-            using(var transaction  = new TransactionScope())
+            using (var transaction = new TransactionScope())
             {
                 Aspnetuser user = new Aspnetuser();
                 Guid guid = Guid.NewGuid();
@@ -1211,7 +1211,7 @@ namespace HalloDoc_BAL.Repository
 
                 Admin admin = new Admin();
                 Admin accountcreatedAdmin = _adminRepo.GetAdminById(adminId);
-                
+
                 admin.Aspnetuserid = user.Id;
                 admin.Firstname = data.FirstName;
                 admin.Lastname = data.LastName;
@@ -1249,11 +1249,11 @@ namespace HalloDoc_BAL.Repository
 
 
         #region Scheduling
-        public void CreateShift(ScheduleModel data , int adminId)
+        public void CreateShift(ScheduleModel data, int adminId)
         {
 
-                using(var transaction = new TransactionScope())
-                {
+            using (var transaction = new TransactionScope())
+            {
                 Shift shift = new Shift();
                 shift.Physicianid = data.Physicianid;
                 shift.Repeatupto = data.Repeatupto;
@@ -1272,7 +1272,7 @@ namespace HalloDoc_BAL.Repository
                 sd.Endtime = data.Endtime;
                 sd.Regionid = data.Regionid;
                 sd.Status = data.Status;
-                sd.Isdeleted= false;
+                sd.Isdeleted = false;
                 _context.Shiftdetails.Add(sd);
                 _context.SaveChanges();
 
@@ -1283,44 +1283,46 @@ namespace HalloDoc_BAL.Repository
                 _context.Shiftdetailregions.Add(sr);
                 _context.SaveChanges();
 
-                List<int> day = data.checkWeekday.Split(',').Select(int.Parse).ToList();
-
-                foreach (int d in day)
+                if (data.Isrepeat == true && data.checkWeekday.Length > 0)
                 {
-                    DayOfWeek desiredDayOfWeek = (DayOfWeek)d;
-                    DateTime today = DateTime.Today;
-                    DateTime nextOccurrence = new DateTime(data.Startdate.Year, data.Startdate.Month, data.Startdate.Day);
-                    int occurrencesFound = 0;
-                    while (occurrencesFound < data.Repeatupto)
+                    List<int> day = data.checkWeekday.Split(',').Select(int.Parse).ToList();
+
+                    foreach (int d in day)
                     {
-                        if (nextOccurrence.DayOfWeek == desiredDayOfWeek)
+                        DayOfWeek desiredDayOfWeek = (DayOfWeek)d;
+                        DateTime nextOccurrence = new DateTime(data.Startdate.Year, data.Startdate.Month, data.Startdate.Day + 1);
+                        int occurrencesFound = 0;
+                        while (occurrencesFound < data.Repeatupto)
                         {
+                            if (nextOccurrence.DayOfWeek == desiredDayOfWeek)
+                            {
 
-                            Shiftdetail sdd = new Shiftdetail();
-                            sdd.Shiftid = shift.Shiftid;
-                            sdd.Shiftdate = nextOccurrence;
-                            sdd.Starttime = data.Starttime;
-                            sdd.Endtime = data.Endtime;
-                            sdd.Regionid = data.Regionid;
-                            sdd.Status = data.Status;
-                            sdd.Isdeleted = false;
-                            _context.Shiftdetails.Add(sdd);
-                            _context.SaveChanges();
+                                Shiftdetail sdd = new Shiftdetail();
+                                sdd.Shiftid = shift.Shiftid;
+                                sdd.Shiftdate = nextOccurrence;
+                                sdd.Starttime = data.Starttime;
+                                sdd.Endtime = data.Endtime;
+                                sdd.Regionid = data.Regionid;
+                                sdd.Status = data.Status;
+                                sdd.Isdeleted = false;
+                                _context.Shiftdetails.Add(sdd);
+                                _context.SaveChanges();
 
-                            Shiftdetailregion srr = new Shiftdetailregion();
-                            srr.Shiftdetailid = sdd.Shiftdetailid;
-                            srr.Regionid = data.Regionid;
-                            srr.Isdeleted =  false;
-                            _context.Shiftdetailregions.Add(srr);
-                            _context.SaveChanges();
-                            occurrencesFound++;
+                                Shiftdetailregion srr = new Shiftdetailregion();
+                                srr.Shiftdetailid = sdd.Shiftdetailid;
+                                srr.Regionid = data.Regionid;
+                                srr.Isdeleted = false;
+                                _context.Shiftdetailregions.Add(srr);
+                                _context.SaveChanges();
+                                occurrencesFound++;
+                            }
+                            nextOccurrence = nextOccurrence.AddDays(1);
                         }
-                        nextOccurrence = nextOccurrence.AddDays(1);
                     }
                 }
 
-                    transaction.Complete();
-             }
+                transaction.Complete();
+            }
 
 
         }
@@ -1352,7 +1354,7 @@ namespace HalloDoc_BAL.Repository
                                                firstName = r.Firstname,
                                                lastName = r.Lastname,
                                                roleid = r.Roleid,
-                                               regionName = _context.Regions.FirstOrDefault(r => r.Regionid  == (int)r.Regionid).Name,
+                                               regionName = _context.Regions.FirstOrDefault(r => r.Regionid == (int)r.Regionid).Name,
                                                Status = r.Status,
                                                email = r.Email,
                                                photo = r.Photo
@@ -1361,26 +1363,26 @@ namespace HalloDoc_BAL.Repository
             foreach (CreateProviderView schedule in pl)
             {
                 List<ScheduleModel> ss = (from s in _context.Shifts
-                                           join pd in _context.Physicians
-                                           on s.Physicianid equals pd.Physicianid
-                                           join sd in _context.Shiftdetails
-                                           on s.Shiftid equals sd.Shiftid into shiftGroup
-                                           from sd in shiftGroup.DefaultIfEmpty()
-                                           join rg in _context.Regions
-                                           on sd.Regionid equals rg.Regionid
-                                           where s.Physicianid == schedule.ProviderId && sd.Isdeleted == false
-                                           select new ScheduleModel
-                                           {
-                                               RegionName = rg.Name,
-                                               Shiftid = sd.Shiftdetailid,
-                                               Status = sd.Status,
-                                               Starttime = sd.Starttime,
-                                               Shiftdate = sd.Shiftdate,
+                                          join pd in _context.Physicians
+                                          on s.Physicianid equals pd.Physicianid
+                                          join sd in _context.Shiftdetails
+                                          on s.Shiftid equals sd.Shiftid into shiftGroup
+                                          from sd in shiftGroup.DefaultIfEmpty()
+                                          join rg in _context.Regions
+                                          on sd.Regionid equals rg.Regionid
+                                          where s.Physicianid == schedule.ProviderId && sd.Isdeleted == false
+                                          select new ScheduleModel
+                                          {
+                                              RegionName = rg.Name,
+                                              Shiftid = sd.Shiftdetailid,
+                                              Status = sd.Status,
+                                              Starttime = sd.Starttime,
+                                              Shiftdate = sd.Shiftdate,
 
-                                               Endtime = sd.Endtime,
-                                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                                              Endtime = sd.Endtime,
+                                              PhysicianName = pd.Firstname + ' ' + pd.Lastname,
 
-                                           }).ToList();
+                                          }).ToList();
 
                 ScheduleModel temp = new ScheduleModel();
                 temp.PhysicianName = schedule.firstName + ' ' + schedule.lastName;
@@ -1396,7 +1398,7 @@ namespace HalloDoc_BAL.Repository
 
 
         }
-        
+
         public List<ScheduleModel> PhysicianByRegion(int? region)
         {
             List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
@@ -1441,29 +1443,29 @@ namespace HalloDoc_BAL.Repository
             foreach (CreateProviderView schedule in pl)
             {
                 List<ScheduleModel> ss = (from s in _context.Shifts
-                                           join pd in _context.Physicians
-                                           on s.Physicianid equals pd.Physicianid
-                                           join sd in _context.Shiftdetails
-                                           on s.Shiftid equals sd.Shiftid into shiftGroup
-                                           from sd in shiftGroup.DefaultIfEmpty()
-                                           join rg in _context.Regions
-                                           on sd.Regionid equals rg.Regionid
-                                           where s.Physicianid == schedule.ProviderId && sd.Isdeleted == false
-                                           select new ScheduleModel
-                                           {
-                                               RegionName = rg.Abbreviation,
-                                               Shiftid = sd.Shiftdetailid,
-                                               Status = sd.Status,
-                                               Starttime = sd.Starttime,
-                                               Shiftdate = sd.Shiftdate,
-                                               Endtime = sd.Endtime,
-                                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
-                                           }).ToList();
+                                          join pd in _context.Physicians
+                                          on s.Physicianid equals pd.Physicianid
+                                          join sd in _context.Shiftdetails
+                                          on s.Shiftid equals sd.Shiftid into shiftGroup
+                                          from sd in shiftGroup.DefaultIfEmpty()
+                                          join rg in _context.Regions
+                                          on sd.Regionid equals rg.Regionid
+                                          where s.Physicianid == schedule.ProviderId && sd.Isdeleted == false && sd.Regionid == region
+                                          select new ScheduleModel
+                                          {
+                                              RegionName = rg.Abbreviation,
+                                              Shiftid = sd.Shiftdetailid,
+                                              Status = sd.Status,
+                                              Starttime = sd.Starttime,
+                                              Shiftdate = sd.Shiftdate,
+                                              Endtime = sd.Endtime,
+                                              PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                                          }).ToList();
 
                 ScheduleModel temp = new ScheduleModel();
                 temp.PhysicianName = schedule.firstName + ' ' + schedule.lastName;
                 temp.PhysicianPhoto = schedule.photo;
-                temp.RegionName = schedule.regionName; 
+                temp.RegionName = schedule.regionName;
                 temp.Physicianid = (int)schedule.ProviderId;
                 temp.DayList = ss;
                 ScheduleDetails.Add(temp);
@@ -1487,20 +1489,20 @@ namespace HalloDoc_BAL.Repository
             foreach (DateTime schedule in uniqueDates)
             {
                 List<ScheduleModel> ss = (from s in _context.Shifts
-                                           join pd in _context.Physicians
-                                           on s.Physicianid equals pd.Physicianid
-                                           join sd in _context.Shiftdetails
-                                           on s.Shiftid equals sd.Shiftid into shiftGroup
-                                           from sd in shiftGroup.DefaultIfEmpty()
-                                           where sd.Shiftdate == schedule && sd.Isdeleted == false
-                                           select new ScheduleModel
-                                           {
-                                               Shiftid = sd.Shiftdetailid,
-                                               Status = sd.Status,
-                                               Starttime = sd.Starttime,
-                                               Endtime = sd.Endtime,
-                                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
-                                           }).ToList();
+                                          join pd in _context.Physicians
+                                          on s.Physicianid equals pd.Physicianid
+                                          join sd in _context.Shiftdetails
+                                          on s.Shiftid equals sd.Shiftid into shiftGroup
+                                          from sd in shiftGroup.DefaultIfEmpty()
+                                          where sd.Shiftdate == schedule && sd.Isdeleted == false
+                                          select new ScheduleModel
+                                          {
+                                              Shiftid = sd.Shiftdetailid,
+                                              Status = sd.Status,
+                                              Starttime = sd.Starttime,
+                                              Endtime = sd.Endtime,
+                                              PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                                          }).ToList();
 
                 ScheduleModel temp = new ScheduleModel();
                 temp.Shiftdate = schedule;
@@ -1517,25 +1519,25 @@ namespace HalloDoc_BAL.Repository
         {
 
             ScheduleModel shiftdata = (from s in _context.Shifts
-                           join pd in _context.Physicians
-                           on s.Physicianid equals pd.Physicianid
-                           join sd in _context.Shiftdetails
-                           on s.Shiftid equals sd.Shiftid into shiftGroup
-                           from sd in shiftGroup.DefaultIfEmpty()
-                           join rg in _context.Regions
-                           on sd.Regionid equals rg.Regionid
-                           where sd.Shiftdetailid == Shiftdetailid
-                           select new ScheduleModel
-                           {
-                               Regionid = (int)sd.Regionid,
-                               Shiftid = sd.Shiftdetailid,
-                               Status = sd.Status,
-                               Starttime = sd.Starttime,
-                               Endtime = sd.Endtime,
-                               Physicianid = s.Physicianid,
-                               PhysicianName = pd.Firstname + ' ' + pd.Lastname,
-                               Shiftdate = sd.Shiftdate
-                           })
+                                       join pd in _context.Physicians
+                                       on s.Physicianid equals pd.Physicianid
+                                       join sd in _context.Shiftdetails
+                                       on s.Shiftid equals sd.Shiftid into shiftGroup
+                                       from sd in shiftGroup.DefaultIfEmpty()
+                                       join rg in _context.Regions
+                                       on sd.Regionid equals rg.Regionid
+                                       where sd.Shiftdetailid == Shiftdetailid
+                                       select new ScheduleModel
+                                       {
+                                           Regionid = (int)sd.Regionid,
+                                           Shiftid = sd.Shiftdetailid,
+                                           Status = sd.Status,
+                                           Starttime = sd.Starttime,
+                                           Endtime = sd.Endtime,
+                                           Physicianid = s.Physicianid,
+                                           PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                                           Shiftdate = sd.Shiftdate
+                                       })
                                           .FirstOrDefault();
 
             return shiftdata;
@@ -1543,17 +1545,17 @@ namespace HalloDoc_BAL.Repository
 
         public void EditShift(ScheduleModel shift, int adminId)
         {
-                Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shift.Shiftid);
-                    sd.Shiftdate = (DateTime)shift.Shiftdate;
-                    sd.Starttime = shift.Starttime;
-                    sd.Endtime = shift.Endtime;
-                    sd.Modifiedby = _adminRepo.GetAdminById(adminId).Aspnetuserid;
-                    sd.Modifieddate = DateTime.Now;
-                    _context.Shiftdetails.Update(sd);
-                    _context.SaveChanges();
+            Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shift.Shiftid);
+            sd.Shiftdate = (DateTime)shift.Shiftdate;
+            sd.Starttime = shift.Starttime;
+            sd.Endtime = shift.Endtime;
+            sd.Modifiedby = _adminRepo.GetAdminById(adminId).Aspnetuserid;
+            sd.Modifieddate = DateTime.Now;
+            _context.Shiftdetails.Update(sd);
+            _context.SaveChanges();
         }
 
-        public void Updateshiftstatus(int shiftId , int adminId)
+        public void Updateshiftstatus(int shiftId, int adminId)
         {
             Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shiftId);
             var temp = sd.Status;
@@ -1609,8 +1611,8 @@ namespace HalloDoc_BAL.Repository
             foreach (var item in providerList)
             {
                 List<int> shiftIds = (from s in _context.Shifts
-                                            where s.Physicianid == item.ProviderId
-                                            select s.Shiftid).ToList();
+                                      where s.Physicianid == item.ProviderId
+                                      select s.Shiftid).ToList();
 
                 foreach (var shift in shiftIds)
                 {
@@ -1635,6 +1637,36 @@ namespace HalloDoc_BAL.Repository
         #endregion
 
 
+        #region ShiftReview 
+        public List<ScheduleModel> GetAllNotApprovedShift(int? regionId)
+        {
+
+            List<ScheduleModel> shiftList = (from s in _context.Shifts
+                                             join pd in _context.Physicians
+                                             on s.Physicianid equals pd.Physicianid
+                                             join sd in _context.Shiftdetails
+                                             on s.Shiftid equals sd.Shiftid into shiftGroup
+                                             from sd in shiftGroup.DefaultIfEmpty()
+                                             join rg in _context.Regions
+                                             on sd.Regionid equals rg.Regionid
+                                             where (regionId == null || regionId == 0 || sd.Regionid == regionId) && sd.Status == 0 && sd.Isdeleted == false
+                                             select new ScheduleModel
+                                             {
+                                                 Regionid = (int)sd.Regionid,
+                                                 RegionName = rg.Name,
+                                                 Shiftid = sd.Shiftdetailid,
+                                                 Status = sd.Status,
+                                                 Starttime = sd.Starttime,
+                                                 Endtime = sd.Endtime,
+                                                 Physicianid = s.Physicianid,
+                                                 PhysicianName = pd.Firstname + ' ' + pd.Lastname,
+                                                 Shiftdate = sd.Shiftdate
+                                             }).ToList();
+
+            return shiftList;
+
+        }
+        #endregion
 
 
 

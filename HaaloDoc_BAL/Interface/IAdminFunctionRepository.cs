@@ -56,6 +56,7 @@ namespace HalloDoc_BAL.Repository
 
 
         List<CreateProviderView> PhysicianOnCall(int? region);
+        List<ScheduleModel> GetAllNotApprovedShift(int? regionId);
 
 
 

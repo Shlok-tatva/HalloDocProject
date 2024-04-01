@@ -48,7 +48,7 @@
             <div class="m-auto p-4 rounded-3">
                 <div class="mb-4">
                     <h5 class="fw-semibold">MD's On Call</h5>
-                    <div class="mt-2 row ">
+                    <div class="mt-2 row oncalldiv">
                         @foreach (var provider in Model)
                         {
                             if (provider.onCallStatus == 1)
@@ -62,7 +62,7 @@
                 </div>
                 <div class="mt-5">
                     <h5 class="fw-semibold">Physician Off Duty</h5>
-                    <div class="mt-2 row">
+                    <div class="mt-2 row offcalldiv">
                         @foreach (var provider in Model)
                         {
                             if (provider.onCallStatus == null)
