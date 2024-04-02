@@ -1249,6 +1249,19 @@ namespace HalloDoc_BAL.Repository
 
 
         #region Scheduling
+
+        public bool HasExistingShifts(int physicianId, DateTime date, TimeOnly startTime, TimeOnly endTime)
+        {
+            bool hasShift = _context.Shiftdetails
+                .Any(sd => sd.Shift.Physicianid == physicianId &&
+                           sd.Shiftdate == date &&
+                           ((sd.Starttime >= startTime && sd.Starttime < endTime) ||
+                           (sd.Endtime > startTime && sd.Endtime <= endTime) ||
+                           (sd.Starttime <= startTime && sd.Endtime >= endTime)));
+
+            return hasShift;
+        }
+
         public void CreateShift(ScheduleModel data, int adminId)
         {
 
@@ -1578,8 +1591,6 @@ namespace HalloDoc_BAL.Repository
             _context.Shiftdetails.Update(sd);
             _context.SaveChanges();
         }
-
-
         #endregion
 
 
@@ -1638,7 +1649,7 @@ namespace HalloDoc_BAL.Repository
 
 
         #region ShiftReview 
-        public List<ScheduleModel> GetAllNotApprovedShift(int? regionId)
+        public List<ScheduleModel> GetAllNotApprovedShift(int? regionId , int? month)
         {
 
             List<ScheduleModel> shiftList = (from s in _context.Shifts
@@ -1649,7 +1660,7 @@ namespace HalloDoc_BAL.Repository
                                              from sd in shiftGroup.DefaultIfEmpty()
                                              join rg in _context.Regions
                                              on sd.Regionid equals rg.Regionid
-                                             where (regionId == null || regionId == 0 || sd.Regionid == regionId) && sd.Status == 0 && sd.Isdeleted == false
+                                             where (regionId == null || regionId == 0 || sd.Regionid == regionId) && sd.Status == 0 && sd.Isdeleted == false && (month == null || month == 0 || sd.Shiftdate.Month == month)
                                              select new ScheduleModel
                                              {
                                                  Regionid = (int)sd.Regionid,

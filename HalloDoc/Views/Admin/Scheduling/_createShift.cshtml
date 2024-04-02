@@ -9,7 +9,7 @@
                     <span aria-hidden="true"><i class="bi bi-x-lg text-white"></i></span>
                 </button>
             </div>
-            <form asp-action="CreateShift" class="row p-3">
+            <form asp-action="CreateShift" id="createShift" class="row p-3">
                 @*<input type="hidden" asp-for="Shiftid" />*@
 
                 <div class="form-floating my-3">
@@ -40,6 +40,16 @@
                     <input id="EndTime" asp-for="Endtime" class="form-control rounded vcs" name="Endtime" type="time" placeholder=Suchtext autocomplete=off>
                     <label for="floatingInput">End</label>
                 </div>
+
+                <div id="shiftavlmsg" style="display: none;" class="col-12 my-2">
+                    <div class="alert alert-success text-center">Selected physician available for shift</div>
+                </div>
+
+                <div id="shiftunavlmsg" style="display: none;" class="col-12 my-2">
+                    <div class="alert alert-danger text-center">Existing shifts found for selected physician</div>
+                </div>
+
+
                 <div class="col-md-6 d-flex align-items-center justify-content-start mb-3">
                     <label for="floatingInput">Repeat</label>
                     <label class="switch">
@@ -111,7 +121,7 @@
 
                 <div class="row">
                     <div class="col-12 d-flex justify-content-end">
-                        <input type="submit" value="Save" class="btn btn-info text-white mx-2" />
+                        <input id="shiftSubmit" type="submit" value="Save" class="btn btn-info text-white mx-2" />
                         <button type="button" class="btn btn-outline-info hover_white" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -124,63 +134,6 @@
 
 <script type="text/javascript">
 
-    var today = new Date();
-    var formattedDate = today.toISOString().split('T')[0];
-
-    document.getElementById('StartDate').min = formattedDate;
-    document.getElementById('StartTime').addEventListener('change', function () {
-        var startTime = this.value;
-
-        document.getElementById('EndTime').min = startTime;
-
-        if (document.getElementById('EndTime').value < startTime) {
-            document.getElementById('EndTime').value = startTime;
-        }
-    });
-
-    var startTimeInput = document.getElementById('StartTime');
-    var endTimeInput = document.getElementById('EndTime');
-
-    startTimeInput.addEventListener('input', function () {
-        var startTimeValue = startTimeInput.value;
-        endTimeInput.min = startTimeValue;
-
-        // If the current end time is before the start time, reset the end time value
-        if (endTimeInput.value < startTimeValue) {
-            endTimeInput.value = startTimeValue;
-        }
-    });
-
-
-    window.onload = toggleCheckboxes;
-    function toggleCheckboxes() {
-        var repeatCheckbox = document.getElementById('Isrepeat');
-        var refile = document.getElementById('Refile');
-        var checkboxes = document.querySelectorAll('.Every');
-
-        if (!repeatCheckbox.checked) {
-            checkboxes.forEach(function (checkbox) {
-                checkbox.checked = false;
-                checkbox.disabled = true;
-                refile.disabled = true;
-            });
-        } else {
-            checkboxes.forEach(function (checkbox) {
-                checkbox.disabled = false;
-                refile.disabled = false;
-            });
-        }
-    }
-
-    function menubox() {
-        event.preventDefault();
-        let checkboxes = document.querySelectorAll('.Every:checked');
-        let repeatDays = [];
-        checkboxes.forEach((checkbox) => {
-            repeatDays.push(checkbox.value);
-        });
-        document.querySelector('#checkWeekday').value = repeatDays.join(',');
-        console.log(document.querySelector('#checkWeekday').value);
-    };
-
+    
+    
 </script>

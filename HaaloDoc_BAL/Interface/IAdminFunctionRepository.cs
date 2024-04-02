@@ -45,6 +45,8 @@ namespace HalloDoc_BAL.Repository
         string GetAccountTypeNameById(int id);
         bool IsUsernameAvailable(string username);
         void createAdmin(CreateAdminView data, int[] regions , int adminId);
+
+        bool HasExistingShifts(int physicianId, DateTime date, TimeOnly startTime, TimeOnly endTime);
         void CreateShift(ScheduleModel data, int adminId);
         List<ScheduleModel> PhysicianAll();
         List<ScheduleModel> PhysicianByRegion(int? region);
@@ -56,7 +58,7 @@ namespace HalloDoc_BAL.Repository
 
 
         List<CreateProviderView> PhysicianOnCall(int? region);
-        List<ScheduleModel> GetAllNotApprovedShift(int? regionId);
+        List<ScheduleModel> GetAllNotApprovedShift(int? regionId, int? month);
 
 
 

@@ -67,8 +67,8 @@ namespace HalloDocAdmin.Controllers
             else if (reqtype != 0 && regionFilter == 0)
             {
                 return Ok(statusIdWiseRequest.Where(x => x.RequestTyepid == reqtype).ToList());
-            } 
-           
+            }
+
             return Ok(statusIdWiseRequest.ToList());
         }
 
@@ -82,7 +82,7 @@ namespace HalloDocAdmin.Controllers
             if (requestId != null && physicianId != null)
             {
                 int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
-                _adminFunctionRepository.assignCase(requestId, physicianId , adminId);
+                _adminFunctionRepository.assignCase(requestId, physicianId, adminId);
                 return Ok();
             }
             else
@@ -127,7 +127,7 @@ namespace HalloDocAdmin.Controllers
                 _adminFunctionRepository.SendEmail(emailSendLink, title, message);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -601,7 +601,7 @@ namespace HalloDocAdmin.Controllers
         {
             try
             {
-                _adminFunctionRepository.ChagePassword(adminId, 0 , password);
+                _adminFunctionRepository.ChagePassword(adminId, 0, password);
                 return Ok();
             }
             catch (Exception ex)
@@ -649,7 +649,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.regions = regions;
             ViewBag.adminId = adminId;
 
-            return View("provider/index" , view);
+            return View("provider/index", view);
         }
 
         [RouteAuthFilter]
@@ -660,7 +660,7 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Providers";
             ViewBag.regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.allRoles = _adminFunctionRepository.GetAllRole();
-            
+
             return View("provider/CreateProvider");
         }
 
@@ -674,11 +674,11 @@ namespace HalloDocAdmin.Controllers
                 Admin admin = _adminrepo.GetAdminById(adminId);
                 model.Createdby = admin.Aspnetuserid;
                 model.allRoles = _adminFunctionRepository.GetAllRole();
-                _adminFunctionRepository.CreateOrUpdateProvider(model, selectedRegions , false);
+                _adminFunctionRepository.CreateOrUpdateProvider(model, selectedRegions, false);
                 TempData["Success"] = "Provider Created Successfully !";
                 return Redirect("/admin/Provider");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["Error"] = "Error while Creating Physician";
                 return Redirect("/admin/CreateProvider");
@@ -696,7 +696,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.regions = regions;
             int providerId = Int32.Parse(Request.Query["providerId"]);
             var view = _adminFunctionRepository.getProviderView(providerId);
-            return View("provider/EditProvider" , view);
+            return View("provider/EditProvider", view);
         }
 
         [HttpPost]
@@ -785,14 +785,14 @@ namespace HalloDocAdmin.Controllers
 
 
         [HttpPost]
-        public IActionResult uploadProviderDocument(IFormFile file , string filename)
+        public IActionResult uploadProviderDocument(IFormFile file, string filename)
         {
             try
             {
 
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -821,7 +821,7 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
-#endregion
+        #endregion
 
         #region Partner-Page
 
@@ -847,7 +847,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.ProfessionNames = professionNames;
 
 
-            return View("Partners/index" , view);
+            return View("Partners/index", view);
         }
 
 
@@ -858,7 +858,7 @@ namespace HalloDocAdmin.Controllers
                 var data = _healthprofessionalRepository.getByProfession(professionId);
                 return Ok(data);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest();
             }
@@ -922,7 +922,7 @@ namespace HalloDocAdmin.Controllers
             int id = Int32.Parse(Request.Query["vendorid"]);
             ViewBag.professionType = _adminFunctionRepository.getAllProfessions();
             Healthprofessional view = _healthprofessionalRepository.get(id);
-            return View("Partners/EditPartner" , view);
+            return View("Partners/EditPartner", view);
         }
 
         [HttpPost]
@@ -984,7 +984,7 @@ namespace HalloDocAdmin.Controllers
             }
             ViewBag.AccountTypeNames = AccountTypeNames;
 
-            return View("Access/index" , view);
+            return View("Access/index", view);
         }
 
         [HttpGet]
@@ -994,13 +994,13 @@ namespace HalloDocAdmin.Controllers
             var allRoles = _adminFunctionRepository.getAllRoleType();
             ViewBag.roles = allRoles;
             CreateEditAccessView view = new CreateEditAccessView();
-            return View("Access/CreateAccess" , view);
+            return View("Access/CreateAccess", view);
         }
 
         [HttpGet]
         public IActionResult GetMenuByRole(int roleId)
         {
-            if(roleId != null)
+            if (roleId != null)
             {
                 var menus = _adminFunctionRepository.GetAllMenu().Where(m => m.Accounttype == roleId).ToList();
                 return Ok(menus);
@@ -1011,15 +1011,15 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-        public IActionResult CreateRole(string roleName , int accountType , int[] selectedMenu) 
+        public IActionResult CreateRole(string roleName, int accountType, int[] selectedMenu)
         {
             try
             {
-             int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
                 _adminFunctionRepository.CreateOrUpdateRole(adminId, roleName, accountType, selectedMenu);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -1032,7 +1032,7 @@ namespace HalloDocAdmin.Controllers
             int roleId = Int32.Parse(Request.Query["roleId"]);
             var allRoles = _adminFunctionRepository.getAllRoleType();
             ViewBag.roles = allRoles;
-            Role role = _adminFunctionRepository.GetAllRole().Where(r=>r.Roleid == roleId).First();
+            Role role = _adminFunctionRepository.GetAllRole().Where(r => r.Roleid == roleId).First();
             CreateEditAccessView view = new CreateEditAccessView();
             view.roleId = role.Roleid;
             view.allmenus = _adminFunctionRepository.GetAllMenu().Where(r => r.Accounttype == role.Accounttype).ToList();
@@ -1042,7 +1042,7 @@ namespace HalloDocAdmin.Controllers
             return View("Access/EditAccess", view);
         }
 
-        public IActionResult EditRole(int roleId , string roleName, int accountType, int[] selectedMenu)
+        public IActionResult EditRole(int roleId, string roleName, int accountType, int[] selectedMenu)
         {
             try
             {
@@ -1064,7 +1064,7 @@ namespace HalloDocAdmin.Controllers
                 _adminFunctionRepository.DeleteRole(adminId, roleId);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -1072,15 +1072,16 @@ namespace HalloDocAdmin.Controllers
 
         public IActionResult UserAccess()
         {
-                List<UserAccessView> view = new List<UserAccessView>();
+            List<UserAccessView> view = new List<UserAccessView>();
             try
             {
                 ViewData["ViewName"] = "Access";
                 ViewBag.Username = HttpContext.Session.GetString("Username");
                 ViewBag.accoutType = _adminFunctionRepository.getAllRoleType();
                 view = _adminFunctionRepository.GetUserAccessView(0);
-                return View("Access/UserAccess" , view);
-            }catch(Exception ex)
+                return View("Access/UserAccess", view);
+            }
+            catch (Exception ex)
             {
                 TempData["Error"] = "Cannot Get Data";
                 return View("Access/UserAccess", view);
@@ -1101,7 +1102,7 @@ namespace HalloDocAdmin.Controllers
                 AdminProfileView view = _adminFunctionRepository.GetAdminProfileView(adminId);
                 return View("AdminProfile", view);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["Error"] = "Try after sometime";
                 return Redirect("Access/UserAccess");
@@ -1143,14 +1144,14 @@ namespace HalloDocAdmin.Controllers
         [HttpPost]
         public ActionResult CheckUsernameAvailability(string username)
         {
-          
-            bool isAvailable  = _adminFunctionRepository.IsUsernameAvailable(username);
+
+            bool isAvailable = _adminFunctionRepository.IsUsernameAvailable(username);
             return Json(new { available = isAvailable });
-            
+
         }
 
         [HttpPost]
-        public IActionResult CreateAdmin(CreateAdminView formData , int[] selectedRegions)
+        public IActionResult CreateAdmin(CreateAdminView formData, int[] selectedRegions)
         {
             try
             {
@@ -1158,7 +1159,7 @@ namespace HalloDocAdmin.Controllers
                 _adminFunctionRepository.createAdmin(formData, selectedRegions, adminId);
                 return Redirect("Access/UserAccess");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["Error"] = "Error while Creating Admin";
                 return Redirect("UserAccess");
@@ -1177,6 +1178,22 @@ namespace HalloDocAdmin.Controllers
             return View("Scheduling/index");
         }
 
+
+        [HttpGet]
+        public IActionResult CheckExistingShifts(int physicianId, DateTime date, string startTime, string endTime)
+        {
+            try
+            {
+                TimeOnly parsedStartTime = TimeOnly.Parse(startTime);
+                TimeOnly parsedEndTime = TimeOnly.Parse(endTime);
+                bool hasExistingShifts = _adminFunctionRepository.HasExistingShifts(physicianId, date, parsedStartTime, parsedEndTime);
+                return Json(hasExistingShifts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         public IActionResult CreateShift(ScheduleModel data)
         {
@@ -1209,7 +1226,7 @@ namespace HalloDocAdmin.Controllers
         {
             TempData["Status"] = TempData["Status"];
 
-            var data =  _adminFunctionRepository.PhysicianAll();
+            var data = _adminFunctionRepository.PhysicianAll();
 
             if (region != 0)
             {
@@ -1228,7 +1245,7 @@ namespace HalloDocAdmin.Controllers
                 var data = _adminFunctionRepository.GetShiftByShiftdetailId(shiftId);
                 return Ok(data);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
                 return BadRequest(ex.Message);
@@ -1244,7 +1261,7 @@ namespace HalloDocAdmin.Controllers
                 TempData["Success"] = "Shift Edited successfully";
                 return Redirect("Scheduling");
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 TempData["Error"] = "Error While Shift Edit";
                 return Redirect("Scheduling");
@@ -1260,7 +1277,7 @@ namespace HalloDocAdmin.Controllers
                 TempData["Success"] = "Shift Status Change Successful";
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -1295,7 +1312,7 @@ namespace HalloDocAdmin.Controllers
             List<CreateProviderView> data = _adminFunctionRepository.PhysicianOnCall(regionId);
             if (regionId != null)
             {
-                var filteredData = data.Select(d => new 
+                var filteredData = data.Select(d => new
                 {
                     ProviderId = d.ProviderId,
                     onCallStatus = d.onCallStatus,
@@ -1306,7 +1323,7 @@ namespace HalloDocAdmin.Controllers
                 return Json(filteredData);
 
             }
-            return View("Scheduling/ProviderOnCall" , data);
+            return View("Scheduling/ProviderOnCall", data);
         }
         #endregion
 
@@ -1316,13 +1333,26 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Providers";
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
-            List<ScheduleModel> data = _adminFunctionRepository.GetAllNotApprovedShift(null);
+            List<ScheduleModel> data = _adminFunctionRepository.GetAllNotApprovedShift(null, null);
             if (regionId != null)
             {
-                data = _adminFunctionRepository.GetAllNotApprovedShift(regionId);
+                data = _adminFunctionRepository.GetAllNotApprovedShift(regionId, null);
                 return PartialView("Scheduling/_requestedShift", data);
             }
-            return View("Scheduling/ShiftReview" , data);
+            return View("Scheduling/ShiftReview", data);
+        }
+        public IActionResult CuurentMonthUnApprovedShift(int? regionId)
+        {
+            try
+            {
+                var month = DateTime.Now.Month;
+                List<ScheduleModel> data = _adminFunctionRepository.GetAllNotApprovedShift(regionId, month);
+                return PartialView("Scheduling/_requestedShift", data);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         public IActionResult Logout()

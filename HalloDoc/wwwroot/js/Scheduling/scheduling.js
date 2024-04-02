@@ -2,21 +2,31 @@ $(document).ready(function () {
 
 
     $(document).on('click', '.open-modal', function () {
-        debugger;
         var modalId = $(this).data("modal-id");
 
         if (modalId == "editShiftModal") {
 
             var shiftId = $(this).data("shiftid");
             var data = getShiftData(shiftId);
-            console.log(data);
 
+            $("#edit").hide();
+            $("#delete").hide();
+            $("#return").hide();
             $("#shiftid").val(shiftId);
             $("#regioneditshift").val(data.regionid);
             $('#StartDateEdit').val(data.shiftdate.split('T')[0]); // Extracting date part only
             $('#StartTimeEdit').val(data.starttime);
             $('#EndTimeEdit').val(data.endtime);
             $("#status").val(data.status);
+
+            var shiftDate = new Date(data.shiftdate.split('T')[0]);
+            var currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
+            if (shiftDate >= currentDate) {
+                $("#edit").show();
+                $("#delete").show();
+                $("#return").show();
+            }
 
 
             getPhysicians(data.regionid, 'phyiscianeditshift', function () {
@@ -107,7 +117,6 @@ $(document).ready(function () {
             data: { region: regionId },
             dataType: "json",
             success: function (response) {
-                debugger
                 providerList = [];
                 // Array to store converted objects
                 response.forEach(function (item) {
@@ -163,7 +172,6 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                debugger
                 // Handle error
                 console.error("Error fetching provider list");
             }
@@ -220,7 +228,6 @@ $(document).ready(function () {
                     // Push extracted data into the array
                     extractedDataArray.push(extractedData);
                 });
-                debugger
                 console.log(extractedDataArray);
                 $('#month').click();
                 manipulate();
@@ -371,7 +378,6 @@ $(document).ready(function () {
    // Event listener for the "Day" button
     $("#day").click(function () {
         x = 3;
-        debugger
         $('#monthcontainer').hide();
         $('#weekviewcontainer').hide();
         $('#daycontainer').show();
@@ -449,6 +455,7 @@ $(document).ready(function () {
 
                     return { startTime, endTime, status, shiftid, regionname };
                 });
+
                 const hoursArray = Array(24).fill(0);
                 const shiftidArray = Array(24).fill(0);
                 const regionArray = Array(24).fill(0);
@@ -476,11 +483,7 @@ $(document).ready(function () {
                 });
 
 
-
                 shiftArrays.push(shiftArray);
-
-                        console.log(shiftidArray);
-                        console.log(regionArray);  
 
                 for (let i = 0; i < 24; i++) {
                     const timeSlot = document.createElement('td');
@@ -500,7 +503,7 @@ $(document).ready(function () {
 
                         // Use start time for the link to edit shift
                         (hoursArray[i] == 0.5) ? hoursArray[i] = 0 : hoursArray[i]; // just for color of the shift change the class name for that !
-                        timeSlot.innerHTML += `<div data-modal-id="editShiftModal"  data-shiftid="${currentShiftId}" class="mt-1 d-block text-dark text-center fs-5 open-modal">${regionArray[i]}</div>`;
+                        timeSlot.innerHTML += `<div data-modal-id="editShiftModal"  data-shiftid="${currentShiftId}" class="mt-1 d-block text-dark text-center fs-5 open-modal"> ${startTime} - ${endTime} <br /> ${regionArray[i]}</div>`;
                         timeSlot.classList.add("p-2");
                         timeSlot.classList.add(`Status-${hoursArray[i]}`);
                         (hoursArray[i] == 0) ? hoursArray[i] = 0.5 : hoursArray[i];
@@ -524,7 +527,6 @@ $(document).ready(function () {
 
     // Event listener for the "Week" button
     $("#week").click(function () {
-        debugger;
         x = 2;
         $('#monthcontainer').hide();
         $('#weekviewcontainer').show();
@@ -756,7 +758,6 @@ $(document).ready(function () {
 
     // Event listener for the "Month" button
     $("#month").click(function(){
-        debugger;
         $('#monthcontainer').show();
         $('#weekviewcontainer').hide();
         $('#daycontainer').hide();
@@ -765,7 +766,6 @@ $(document).ready(function () {
     });
 
     $('#fregion').on('change', function () {
-        debugger
         if (x == 1) {
             GetShiftForMonth(month + 1);
         } else if (x == 2 || x == 3) {

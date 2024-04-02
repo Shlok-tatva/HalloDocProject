@@ -4,7 +4,7 @@
 
     @foreach (var shift in Model)
     {
-        <tr data-shiftid="@shift.Shiftid">
+        <tr class="notApprovedShift" data-shiftid="@shift.Shiftid">
             <td><input type="checkbox" class="shiftcheckBox"></td>
             <td>@shift.PhysicianName</td>
             @{
