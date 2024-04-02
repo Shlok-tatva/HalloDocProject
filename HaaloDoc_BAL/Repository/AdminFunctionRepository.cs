@@ -372,7 +372,6 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-
         public void SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null)
         {
             try
@@ -418,6 +417,402 @@ namespace HalloDoc_BAL.Repository
             {
                 // Handle exception, log error, etc.
                 throw new ApplicationException("Failed to send email", ex);
+            }
+        }
+
+        public void clearCase(int requestId, int adminId)
+        {
+            using (var transaction = new TransactionScope())
+            {
+                Request request = _requestRepository.Get(requestId);
+                request.Status = 10;
+                _requestRepository.Update(request);
+
+                Requeststatuslog log = new Requeststatuslog();
+                log.Requestid = requestId;
+                log.Adminid = adminId;
+                log.Status = 10; // clear the request
+                log.Notes = "Reqest Cleared";
+                log.Createddate = DateTime.Now;
+                _context.Requeststatuslogs.Add(log);
+                _context.SaveChanges();
+
+                transaction.Complete();
+
+            }
+        }
+
+
+        public void sendAgreement(int requestId, int adminId, string email, string link)
+        {
+            using (var transaction = new TransactionScope())
+            {
+
+                var title = "Accept the Agreement for your request";
+                var message = $"Please click <a href=\"{link}\">here</a> to accept your agreement for request you created on HalloDoc.";
+                SendEmail(email, title, message);
+                Requeststatuslog log = new Requeststatuslog();
+                log.Requestid = requestId;
+                log.Createddate = DateTime.Now;
+                log.Adminid = adminId;
+                log.Status = 2;
+                log.Notes = "Agreement sent to patient by Admin";
+                _context.Requeststatuslogs.Add(log);
+                _context.SaveChanges();
+                transaction.Complete();
+
+            }
+        }
+
+
+        #region Encounter-Form
+        public EncounterFormView GetEncounterFormView(int requestId)
+        {
+            EncounterFormView formView = new EncounterFormView();
+            Requestclient requestclient = _requestClientRepository.Get(requestId);
+            Encounterform encounterform = _context.Encounterforms.FirstOrDefault(r => r.Requestid == requestId);
+
+            if (encounterform != null && encounterform.Isfinalize == true)
+            {
+                return null;
+            }
+
+            if (requestclient != null)
+            {
+                formView.requestId = requestId;
+                formView.firstName = requestclient.Firstname;
+                formView.lastName = requestclient.Lastname;
+                formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
+                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate);
+                formView.phone = requestclient.Phonenumber;
+                formView.email = requestclient.Email;
+                formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
+                if (encounterform != null)
+                {
+                    formView.historyOfPresentIllnessOrInjury = encounterform.Historyofpresentillnessorinjury;
+                    formView.medicalHistory = encounterform.Medicalhistory;
+                    formView.medications = encounterform.Medications;
+                    formView.allergies = encounterform.Allergies;
+                    formView.temp = encounterform.Temp;
+                    formView.hr = encounterform.Hr;
+                    formView.rr = encounterform.Rr;
+                    formView.bloodPressureDiastolic = encounterform.Bloodpressurediastolic;
+                    formView.bloodPressureSystolic = encounterform.Bloodpressurediastolic;
+                    formView.o2 = encounterform.O2;
+                    formView.pain = encounterform.Pain;
+                    formView.heent = encounterform.Heent;
+                    formView.pain = encounterform.Pain;
+                    formView.cv = encounterform.Cv;
+                    formView.chest = encounterform.Chest;
+                    formView.abd = encounterform.Abd;
+                    formView.extremities = encounterform.Extremities;
+                    formView.skin = encounterform.Skin;
+                    formView.neuro = encounterform.Neuro;
+                    formView.other = encounterform.Other;
+                    formView.diagnosis = encounterform.Diagnosis;
+                    formView.treatmentPlan = encounterform.TreatmentPlan;
+                    formView.followup = encounterform.Followup;
+                    formView.medicalDispensed = encounterform.Medicaldispensed;
+                    formView.procedures = encounterform.Procedures;
+                    formView.adminId = encounterform.Adminid;
+                    formView.isFinalize = encounterform.Isfinalize == false ? 0 : 1;
+                }
+
+            }
+
+            return formView;
+        }
+
+
+
+        public EncounterFormView GetEncounterForm(int requestId)
+        {
+            EncounterFormView formView = new EncounterFormView();
+            Requestclient requestclient = _requestClientRepository.Get(requestId);
+            Encounterform encounterform = _context.Encounterforms.FirstOrDefault(r => r.Requestid == requestId);
+
+            if (requestclient != null)
+            {
+                formView.requestId = requestId;
+                formView.firstName = requestclient.Firstname;
+                formView.lastName = requestclient.Lastname;
+                formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
+                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate);
+                formView.phone = requestclient.Phonenumber;
+                formView.email = requestclient.Email;
+                formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
+                if (encounterform != null)
+                {
+                    formView.historyOfPresentIllnessOrInjury = encounterform.Historyofpresentillnessorinjury;
+                    formView.medicalHistory = encounterform.Medicalhistory;
+                    formView.medications = encounterform.Medications;
+                    formView.allergies = encounterform.Allergies;
+                    formView.temp = encounterform.Temp;
+                    formView.hr = encounterform.Hr;
+                    formView.rr = encounterform.Rr;
+                    formView.bloodPressureDiastolic = encounterform.Bloodpressurediastolic;
+                    formView.bloodPressureSystolic = encounterform.Bloodpressurediastolic;
+                    formView.o2 = encounterform.O2;
+                    formView.pain = encounterform.Pain;
+                    formView.heent = encounterform.Heent;
+                    formView.pain = encounterform.Pain;
+                    formView.cv = encounterform.Cv;
+                    formView.chest = encounterform.Chest;
+                    formView.abd = encounterform.Abd;
+                    formView.extremities = encounterform.Extremities;
+                    formView.skin = encounterform.Skin;
+                    formView.neuro = encounterform.Neuro;
+                    formView.other = encounterform.Other;
+                    formView.diagnosis = encounterform.Diagnosis;
+                    formView.treatmentPlan = encounterform.TreatmentPlan;
+                    formView.followup = encounterform.Followup;
+                    formView.medicalDispensed = encounterform.Medicaldispensed;
+                    formView.procedures = encounterform.Procedures;
+                    formView.adminId = encounterform.Adminid;
+                    formView.isFinalize = encounterform.Isfinalize == false ? 0 : 1;
+                }
+
+            }
+
+            return formView;
+        }
+
+        public void SubmitEncounterForm(EncounterFormView formView)
+        {
+            if (formView != null)
+            {
+                using (var transaction = new TransactionScope())
+                {
+                    Encounterform newform = _context.Encounterforms.FirstOrDefault(f => f.Requestid == formView.requestId);
+
+                    if (newform == null)
+                    {
+                        newform = new Encounterform();
+                    }
+
+                    newform.Requestid = formView.requestId;
+                    newform.Historyofpresentillnessorinjury = formView.historyOfPresentIllnessOrInjury;
+                    newform.Medicalhistory = formView.medicalHistory;
+                    newform.Medications = formView.medications;
+                    newform.Allergies = formView.allergies;
+                    newform.Temp = formView.temp;
+                    newform.Hr = formView.hr;
+                    newform.Rr = formView.rr;
+                    newform.Bloodpressurediastolic = formView.bloodPressureDiastolic;
+                    newform.Bloodpressuresystolic = formView.bloodPressureSystolic;
+                    newform.O2 = formView.o2;
+                    newform.Pain = formView.pain;
+                    newform.Heent = formView.heent;
+                    newform.Pain = formView.pain;
+                    newform.Cv = formView.cv;
+                    newform.Chest = formView.chest;
+                    newform.Abd = formView.abd;
+                    newform.Extremities = formView.extremities;
+                    newform.Skin = formView.skin;
+                    newform.Neuro = formView.neuro;
+                    newform.Other = formView.other;
+                    newform.Diagnosis = formView.diagnosis;
+                    newform.TreatmentPlan = formView.treatmentPlan;
+                    newform.Followup = formView.followup;
+                    newform.Medicaldispensed = formView.medicalDispensed;
+                    newform.Procedures = formView.procedures;
+                    newform.Adminid = formView.adminId;
+                    newform.Isfinalize = formView.isFinalize == 0 ? false : true;
+
+                    if (newform == null)
+                    {
+                        _context.Encounterforms.Add(newform);
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        _context.Encounterforms.Update(newform);
+                        _context.SaveChanges();
+                    }
+                    transaction.Complete();
+                }
+            }
+        }
+
+        public int getEcounterFormStatus(int requestId)
+        {
+            var form = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId);
+            if (form == null)
+            {
+                return 0;
+            }
+            else
+            {
+                bool status = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId).Isfinalize;
+                return status ? 1 : 0;
+            }
+        }
+
+        #endregion
+
+        #region Partner-Page
+
+        public List<Healthprofessionaltype> getAllProfessions()
+        {
+            return _context.Healthprofessionaltypes.ToList();
+        }
+
+        public List<Healthprofessional> GetBusinessesByProfession(int professionId)
+        {
+            return _context.Healthprofessionals.Where(h => h.Profession == professionId).ToList();
+        }
+
+        public Healthprofessional GetBusinessDetailsById(int Vendorid)
+        {
+            return _context.Healthprofessionals.FirstOrDefault(h => h.Vendorid == Vendorid);
+        }
+
+
+
+        public void AddOrder(Orderdetail orderdetail)
+        {
+            try
+            {
+                _context.Orderdetails.Add(orderdetail);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        #endregion
+
+        #region AdminProfile-page
+        public AdminProfileView GetAdminProfileView(int adminId)
+        {
+            if (adminId != null)
+            {
+                try
+                {
+                    AdminProfileView view = new AdminProfileView();
+                    Admin admin = _adminRepo.GetAdminById(adminId);
+                    view.adminId = adminId;
+                    view.FirstName = admin.Firstname;
+                    view.LastName = admin.Lastname;
+                    view.Email = admin.Email;
+                    view.ConfirmEmail = admin.Email;
+                    view.Phone = admin.Mobile;
+                    view.Address1 = admin.Address1;
+                    view.Address2 = admin.Address2;
+                    view.City = admin.City;
+                    view.Zip = admin.Zip;
+                    view.StateId = admin.Regionid;
+                    view.billingPhone = admin.Altphone;
+                    view.Status = admin.Status;
+                    string role = _context.Roles.FirstOrDefault(r => r.Roleid == admin.Roleid).Name;
+                    view.role = role;
+                    view.UserName = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid).Username;
+                    view.AdminRegions = (from ar in _context.Adminregions.ToList()
+                                         where ar.Adminid == adminId
+                                         select (int)ar.Regionid).ToList();
+
+                    return view;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+
+        }
+
+        public void UpdateAdminData(AdminProfileView data)
+        {
+            Admin admin = _adminRepo.GetAdminById(data.adminId);
+            if (admin != null)
+            {
+                admin.Firstname = data.FirstName;
+                admin.Lastname = data.LastName;
+                admin.Email = data.Email;
+                admin.Mobile = data.Phone;
+                admin.City = data.City;
+                admin.Address1 = data.Address1;
+                admin.Address2 = data.Address2;
+                admin.Regionid = data.StateId;
+                admin.Zip = data.Zip;
+                admin.Altphone = data.billingPhone;
+                _adminRepo.updateAdmin(admin);
+            }
+        }
+
+        public void ChagePassword(int adminId, int providerId, string password)
+        {
+            Aspnetuser user = new Aspnetuser();
+
+            if (adminId != 0)
+            {
+                Admin admin = _adminRepo.GetAdminById(adminId);
+                user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
+            }
+            if (providerId != 0)
+            {
+                Physician physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == providerId);
+                user = _context.Aspnetusers.FirstOrDefault(u => u.Id == physician.Aspnetuserid);
+
+            }
+            if (user != null)
+            {
+                var hasher = new PasswordHasher<string>();
+                string hashedPassword = hasher.HashPassword(null, password);
+                user.Passwordhash = hashedPassword;
+                _context.Aspnetusers.Update(user);
+                _context.SaveChanges();
+            }
+        }
+        #endregion
+
+        #region Providers-Page
+        public List<ProviderInfoAdmin> getProviderInfoView()
+        {
+            List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
+            List<Physician> providers = _context.Physicians.Where(p => p.Isdeleted == false).ToList();
+            providers.Sort((a, b) => b.Physicianid - a.Physicianid);
+            foreach (Physician pro in providers)
+            {
+                ProviderInfoAdmin provider = new ProviderInfoAdmin();
+                provider.providerId = pro.Physicianid;
+                provider.providerName = pro.Firstname + " " + pro.Lastname;
+                provider.providerEmail = pro.Email;
+                provider.providerPhone = pro.Mobile;
+                provider.providerStatus = pro.Status;
+
+                provider.providerRole = _context.Roles.FirstOrDefault(r => r.Roleid == pro.Roleid).Name;
+                provider.stopNotification = providerNotificationStatus(pro.Physicianid);
+                providerInfoAdmin.Add(provider);
+            }
+
+            return providerInfoAdmin;
+        }
+
+        public bool providerNotificationStatus(int providerId)
+        {
+            return _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId).Isnotificationstopped;
+        }
+
+        public void updateNotificationStatus(int providerId, bool status)
+        {
+            using (var transaction = new TransactionScope())
+            {
+
+                Physiciannotification physiciannotification = _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId);
+                if (physiciannotification != null)
+                {
+                    physiciannotification.Isnotificationstopped = status;
+                    _context.Physiciannotifications.Update(physiciannotification);
+                    _context.SaveChanges();
+                    transaction.Complete();
+                }
             }
         }
 
@@ -660,406 +1055,9 @@ namespace HalloDoc_BAL.Repository
         }
 
 
+        #endregion
 
-        public List<Physician> GetPhysiciansByRegion(int regionId)
-        {
-            var physicians = (from pr in _context.Physicianregions
-                              join p in _context.Physicians on pr.Physicianid equals p.Physicianid
-                              where pr.Regionid == regionId
-                              select p).ToList();
-            return physicians;
-        }
-
-        public void clearCase(int requestId, int adminId)
-        {
-            using (var transaction = new TransactionScope())
-            {
-                Request request = _requestRepository.Get(requestId);
-                request.Status = 10;
-                _requestRepository.Update(request);
-
-                Requeststatuslog log = new Requeststatuslog();
-                log.Requestid = requestId;
-                log.Adminid = adminId;
-                log.Status = 10; // clear the request
-                log.Notes = "Reqest Cleared";
-                log.Createddate = DateTime.Now;
-                _context.Requeststatuslogs.Add(log);
-                _context.SaveChanges();
-
-                transaction.Complete();
-
-            }
-        }
-
-
-
-
-        public void sendAgreement(int requestId, int adminId, string email, string link)
-        {
-            using (var transaction = new TransactionScope())
-            {
-
-                var title = "Accept the Agreement for your request";
-                var message = $"Please click <a href=\"{link}\">here</a> to accept your agreement for request you created on HalloDoc.";
-                SendEmail(email, title, message);
-                Requeststatuslog log = new Requeststatuslog();
-                log.Requestid = requestId;
-                log.Createddate = DateTime.Now;
-                log.Adminid = adminId;
-                log.Status = 2;
-                log.Notes = "Agreement sent to patient by Admin";
-                _context.Requeststatuslogs.Add(log);
-                _context.SaveChanges();
-                transaction.Complete();
-
-            }
-        }
-
-        public EncounterFormView GetEncounterFormView(int requestId)
-        {
-            EncounterFormView formView = new EncounterFormView();
-            Requestclient requestclient = _requestClientRepository.Get(requestId);
-            Encounterform encounterform = _context.Encounterforms.FirstOrDefault(r => r.Requestid == requestId);
-
-            if (encounterform != null && encounterform.Isfinalize == true)
-            {
-                return null;
-            }
-
-            if (requestclient != null)
-            {
-                formView.requestId = requestId;
-                formView.firstName = requestclient.Firstname;
-                formView.lastName = requestclient.Lastname;
-                formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
-                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate);
-                formView.phone = requestclient.Phonenumber;
-                formView.email = requestclient.Email;
-                formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
-                if (encounterform != null)
-                {
-                    formView.historyOfPresentIllnessOrInjury = encounterform.Historyofpresentillnessorinjury;
-                    formView.medicalHistory = encounterform.Medicalhistory;
-                    formView.medications = encounterform.Medications;
-                    formView.allergies = encounterform.Allergies;
-                    formView.temp = encounterform.Temp;
-                    formView.hr = encounterform.Hr;
-                    formView.rr = encounterform.Rr;
-                    formView.bloodPressureDiastolic = encounterform.Bloodpressurediastolic;
-                    formView.bloodPressureSystolic = encounterform.Bloodpressurediastolic;
-                    formView.o2 = encounterform.O2;
-                    formView.pain = encounterform.Pain;
-                    formView.heent = encounterform.Heent;
-                    formView.pain = encounterform.Pain;
-                    formView.cv = encounterform.Cv;
-                    formView.chest = encounterform.Chest;
-                    formView.abd = encounterform.Abd;
-                    formView.extremities = encounterform.Extremities;
-                    formView.skin = encounterform.Skin;
-                    formView.neuro = encounterform.Neuro;
-                    formView.other = encounterform.Other;
-                    formView.diagnosis = encounterform.Diagnosis;
-                    formView.treatmentPlan = encounterform.TreatmentPlan;
-                    formView.followup = encounterform.Followup;
-                    formView.medicalDispensed = encounterform.Medicaldispensed;
-                    formView.procedures = encounterform.Procedures;
-                    formView.adminId = encounterform.Adminid;
-                    formView.isFinalize = encounterform.Isfinalize == false ? 0 : 1;
-                }
-
-            }
-
-            return formView;
-        }
-
-
-        public EncounterFormView GetEncounterForm(int requestId)
-        {
-            EncounterFormView formView = new EncounterFormView();
-            Requestclient requestclient = _requestClientRepository.Get(requestId);
-            Encounterform encounterform = _context.Encounterforms.FirstOrDefault(r => r.Requestid == requestId);
-
-            if (requestclient != null)
-            {
-                formView.requestId = requestId;
-                formView.firstName = requestclient.Firstname;
-                formView.lastName = requestclient.Lastname;
-                formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
-                formView.dateOfRequest = String.Format("{0:yyyy-MM-dd}", _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Createddate);
-                formView.phone = requestclient.Phonenumber;
-                formView.email = requestclient.Email;
-                formView.location = requestclient.Street + " " + requestclient.City + "," + requestclient.State + ", (" + requestclient.Zipcode + ")";
-                if (encounterform != null)
-                {
-                    formView.historyOfPresentIllnessOrInjury = encounterform.Historyofpresentillnessorinjury;
-                    formView.medicalHistory = encounterform.Medicalhistory;
-                    formView.medications = encounterform.Medications;
-                    formView.allergies = encounterform.Allergies;
-                    formView.temp = encounterform.Temp;
-                    formView.hr = encounterform.Hr;
-                    formView.rr = encounterform.Rr;
-                    formView.bloodPressureDiastolic = encounterform.Bloodpressurediastolic;
-                    formView.bloodPressureSystolic = encounterform.Bloodpressurediastolic;
-                    formView.o2 = encounterform.O2;
-                    formView.pain = encounterform.Pain;
-                    formView.heent = encounterform.Heent;
-                    formView.pain = encounterform.Pain;
-                    formView.cv = encounterform.Cv;
-                    formView.chest = encounterform.Chest;
-                    formView.abd = encounterform.Abd;
-                    formView.extremities = encounterform.Extremities;
-                    formView.skin = encounterform.Skin;
-                    formView.neuro = encounterform.Neuro;
-                    formView.other = encounterform.Other;
-                    formView.diagnosis = encounterform.Diagnosis;
-                    formView.treatmentPlan = encounterform.TreatmentPlan;
-                    formView.followup = encounterform.Followup;
-                    formView.medicalDispensed = encounterform.Medicaldispensed;
-                    formView.procedures = encounterform.Procedures;
-                    formView.adminId = encounterform.Adminid;
-                    formView.isFinalize = encounterform.Isfinalize == false ? 0 : 1;
-                }
-
-            }
-
-            return formView;
-        }
-
-        public void SubmitEncounterForm(EncounterFormView formView)
-        {
-            if (formView != null)
-            {
-                using (var transaction = new TransactionScope())
-                {
-                    Encounterform newform = _context.Encounterforms.FirstOrDefault(f => f.Requestid == formView.requestId);
-
-                    if (newform == null)
-                    {
-                        newform = new Encounterform();
-                    }
-
-                    newform.Requestid = formView.requestId;
-                    newform.Historyofpresentillnessorinjury = formView.historyOfPresentIllnessOrInjury;
-                    newform.Medicalhistory = formView.medicalHistory;
-                    newform.Medications = formView.medications;
-                    newform.Allergies = formView.allergies;
-                    newform.Temp = formView.temp;
-                    newform.Hr = formView.hr;
-                    newform.Rr = formView.rr;
-                    newform.Bloodpressurediastolic = formView.bloodPressureDiastolic;
-                    newform.Bloodpressuresystolic = formView.bloodPressureSystolic;
-                    newform.O2 = formView.o2;
-                    newform.Pain = formView.pain;
-                    newform.Heent = formView.heent;
-                    newform.Pain = formView.pain;
-                    newform.Cv = formView.cv;
-                    newform.Chest = formView.chest;
-                    newform.Abd = formView.abd;
-                    newform.Extremities = formView.extremities;
-                    newform.Skin = formView.skin;
-                    newform.Neuro = formView.neuro;
-                    newform.Other = formView.other;
-                    newform.Diagnosis = formView.diagnosis;
-                    newform.TreatmentPlan = formView.treatmentPlan;
-                    newform.Followup = formView.followup;
-                    newform.Medicaldispensed = formView.medicalDispensed;
-                    newform.Procedures = formView.procedures;
-                    newform.Adminid = formView.adminId;
-                    newform.Isfinalize = formView.isFinalize == 0 ? false : true;
-
-                    if (newform == null)
-                    {
-                        _context.Encounterforms.Add(newform);
-                        _context.SaveChanges();
-                    }
-                    else
-                    {
-                        _context.Encounterforms.Update(newform);
-                        _context.SaveChanges();
-                    }
-                    transaction.Complete();
-                }
-            }
-        }
-
-        public int getEcounterFormStatus(int requestId)
-        {
-            var form = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId);
-            if (form == null)
-            {
-                return 0;
-            }
-            else
-            {
-                bool status = _context.Encounterforms.FirstOrDefault(f => f.Requestid == requestId).Isfinalize;
-                return status ? 1 : 0;
-            }
-        }
-
-        public List<Healthprofessionaltype> getAllProfessions()
-        {
-            return _context.Healthprofessionaltypes.ToList();
-        }
-
-        public List<Healthprofessional> GetBusinessesByProfession(int professionId)
-        {
-            return _context.Healthprofessionals.Where(h => h.Profession == professionId).ToList();
-        }
-
-        public Healthprofessional GetBusinessDetailsById(int Vendorid)
-        {
-            return _context.Healthprofessionals.FirstOrDefault(h => h.Vendorid == Vendorid);
-        }
-
-        public List<Physicianlocation> GetPhysicianlocations()
-        {
-            return _context.Physicianlocations.ToList();
-        }
-
-        public void AddOrder(Orderdetail orderdetail)
-        {
-            try
-            {
-                _context.Orderdetails.Add(orderdetail);
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-
-        public AdminProfileView GetAdminProfileView(int adminId)
-        {
-            if (adminId != null)
-            {
-                try
-                {
-                    AdminProfileView view = new AdminProfileView();
-                    Admin admin = _adminRepo.GetAdminById(adminId);
-                    view.adminId = adminId;
-                    view.FirstName = admin.Firstname;
-                    view.LastName = admin.Lastname;
-                    view.Email = admin.Email;
-                    view.ConfirmEmail = admin.Email;
-                    view.Phone = admin.Mobile;
-                    view.Address1 = admin.Address1;
-                    view.Address2 = admin.Address2;
-                    view.City = admin.City;
-                    view.Zip = admin.Zip;
-                    view.StateId = admin.Regionid;
-                    view.billingPhone = admin.Altphone;
-                    view.Status = admin.Status;
-                    string role = _context.Roles.FirstOrDefault(r => r.Roleid == admin.Roleid).Name;
-                    view.role = role;
-                    view.UserName = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid).Username;
-                    view.AdminRegions = (from ar in _context.Adminregions.ToList()
-                                         where ar.Adminid == adminId
-                                         select (int)ar.Regionid).ToList();
-
-                    return view;
-                }
-                catch (Exception ex)
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
-
-
-        }
-
-        public void UpdateAdminData(AdminProfileView data)
-        {
-            Admin admin = _adminRepo.GetAdminById(data.adminId);
-            if (admin != null)
-            {
-                admin.Firstname = data.FirstName;
-                admin.Lastname = data.LastName;
-                admin.Email = data.Email;
-                admin.Mobile = data.Phone;
-                admin.City = data.City;
-                admin.Address1 = data.Address1;
-                admin.Address2 = data.Address2;
-                admin.Regionid = data.StateId;
-                admin.Zip = data.Zip;
-                admin.Altphone = data.billingPhone;
-                _adminRepo.updateAdmin(admin);
-            }
-        }
-
-        public void ChagePassword(int adminId, int providerId, string password)
-        {
-            Aspnetuser user = new Aspnetuser();
-
-            if (adminId != 0)
-            {
-                Admin admin = _adminRepo.GetAdminById(adminId);
-                user = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid);
-            }
-            if (providerId != 0)
-            {
-                Physician physician = _context.Physicians.FirstOrDefault(p => p.Physicianid == providerId);
-                user = _context.Aspnetusers.FirstOrDefault(u => u.Id == physician.Aspnetuserid);
-
-            }
-            if (user != null)
-            {
-                var hasher = new PasswordHasher<string>();
-                string hashedPassword = hasher.HashPassword(null, password);
-                user.Passwordhash = hashedPassword;
-                _context.Aspnetusers.Update(user);
-                _context.SaveChanges();
-            }
-        }
-
-        public List<ProviderInfoAdmin> getProviderInfoView()
-        {
-            List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
-            List<Physician> providers = _context.Physicians.Where(p => p.Isdeleted == false).ToList();
-            providers.Sort((a, b) => b.Physicianid - a.Physicianid);
-            foreach (Physician pro in providers)
-            {
-                ProviderInfoAdmin provider = new ProviderInfoAdmin();
-                provider.providerId = pro.Physicianid;
-                provider.providerName = pro.Firstname + " " + pro.Lastname;
-                provider.providerEmail = pro.Email;
-                provider.providerPhone = pro.Mobile;
-                provider.providerStatus = pro.Status;
-
-                provider.providerRole = _context.Roles.FirstOrDefault(r => r.Roleid == pro.Roleid).Name;
-                provider.stopNotification = providerNotificationStatus(pro.Physicianid);
-                providerInfoAdmin.Add(provider);
-            }
-
-            return providerInfoAdmin;
-        }
-
-        public bool providerNotificationStatus(int providerId)
-        {
-            return _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId).Isnotificationstopped;
-        }
-
-        public void updateNotificationStatus(int providerId, bool status)
-        {
-            using (var transaction = new TransactionScope())
-            {
-
-                Physiciannotification physiciannotification = _context.Physiciannotifications.FirstOrDefault(p => p.Physicianid == providerId);
-                if (physiciannotification != null)
-                {
-                    physiciannotification.Isnotificationstopped = status;
-                    _context.Physiciannotifications.Update(physiciannotification);
-                    _context.SaveChanges();
-                    transaction.Complete();
-                }
-            }
-        }
-
+        #region UserAccess-And-AccountAccess
         public void CreateOrUpdateRole(int adminId, string roleName, int accountType, int[] selectedMenu, int? roleId = null)
         {
             using (var transaction = new TransactionScope())
@@ -1246,7 +1244,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-
+        #endregion
 
         #region Scheduling
 
@@ -1680,26 +1678,19 @@ namespace HalloDoc_BAL.Repository
         #endregion
 
 
+        public List<Physician> GetPhysiciansByRegion(int regionId)
+        {
+            var physicians = (from pr in _context.Physicianregions
+                              join p in _context.Physicians on pr.Physicianid equals p.Physicianid
+                              where pr.Regionid == regionId
+                              select p).ToList();
+            return physicians;
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        public List<Physicianlocation> GetPhysicianlocations()
+        {
+            return _context.Physicianlocations.ToList();
+        }
 
         public List<Healthprofessional> getAllVendors()
         {

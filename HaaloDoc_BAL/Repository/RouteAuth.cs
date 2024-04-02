@@ -23,19 +23,19 @@ namespace HalloDoc_BAL.Repository
 
         public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
         {
-            var context = serviceProvider.GetService<ApplicationDbContext>();
-            return new RouteAuth(context);
+            var commonFunctionRepository = serviceProvider.GetService<ICommonFunctionRepository>();
+            return new RouteAuth(commonFunctionRepository);
         }
     }
 
     public class RouteAuth : IAuthorizationFilter
     {
 
-        private readonly ApplicationDbContext _context;
+        private readonly ICommonFunctionRepository _commonFunctionRepository;
 
-        public RouteAuth(ApplicationDbContext context)
+        public RouteAuth(ICommonFunctionRepository commonFunctionRepository)
         {
-            _context = context;
+            _commonFunctionRepository = commonFunctionRepository;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -61,7 +61,8 @@ namespace HalloDoc_BAL.Repository
                 return;
             }
 
-            List<string> menuItems = GetMenuItemsForRole(roleId);
+            List<string> menuItems = _commonFunctionRepository.GetMenuItemsForRole(roleId);
+
             pageName = pageName.ToLower();
 
             //// Check if pageName is present in menuItems
@@ -73,17 +74,17 @@ namespace HalloDoc_BAL.Repository
 
         }
 
-        private List<string> GetMenuItemsForRole(string roleid)
-        {
-            List<string> menuNames = new List<string>();
-            List<Rolemenu> menus = _context.Rolemenus.Where(rm => rm.Roleid == Int32.Parse(roleid)).ToList();
-            foreach (var menu in menus)
-            {
-                var menuName = _context.Menus.Where(rm => rm.Menuid == menu.Menuid).FirstOrDefault().Name;
-                menuNames.Add(menuName);
-            }
-            return menuNames;
-        }
+        //private List<string> GetMenuItemsForRole(string roleid)
+        //{
+        //    List<string> menuNames = new List<string>();
+        //    List<Rolemenu> menus = _context.Rolemenus.Where(rm => rm.Roleid == Int32.Parse(roleid)).ToList();
+        //    foreach (var menu in menus)
+        //    {
+        //        var menuName = _context.Menus.Where(rm => rm.Menuid == menu.Menuid).FirstOrDefault().Name;
+        //        menuNames.Add(menuName);
+        //    }
+        //    return menuNames;
+        //}
 
     }
 }

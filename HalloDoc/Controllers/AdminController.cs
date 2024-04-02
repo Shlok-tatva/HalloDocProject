@@ -1327,6 +1327,8 @@ namespace HalloDocAdmin.Controllers
         }
         #endregion
 
+        #region RequestedShift
+
         public IActionResult ShiftReview(int? regionId)
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1354,6 +1356,8 @@ namespace HalloDocAdmin.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        #endregion
 
         public IActionResult Logout()
         {

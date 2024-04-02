@@ -9,6 +9,7 @@ namespace HalloDoc_BAL.Interface
         string Decrypt(string encryptEmail, string Key);
         void HandleFileUpload(IFormFile UploadFile, int requestId , int? adminId);
         string GetConfirmationNumber(string state, string lastname, string firstname);
+        List<string> GetMenuItemsForRole(string roleid);
         public void updateServiceRegion(List<ChangeRegionData> regionsData, int adminId);
     }
 }

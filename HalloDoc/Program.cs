@@ -26,7 +26,7 @@ builder.Services.AddScoped<IHealthProfessionalRepository, HealthProfessionalRepo
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IPhysicianRepository, PhysicianRepository>();
 builder.Services.AddScoped<IJwtServices, JwtServices>();
-
+builder.Services.AddHttpContextAccessor();
 
 
 

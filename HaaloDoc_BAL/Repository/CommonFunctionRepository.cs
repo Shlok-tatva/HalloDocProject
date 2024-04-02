@@ -158,6 +158,18 @@ namespace HalloDoc_BAL.Repository
                 
             }
         }
+        public List<string> GetMenuItemsForRole(string roleid)
+        {
+            List<string> menuNames = new List<string>();
+            List<Rolemenu> menus = _context.Rolemenus.Where(rm => rm.Roleid == Int32.Parse(roleid)).ToList();
+            foreach (var menu in menus)
+            {
+                var menuName = _context.Menus.Where(rm => rm.Menuid == menu.Menuid).FirstOrDefault().Name;
+                menuNames.Add(menuName);
+            }
+            return menuNames;
+        }
+
 
         private int GetCountOfTodayRequests()
         {
@@ -165,7 +177,6 @@ namespace HalloDoc_BAL.Repository
 
             return _context.Requests.Where(u => u.Createddate.Date == currentDate).Count();
         }
-
 
 
 

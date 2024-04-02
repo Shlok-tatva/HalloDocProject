@@ -97,6 +97,9 @@ $(document).ready(function () {
         }
 
         else {
+            var date = $(this).data('date');
+            $('#StartDate').val(date);
+            console.log(date);
             $("#createShiftModal").modal("show");
         }
     })
@@ -134,7 +137,7 @@ $(document).ready(function () {
                                 starttime: dayItem.starttime,
                                 endtime: dayItem.endtime,
                                 isrepeat: dayItem.isrepeat,
-                                regionname : dayItem.regionName,
+                                regionname: dayItem.regionName,
                                 checkWeekday: dayItem.checkWeekday,
                                 repeatupto: dayItem.repeatupto,
                                 status: dayItem.status,
@@ -316,13 +319,12 @@ $(document).ready(function () {
             }
 
             lit += `<td class="table-text ${isToday} p-0"> 
-                            <div class="first">${i}</div>
-
-                                    <div class="${Status.length > 0 ? 'Status-' + Status[0] + ' open-modal' : ''}" data-modal-id="editShiftModal" data-shiftid = '${ProviderNames.length > 0 ? ProviderNames[0].shiftid : ''}'>${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
-                                    <div class="${Status.length > 1 ? 'Status-' + Status[1] + ' open-modal' : ''}" data-modal-id="editShiftModal" data-shiftid = '${ProviderNames.length > 1 ? ProviderNames[1].shiftid : ''}' >${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</div>
-                                    <div class="${Status.length > 2 ? 'Status-' + Status[2] + ' open-modal' : ''}" data-modal-id="editShiftModal" data-shiftid = '${ProviderNames.length > 2 ? ProviderNames[2].shiftid : ''}' >${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</div>
-                                    <div type="button" id="${buttonId}" data-modal-id="${ProviderNames.length > 3 ? '#exampleModal' : ''}" data-month="${month}" data-index="${i}" class="${Status.length > 3 ? 'btn btn-info w-100 text-white rounded-0 open-modal' : ''}">${ProviderNames.length > 3 ? 'View All' : ''}</div>
-                        </td>`;
+                        <div class="first">${i}</div>
+                        <div class="open-modal ${Status.length > 0 ? 'Status-' + Status[0] : ''}" ${Status.length > 0 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 0 ? 'data-shiftid="' + ProviderNames[0].shiftid + '"' : ''} data-date="${year}-${month.toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
+                        <div class="open-modal ${Status.length > 1 ? 'Status-' + Status[1] : ''}" ${Status.length > 1 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 1 ? 'data-shiftid="' + ProviderNames[1].shiftid + '"' : ''} data-date="${year}-${month.toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</div>
+                        <div class="open-modal ${Status.length > 2 ? 'Status-' + Status[2] : ''}" ${Status.length > 2 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 2 ? 'data-shiftid="' + ProviderNames[2].shiftid + '"' : ''} data-date="${year}-${month.toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</div>
+                        <div type="button" id="${buttonId}" ${ProviderNames.length > 3 ? 'data-modal-id="#exampleModal"' : ''} data-month="${month}" data-index="${i}" class="${Status.length > 3 ? 'btn btn-info w-100 text-white rounded-0 open-modal' : ''}">${ProviderNames.length > 3 ? 'View All' : ''}</div>
+                    </td>`;
             dayCount++;
         }
 
@@ -375,7 +377,7 @@ $(document).ready(function () {
 
     getProviderList();
 
-   // Event listener for the "Day" button
+    // Event listener for the "Day" button
     $("#day").click(function () {
         x = 3;
         $('#monthcontainer').hide();
@@ -457,6 +459,8 @@ $(document).ready(function () {
                 });
 
                 const hoursArray = Array(24).fill(0);
+                const startTimeArray = Array(24).fill(0);
+                const endTimeArray = Array(24).fill(0);
                 const shiftidArray = Array(24).fill(0);
                 const regionArray = Array(24).fill(0);
 
@@ -479,11 +483,17 @@ $(document).ready(function () {
                     for (let hour = startHour; hour <= endHour; hour++) {
                         hoursArray[hour] = valueToStore;
                         regionArray[hour] = regionname;
+                        startTimeArray[hour] = startTime;
+                        endTimeArray[hour] = endTime;
                     }
                 });
 
 
+
                 shiftArrays.push(shiftArray);
+
+                console.log(shiftidArray);
+                console.log(regionArray);
 
                 for (let i = 0; i < 24; i++) {
                     const timeSlot = document.createElement('td');
@@ -503,7 +513,7 @@ $(document).ready(function () {
 
                         // Use start time for the link to edit shift
                         (hoursArray[i] == 0.5) ? hoursArray[i] = 0 : hoursArray[i]; // just for color of the shift change the class name for that !
-                        timeSlot.innerHTML += `<div data-modal-id="editShiftModal"  data-shiftid="${currentShiftId}" class="mt-1 d-block text-dark text-center fs-5 open-modal"> ${startTime} - ${endTime} <br /> ${regionArray[i]}</div>`;
+                        timeSlot.innerHTML += `<div data-modal-id="editShiftModal"  data-shiftid="${currentShiftId}" class="mt-1 d-block text-dark text-center open-modal"> ${regionArray[i]} <br /> ${startTimeArray[i]}-${endTimeArray[i]}</div>`;
                         timeSlot.classList.add("p-2");
                         timeSlot.classList.add(`Status-${hoursArray[i]}`);
                         (hoursArray[i] == 0) ? hoursArray[i] = 0.5 : hoursArray[i];
@@ -757,7 +767,7 @@ $(document).ready(function () {
 
 
     // Event listener for the "Month" button
-    $("#month").click(function(){
+    $("#month").click(function () {
         $('#monthcontainer').show();
         $('#weekviewcontainer').hide();
         $('#daycontainer').hide();
