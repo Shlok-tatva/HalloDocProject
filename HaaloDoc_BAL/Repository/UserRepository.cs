@@ -18,6 +18,10 @@ namespace HalloDoc_BAL.Repository
         {
             _context = context;
         }
+        public List<User> GetAll()
+        {
+            return _context.Users.Where(u=>u.Isdeleted == false).ToList();
+        }
         public void Add(User user)
         {
             _context.Add(user);

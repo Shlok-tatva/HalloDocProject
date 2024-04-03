@@ -31,17 +31,13 @@ namespace HalloDoc.Controllers
         public IActionResult Index()
         {
             var role = HttpContext.Session.GetInt32("roleid");
-            if (role == 1)
-            {
-                return Redirect("/Admin/Dashboard");
-            }
-            else if(role == 3)
+            if(role == 3)
             {
                 return Redirect("/dashboard");
             }
             else
             {
-            return View();
+             return View();
             }
         }
 
@@ -102,6 +98,12 @@ namespace HalloDoc.Controllers
         [HttpGet]
         public IActionResult PhysicianLogin()
         {
+            var role = HttpContext.Session.GetInt32("roleid");
+            if (role == 1)
+            {
+                return Redirect("/Admin/Dashboard");
+            }
+
             return View();
         }
 

@@ -322,3 +322,21 @@ input:checked + .slider:before {
     .slider.round:before {
         border-radius: 50%;
     }
+
+
+::-webkit-inner-spin-button {
+    display: none;
+}
+
+::-webkit-calendar-picker-indicator {
+    background-color: white
+}
+
+input[type=month] {
+    position: relative;
+    top: 9px;
+    border: none;
+    font-size:35px;
+    width: 35px;
+
+}

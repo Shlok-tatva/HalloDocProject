@@ -24,7 +24,7 @@ namespace HalloDoc_BAL.Repository
         }
         public List<Healthprofessional> getByProfession(int professionId)
         {
-            return _context.Healthprofessionals.Where(hp => hp.Profession == (int)professionId).ToList();
+            return _context.Healthprofessionals.Where(hp => hp.Isdeleted == false && (professionId == 0 || hp.Profession == (int)professionId)).ToList();
         }
 
         public void Add(Healthprofessional healthprofessional)

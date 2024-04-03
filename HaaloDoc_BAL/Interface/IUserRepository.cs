@@ -9,6 +9,7 @@ namespace HalloDoc_BAL.Interface
 {
     public interface IUserRepository
     {
+        List<User> GetAll();
         void Add(User user);
         public void Update(User user);
         User GetUser(string email);

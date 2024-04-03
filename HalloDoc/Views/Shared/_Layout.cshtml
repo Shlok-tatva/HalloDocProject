@@ -22,11 +22,6 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps.css'>
-
-
-
-
-
     @RenderSection("PatientLoginStyle", false)
     @RenderSection("PatientRequestStyle", false)
     @RenderSection("DashboardCSS", false)
@@ -38,13 +33,11 @@
 <body>
     <div id="overlay" style="display:none;"></div>
     <div class="h-100">
-
         @if (String.Equals(ViewData["ViewName"], "Dashboard") || String.Equals(ViewData["ViewName"], "DocumentView") ||
         String.Equals(ViewData["ViewName"], "UserProfile"))
         {
             <partial name="_NavBar" model="ViewBag.Username" />
         }
-
         <main role="main" class="h-100">
             @RenderBody()
         </main>
@@ -86,6 +79,7 @@
     }
 
 </body>
+
 <partial name="_ValidationScriptsPartial" />
 
 </html>

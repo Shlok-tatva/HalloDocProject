@@ -37,9 +37,9 @@ namespace HalloDoc_BAL.Repository
         AdminProfileView GetAdminProfileView(int adminId);
         void UpdateAdminData(AdminProfileView data);
         void ChagePassword(int adminId, int providerId , string password);
-        List<ProviderInfoAdmin> getProviderInfoView();
+        List<ProviderInfoAdmin> getProviderInfoView(int? regionId);
         CreateProviderView getProviderView(int providerId);
-        void updateNotificationStatus(int providerId, bool status);
+         void updateNotificationStatus(int providerId, bool status);
         List<Healthprofessional> getAllVendors();
         string GetProfessionNameById(int id);
         string GetAccountTypeNameById(int id);
@@ -50,7 +50,7 @@ namespace HalloDoc_BAL.Repository
         void CreateShift(ScheduleModel data, int adminId);
         List<ScheduleModel> PhysicianAll();
         List<ScheduleModel> PhysicianByRegion(int? region);
-        List<ScheduleModel> GetShift(int month, int? regionId);
+        List<ScheduleModel> GetShift(int month, int year , int? regionId);
         ScheduleModel GetShiftByShiftdetailId(int Shiftdetailid);
         void EditShift(ScheduleModel shift, int adminId);
         void Updateshiftstatus(int shiftId, int adminId);

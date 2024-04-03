@@ -22,6 +22,7 @@ namespace HalloDocAdmin.Controllers
     {
         private readonly ILogger<AdminController> _logger;
         private readonly IRequestRepository _requestRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IRequestClientRepository _requestClientRepository;
         private readonly IRequestNotesRepository _requestNotesRepository;
         private readonly IAdminFunctionRepository _adminFunctionRepository;
@@ -29,7 +30,7 @@ namespace HalloDocAdmin.Controllers
         private readonly IAdminRepository _adminrepo;
         private readonly IHealthProfessionalRepository _healthprofessionalRepository;
 
-        public AdminController(ILogger<AdminController> logger, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IAdminFunctionRepository adminFunctionRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo, IAdminRepository adminrepo, IHealthProfessionalRepository healthprofessionalRepository)
+        public AdminController(ILogger<AdminController> logger, IRequestRepository requestRepository, IRequestClientRepository requestClientRepository, IAdminFunctionRepository adminFunctionRepository, IRequestNotesRepository requestNotesRepository, ICommonFunctionRepository commonFunctionrepo, IAdminRepository adminrepo, IHealthProfessionalRepository healthprofessionalRepository, IUserRepository userRepository)
         {
             _logger = logger;
             _requestRepository = requestRepository;
@@ -39,6 +40,7 @@ namespace HalloDocAdmin.Controllers
             _commonFunctionrepo = commonFunctionrepo;
             _adminrepo = adminrepo;
             _healthprofessionalRepository = healthprofessionalRepository;
+            _userRepository = userRepository;
         }
 
         [RouteAuthFilter]
@@ -638,16 +640,30 @@ namespace HalloDocAdmin.Controllers
 
         #region Provider-Page
         [RouteAuthFilter]
-        public IActionResult Provider()
+        public IActionResult Provider(int? regionId)
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
             int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
             var regions = _adminFunctionRepository.GetAllReagion();
+            List<ProviderInfoAdmin> view = new List<ProviderInfoAdmin>();
 
-            List<ProviderInfoAdmin> view = _adminFunctionRepository.getProviderInfoView();
+            if(regionId != null)
+            {
+               view =  _adminFunctionRepository.getProviderInfoView(regionId);
+            }
+            else
+            {
+               view = _adminFunctionRepository.getProviderInfoView(null);
+            }
+
             ViewBag.regions = regions;
             ViewBag.adminId = adminId;
+
+            if(regionId != null)
+            {
+                return PartialView("provider/_providerList" , view);
+            }
 
             return View("provider/index", view);
         }
@@ -827,12 +843,22 @@ namespace HalloDocAdmin.Controllers
 
         [RouteAuthFilter]
         [HttpGet]
-        public IActionResult Partners()
+        public IActionResult Partners(int? professionId)
         {
             ViewData["ViewName"] = "Partners";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewBag.professionType = _adminFunctionRepository.getAllProfessions();
-            List<Healthprofessional> view = _adminFunctionRepository.getAllVendors();
+            List<Healthprofessional> view = new List<Healthprofessional>();
+
+            if(professionId != null )
+            {
+                view = _healthprofessionalRepository.getByProfession((int)professionId);
+            }
+            else
+            {
+                view = _adminFunctionRepository.getAllVendors();
+            }
+
             view.Sort((a, b) => b.Vendorid - a.Vendorid);
 
             Dictionary<int, string> professionNames = new Dictionary<int, string>();
@@ -846,23 +872,29 @@ namespace HalloDocAdmin.Controllers
             }
             ViewBag.ProfessionNames = professionNames;
 
+            if(professionId != null)
+            {
+                return PartialView("Partners/_partnersData", view);
+            }
 
             return View("Partners/index", view);
         }
 
 
-        public IActionResult vendorDataByProfession(int professionId)
-        {
-            try
-            {
-                var data = _healthprofessionalRepository.getByProfession(professionId);
-                return Ok(data);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest();
-            }
-        }
+        //public IActionResult vendorDataByProfession(int professionId)
+        //{
+        //    try
+        //    {
+        //        var data = _healthprofessionalRepository.getByProfession(professionId);
+        //        return Ok(data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
+
+
 
         [RouteAuthFilter]
         [HttpGet]
@@ -1215,10 +1247,11 @@ namespace HalloDocAdmin.Controllers
 
         /*For week wise Data*/
 
-        public IActionResult GetShiftByMonth(int? month, int? regionId)
+        public IActionResult GetShiftByMonth(int? month, int? year , int? regionId)
         {
-            var data = _adminFunctionRepository.GetShift((int)month, regionId);
+            var data = _adminFunctionRepository.GetShift((int)month, (int)year, regionId);
             return Json(data);
+            //return Ok();
         }
 
         [HttpGet]
@@ -1355,6 +1388,28 @@ namespace HalloDocAdmin.Controllers
             {
                 return NotFound(ex.Message);
             }
+        }
+
+        #endregion
+
+        #region PatientRecords
+
+        public IActionResult PatientRecords()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Records";
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+            List<User> data = _userRepository.GetAll();
+            return View("Records/PatientRecords" , data);
+        }
+        public IActionResult PatientRequestes()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            int userId = Int32.Parse(Request.Query["Id"]);
+            List<Request> data = _requestRepository.GetAll().Where(r=>r.Userid == userId).ToList();
+            ViewData["ViewName"] = "Records";
+            return View("Records/PatientRequestes" , data);
         }
 
         #endregion

@@ -181,12 +181,12 @@ $(document).ready(function () {
         });
     }
 
-    function GetShiftForMonth(month) {
+    function GetShiftForMonth(month , year) {
         var regionId = $('#fregion').val();
         $.ajax({
             type: "GET",
             url: 'GetShiftByMonth',
-            data: { month: month, regionId: regionId },
+            data: { month: month, year:year,regionId: regionId },
             dataType: "json",
             success: function (response) {
                 // Initialize an array to store extracted data
@@ -234,8 +234,6 @@ $(document).ready(function () {
                 console.log(extractedDataArray);
                 $('#month').click();
                 manipulate();
-                // Output the extracted data array to the console
-                //console.log(extractedDataArray);
             },
             error: function () {
                 // Handle error
@@ -248,8 +246,9 @@ $(document).ready(function () {
     let year = date.getFullYear();
     let month = date.getMonth();
     console.log(month);
+    console.log(year);
 
-    GetShiftForMonth(month + 1);
+    GetShiftForMonth(month + 1 , year);
 
     const day = document.querySelector(".calendar-dates");
     const weekdays = document.querySelector(".calendar-weekdays");
@@ -320,9 +319,9 @@ $(document).ready(function () {
 
             lit += `<td class="table-text ${isToday} p-0"> 
                         <div class="first">${i}</div>
-                        <div class="open-modal ${Status.length > 0 ? 'Status-' + Status[0] : ''}" ${Status.length > 0 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 0 ? 'data-shiftid="' + ProviderNames[0].shiftid + '"' : ''} data-date="${year}-${month.toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
-                        <div class="open-modal ${Status.length > 1 ? 'Status-' + Status[1] : ''}" ${Status.length > 1 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 1 ? 'data-shiftid="' + ProviderNames[1].shiftid + '"' : ''} data-date="${year}-${month.toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</div>
-                        <div class="open-modal ${Status.length > 2 ? 'Status-' + Status[2] : ''}" ${Status.length > 2 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 2 ? 'data-shiftid="' + ProviderNames[2].shiftid + '"' : ''} data-date="${year}-${month.toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</div>
+                        <div class="open-modal ${Status.length > 0 ? 'Status-' + Status[0] : ''}" ${Status.length > 0 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 0 ? 'data-shiftid="' + ProviderNames[0].shiftid + '"' : ''} data-date="${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
+                        <div class="open-modal ${Status.length > 1 ? 'Status-' + Status[1] : ''}" ${Status.length > 1 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 1 ? 'data-shiftid="' + ProviderNames[1].shiftid + '"' : ''} data-date="${year}-${(month+1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</div>
+                        <div class="open-modal ${Status.length > 2 ? 'Status-' + Status[2] : ''}" ${Status.length > 2 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 2 ? 'data-shiftid="' + ProviderNames[2].shiftid + '"' : ''} data-date="${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</div>
                         <div type="button" id="${buttonId}" ${ProviderNames.length > 3 ? 'data-modal-id="#exampleModal"' : ''} data-month="${month}" data-index="${i}" class="${Status.length > 3 ? 'btn btn-info w-100 text-white rounded-0 open-modal' : ''}">${ProviderNames.length > 3 ? 'View All' : ''}</div>
                     </td>`;
             dayCount++;
@@ -336,7 +335,7 @@ $(document).ready(function () {
         }
         lit += "</tr></tbody>";
         // Update the text of the current date element with the formatted current month and year
-        currdate.innerText = `${months[month]} ${year}`;
+        currdate.innerText = `${months[month] == undefined ? "Januaray" : months[month]} ${year}`;
 
         // Update the HTML of the dates element with the generated calendar
         day.innerHTML = lit;
@@ -344,35 +343,49 @@ $(document).ready(function () {
 
     manipulate();
 
-    // Attach a click event listener to each icon
     prenexIcons.forEach(icon => {
-        // When an icon is clicked
         icon.addEventListener("click", () => {
             if (x == 1) {
-                // Check if the icon is "calendar-prev" or "calendar-next"
-                month = icon.id === "calendar-prev" ? month - 1 : month + 1;
-                console.log(x);
-                // Check if the month is out of range
-                if (month < 0 || month > 11) {
-                    // Set the date to the first day of the month with the new year
-                    date = new Date(year, month, new Date().getDate());
 
-                    // Set the year to the new year
-                    year = date.getFullYear();
-
-                    // Set the month to the new month
-                    month = date.getMonth();
-                } else {
-                    // Set the date to the current date
-                    date = new Date();
+                if (icon.id === "calendar-prev") {
+                    month--;
+                    if (month < 1) {
+                        month = 12;
+                        year--;
+                    }
+                } else if (icon.id === "calendar-next") {
+                    month++;
+                    console.log(month);
+                    if (month > 12) {
+                        month = 1;
+                        year++;
+                    }
                 }
-
                 // Call the manipulate function to update the calendar display
-                GetShiftForMonth(month + 1);
+                GetShiftForMonth(month+1, year);
             }
 
         });
     });
+
+
+
+    /* Open Calender When USer click on Calneder Icon */
+    const centerSpan = document.querySelector(".center-span");
+    const datepicker = document.getElementById("datepicker");
+
+    datepicker.addEventListener("change", (event) => {
+        if (x == 1) {
+            debugger;
+        const selectedDate = new Date(event.target.value);
+        month = selectedDate.getMonth();
+        year = selectedDate.getFullYear();
+        console.log(month , year);
+        GetShiftForMonth(month, year);
+        centerSpan.click();
+        }
+    });
+
 
 
     getProviderList();
@@ -777,7 +790,7 @@ $(document).ready(function () {
 
     $('#fregion').on('change', function () {
         if (x == 1) {
-            GetShiftForMonth(month + 1);
+            GetShiftForMonth(month + 1 , year);
         } else if (x == 2 || x == 3) {
             getProviderList();
         } else {

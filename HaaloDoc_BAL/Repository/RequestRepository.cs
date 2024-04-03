@@ -1,6 +1,7 @@
 ﻿using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.DataContext;
 using HalloDoc_DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,8 +52,9 @@ namespace HalloDoc_BAL.Repository
 
         public List<Request> GetAll()
         {
-            return _context.Requests.ToList();
+            return _context.Requests.Include(e => e.Physician).ToList();
         }
+
     }
 
 }

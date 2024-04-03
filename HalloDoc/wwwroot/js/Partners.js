@@ -1,5 +1,32 @@
 $(document).ready(function () {
-    $(".open-modal").on("click", function () {
+
+    contactModalHandler();
+
+    $('#professionSelect').change(function () {
+        console.log($(this).val());
+        var professionId = +$(this).val();
+
+        $.ajax({
+            url: 'Partners', 
+            type: 'GET',
+            data: { professionId },
+            success: function (data) {
+                debugger
+                console.log(data);
+                $('#vendorTable tbody').empty();
+                $('#vendorTable tbody').html(data);
+                contactModalHandler();
+                setupPagination(10);
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    });
+})
+
+function contactModalHandler() {
+    $(".open-modal").unbind("click").on("click", function () {
         let vendorid = +$(this).data("vendorid");
         let vendorName = $(this).data("vendorname");
 
@@ -36,42 +63,12 @@ $(document).ready(function () {
                         })
                     },
                     error: function (xhr, status, error) {
-                        showToaster("Error While Delete Vendor" , "error");
+                        showToaster("Error While Delete Vendor", "error");
                     }
                 });
             }
         });
     })
-
-    $('#professionSelect').change(function () {
-        console.log($(this).val());
-        var professionId = +$(this).val();
-
-        $.ajax({
-            url: 'vendorDataByProfession', 
-            type: 'GET',
-            data: { professionId },
-            success: function (data) {
-                console.log(data);
-                $('#vendorTable tbody').empty();
-               // data.forEach(function (item) {
-               //     var newRow = $('<tr class="data-row">');
-
-               //     for (key in item) {
-               //         newRow.append('<td class="' + key + '">' + item[key] + '</td>');
-               //     }
-
-               //$('#vendorTable tbody').append(newRow);
-               // })
-
-
-            },
-            error: function () {
-                alert("error");
-            }
-        });
-    });
-
-})
+}
 
 setupPagination(10);

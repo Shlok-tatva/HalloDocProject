@@ -8,6 +8,6 @@ namespace HalloDoc_BAL.Interface
         void Delete(int id);
         Healthprofessional get(int id);
         List<Healthprofessional> getByProfession(int professionId);
-        void Update(Healthprofessional healthprofessional);
+        void Update(Healthprofessional healthprofessional); 
     }
 }

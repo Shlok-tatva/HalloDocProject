@@ -2,6 +2,30 @@ $(document).ready(function () {
 
     physicianNotificationHandler();
 
+    $('#regionForProvider').on('change' , function () {
+        debugger;
+        console.log($(this).val());
+        var regionId = +$(this).val();
+
+        $.ajax({
+            url: 'Provider',
+            type: 'GET',
+            data: { regionId },
+            success: function (data) {
+                debugger
+                console.log(data);
+                $('#providerTable tbody').empty();
+                $('#providerTable tbody').html(data);
+                physicianNotificationHandler();
+
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    });
+
+
     $(document).on('click', '.open-modal', function () {
         debugger
         var requestId = $(this).data('physicianid');
@@ -17,6 +41,7 @@ $(document).ready(function () {
         // Show the modal
         $('#contactProviderModal').modal('show');
     });
+
 
     $('.close').on('click', function () {
 
@@ -76,7 +101,6 @@ $(document).ready(function () {
     })
 
 
-
     function physicianNotificationHandler() {
         var initialCheckboxState = {};
 
@@ -90,7 +114,7 @@ $(document).ready(function () {
             $('#saveBtn').show();
         });
 
-        $('#saveBtn').click(function () {
+        $('#saveBtn').unbind("click").click(function () {
             var changedCheckboxData = [];
 
             // Compare initial state with final state of checkboxes
@@ -132,6 +156,7 @@ $(document).ready(function () {
             });
 
         });
+
     }
 
 })

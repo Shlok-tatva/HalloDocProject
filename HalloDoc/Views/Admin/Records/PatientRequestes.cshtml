@@ -1,0 +1,123 @@
+﻿@model List<HalloDoc_DAL.Models.Request>;
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+    <style>
+        tr, th, td {
+            text-align: left !important;
+        }
+
+        th {
+            padding-left: 15px !important
+        }
+
+        td {
+            padding: 15px !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+<partial name="_NavBar" />
+
+<div class="m-4 mt-5">
+    <div class="p-2">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">Patient Records</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+    <div class="shadow rounded-3 mt-3">
+        <table class="table table-hover w-100 my-2">
+            <thead class="">
+                <tr>
+                    <th>Client/Member</th>
+                    <th>Created Date</th>
+                    <th>Conformation</th>
+                    <th>Provider Name</th>
+                    <th>Concluded Date</th>
+                    <th>Status</th>
+                    <th>Final Report</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td>@request.Firstname @request.Lastname</td>
+                        <td>@request.Createddate.ToString("MMM dd , yyyy")</td>
+                        <td>@request.Confirmationnumber</td>
+                        <td>@(@request.Physicianid != null ? "Dr." + @request.Physician?.Firstname : '-')</td>
+                        <td>@request.Modifieddate</td>
+                        <td>
+                            @{
+                                var statusString = "";
+
+                                switch (request.Status)
+                                {
+                                    case 1:
+                                        statusString = "Unassigned";
+                                        break;
+                                    case 2:
+                                        statusString =  "Accepted";
+                                        break;
+                                    case 3:
+                                        statusString = "Cancel by Admin";
+                                        break;
+                                    case 4:
+                                        statusString = "MDEnRoute";
+                                        break;
+                                    case 5:
+                                        statusString = "MDONSite";
+                                        break;
+                                    case 6:
+                                        statusString = "Conclude";
+                                        break;
+                                    case 7:
+                                        statusString = "Cancelled By Patient";
+                                        break;
+                                    case 8:
+                                        statusString = "Closed";
+                                        break;
+                                    case 9:
+                                        statusString = "UnPaid";
+                                        break;
+                                    case 10:
+                                        statusString = "Clear";
+                                        break;
+                                    case 11:
+                                        statusString = "Blocked by Admin";
+                                        break;
+                                    default:          
+                                        statusString  =  "Unknown";
+                                        break;
+                                }
+                            }
+                            @statusString
+                        </td>
+                        <td></td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-info btn-sm hover_white dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li><a href="viewCase?request=@request.Requestid" class="dropdown-item">View Case</a></li>
+                                    <li><a href="viewUpload?request=@request.Requestid" class="dropdown-item">Documents</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

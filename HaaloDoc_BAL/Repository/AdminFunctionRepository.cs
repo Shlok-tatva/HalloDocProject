@@ -292,7 +292,7 @@ namespace HalloDoc_BAL.Repository
 
                     Requeststatuslog requestlog = new Requeststatuslog();
                     requestlog.Requestid = requestId;
-                    requestlog.Status = 10;
+                    requestlog.Status = 11;
                     requestlog.Adminid = adminId;
                     requestlog.Notes = reason;
                     requestlog.Createddate = DateTime.Now;
@@ -773,10 +773,10 @@ namespace HalloDoc_BAL.Repository
         #endregion
 
         #region Providers-Page
-        public List<ProviderInfoAdmin> getProviderInfoView()
+        public List<ProviderInfoAdmin> getProviderInfoView(int? regionId)
         {
             List<ProviderInfoAdmin> providerInfoAdmin = new List<ProviderInfoAdmin>();
-            List<Physician> providers = _context.Physicians.Where(p => p.Isdeleted == false).ToList();
+            List<Physician> providers = _context.Physicians.Where(p => p.Isdeleted == false && (regionId == 0 || regionId == null || regionId == p.Regionid)).ToList();
             providers.Sort((a, b) => b.Physicianid - a.Physicianid);
             foreach (Physician pro in providers)
             {
@@ -1486,12 +1486,12 @@ namespace HalloDoc_BAL.Repository
 
         }
 
-        public List<ScheduleModel> GetShift(int month, int? regionId)
+        public List<ScheduleModel> GetShift(int month, int year , int? regionId)
         {
             List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
-
+           
             var uniqueDates = _context.Shiftdetails
-                            .Where(sd => sd.Shiftdate.Month == month && sd.Isdeleted == false && (regionId == null || regionId == 0 || sd.Regionid == regionId))
+                            .Where(sd => sd.Shiftdate.Month == month && sd.Shiftdate.Year == year && sd.Isdeleted == false && (regionId == null || regionId == 0 || sd.Regionid == regionId))
                             .Select(sd => sd.Shiftdate.Date) // Select the date part of Shiftdate
                             .Distinct() // Get distinct dates
                             .ToList();

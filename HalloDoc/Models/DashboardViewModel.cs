@@ -24,31 +24,23 @@
                     case 2:
                         return "Accepted";
                     case 3:
-                        return "Cancelled";
+                        return "Cancel by Admin";
                     case 4:
-                        return "Reserving";
-                    case 5:
                         return "MDEnRoute";
+                    case 5:
+                        return "MDONSite";
                     case 6:
-                        return "MDOnSite";
+                        return "Conclude";
                     case 7:
-                        return "FollowUp";
+                        return "Cancelled By Patient";
                     case 8:
                         return "Closed";
                     case 9:
-                        return "Locked";
+                        return "UnPaid";
                     case 10:
-                        return "Declined";
+                        return "Requeste Cleared";
                     case 11:
-                        return "Consult";
-                    case 12:
-                        return "Clear";
-                    case 13:
-                        return "CancelledByProvider";
-                    case 14:
-                        return "CCUploadedByClient";
-                    case 15:
-                        return "CCApprovedByAdmin";
+                        return "Blocked Request";
                     default:
                         return "Unknown";
                 }
@@ -56,6 +48,7 @@
         }
     }
 }
+
 
 
 

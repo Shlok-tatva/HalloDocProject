@@ -85,26 +85,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach (var vendor in Model)
-                    {
-                        <tr class="text-start data-row">
-
-                            <td class="text-black ps-3"> @ViewBag.ProfessionNames[(int)@vendor.Profession]</td>
-                            <td class="text-black ps-3">@vendor.Vendorname</td>
-                            <td class="text-black ps-3">@vendor.Email</td>
-                            <td class="text-black ps-3">@vendor.Faxnumber</td>
-                            <td class="text-black ps-3">@vendor.Phonenumber</td>
-                            <td class="text-black ps-3">@vendor.Businesscontact</td>
-                            <td class="text-black">
-                                <a href="/Admin/EditPartner?vendorid=@vendor.Vendorid" class="btn btn-sm hover_white btn-outline-info">Edit</a>
-                                <button class="btn btn-sm hover_white btn-outline-info open-modal"
-                                        data-vendorid="@vendor.Vendorid"
-                                        data-vendorname="@vendor.Vendorname">
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    }
+                    <partial name="~/Views/Admin/Partners/_partnersData.cshtml" model="Model" />
                 </tbody>
             </table>
         </div>
