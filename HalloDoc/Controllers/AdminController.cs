@@ -3,6 +3,7 @@
 using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.Repository;
 using HalloDoc_BAL.ViewModel.Admin;
+using HalloDoc_BAL.ViewModel.Records;
 using HalloDoc_BAL.ViewModel.Schedule;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Identity;
@@ -648,21 +649,21 @@ namespace HalloDocAdmin.Controllers
             var regions = _adminFunctionRepository.GetAllReagion();
             List<ProviderInfoAdmin> view = new List<ProviderInfoAdmin>();
 
-            if(regionId != null)
+            if (regionId != null)
             {
-               view =  _adminFunctionRepository.getProviderInfoView(regionId);
+                view = _adminFunctionRepository.getProviderInfoView(regionId);
             }
             else
             {
-               view = _adminFunctionRepository.getProviderInfoView(null);
+                view = _adminFunctionRepository.getProviderInfoView(null);
             }
 
             ViewBag.regions = regions;
             ViewBag.adminId = adminId;
 
-            if(regionId != null)
+            if (regionId != null)
             {
-                return PartialView("provider/_providerList" , view);
+                return PartialView("provider/_providerList", view);
             }
 
             return View("provider/index", view);
@@ -850,7 +851,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.professionType = _adminFunctionRepository.getAllProfessions();
             List<Healthprofessional> view = new List<Healthprofessional>();
 
-            if(professionId != null )
+            if (professionId != null)
             {
                 view = _healthprofessionalRepository.getByProfession((int)professionId);
             }
@@ -872,7 +873,7 @@ namespace HalloDocAdmin.Controllers
             }
             ViewBag.ProfessionNames = professionNames;
 
-            if(professionId != null)
+            if (professionId != null)
             {
                 return PartialView("Partners/_partnersData", view);
             }
@@ -1247,7 +1248,7 @@ namespace HalloDocAdmin.Controllers
 
         /*For week wise Data*/
 
-        public IActionResult GetShiftByMonth(int? month, int? year , int? regionId)
+        public IActionResult GetShiftByMonth(int? month, int? year, int? regionId)
         {
             var data = _adminFunctionRepository.GetShift((int)month, (int)year, regionId);
             return Json(data);
@@ -1392,17 +1393,39 @@ namespace HalloDocAdmin.Controllers
 
         #endregion
 
-        #region PatientRecords
+        #region Records
 
-        public IActionResult PatientRecords()
-        {
+        //public IActionResult PatientRecords()
+        //{
+        //    ViewBag.Username = HttpContext.Session.GetString("Username");
+        //    ViewData["ViewName"] = "Records";
+        //    var regions = _adminFunctionRepository.GetAllReagion();
+        //    ViewBag.regions = regions;
+        //    List<User> data = _userRepository.GetAll();
+        //    return View("Records/PatientRecords", data);
+        //}
+
+        public IActionResult PatientRecords(string? firstName, string? lastName, string? email, string? phoneNumber)
+           {
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Records";
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
-            List<User> data = _userRepository.GetAll();
-            return View("Records/PatientRecords" , data);
+            List<User> data = new List<User>();
+            if (firstName == null && lastName == null && email == null && phoneNumber == null)
+            {
+                data = _userRepository.GetAll();
+                return View("Records/PatientRecords", data);
+            }
+            else
+            {
+                data = _userRepository.GetBySearch(firstName, lastName, email, phoneNumber);
+                 return PartialView("Records/_patientRecordsData", data);
+
+            }
         }
+
+
         public IActionResult PatientRequestes()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1411,6 +1434,52 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Records";
             return View("Records/PatientRequestes" , data);
         }
+
+        public IActionResult BlockHistory(string? name, DateTime? date, string? email, string? phoneNumber)
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Records";
+            var regions = _adminFunctionRepository.GetAllReagion();
+            ViewBag.regions = regions;
+
+            List<BlockHistoryView> data = new List<BlockHistoryView>();
+            if(name == null && date == null && email == null && phoneNumber == null)
+            {
+                data = _adminFunctionRepository.GetBlockHistoryData(null, null, null, null);
+                return View("Records/BlockHistory", data);
+            }
+            else
+            {
+                data = _adminFunctionRepository.GetBlockHistoryData(name, date, email, phoneNumber);
+                return PartialView("Records/_blockUserData", data);
+            }
+
+        }
+
+
+        [HttpPost]
+        public IActionResult unBlock(int Id , int requestId)
+        {
+            try
+            {
+                _adminFunctionRepository.unBlock(Id, requestId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        public IActionResult EmailLogs()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Records";
+            var accountType = _adminFunctionRepository.getAllRoleType();
+            ViewBag.accountType = accountType;
+            return View("Records/EmailLogs");
+        }
+
 
         #endregion
 

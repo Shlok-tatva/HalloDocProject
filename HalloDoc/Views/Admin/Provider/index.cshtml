@@ -17,11 +17,9 @@
             height: var(--s);
             aspect-ratio: 1;
             border: calc(var(--s)/8) solid #939393;
-
             padding: calc(var(--s)/8);
             margin: 7px;
-            background:
-                radial-gradient(farthest-side, var(--c) 94%, #0000) 50%/0 0 no-repeat content-box;
+            background: radial-gradient(farthest-side, var(--c) 94%, #0000) 50%/0 0 no-repeat content-box;
             border-radius: 50%;
             outline-offset: calc(var(--s)/10);
             -webkit-appearance: none;
@@ -32,16 +30,16 @@
             transition: .3s;
         }
 
-        input[type=radio]:checked {
-            border-color: var(--c);
-            background-size: 100% 100%;
-        }
-        .radiolabel{
-            display:flex;
-            align-items: center;
+            input[type=radio]:checked {
+                border-color: var(--c);
+                background-size: 100% 100%;
+            }
 
+        .radiolabel {
+            display: flex;
+            align-items: center;
         }
-        
+
         @@media print {
             input[type=radio] {
                 -webkit-appearance: auto;
@@ -50,7 +48,6 @@
                 background: none;
             }
         }
-    
     </style>
 }
 
@@ -100,28 +97,13 @@
             </div>
 
             <div class="col-md-7 my-auto text-end">
-                <button id="saveBtn" class="btn btn-outline-info hover_white mx-4" style="display: none;" >Save</button>
+                <button id="saveBtn" class="btn btn-outline-info hover_white mx-4" style="display: none;">Save</button>
                 <a href="/Admin/CreateProvider" class="btn btn-info text-white">Create provider Account</a>
             </div>
         </div>
 
-        <div>
-            <table id="providerTable" class="w-100 table table-hover overflow-scroll">
-                <thead>
-                    <tr>
-                        <th class="w-10">Stop <br /> Notification</th>
-                        <th class="w-25">Provider Name</th>
-                        <th class="w-10">Role</th>
-                        <th class="w-20">On Call Status</th>
-                        <th class="w-15">Status</th>
-                        <th class="w-25">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <partial name="~/Views/Admin/Provider/_providerList.cshtml" , model="Model"/>
-                </tbody>
-            </table>
+        <div id="providerTable">
+            <partial name="~/Views/Admin/Provider/_providerList.cshtml" , model="Model" />
         </div>
     </div>
 </div>

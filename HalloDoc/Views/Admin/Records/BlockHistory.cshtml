@@ -1,27 +1,30 @@
-﻿@model List<HalloDoc_DAL.Models.User>;
+﻿@model List<HalloDoc_BAL.ViewModel.Records.BlockHistoryView>;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
     <style>
-         tr ,th ,td{
-                    text-align: left !important;
-                }
-                th{
-                    padding-left:15px !important
-                }
-                td{
-                padding: 15px !important;
-                }
+        tr, th, td {
+            text-align: left !important;
+        }
+
+        th {
+            padding-left: 15px !important
+        }
+
+        td {
+            padding: 15px !important;
+        }
     </style>
 }
 
 @section Scripts {
-    <script src="~/js/Records/PatientRecords.js"></script>
+    <script src="~/js/Records/BlockHistroy.js"></script>
     <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
         }
     </script>
+
 }
 
 <partial name="_NavBar" />
@@ -29,7 +32,7 @@
 <div class="m-4 mt-5">
     <div class="p-2">
         <div class="d-flex justify-content-between">
-            <h3 class="fw-bold">Patient History</h3>
+            <h3 class="fw-bold">Block History</h3>
             <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
                 <i class="fa-solid fa-chevron-left"></i> Back
             </button>
@@ -37,18 +40,18 @@
     </div>
     <div class="shadow rounded-3 mt-3">
 
-        <form id="patientRecordSearch" class="row px-4">
+        <form id="BloclpatientSearch" class="row px-4">
             <div class="form-floating col-md-3 my-3">
-                <input type="text" name="firstName" class="form-control" placeholder=" ">
+                <input type="text" name="name" class="form-control" placeholder=" ">
                 <label for="floatingInput" class="control-label ms-3">
-                    First Name
+                    Name
                 </label>
             </div>
 
             <div class="form-floating col-md-3 my-3">
-                <input type="text" name="lastName" class="form-control" placeholder=" ">
+                <input type="date" name="date" class="form-control" placeholder=" ">
                 <label for="floatingInput" class="control-label ms-3">
-                    Last Name
+                    Date
                 </label>
             </div>
 
@@ -66,19 +69,15 @@
                 </label>
             </div>
 
-            <div class="col-12" id="errorContainer"></div>
-
             <div class="col-12 text-end mb-2">
-                <button id="clearbtn" class="btn btn-outline-info hover_white"> Clear </button>
-                <input type="submit" value="Search" class="btn btn-info text-white"  />
+                <button class="btn btn-outline-info hover_white" > Clear </button>
+                <input type="submit" value="Search" class="btn btn-info text-white" />
             </div>
         </form>
-
-        <div id="patientRecordData">
-            <partial name="~/Views/Admin/Records/_patientRecordsData.cshtml" , model="Model" />
-        </div>
+       <div id="blockUserData">
+            <partial name="~/Views/Admin/Records/_blockUserData.cshtml" , model="Model" />
+       </div>
     </div>
-
     <div id="pagination">
         <button id="first-button" class="pagination_btn">First</button>
         <button id="prev-button" class="pagination_btn" disabled><i class="bi bi-chevron-left fs-5"></i> </button>
@@ -87,5 +86,4 @@
         <button id="next-button" class="pagination_btn"> <i class="bi bi-chevron-right fs-5"></i> </button>
         <button id="last-button" class="pagination_btn">Last</button>
     </div>
-
 </div>

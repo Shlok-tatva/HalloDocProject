@@ -1,0 +1,29 @@
+﻿@model List<HalloDoc_DAL.Models.User>;
+
+<table class="table table-hover w-100 my-4">
+    <thead class="">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr class="text-black data-row">
+                <td class="text-black">@user.Firstname</td>
+                <td class="text-black">@user.Lastname</td>
+                <td class="text-black">@user.Email</td>
+                <td class="text-black">@user.Mobile</td>
+                <td class="text-black">@user.Street @user.City , @user.State (@user.Zipcode)</td>
+                <td>
+                    <a href="PatientRequestes?id=@user.Userid" class="btn btn-outline-info btn-sm hover_white">Explore</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -13,8 +13,8 @@ $(document).ready(function () {
             success: function (data) {
                 debugger
                 console.log(data);
-                $('#vendorTable tbody').empty();
-                $('#vendorTable tbody').html(data);
+                $('#vendorTable').empty();
+                $('#vendorTable').html(data);
                 contactModalHandler();
                 setupPagination(10);
             },

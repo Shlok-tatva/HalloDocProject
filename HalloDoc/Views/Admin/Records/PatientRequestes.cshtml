@@ -19,6 +19,9 @@
 
 @section Scripts {
     <script>
+        setupPagination(5);
+    </script>
+    <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
         }
@@ -53,7 +56,7 @@
             <tbody>
                 @foreach (var request in Model)
                 {
-                    <tr>
+                    <tr class="data-row">
                         <td>@request.Firstname @request.Lastname</td>
                         <td>@request.Createddate.ToString("MMM dd , yyyy")</td>
                         <td>@request.Confirmationnumber</td>
@@ -105,7 +108,7 @@
                             }
                             @statusString
                         </td>
-                        <td></td>
+                        <td> @(request.Status == (short)8 ? "<a href='' class='btn btn-otline-info hover_white'>View</a>" : "-" ) </td>
                         <td>
                             <div class="dropdown">
                                 <button class="btn btn-outline-info btn-sm hover_white dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
@@ -120,4 +123,14 @@
             </tbody>
         </table>
     </div>
+
+    <div id="pagination">
+        <button id="first-button" class="pagination_btn">First</button>
+        <button id="prev-button" class="pagination_btn" disabled><i class="bi bi-chevron-left fs-5"></i> </button>
+        <!-- Pagination buttons container -->
+        <div id="page-buttons"></div>
+        <button id="next-button" class="pagination_btn"> <i class="bi bi-chevron-right fs-5"></i> </button>
+        <button id="last-button" class="pagination_btn">Last</button>
+    </div>
+
 </div>

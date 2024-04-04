@@ -1,4 +1,5 @@
 ﻿using HalloDoc_BAL.ViewModel.Admin;
+using HalloDoc_BAL.ViewModel.Records;
 using HalloDoc_BAL.ViewModel.Schedule;
 using HalloDoc_DAL.Models;
 
@@ -59,6 +60,10 @@ namespace HalloDoc_BAL.Repository
 
         List<CreateProviderView> PhysicianOnCall(int? region);
         List<ScheduleModel> GetAllNotApprovedShift(int? regionId, int? month);
+
+
+        List<BlockHistoryView> GetBlockHistoryData(string? name, DateTime? date, string? email, string? phoneNumber);
+        void unBlock(int blockrequestId, int requestId);
 
 
 

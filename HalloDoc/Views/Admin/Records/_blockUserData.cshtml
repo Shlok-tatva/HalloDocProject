@@ -1,0 +1,34 @@
+﻿@model List<HalloDoc_BAL.ViewModel.Records.BlockHistoryView>;
+
+
+<table class="table table-hover w-100 my-4">
+    <thead class="">
+        <tr>
+            <th>Patient Name</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Created Date</th>
+            <th>Notes</th>
+            <th>is Active</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr class="text-black data-row">
+                <td class="text-black">@request.patientName</td>
+                <td class="text-black">@request.PhoneNumber</td>
+                <td class="text-black">@request.Email</td>
+                <td class="text-black">@request.createdDate.ToString("dd MMM , yyyy")</td>
+                <td class="text-black">@request.Notes</td>
+                <td class="text-black">
+                    <input type="checkbox" checked disabled />
+                </td>
+                <td>
+                    <button onclick="unblock(@request.blockRequestId , @request.requestId)" class="btn btn-outline-info btn-sm hover_white">Unblock</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

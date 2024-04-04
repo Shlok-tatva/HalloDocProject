@@ -1,30 +1,44 @@
 ﻿@model List<HalloDoc_BAL.ViewModel.Admin.ProviderInfoAdmin>;
 
-@foreach (var provider in Model)
-{
-    <tr>
+<table class="w-100 table table-hover overflow-scroll">
+    <thead>
+        <tr>
+            <th class="w-10">Stop <br /> Notification</th>
+            <th class="w-25">Provider Name</th>
+            <th class="w-10">Role</th>
+            <th class="w-20">On Call Status</th>
+            <th class="w-15">Status</th>
+            <th class="w-25">Actions</th>
+        </tr>
+    </thead>
 
-        @if (provider.stopNotification)
+    <tbody>
+        @foreach (var provider in Model)
         {
-            <td class="p-3"> <input type="checkbox" data-physicianid="@provider.providerId" id="" checked></td>
+            <tr>
+                @if (provider.stopNotification)
+                {
+                    <td class="p-3"> <input type="checkbox" data-physicianid="@provider.providerId" id="" checked></td>
+                }
+                else
+                {
+                    <td class="p-3"> <input type="checkbox" data-physicianid="@provider.providerId" id=""></td>
+                }
+                <td class="text-black">@provider.providerName</td>
+                <td class="text-black">@provider.providerRole</td>
+                <td class="text-black">Un avalible</td>
+                <td class="text-black">@provider.statusString</td>
+                <td class="text-black">
+                    <button class="btn btn-sm hover_white btn-outline-info open-modal"
+                            data-physicianid="@provider.providerId"
+                            data-email="@provider.providerEmail"
+                            data-adminid="@ViewBag.adminId"
+                            data-phone="@provider.providerPhone">
+                        Contact
+                    </button>
+                    <a href="EditProvider?providerId=@provider.providerId" class="btn btn-sm hover_white btn-outline-info">edit</a>
+                </td>
+            </tr>
         }
-        else
-        {
-            <td class="p-3"> <input type="checkbox" data-physicianid="@provider.providerId" id=""></td>
-        }
-        <td class="text-black">@provider.providerName</td>
-        <td class="text-black">@provider.providerRole</td>
-        <td class="text-black">Un avalible</td>
-        <td class="text-black">@provider.statusString</td>
-        <td class="text-black">
-            <button class="btn btn-sm hover_white btn-outline-info open-modal"
-                    data-physicianid="@provider.providerId"
-                    data-email="@provider.providerEmail"
-                    data-adminid="@ViewBag.adminId"
-                    data-phone="@provider.providerPhone">
-                Contact
-            </button>
-            <a href="EditProvider?providerId=@provider.providerId" class="btn btn-sm hover_white btn-outline-info">edit</a>
-        </td>
-    </tr>
-}
+    </tbody>
+</table>

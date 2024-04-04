@@ -1,5 +1,21 @@
 ﻿@model List<HalloDoc_DAL.Models.Healthprofessional>;
 
+
+<table  class="w-100 table table-hover overflow-scroll">
+    <thead>
+        <tr class="text-start">
+            <th class="text-start ps-3">Profession</th>
+            <th class="text-start ps-3">Business Name</th>
+            <th class="text-start ps-3">Email</th>
+            <th class="text-start ps-3">Fax Number</th>
+            <th class="text-start ps-3">Phone Number</th>
+            <th class="text-start ps-3">Business Contact</th>
+            <th class="text-start ps-3" "">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
 @foreach (var vendor in Model)
 {
     <tr class="text-start data-row">
@@ -20,3 +36,5 @@
         </td>
     </tr>
 }
+    </tbody>
+</table>

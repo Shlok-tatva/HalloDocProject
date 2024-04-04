@@ -1,0 +1,123 @@
+﻿@*@model List<HalloDoc_BAL.ViewModel.Records.BlockHistoryView>;*@
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+    <style>
+        tr, th, td {
+            text-align: left !important;
+        }
+
+        th {
+            padding-left: 15px !important
+        }
+
+        td {
+            padding: 15px !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    @*<script src="~/js/Records/BlockHistroy.js"></script>*@
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+
+}
+
+<partial name="_NavBar" />
+
+<div class="m-4 mt-5">
+    <div class="p-2">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">Email Logs (Gmail)</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+    <div class="shadow rounded-3 mt-3">
+
+        <form class="row px-4">
+            <div class="form-floating col-md-2 my-3">
+                <select  asp class="form-select pt-1" id="AccountType" aria-label="Default select example">
+                    <option disabled selected>Account Type</option>
+                    <option value="0">All</option>
+                    @foreach (var accountType in @ViewBag.accountType)
+                    {
+                        <option value="@accountType.Id">@accountType.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-floating col-md-2 my-3">
+                <input type="text" id="RecevierName" class="form-control" placeholder=" ">
+                <label for="floatingInput" class="control-label ms-3">
+                    Receiver Name
+                </label>
+            </div>
+
+            <div class="form-floating col-md-2 my-3">
+                <input type="Email" id="Email" class="form-control" placeholder=" ">
+                <label for="floatingInput" class="control-label ms-3">
+                    Email Id
+                </label>
+            </div>
+
+            <div class="form-floating col-md-2 my-3">
+                <input type="date" id="createdDate" class="form-control" placeholder=" ">
+                <label for="floatingInput" class="control-label ms-3">
+                    Created Date
+                </label>
+            </div>
+
+            <div class="form-floating col-md-2 my-3">
+                <input type="date" id="sentDate" class="form-control" placeholder=" ">
+                <label for="floatingInput" class="control-label ms-3">
+                    Sent Date
+                </label>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-center justify-content-end mb-2">
+                <input type="reset" value="Clear" class="btn btn-outline-info mx-2 hover_white" />
+                <input type="submit" value="Search" class="btn btn-info text-white" />
+            </div>
+        </form>
+
+        <table class="table table-hover w-100 my-4">
+            <thead class="">
+                <tr>
+                    <th>Recipient</th>
+                    <th>Action</th>
+                    <th>Role Name</th>
+                    <th>Email id</th>
+                    <th>Created Date</th>
+                    <th>Sent Date</th>
+                    <th>Sent</th>
+                    <th>Sent Tries</th>
+                    <th>Confirmation Number</th>
+                </tr>
+            </thead>
+            <tbody>
+               @* @foreach (var request in Model)
+                {
+                    <tr class="text-black">
+                        <td class="text-black">@request.patientName</td>
+                        <td class="text-black">@request.PhoneNumber</td>
+                        <td class="text-black">@request.Email</td>
+                        <td class="text-black">@request.createdDate.ToString("dd MMM , yyyy")</td>
+                        <td class="text-black">@request.Notes</td>
+                        <td class="text-black">
+                            <input type="checkbox" checked disabled />
+                        </td>
+                        <td>
+                            <button onclick="unblock(@request.blockRequestId , @request.requestId)" class="btn btn-outline-info btn-sm hover_white">Unblock</button>
+                        </td>
+                    </tr>
+                }*@
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -70,25 +70,10 @@
             </div>
         </div>
 
-        <div>
-            <table id="vendorTable" class="w-100 table table-hover overflow-scroll">
-                <thead>
-                    <tr class="text-start">
-                        <th class="text-start ps-3">Profession</th>
-                        <th class="text-start ps-3">Business Name</th>
-                        <th class="text-start ps-3">Email</th>
-                        <th class="text-start ps-3">Fax Number</th>
-                        <th class="text-start ps-3">Phone Number</th>
-                        <th class="text-start ps-3">Business Contact</th>
-                        <th class="text-start ps-3" "">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <partial name="~/Views/Admin/Partners/_partnersData.cshtml" model="Model" />
-                </tbody>
-            </table>
+        <div id="vendorTable">
+            <partial name="~/Views/Admin/Partners/_partnersData.cshtml" model="Model" />        
         </div>
+
     </div>
     <div id="pagination">
         <button id="first-button" class="pagination_btn">First</button>

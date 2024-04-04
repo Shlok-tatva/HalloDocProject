@@ -8,18 +8,21 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\access\UserAccess.js" />
+    <Content Remove="wwwroot\js\records\BlockHistroy.js" />
     <Content Remove="wwwroot\js\scheduling\RequestedShift.js" />
     <Content Remove="wwwroot\js\scheduling\scheduling.js" />
   </ItemGroup>
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\js\access\UserAccess.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\records\BlockHistroy.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\scheduling\RequestedShift.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\scheduling\scheduling.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\js\access\UserAccess.js" />
+    <None Include="wwwroot\js\records\BlockHistroy.js" />
     <None Include="wwwroot\js\scheduling\RequestedShift.js" />
     <None Include="wwwroot\js\scheduling\scheduling.js" />
     <None Include="wwwroot\js\site.js" />
@@ -83,6 +86,10 @@
   <ItemGroup>
     <ProjectReference Include="..\HaaloDoc_BAL\HalloDoc_BAL.csproj" />
     <ProjectReference Include="..\HalloDoc_DAL\HalloDoc_DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\js\Records\" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

@@ -14,5 +14,6 @@ namespace HalloDoc_BAL.Interface
         public void Update(User user);
         User GetUser(string email);
         User GetUserByID(int  id);
+        List<User> GetBySearch(string? firstName, string? lastName, string? email, string? phoneNumber);
     }
 }

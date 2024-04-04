@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections;
 using HalloDoc_BAL.ViewModel.Schedule;
+using HalloDoc_BAL.ViewModel.Records;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -282,12 +283,21 @@ namespace HalloDoc_BAL.Repository
                     request.Status = 11; // it is for Block the request
                     _requestRepository.Update(request);
                     Blockrequest blockrequest = new Blockrequest();
+                    blockrequest = _context.Blockrequests.Where(br => br.Email == rc.Email).FirstOrDefault();
+
+                    if(blockrequest == null){
                     blockrequest.Requestid = requestId.ToString();
                     blockrequest.Reason = reason;
                     blockrequest.Phonenumber = rc.Phonenumber;
                     blockrequest.Email = rc.Email;
+                    blockrequest.Isactive = true;
                     blockrequest.Createddate = DateTime.Now;
                     _context.Blockrequests.Add(blockrequest);
+                    }
+                    else{
+                        blockrequest.Isactive = true;
+                        _context.Blockrequests.Update(blockrequest);
+                    }
                     _context.SaveChanges();
 
                     Requeststatuslog requestlog = new Requeststatuslog();
@@ -1486,10 +1496,10 @@ namespace HalloDoc_BAL.Repository
 
         }
 
-        public List<ScheduleModel> GetShift(int month, int year , int? regionId)
+        public List<ScheduleModel> GetShift(int month, int year, int? regionId)
         {
             List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
-           
+
             var uniqueDates = _context.Shiftdetails
                             .Where(sd => sd.Shiftdate.Month == month && sd.Shiftdate.Year == year && sd.Isdeleted == false && (regionId == null || regionId == 0 || sd.Regionid == regionId))
                             .Select(sd => sd.Shiftdate.Date) // Select the date part of Shiftdate
@@ -1647,7 +1657,7 @@ namespace HalloDoc_BAL.Repository
 
 
         #region ShiftReview 
-        public List<ScheduleModel> GetAllNotApprovedShift(int? regionId , int? month)
+        public List<ScheduleModel> GetAllNotApprovedShift(int? regionId, int? month)
         {
 
             List<ScheduleModel> shiftList = (from s in _context.Shifts
@@ -1673,6 +1683,83 @@ namespace HalloDoc_BAL.Repository
                                              }).ToList();
 
             return shiftList;
+
+        }
+        #endregion
+
+
+
+        #region Records
+
+
+
+        public List<BlockHistoryView> GetBlockHistoryData(string? name, DateTime? date, string? email, string? phoneNumber)
+        {
+            List<BlockHistoryView> data = new List<BlockHistoryView>();
+
+            IQueryable<Blockrequest> query = _context.Blockrequests.Where(br => br.Isactive == true);
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(br => _context.Requests.Any(r => r.Requestid.ToString() == br.Requestid && EF.Functions.Like((r.Firstname + " " + r.Lastname).ToLower(), $"%{name.ToLower()}%")));
+            }
+
+            if (date != null)
+            {
+                query = query.Where(br => br.Createddate.Value.Date == date.Value.Date);
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                query = query.Where(br => br.Email.Contains(email));
+            }
+
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                query = query.Where(br => br.Phonenumber.Contains(phoneNumber));
+            }
+
+            List<Blockrequest> blockrequests = query.ToList();
+
+            foreach (var br in blockrequests)
+            {
+                BlockHistoryView singleRequest = new BlockHistoryView();
+                Request rq = _context.Requests.Where(r => r.Requestid == int.Parse(br.Requestid)).FirstOrDefault();
+                singleRequest.requestId = Int32.Parse(br.Requestid);
+                singleRequest.blockRequestId = br.Blockrequestid;
+                singleRequest.Email = br.Email;
+                singleRequest.PhoneNumber = br.Phonenumber;
+                singleRequest.patientName = rq.Firstname + " " + rq.Lastname;
+                singleRequest.isActive = br.Isactive;
+                singleRequest.Notes = br.Reason;
+                singleRequest.createdDate = (DateTime)br.Createddate;
+                data.Add(singleRequest);
+            }
+
+            return data;
+        }
+
+
+
+
+
+        public void unBlock(int blockrequestId, int requestId)
+        {
+            using (var transaction = new TransactionScope())
+            {
+
+                Blockrequest blockRequest = _context.Blockrequests.Where(br => br.Blockrequestid == blockrequestId).FirstOrDefault();
+                if (blockRequest != null)
+                {
+                    blockRequest.Isactive = false;
+                }
+                _context.Blockrequests.Update(blockRequest);
+                _context.SaveChanges();
+                Request request = _requestRepository.Get(requestId);
+                request.Status = 1;
+                _requestRepository.Update(request);
+                transaction.Complete();
+            }
 
         }
         #endregion

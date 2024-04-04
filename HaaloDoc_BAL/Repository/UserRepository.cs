@@ -43,5 +43,21 @@ namespace HalloDoc_BAL.Repository
             return _context.Users.FirstOrDefault(m => m.Userid == id);
         }
 
+        public List<User> GetBySearch(string? firstName, string? lastName, string? email, string? phoneNumber)
+        {
+            var query = _context.Users.AsQueryable();
+            firstName = firstName?.ToLower();
+            lastName = lastName?.ToLower();
+            email = email?.ToLower();
+            phoneNumber = phoneNumber?.ToLower();
+
+            query = query.Where(u =>
+                (string.IsNullOrEmpty(firstName) || EF.Functions.Like(u.Firstname.ToLower(), $"%{firstName}%")) &&
+                (string.IsNullOrEmpty(lastName) || EF.Functions.Like(u.Lastname.ToLower(), $"%{lastName}%")) &&
+                (string.IsNullOrEmpty(email) || EF.Functions.Like(u.Email.ToLower(), $"%{email}%")) &&
+                (string.IsNullOrEmpty(phoneNumber) || u.Mobile.ToLower() == phoneNumber));
+            return query.ToList();
+        }
+
     }
 }

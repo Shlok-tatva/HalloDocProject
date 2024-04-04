@@ -14,8 +14,8 @@ $(document).ready(function () {
             success: function (data) {
                 debugger
                 console.log(data);
-                $('#providerTable tbody').empty();
-                $('#providerTable tbody').html(data);
+                $('#providerTable').empty();
+                $('#providerTable').html(data);
                 physicianNotificationHandler();
 
             },
