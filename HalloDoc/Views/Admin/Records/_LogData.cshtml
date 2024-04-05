@@ -1,0 +1,48 @@
+﻿@model List<HalloDoc_BAL.ViewModel.Records.LogView>;
+
+
+<table class="table table-hover w-100 my-4">
+    <thead class="">
+        <tr>
+            <th>Recipient</th>
+            <th>Action</th>
+            <th>Role Name</th>
+            @if (ViewBag.LogType == 1)
+            {
+                <th>Email id</th>
+            }
+            else if (ViewBag.LogType == 2)
+            {
+                <th>Phone Number</th>
+            }
+            <th>Created Date</th>
+            <th>Sent Date</th>
+            <th>Sent</th>
+            <th>Sent Tries</th>
+            <th>Confirmation Number</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr class="data-row">
+                <td>@log.recipientName</td>
+                <td>@log.Action</td>
+                <td>@log.roleName</td>
+                @if (ViewBag.LogType == 1)
+                {
+                    <td>@log.emailId</td>
+                }
+                else if (ViewBag.LogType == 2)
+                {
+                    <td>@log.phoneNumber</td>
+                }
+                <td>@log.createdDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                <td>@log.createdDate.ToString("MMM dd, yyyy")</td>
+                <td>@(@log.isSent ? "Yes" : "No")</td>
+                <td>@log.sentTries</td>
+                <td>@(log.confirmationNumber != null ? log.confirmationNumber : " - ")</td>
+            </tr>
+        }
+    </tbody>
+</table>

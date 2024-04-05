@@ -19,7 +19,7 @@ namespace HalloDoc_BAL.Repository
         void cancelCase(int requestId, int adminId, string reason, string note);
         List<ViewUploadView> GetuploadedDocuments(int requestId);
         void DeletefileFromDatabase(int fileId);
-        void SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null);
+        bool SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null);
         void CreateOrUpdateProvider(CreateProviderView model, int[] selectedRegions, bool isEditing);
         void DeleteProvider(int adminId, int providerId);
         List<Physician> GetPhysiciansByRegion(int regionId);
@@ -64,7 +64,8 @@ namespace HalloDoc_BAL.Repository
 
         List<BlockHistoryView> GetBlockHistoryData(string? name, DateTime? date, string? email, string? phoneNumber);
         void unBlock(int blockrequestId, int requestId);
-
+        List<LogView> GetEmailLogs(int? accountType, string? receiverName, string? emailId, DateTime? createdDate, DateTime? sentDate);
+        List<LogView> GetSMSLogs(int? accountType, string? receiverName, string? phoneNumber, DateTime? createdDate, DateTime? sentDate);
 
 
         List<Role> GetAllRole();

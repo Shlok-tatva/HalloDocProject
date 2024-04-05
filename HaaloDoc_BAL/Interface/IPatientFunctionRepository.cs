@@ -6,7 +6,7 @@ namespace HalloDoc_BAL.Interface
     {
         string Encrypt(string plainBytes, string Key);
         string Decrypt(string chiperText, string Key);
-        void SendEmail(string toEmail, string Title , string Message );
+        bool SendEmail(string toEmail, string Title , string Message );
         void createLog(Requeststatuslog log);
     }
 }

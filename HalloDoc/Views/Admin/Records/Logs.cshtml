@@ -1,4 +1,4 @@
-﻿@*@model List<HalloDoc_BAL.ViewModel.Records.BlockHistoryView>;*@
+﻿@model List<HalloDoc_BAL.ViewModel.Records.LogView>;
 
 @section Style {
     <link rel="stylesheet" href="~/css/adminCss.css" />
@@ -18,7 +18,8 @@
 }
 
 @section Scripts {
-    @*<script src="~/js/Records/BlockHistroy.js"></script>*@
+    <script src="~/js/Records/Logs.js"></script>
+
     <script>
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
@@ -32,17 +33,37 @@
 <div class="m-4 mt-5">
     <div class="p-2">
         <div class="d-flex justify-content-between">
-            <h3 class="fw-bold">Email Logs (Gmail)</h3>
+
+            @if (ViewBag.LogType == 1)
+            {
+                <h3 class="fw-bold">Email Logs (Gmail)</h3>
+            }
+            else if (ViewBag.LogType == 2)
+            {
+                <h3 class="fw-bold">SMS Logs (Twilo)</h3>
+            }
+
+
             <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
                 <i class="fa-solid fa-chevron-left"></i> Back
             </button>
+
         </div>
     </div>
     <div class="shadow rounded-3 mt-3">
 
-        <form class="row px-4">
+        @{
+            String formId = "emailLogsForm";
+        }
+
+        @if (ViewBag.LogType == 2)
+        {
+                formId = "smsLogsForm";
+        }
+
+        <form id="@formId" class="row px-4">
             <div class="form-floating col-md-2 my-3">
-                <select  asp class="form-select pt-1" id="AccountType" aria-label="Default select example">
+                <select asp class="form-select pt-1" id="AccountType" aria-label="Default select example">
                     <option disabled selected>Account Type</option>
                     <option value="0">All</option>
                     @foreach (var accountType in @ViewBag.accountType)
@@ -51,20 +72,33 @@
                     }
                 </select>
             </div>
-
             <div class="form-floating col-md-2 my-3">
-                <input type="text" id="RecevierName" class="form-control" placeholder=" ">
+                <input type="text" id="ReceiverName" class="form-control" placeholder=" ">
                 <label for="floatingInput" class="control-label ms-3">
                     Receiver Name
                 </label>
             </div>
 
-            <div class="form-floating col-md-2 my-3">
-                <input type="Email" id="Email" class="form-control" placeholder=" ">
-                <label for="floatingInput" class="control-label ms-3">
-                    Email Id
-                </label>
-            </div>
+            @if (ViewBag.LogType == 1)
+            {
+                <div class="form-floating col-md-2 my-3">
+                    <input type="text" id="Email" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Email Id
+                    </label>
+                </div>
+            }
+            else if (ViewBag.LogType == 2)
+            {
+                <div class="form-floating col-md-2 my-3">
+                    <input type="text" id="PhoneNumber" class="form-control" placeholder=" ">
+                    <label for="floatingInput" class="control-label ms-3">
+                        Phone Number
+                    </label>
+                </div>
+            }
+
+            
 
             <div class="form-floating col-md-2 my-3">
                 <input type="date" id="createdDate" class="form-control" placeholder=" ">
@@ -86,38 +120,16 @@
             </div>
         </form>
 
-        <table class="table table-hover w-100 my-4">
-            <thead class="">
-                <tr>
-                    <th>Recipient</th>
-                    <th>Action</th>
-                    <th>Role Name</th>
-                    <th>Email id</th>
-                    <th>Created Date</th>
-                    <th>Sent Date</th>
-                    <th>Sent</th>
-                    <th>Sent Tries</th>
-                    <th>Confirmation Number</th>
-                </tr>
-            </thead>
-            <tbody>
-               @* @foreach (var request in Model)
-                {
-                    <tr class="text-black">
-                        <td class="text-black">@request.patientName</td>
-                        <td class="text-black">@request.PhoneNumber</td>
-                        <td class="text-black">@request.Email</td>
-                        <td class="text-black">@request.createdDate.ToString("dd MMM , yyyy")</td>
-                        <td class="text-black">@request.Notes</td>
-                        <td class="text-black">
-                            <input type="checkbox" checked disabled />
-                        </td>
-                        <td>
-                            <button onclick="unblock(@request.blockRequestId , @request.requestId)" class="btn btn-outline-info btn-sm hover_white">Unblock</button>
-                        </td>
-                    </tr>
-                }*@
-            </tbody>
-        </table>
+       <div id="emaillogTable">
+            <partial name="~/Views/Admin/Records/_LogData.cshtml" , model="Model" />
+       </div>
+    </div>
+    <div id="pagination">
+        <button id="first-button" class="pagination_btn">First</button>
+        <button id="prev-button" class="pagination_btn" disabled><i class="bi bi-chevron-left fs-5"></i> </button>
+        <!-- Pagination buttons container -->
+        <div id="page-buttons"></div>
+        <button id="next-button" class="pagination_btn"> <i class="bi bi-chevron-right fs-5"></i> </button>
+        <button id="last-button" class="pagination_btn">Last</button>
     </div>
 </div>

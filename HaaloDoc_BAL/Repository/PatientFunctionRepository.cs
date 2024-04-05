@@ -73,7 +73,7 @@ namespace HalloDoc_BAL.Repository
         }
 
 
-        public void SendEmail(string toEmail, string Title, string Message)
+        public bool SendEmail(string toEmail, string Title, string Message)
         {
             try
             {
@@ -105,13 +105,13 @@ namespace HalloDoc_BAL.Repository
 
                         // Send the email
                         smtpClient.Send(mailMessage);
+                        return true;
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Handle exception, log error, etc.
-                throw new ApplicationException("Failed to send email", ex);
+                return false;
             }
         }
 

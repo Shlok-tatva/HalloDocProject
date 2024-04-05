@@ -174,8 +174,9 @@ function getEmailDataAndSend() {
 
     // Loop through table rows to find selected files
     $('.fileCheckbox:checked').each(function () {
+        debugger;
         var filePath = $(this).closest('tr').find('.download-btn').data('file');
-        if (filePath !== '') {
+        if (filePath !== undefined && filePath.length > 0) {
             var trimpath = "wwwroot/" + filePath.substring(2);
             attachmentFilePaths.push(trimpath);
         }
@@ -198,12 +199,12 @@ function getEmailDataAndSend() {
 
 function sendEmail(toEmail, attachmentFilePaths) {
     var apiUrl = '/Admin/SendfilesonMail';
-    var formdata = new FormData();
-    formdata.append('receverEmail', toEmail);
-    formdata.append('filePaths', attachmentFilePaths);
+    var requestId = +$('#requestId').val();
+
     var data = {
         'receverEmail': toEmail,
-        'filePaths': attachmentFilePaths
+        'filePaths': attachmentFilePaths,
+        'requestId': requestId
     }
 
     $.ajax({

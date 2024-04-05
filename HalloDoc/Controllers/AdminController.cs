@@ -1,4 +1,5 @@
-﻿using HalloDoc.Models;
+﻿
+using HalloDoc.Models;
 
 using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.Repository;
@@ -123,11 +124,14 @@ namespace HalloDocAdmin.Controllers
         {
             try
             {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
                 var title = "Create Request Link";
                 var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/PatientRequest";
 
                 var message = "Please use this link to create Request " + accountCreationLink;
-                _adminFunctionRepository.SendEmail(emailSendLink, title, message);
+                bool isSent =  _adminFunctionRepository.SendEmail(emailSendLink, title, message);
+                string name = firstNameSendLink + " , " + lastNameSendLink;
+                _commonFunctionrepo.EmailLog(emailSendLink, message, title, name , 1, null, adminId, null, 1, isSent , 1);
                 return Ok();
             }
             catch (Exception ex)
@@ -323,13 +327,17 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-        public IActionResult SendfilesonMail(string receverEmail, string[] filePaths)
+        public IActionResult SendfilesonMail(string receverEmail, string[] filePaths , int requestId)
         {
             try
             {
+                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
                 var title = "Files attachment below";
                 var message = "In this mail you receive you file as a attachment";
-                _adminFunctionRepository.SendEmail("shlok.jadeja@etatvasoft.com", title, message, filePaths);
+                bool isSent = _adminFunctionRepository.SendEmail("shlok.jadeja@etatvasoft.com", title, message, filePaths);
+                HalloDoc_DAL.Models.Request rq = _requestRepository.Get(requestId);
+                string name = rq.Firstname + " , " + rq.Lastname;
+                _commonFunctionrepo.EmailLog("shlok.jadeja@etatvasoft.com" , message, "Sent files on Mail", name, 1 , requestId, adminId, null, 2, isSent, 1);
                 return Ok();
             }
             catch (Exception ex)
@@ -771,6 +779,7 @@ namespace HalloDocAdmin.Controllers
             {
                 var admin = _adminrepo.GetAdminById(adminId);
                 var title = admin.Firstname + " " + admin.Lastname + " (Admin) Sent Message";
+                bool isSent;
 
                 if (selectedRadio == "Phone")
                 {
@@ -781,12 +790,15 @@ namespace HalloDocAdmin.Controllers
                 else if (selectedRadio == "Email")
                 {
 
-                    _adminFunctionRepository.SendEmail(email, title, message);
+                    isSent = _adminFunctionRepository.SendEmail(email, title, message);
+                    _commonFunctionrepo.EmailLog(email , message, title, null, 1 , null, adminId, physicianId, 3, isSent, 1);
                     return Ok(new { message = "Message sent successfully via Email." });
                 }
                 else if (selectedRadio == "Both")
                 {
-                    _adminFunctionRepository.SendEmail(email, title, message);
+                    isSent = _adminFunctionRepository.SendEmail(email, title, message);
+                    _commonFunctionrepo.EmailLog(email, message, title, null , 1, null, adminId, physicianId, 3, isSent, 1);
+
 
                     return Ok(new { message = "Message sent successfully via Phone and Email." });
                 }
@@ -1477,7 +1489,34 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Records";
             var accountType = _adminFunctionRepository.getAllRoleType();
             ViewBag.accountType = accountType;
-            return View("Records/EmailLogs");
+            ViewBag.LogType = 1;
+            List<LogView> data = _adminFunctionRepository.GetEmailLogs(null , null , null , null , null);
+            return View("Records/Logs" , data);
+        }
+
+        public IActionResult EmailLogsBySearch(int? accountType, string? receiverName, string? emailId, DateTime? createdDate, DateTime? sentDate)
+        {
+            try
+            {
+            List<LogView> data = _adminFunctionRepository.GetEmailLogs(accountType, receiverName, emailId, createdDate, sentDate);
+            return PartialView("Records/_LogData", data);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        public IActionResult SmsLogs()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Records";
+            var accountType = _adminFunctionRepository.getAllRoleType();
+            ViewBag.accountType = accountType;
+            ViewBag.LogType = 2;
+            List<LogView> data = _adminFunctionRepository.GetSMSLogs(null, null, null, null, null);
+            return View("Records/Logs", data);
         }
 
 

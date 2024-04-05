@@ -283,9 +283,11 @@ namespace HalloDoc.Controllers
                     string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
                     var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
 
-                    var title = "Account Creation LInk";
+                    var title = "Account Creation Link";
                     var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
-                    _patientFuncrepo.SendEmail(formData.Email, title, message);
+                    bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
+                    string name = formData.FirstName + " , " + formData.LastName;
+                    _commonFunctionrepo.EmailLog(formData.Email, message, title, name , 3, request.Requestid, null, null, 4, isSent, 1);
 
                     transaction.Complete();
 

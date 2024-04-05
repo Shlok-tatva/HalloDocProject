@@ -411,6 +411,8 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<Smslog>(entity =>
         {
             entity.HasKey(e => e.Smslogid).HasName("smslog_pkey");
+
+            entity.Property(e => e.Smslogid).HasDefaultValueSql("nextval('smslog_id_seq'::regclass)");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -428,6 +430,7 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.HasSequence("shift_id_seq");
         modelBuilder.HasSequence("shiftdetailregion_id_seq");
         modelBuilder.HasSequence("shiftdetails_id_seq");
+        modelBuilder.HasSequence("smslog_id_seq");
         modelBuilder.HasSequence("user_id_seq");
 
         OnModelCreatingPartial(modelBuilder);

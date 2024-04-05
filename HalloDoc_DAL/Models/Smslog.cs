@@ -52,4 +52,7 @@ public partial class Smslog
 
     [Column("action")]
     public int? Action { get; set; }
+
+    [Column("receivername", TypeName = "character varying")]
+    public string? Receivername { get; set; }
 }

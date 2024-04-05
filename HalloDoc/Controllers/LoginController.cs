@@ -13,15 +13,18 @@ namespace HalloDoc.Controllers
     {
         private readonly IAspnetuserRepository _aspnetuserrepo;
         private readonly IPatientFunctionRepository _petientfunctionrepo;
+        private readonly ICommonFunctionRepository _commonfunctionrepo;
         private readonly IUserRepository _userrepo;
         private readonly IAdminRepository _adminrepo;
         private readonly IPhysicianRepository _physicianrepo;
         private readonly IJwtServices _jwtServices;
 
-        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , IUserRepository userrepo, IAdminRepository adminrepo , IPhysicianRepository physicianrepo , IJwtServices jwtServices)
+
+        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , ICommonFunctionRepository commonfunctionrepo , IUserRepository userrepo, IAdminRepository adminrepo , IPhysicianRepository physicianrepo , IJwtServices jwtServices)
         {
             _aspnetuserrepo = aspnetuser;
             _petientfunctionrepo = petientfunctionrepo;
+            _commonfunctionrepo = commonfunctionrepo;
             _userrepo = userrepo;
             _adminrepo = adminrepo;
             _physicianrepo = physicianrepo;
@@ -180,6 +183,7 @@ namespace HalloDoc.Controllers
         public IActionResult resetPassword(string email)
         {
             User user = _userrepo.GetUser(email);
+            string name = user.Firstname + " , " + user.Lastname;
             if(user == null)
             {
                 TempData["Error"] = "User Not Found";
@@ -193,7 +197,9 @@ namespace HalloDoc.Controllers
             var resetPassowrdLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/Login/changePassword?email={encryptedEmail}&datetime={encryptedDate}";
             var title = "Reset Password Link";
             var message = $"Please click <a href=\"{resetPassowrdLink}\">here</a> to Reset Your Password account.";
-            _petientfunctionrepo.SendEmail(email , title , message);
+            bool isSent = _petientfunctionrepo.SendEmail(email , title , message);
+            _commonfunctionrepo.EmailLog(email, message, title, name , 3, null, null, null, 3, isSent, 1);
+
             return Ok();
         }
 

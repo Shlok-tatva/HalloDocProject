@@ -105,8 +105,6 @@ namespace HalloDoc_BAL.Repository
             _context.SaveChanges();
         }
 
-
-
         public string GetConfirmationNumber(string state, string lastname, string firstname)
         {
 
@@ -158,6 +156,7 @@ namespace HalloDoc_BAL.Repository
                 
             }
         }
+
         public List<string> GetMenuItemsForRole(string roleid)
         {
             List<string> menuNames = new List<string>();
@@ -168,6 +167,45 @@ namespace HalloDoc_BAL.Repository
                 menuNames.Add(menuName);
             }
             return menuNames;
+        }
+
+        public void EmailLog(string email , string messaage , string subject , string? name , int roleId , int? requestId , int? adminId , int? physicianId , int action , bool isSent , int sentTires)
+        {
+            try
+            {
+                Emaillog log = new Emaillog();
+                log.Emailtemplate = messaage;
+                log.Subjectname = subject;
+                log.Emailid = email;
+                log.Roleid = roleId;
+                log.Createdate = DateTime.Now;
+                log.Sentdate = DateTime.Now;
+                log.Adminid = adminId;
+                log.Requestid = requestId;
+                log.Physicianid = physicianId;
+                log.Action = action;
+                log.Receivername = name;
+                if(requestId != null)
+                {
+                log.Confirmationnumber = _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Confirmationnumber;
+                }
+
+                if (isSent)
+                {
+                    log.Isemailsent = true;
+                }
+                else
+                {
+                    log.Isemailsent = false;
+                }
+                log.Senttries = sentTires;
+                _context.Emaillogs.Add(log);
+                _context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
 
 

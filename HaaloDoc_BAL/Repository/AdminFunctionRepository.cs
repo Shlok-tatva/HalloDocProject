@@ -382,7 +382,7 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
-        public void SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null)
+        public bool SendEmail(string toEmail, string Title, string Message, string[] attachmentFilePaths = null)
         {
             try
             {
@@ -420,13 +420,13 @@ namespace HalloDoc_BAL.Repository
 
                         // Send the email
                         smtpClient.Send(mailMessage);
+                        return true;
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Handle exception, log error, etc.
-                throw new ApplicationException("Failed to send email", ex);
+                return false;
             }
         }
 
@@ -451,7 +451,6 @@ namespace HalloDoc_BAL.Repository
 
             }
         }
-
 
         public void sendAgreement(int requestId, int adminId, string email, string link)
         {
@@ -1601,7 +1600,6 @@ namespace HalloDoc_BAL.Repository
         }
         #endregion
 
-
         #region Provider-on-call
         public List<CreateProviderView> PhysicianOnCall(int? region)
         {
@@ -1655,7 +1653,6 @@ namespace HalloDoc_BAL.Repository
         }
         #endregion
 
-
         #region ShiftReview 
         public List<ScheduleModel> GetAllNotApprovedShift(int? regionId, int? month)
         {
@@ -1687,12 +1684,7 @@ namespace HalloDoc_BAL.Repository
         }
         #endregion
 
-
-
         #region Records
-
-
-
         public List<BlockHistoryView> GetBlockHistoryData(string? name, DateTime? date, string? email, string? phoneNumber)
         {
             List<BlockHistoryView> data = new List<BlockHistoryView>();
@@ -1739,10 +1731,6 @@ namespace HalloDoc_BAL.Repository
             return data;
         }
 
-
-
-
-
         public void unBlock(int blockrequestId, int requestId)
         {
             using (var transaction = new TransactionScope())
@@ -1762,8 +1750,132 @@ namespace HalloDoc_BAL.Repository
             }
 
         }
-        #endregion
 
+        public List<LogView> GetEmailLogs(int? accountType, string? receiverName, string? emailId, DateTime? createdDate, DateTime? sentDate)
+        {
+            List<LogView> emaillogs = new List<LogView>();
+
+            IQueryable<Emaillog> query = _context.Emaillogs;
+
+            if (accountType != null && accountType != 0)
+            {
+                query = query.Where(el => el.Roleid == accountType);
+            }
+
+            if (!string.IsNullOrEmpty(receiverName))
+            {
+                query = query.Where(el => EF.Functions.Like(el.Receivername.ToLower(), $"%{receiverName.ToLower()}%"));
+            }
+
+            if (!string.IsNullOrEmpty(emailId))
+            {
+                query = query.Where(el => el.Emailid.Contains(emailId));
+            }
+
+            if (createdDate != null)
+            {
+                query = query.Where(el => el.Createdate.Date == createdDate.Value.Date);
+            }
+
+            if (sentDate != null)
+            {
+                query = query.Where(el => el.Sentdate.Value.Date == sentDate.Value.Date);
+            }
+
+            // Retrieve the filtered email logs
+            List<Emaillog> logs = query.ToList();
+
+            // Transform email logs into LogView objects
+            foreach (var item in logs)
+            {
+                LogView emaillog = new LogView();
+                emaillog.Action = item.Subjectname;
+                emaillog.emailId = item.Emailid;
+                emaillog.createdDate = item.Createdate;
+                emaillog.sentDate = (DateTime)item.Sentdate;
+                emaillog.sentTries = (int)item.Senttries;
+                emaillog.isSent = (bool)item.Isemailsent;
+                emaillog.roleName = _context.Aspnetroles.FirstOrDefault(r => r.Id == item.Roleid)?.Name;
+                emaillog.confirmationNumber = item.Confirmationnumber;
+                if (item.Roleid == 1 && item.Physicianid != null)
+                {
+                    Physician ph = _context.Physicians.FirstOrDefault(ph => ph.Physicianid == item.Physicianid);
+                    item.Receivername = ph?.Firstname + " , " + ph?.Lastname;
+                }
+                if (!string.IsNullOrEmpty(item.Receivername))
+                {
+                    emaillog.recipientName = item.Receivername;
+                }
+                emaillogs.Add(emaillog);
+            }
+
+            return emaillogs;
+        }
+
+        public List<LogView> GetSMSLogs(int? accountType, string? receiverName, string? phoneNumber, DateTime? createdDate, DateTime? sentDate)
+        {
+            List<LogView> smslogs = new List<LogView>();
+
+            IQueryable<Smslog> query = _context.Smslogs;
+
+            if (accountType != null && accountType != 0)
+            {
+                query = query.Where(el => el.Roleid == accountType);
+            }
+
+            if (!string.IsNullOrEmpty(receiverName))
+            {
+                query = query.Where(el => EF.Functions.Like(el.Receivername.ToLower(), $"%{receiverName.ToLower()}%"));
+            }
+
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                query = query.Where(el => el.Mobilenumber.Contains(phoneNumber));
+            }
+
+            if (createdDate != null)
+            {
+                query = query.Where(el => el.Createdate.Date == createdDate.Value.Date);
+            }
+
+            if (sentDate != null)
+            {
+                query = query.Where(el => el.Sentdate.Value.Date == sentDate.Value.Date);
+            }
+
+            // Retrieve the filtered email logs
+            List<Smslog> logs = query.ToList();
+
+            // Transform email logs into LogView objects
+            foreach (var item in logs)
+            {
+                LogView smslog = new LogView();
+                //smslog.Action = item.Action;
+                smslog.phoneNumber = item.Mobilenumber;
+                smslog.createdDate = item.Createdate;
+                smslog.sentDate = (DateTime)item.Sentdate;
+                smslog.sentTries = (int)item.Senttries;
+                smslog.isSent = (bool)item.Issmssent;
+                smslog.roleName = _context.Aspnetroles.FirstOrDefault(r => r.Id == item.Roleid)?.Name;
+                smslog.confirmationNumber = item.Confirmationnumber;
+                if (item.Roleid == 1 && item.Physicianid != null)
+                {
+                    Physician ph = _context.Physicians.FirstOrDefault(ph => ph.Physicianid == item.Physicianid);
+                    item.Receivername = ph?.Firstname + " , " + ph?.Lastname;
+                }
+                if (!string.IsNullOrEmpty(item.Receivername))
+                {
+                    smslog.recipientName = item.Receivername;
+                }
+                smslogs.Add(smslog);
+            }
+
+            return smslogs;
+        }
+
+
+
+        #endregion
 
         public List<Physician> GetPhysiciansByRegion(int regionId)
         {
