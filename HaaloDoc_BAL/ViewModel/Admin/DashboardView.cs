@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HalloDoc_BAL.ViewModel.Admin
 {
-    public class AdminDashboardView
+    public class DashboardView
     {
         public List<Region> regions { get; set; }
 

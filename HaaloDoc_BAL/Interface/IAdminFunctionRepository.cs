@@ -9,10 +9,10 @@ namespace HalloDoc_BAL.Repository
     {
         void assignCase(int requestId, int physicianId , int adminId);
         void blockRequst(int requestId, string reason , int adminId);
-        AdminDashboardView GetAdminDashboardView();
+        DashboardView GetDashboardView();
         List<Casetag> GetAllCaseTag();
         List<Region> GetAllReagion();
-        IEnumerable<RequestDataTableView> GetRequestsByStatusID(int statusId);
+        IEnumerable<RequestDataTableView> GetRequestsByStatusID(int statusId , int? physicianId);
         int[] GetStatus(int statusId);
         ViewCaseView GetViewCase(int requestId);
         ViewNotesView GetViewNotesView(int requestId);

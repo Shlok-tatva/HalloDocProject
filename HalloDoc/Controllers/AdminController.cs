@@ -19,7 +19,7 @@ using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
 {
-    [CustomAuth("Admin")]
+
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> _logger;
@@ -45,19 +45,28 @@ namespace HalloDocAdmin.Controllers
             _userRepository = userRepository;
         }
 
+        [CustomAuth("Admin")]
         [RouteAuthFilter]
         public IActionResult Dashboard()
         {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
-            AdminDashboardView view = _adminFunctionRepository.GetAdminDashboardView();
+            DashboardView view = _adminFunctionRepository.GetDashboardView();
             return View(view);
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public IActionResult GetRequestByStatusId(int statusID, int reqtype, int regionFilter)
         {
-            var statusIdWiseRequest = _adminFunctionRepository.GetRequestsByStatusID(statusID);
+            string providerid = HttpContext.Session.GetString("providerId");
+            IEnumerable<RequestDataTableView> statusIdWiseRequest;
+            statusIdWiseRequest = _adminFunctionRepository.GetRequestsByStatusID(statusID, null);
+            if (providerid != null)
+            {
+                int providerId = Int32.Parse(providerid);
+                statusIdWiseRequest = _adminFunctionRepository.GetRequestsByStatusID(statusID, providerId);
+            }
 
             if (reqtype != 0 && regionFilter != 0)
             {
@@ -79,6 +88,7 @@ namespace HalloDocAdmin.Controllers
 
         #region All-Options-requests
 
+        [CustomAuth("Admin", "Provider")]
         [HttpPost]
         public IActionResult AssignCase(int requestId, int physicianId)
         {
@@ -95,6 +105,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public IActionResult GetRequestClient(int requestId)
         {
@@ -102,6 +113,7 @@ namespace HalloDocAdmin.Controllers
             return Ok(request);
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public IActionResult getRequestCountPerStatusId()
         {
@@ -118,7 +130,7 @@ namespace HalloDocAdmin.Controllers
             return Ok(statusCounts);
         }
 
-
+        [CustomAuth("Admin", "Provider")]
         [HttpPost("SendLink")]
         public IActionResult SendLink(string firstNameSendLink, string lastNameSendLink, string phoneSendLink, string emailSendLink)
         {
@@ -129,9 +141,9 @@ namespace HalloDocAdmin.Controllers
                 var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/PatientRequest";
 
                 var message = "Please use this link to create Request " + accountCreationLink;
-                bool isSent =  _adminFunctionRepository.SendEmail(emailSendLink, title, message);
+                bool isSent = _adminFunctionRepository.SendEmail(emailSendLink, title, message);
                 string name = firstNameSendLink + " , " + lastNameSendLink;
-                _commonFunctionrepo.EmailLog(emailSendLink, message, title, name , 1, null, adminId, null, 1, isSent , 1);
+                _commonFunctionrepo.EmailLog(emailSendLink, message, title, name, 1, null, adminId, null, 1, isSent, 1);
                 return Ok();
             }
             catch (Exception ex)
@@ -145,9 +157,9 @@ namespace HalloDocAdmin.Controllers
             return View();
         }
 
-
+        [CustomAuth("Admin", "Provider")]
         public IActionResult ViewCase()
-        {
+            {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             int requestId = Int32.Parse(Request.Query["request"]);
@@ -158,6 +170,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult GetPhysiciansByRegion(int regionId)
         {
@@ -165,7 +178,7 @@ namespace HalloDocAdmin.Controllers
             return Ok(physicians);
         }
 
-
+        [CustomAuth("Admin", "Provider")]
         [HttpPost("UpdateEmail")]
         public IActionResult UpdateEmail(int requestId, string Email)
         {
@@ -183,6 +196,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [CustomAuth("Admin", "Provider")]
         public IActionResult ViewNotes()
         {
             ViewData["ViewName"] = "Dashboard";
@@ -193,6 +207,7 @@ namespace HalloDocAdmin.Controllers
             return View(view);
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpPost("UpdateNotes")]
         public IActionResult UpdateNotes(int requestId, string adminNotes)
         {
@@ -224,6 +239,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         [HttpPost("BlockPatient")]
         public IActionResult BlockPatient(int requestId, string reason)
         {
@@ -241,7 +257,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult CancelCase(int requestId, string reason, string notes)
         {
@@ -260,6 +276,7 @@ namespace HalloDocAdmin.Controllers
         }
 
         #region DocumetnView
+        [CustomAuth("Admin", "Provider")]
         public IActionResult ViewUpload()
         {
             ViewData["ViewName"] = "Dashboard";
@@ -275,7 +292,7 @@ namespace HalloDocAdmin.Controllers
             return View(documetns);
         }
 
-
+        [CustomAuth("Admin", "Provider")]
         [HttpPost("UploadFile")]
         public IActionResult UploadFile(IFormFile file, int requestId)
         {
@@ -292,6 +309,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin", "Provider")]
         public IActionResult DownloadFile(string filePath)
         {
             var physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('~', '/'));
@@ -307,6 +325,7 @@ namespace HalloDocAdmin.Controllers
             return File(fileBytes, "application/octet-stream", fileName);
         }
 
+        [CustomAuth("Admin", "Provider")]
         public IActionResult DeleteFile(string filePath, int fileId)
         {
             var physicalPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('~', '/'));
@@ -327,6 +346,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin", "Provider")]
         public IActionResult SendfilesonMail(string receverEmail, string[] filePaths , int requestId)
         {
             try
@@ -346,7 +366,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
+        [CustomAuth("Admin")]
         [HttpPost("TransferCase")]
         public IActionResult TransferCase(int requestId, int physicianId, string note)
         {
@@ -365,7 +385,7 @@ namespace HalloDocAdmin.Controllers
         }
         #endregion
 
-
+        [CustomAuth("Admin")]
         public IActionResult closeCase()
         {
             ViewData["ViewName"] = "Dashboard";
@@ -395,6 +415,7 @@ namespace HalloDocAdmin.Controllers
             return View(closeCaseData);
         }
 
+        [CustomAuth("Admin")]
         [HttpPost("closeCaseUpdate")]
         public IActionResult closeCaseUpdate(int requestId, string phone, string email)
         {
@@ -412,6 +433,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         [HttpPost("HandleCloseCase")]
         public IActionResult HandleCloseCase(int requestId)
         {
@@ -429,7 +451,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
-
+        [CustomAuth("Admin")]
         [HttpPost("ClearCase")]
         public IActionResult ClearCase(int requestId)
 
@@ -447,6 +469,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpPost("SendAgreement")]
         public IActionResult SendAgreement(int requestId, string email, string phoneNumber)
         {
@@ -463,6 +486,7 @@ namespace HalloDocAdmin.Controllers
         #region Encounter-Page-and-PDFGenration
 
         [HttpGet]
+        [CustomAuth("Admin", "Provider")]
         public IActionResult Encounter()
         {
             ViewData["ViewName"] = "Dashboard";
@@ -478,7 +502,7 @@ namespace HalloDocAdmin.Controllers
             return View(view);
         }
 
-
+        [CustomAuth("Admin", "Provider")]
         [HttpPost("encounter")]
         public IActionResult Encounter(EncounterFormView formData)
         {
@@ -493,6 +517,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin", "Provider")]
         public int EcounterFormStatus(int requestId)
         {
 
@@ -500,6 +525,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public IActionResult GetEncounterFormDetails(int requestId)
         {
@@ -507,6 +533,7 @@ namespace HalloDocAdmin.Controllers
             return View("EncounterFormDetails", encounterFormView);
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public IActionResult GeneratePDF(int requestId)
         {
@@ -526,6 +553,7 @@ namespace HalloDocAdmin.Controllers
 
         #region Physician-location-page
 
+        [CustomAuth("Admin")]
         [RouteAuthFilter]
         public IActionResult ProviderLocation()
         {
@@ -534,6 +562,7 @@ namespace HalloDocAdmin.Controllers
             return View("Provider/ProviderLocation");
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult GetPhysicianLocation()
         {
@@ -543,6 +572,7 @@ namespace HalloDocAdmin.Controllers
         #endregion
 
         #region Order-Page
+        [CustomAuth("Admin", "Provider")]
         public IActionResult Orders()
         {
             var requestId = Request.Query["request"];
@@ -553,6 +583,7 @@ namespace HalloDocAdmin.Controllers
             return View();
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public IActionResult getProfessions()
         {
@@ -561,6 +592,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public ActionResult getBusinesses(int professionId)
         {
@@ -568,6 +600,7 @@ namespace HalloDocAdmin.Controllers
             return Json(businesses);
         }
 
+        [CustomAuth("Admin", "Provider")]
         [HttpGet]
         public ActionResult GetBusinessDetails(int Vendorid)
         {
@@ -575,6 +608,7 @@ namespace HalloDocAdmin.Controllers
             return Json(business);
         }
 
+        [CustomAuth("Admin", "Provider")]
         public IActionResult Addorder(Orderdetail details)
         {
             try
@@ -596,6 +630,7 @@ namespace HalloDocAdmin.Controllers
 
         #region AdminProfile-page
         [RouteAuthFilter]
+        [CustomAuth("Admin")]
         public IActionResult AdminProfile()
         {
             ViewData["ViewName"] = "AdminProfile";
@@ -607,6 +642,7 @@ namespace HalloDocAdmin.Controllers
             return View(view);
         }
 
+        [CustomAuth("Admin")]
         [HttpPost("changeAdminPassword")]
         public IActionResult changeAdminPassword(int adminId, string password)
         {
@@ -630,6 +666,7 @@ namespace HalloDocAdmin.Controllers
         }
 
         [HttpPost]
+        [CustomAuth("Admin")]
         public IActionResult UpdateAdminInfo([FromBody] AdminUpdateData adminData)
         {
             try
@@ -649,6 +686,7 @@ namespace HalloDocAdmin.Controllers
 
         #region Provider-Page
         [RouteAuthFilter]
+        [CustomAuth("Admin")]
         public IActionResult Provider(int? regionId)
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -678,6 +716,7 @@ namespace HalloDocAdmin.Controllers
         }
 
         [RouteAuthFilter]
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult CreateProvider()
         {
@@ -689,7 +728,7 @@ namespace HalloDocAdmin.Controllers
             return View("provider/CreateProvider");
         }
 
-
+        [CustomAuth("Admin")]
         [HttpPost("CreateProvider")]
         public IActionResult CreateProvider(CreateProviderView model, int[] selectedRegions)
         {
@@ -711,6 +750,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [CustomAuth("Admin")]
         [RouteAuthFilter]
         [HttpGet]
         public IActionResult EditProvider()
@@ -724,6 +764,7 @@ namespace HalloDocAdmin.Controllers
             return View("provider/EditProvider", view);
         }
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult EditProvider(CreateProviderView formData, int[] selectedRegions)
         {
@@ -743,6 +784,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult DeleteProvider(int providerId)
         {
             try
@@ -757,6 +799,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         [HttpPost("changeProviderPassword")]
         public IActionResult changeProviderPassword(int providerId, string password)
         {
@@ -772,6 +815,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult contactProvider(int physicianId, int adminId, string selectedRadio, string email, string phone, string message)
         {
@@ -813,6 +857,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult uploadProviderDocument(IFormFile file, string filename)
         {
@@ -833,6 +878,7 @@ namespace HalloDocAdmin.Controllers
             public bool isChecked { get; set; }
         }
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult ChangeProviderNotificationStatus([FromBody] List<PhysicianNotificationData> PhysicianNotificationDataList)
         {
@@ -854,6 +900,7 @@ namespace HalloDocAdmin.Controllers
 
         #region Partner-Page
 
+        [CustomAuth("Admin")]
         [RouteAuthFilter]
         [HttpGet]
         public IActionResult Partners(int? professionId)
@@ -909,6 +956,7 @@ namespace HalloDocAdmin.Controllers
 
 
 
+        [CustomAuth("Admin")]
         [RouteAuthFilter]
         [HttpGet]
         public IActionResult AddPartner()
@@ -920,6 +968,7 @@ namespace HalloDocAdmin.Controllers
             return View("Partners/AddPartner");
         }
 
+        [CustomAuth("Admin")]
         [HttpPost("AddPartner")]
         public IActionResult AddPartner(Healthprofessional formData)
         {
@@ -958,6 +1007,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         [RouteAuthFilter]
         [HttpGet]
         public IActionResult EditPartner()
@@ -970,6 +1020,7 @@ namespace HalloDocAdmin.Controllers
             return View("Partners/EditPartner", view);
         }
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult EditPartner(Healthprofessional formData)
         {
@@ -995,6 +1046,7 @@ namespace HalloDocAdmin.Controllers
            ;
         }
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult DeletePartner(int vendorid)
         {
@@ -1013,6 +1065,8 @@ namespace HalloDocAdmin.Controllers
         #endregion
 
         #region UserAccess-And-RoleAccess
+
+        [CustomAuth("Admin")]
         public IActionResult Access()
         {
             ViewData["ViewName"] = "Access";
@@ -1032,6 +1086,7 @@ namespace HalloDocAdmin.Controllers
             return View("Access/index", view);
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult CreateAccess()
         {
@@ -1042,6 +1097,7 @@ namespace HalloDocAdmin.Controllers
             return View("Access/CreateAccess", view);
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult GetMenuByRole(int roleId)
         {
@@ -1056,6 +1112,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult CreateRole(string roleName, int accountType, int[] selectedMenu)
         {
             try
@@ -1070,6 +1127,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult EditAccess()
         {
@@ -1087,6 +1145,7 @@ namespace HalloDocAdmin.Controllers
             return View("Access/EditAccess", view);
         }
 
+        [CustomAuth("Admin")]
         public IActionResult EditRole(int roleId, string roleName, int accountType, int[] selectedMenu)
         {
             try
@@ -1101,6 +1160,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult DeleteRole(int roleId)
         {
             try
@@ -1115,6 +1175,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult UserAccess()
         {
             List<UserAccessView> view = new List<UserAccessView>();
@@ -1134,6 +1195,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult EditAdmin()
         {
@@ -1154,6 +1216,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult EditPhysician()
         {
@@ -1175,6 +1238,7 @@ namespace HalloDocAdmin.Controllers
         }
 
         //[RouteAuthFilter]
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult CreateAdmin()
         {
@@ -1186,6 +1250,7 @@ namespace HalloDocAdmin.Controllers
             return View("Access/CreateAdmin");
         }
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public ActionResult CheckUsernameAvailability(string username)
         {
@@ -1195,6 +1260,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [CustomAuth("Admin")]
         [HttpPost]
         public IActionResult CreateAdmin(CreateAdminView formData, int[] selectedRegions)
         {
@@ -1214,6 +1280,7 @@ namespace HalloDocAdmin.Controllers
         #endregion
 
         #region Scheduling
+        [CustomAuth("Admin")]
         public IActionResult Scheduling()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1224,6 +1291,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult CheckExistingShifts(int physicianId, DateTime date, string startTime, string endTime)
         {
@@ -1240,6 +1308,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult CreateShift(ScheduleModel data)
         {
             try
@@ -1260,6 +1329,7 @@ namespace HalloDocAdmin.Controllers
 
         /*For week wise Data*/
 
+        [CustomAuth("Admin")]
         public IActionResult GetShiftByMonth(int? month, int? year, int? regionId)
         {
             var data = _adminFunctionRepository.GetShift((int)month, (int)year, regionId);
@@ -1267,6 +1337,7 @@ namespace HalloDocAdmin.Controllers
             //return Ok();
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult GetPhyscianDataForShift(int? region)
         {
@@ -1283,6 +1354,7 @@ namespace HalloDocAdmin.Controllers
             return Json(data);
         }
 
+        [CustomAuth("Admin")]
         [HttpGet]
         public IActionResult getShiftData(int shiftId)
         {
@@ -1298,6 +1370,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult EditShiftData(ScheduleModel data)
         {
             try
@@ -1314,6 +1387,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult UpdateshiftStatus(int shiftId)
         {
             try
@@ -1329,6 +1403,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult DeleteShift(int shiftId)
         {
             try
@@ -1348,6 +1423,7 @@ namespace HalloDocAdmin.Controllers
 
         #region MDs-on-Call
 
+        [CustomAuth("Admin")]
         public IActionResult ProviderOnCall(int? regionId)
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1375,6 +1451,7 @@ namespace HalloDocAdmin.Controllers
 
         #region RequestedShift
 
+        [CustomAuth("Admin")]
         public IActionResult ShiftReview(int? regionId)
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1389,6 +1466,8 @@ namespace HalloDocAdmin.Controllers
             }
             return View("Scheduling/ShiftReview", data);
         }
+
+        [CustomAuth("Admin")]
         public IActionResult CuurentMonthUnApprovedShift(int? regionId)
         {
             try
@@ -1417,6 +1496,7 @@ namespace HalloDocAdmin.Controllers
         //    return View("Records/PatientRecords", data);
         //}
 
+        [CustomAuth("Admin")]
         public IActionResult PatientRecords(string? firstName, string? lastName, string? email, string? phoneNumber)
            {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1438,6 +1518,7 @@ namespace HalloDocAdmin.Controllers
         }
 
 
+        [CustomAuth("Admin")]
         public IActionResult PatientRequestes()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1447,6 +1528,7 @@ namespace HalloDocAdmin.Controllers
             return View("Records/PatientRequestes" , data);
         }
 
+        [CustomAuth("Admin")]
         public IActionResult BlockHistory(string? name, DateTime? date, string? email, string? phoneNumber)
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1470,6 +1552,7 @@ namespace HalloDocAdmin.Controllers
 
 
         [HttpPost]
+        [CustomAuth("Admin")]
         public IActionResult unBlock(int Id , int requestId)
         {
             try
@@ -1483,6 +1566,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        [CustomAuth("Admin")]
         public IActionResult EmailLogs()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
@@ -1494,6 +1578,7 @@ namespace HalloDocAdmin.Controllers
             return View("Records/Logs" , data);
         }
 
+        [CustomAuth("Admin")]
         public IActionResult EmailLogsBySearch(int? accountType, string? receiverName, string? emailId, DateTime? createdDate, DateTime? sentDate)
         {
             try
@@ -1508,6 +1593,7 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [CustomAuth("Admin")]
         public IActionResult SmsLogs()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");

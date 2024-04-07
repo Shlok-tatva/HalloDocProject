@@ -183,7 +183,7 @@ namespace HelloDoc.Controllers
         {
             ViewData["ViewName"] = "FamilyFriendRequest";
             return View();
-        }
+        }   
 
 
         [HttpPost]

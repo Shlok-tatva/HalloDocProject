@@ -39,47 +39,83 @@ namespace HalloDoc_BAL.Repository
             _adminRepo = adminRepo;
         }
 
-        public AdminDashboardView GetAdminDashboardView()
+        public DashboardView GetDashboardView()
         {
-            AdminDashboardView view = new AdminDashboardView();
+            DashboardView view = new DashboardView();
             view.regions = GetAllReagion();
             view.casetags = GetAllCaseTag();
             return view;
         }
 
-        public IEnumerable<RequestDataTableView> GetRequestsByStatusID(int statusId)
+        public IEnumerable<RequestDataTableView> GetRequestsByStatusID(int statusId , int? physicianId)
         {
             var statusIds = GetStatus(statusId);
-            var statusIdWiseRequest = from r in _context.Requests.ToList()
-                                      join rc in _context.Requestclients.ToList()
-                                      on r.Requestid equals rc.Requestid into rrc
-                                      from rc in rrc.DefaultIfEmpty()
-                                      join p in _context.Physicians.ToList()
-                                      on r.Physicianid equals p.Physicianid into rp
-                                      from p in rp.DefaultIfEmpty()
-                                      join rs in _context.Requeststatuslogs.ToList()
-                                      on r.Requestid equals rs.Requestid into rrs
-                                      from rs in rrs.OrderByDescending(x => x.Createddate).Take(1).DefaultIfEmpty()
-                                      where statusIds.Contains(r.Status)
-                                      select new RequestDataTableView
-                                      {
-                                          requestId = r.Requestid,
-                                          PatientName = rc.Firstname + " " + rc.Lastname,
-                                          PatientEmail = rc.Email,
-                                          RequesterEmail = r.Email,
-                                          DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
-                                          PhysicianName = p != null ? p.Firstname + " " + p.Lastname : "",
-                                          RequesterName = r.Firstname + " " + r.Lastname,
-                                          RequestedDate = r.Createddate.ToString(),
-                                          PatientPhoneNumber = rc.Phonenumber,
-                                          Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
-                                          RequesterPhoneNumber = r.Phonenumber,
-                                          Notes = rs != null ? rs.Notes : "-", // Store result into notes
-                                          status = r.Status,
-                                          MenuOptions = GetMenuOptionsForStatus(statusId),
-                                          RequestTyepid = r.Requesttypeid,
-                                          regionId = rc.Regionid
-                                      };
+            var statusIdWiseRequest = Enumerable.Empty<RequestDataTableView>();
+            if (physicianId == null)
+            {
+                statusIdWiseRequest = from r in _context.Requests.ToList()
+                                          join rc in _context.Requestclients.ToList()
+                                          on r.Requestid equals rc.Requestid into rrc
+                                          from rc in rrc.DefaultIfEmpty()
+                                          join p in _context.Physicians.ToList()
+                                          on r.Physicianid equals p.Physicianid into rp
+                                          from p in rp.DefaultIfEmpty()
+                                          join rs in _context.Requeststatuslogs.ToList()
+                                          on r.Requestid equals rs.Requestid into rrs
+                                          from rs in rrs.OrderByDescending(x => x.Createddate).Take(1).DefaultIfEmpty()
+                                          where statusIds.Contains(r.Status) && (physicianId == null || r.Physicianid == physicianId)
+                                          select new RequestDataTableView
+                                          {
+                                              requestId = r.Requestid,
+                                              PatientName = rc.Firstname + " " + rc.Lastname,
+                                              PatientEmail = rc.Email,
+                                              RequesterEmail = r.Email,
+                                              DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
+                                              PhysicianName = p != null ? p.Firstname + " " + p.Lastname : "",
+                                              RequesterName = r.Firstname + " " + r.Lastname,
+                                              RequestedDate = r.Createddate.ToString(),
+                                              PatientPhoneNumber = rc.Phonenumber,
+                                              Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
+                                              RequesterPhoneNumber = r.Phonenumber,
+                                              Notes = rs != null ? rs.Notes : "-", // Store result into notes
+                                              status = r.Status,
+                                              MenuOptions = GetMenuOptionsForStatus(statusId),
+                                              RequestTyepid = r.Requesttypeid,
+                                              regionId = rc.Regionid,
+                                              isPhysicianDashboard = false
+                                          };
+            }
+            else
+            {
+                statusIdWiseRequest = from r in _context.Requests.ToList()
+                                          join rc in _context.Requestclients.ToList()
+                                          on r.Requestid equals rc.Requestid into rrc
+                                          from rc in rrc.DefaultIfEmpty()
+                                          join p in _context.Physicians.ToList()
+                                          on r.Physicianid equals p.Physicianid into rp
+                                          from p in rp.DefaultIfEmpty()
+                                          join rs in _context.Requeststatuslogs.ToList()
+                                          on r.Requestid equals rs.Requestid into rrs
+                                          from rs in rrs.OrderByDescending(x => x.Createddate).Take(1).DefaultIfEmpty()
+                                          where statusIds.Contains(r.Status) && (physicianId == null || r.Physicianid == physicianId)
+                                          select new RequestDataTableView
+                                          {
+                                              requestId = r.Requestid,
+                                              PatientName = rc.Firstname + " " + rc.Lastname,
+                                              PatientEmail = rc.Email,
+                                              RequesterEmail = r.Email,
+                                              DateOfBirth = rc.Intyear.Value.ToString("") + "-" + rc.Strmonth + "-" + string.Format("{0:00}", rc.Intdate.Value),
+                                              PatientPhoneNumber = rc.Phonenumber,
+                                              Address = rc.Street + " " + rc.City + " " + rc.State + ",(" + rc.Zipcode + ")",
+                                              RequesterPhoneNumber = r.Phonenumber,
+                                              status = r.Status,
+                                              MenuOptions = GetMenuOptionsForStatusForPhysician(statusId),
+                                              RequestTyepid = r.Requesttypeid,
+                                              regionId = rc.Regionid,
+                                              isPhysicianDashboard = true
+                                          };
+            }
+           
 
             return statusIdWiseRequest;
         }
@@ -100,6 +136,23 @@ namespace HalloDoc_BAL.Repository
                     return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.closeCase, MenuOptionEnum.clearCase, MenuOptionEnum.Encounter };
                 case 6:
                     return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes };
+                default:
+                    return new List<MenuOptionEnum>(); // Default case
+            }
+        }
+
+        private List<MenuOptionEnum> GetMenuOptionsForStatusForPhysician(int statusId)
+        {
+            switch (statusId)
+            {
+                case 1:
+                    return new List<MenuOptionEnum> { MenuOptionEnum.Accept , MenuOptionEnum.viewCase, MenuOptionEnum.viewNotes }; // Map to 'New' state
+                case 2:
+                    return new List<MenuOptionEnum> { MenuOptionEnum.sendAgreement , MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.Transfer}; // Map to 'Panding' state
+                case 3:
+                    return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.Encounter }; // Map to 'Active' state
+                case 4:
+                    return new List<MenuOptionEnum> {MenuOptionEnum.orders , MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.Encounter }; // Map to 'Conclude' state
                 default:
                     return new List<MenuOptionEnum>(); // Default case
             }
@@ -234,7 +287,7 @@ namespace HalloDoc_BAL.Repository
                 Requeststatuslog log = new Requeststatuslog();
 
                 log.Requestid = requestId;
-                log.Status = 2;
+                log.Status = 1;
                 log.Notes = "Request Assign to Physician " + physician.Firstname + " " + physician.Lastname;
                 log.Createddate = DateTime.Now;
                 log.Adminid = adminId;

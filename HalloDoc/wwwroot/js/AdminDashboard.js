@@ -4,10 +4,12 @@ $(document).ready(function () {
 
     var lastFilter;
     var lastregion;
+    //get requestCount
 
-    //get requestCount 
+    var URLFORCOUNT = "getRequestCountPerStatusId";
+
     $.ajax({
-        url: 'getRequestCountPerStatusId',
+        url: URLFORCOUNT,
         type: "GET",
         success: function (data) {
             $('#newCount').text(data[1]);
@@ -36,6 +38,7 @@ $(document).ready(function () {
         9: "Orders",
         10: "Encounter",
         11: "Close Case",
+        12: "Accept"
     };
     // Object mapping menu options to image URLs
     const menuOptionImageMapping = {
@@ -51,6 +54,7 @@ $(document).ready(function () {
         'Orders': 'orders.png',
         'Encounter': 'encounter.png',
         'Close Case': 'closeCase.png',
+        'Accept': 'clearCase.png'
     };
     function reloadDataTable(statusID, reqtype, filter) {
         var tableData;
@@ -60,17 +64,20 @@ $(document).ready(function () {
             data: { statusID: statusID, reqtype: reqtype, regionFilter: filter },
             async: false,
             success: function (data) {
+
+                console.log(data)
+
                 tableData = data;
                 $('#request-table tbody').empty();
                 $('#request-table thead').empty();
                 $('#RequestAccordion').empty();
-    
+
                 if (data.length > 0) {
                     data.sort((a, b) => a.requestId - b.requestId);
                     if (window.innerWidth < 900) {
                         renderMobileAccoridan(data);
                     } else {
-                        renderDesktopTable(data, statusID);
+                        renderDesktopTable(data, statusID, data[0].isPhysicianDashboard);
                     }
                 }
             },
@@ -81,14 +88,19 @@ $(document).ready(function () {
         return tableData;
 
     }
-    function renderDesktopTable(data, statusID) {
-
+    function renderDesktopTable(data, statusID, isPhysicianDashboard) {
+        debugger
         var headers = Object.keys(data[0]);
+
+        if (isPhysicianDashboard) {
+            headers = ["patientName", "patientEmail", "patientPhoneNumber", "address", "menuOptions"];
+        }
+
         var headerMapping = {
             "requestId": "Request ID",
             "patientName": "Name",
             "patientEmail": "Email",
-            "physicianName" : "Physician",
+            "physicianName": "Physician",
             "patientPhoneNumber": "Phone Number",
             "status": "Status",
             "dateOfBirth": "DateOfBirth",
@@ -100,16 +112,20 @@ $(document).ready(function () {
             "menuOptions": "Action"
         };
 
+
+
         var headerRow = $('<tr>');
         headers.forEach(function (header) {
+
 
             if (header === "physicianName" && statusID == 1) {
                 return;
             }
 
-            if (["requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId"].includes(header)) {
+            if (["requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId", "isPhysicianDashboard"].includes(header)) {
                 return;
             }
+
             var columnName = headerMapping[header] || header;
             headerRow.append('<th class="py-4">' + columnName + '</th>');
         });
@@ -117,25 +133,24 @@ $(document).ready(function () {
         $('#request-table thead').append(headerRow);
         data.forEach(function (request, index) {
             var newRow = $('<tr class="data-row">').attr('data-request-type-id', request.requestTyepid);
-            var newAcordian = $('<div class="accordion-item">');
-
+            var newAccordionItem = $('<div class="accordion-item">');
 
             for (var key in request) {
-                /* For Desktop View Insert table*/
-
-                if (!["menuOptions", "requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId"].includes(key)) {
+                // Exclude certain keys from being displayed
+                if (!["menuOptions", "requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId", "isPhysicianDashboard"].includes(key)) {
                     if (statusID == 1 && key === 'physicianName') {
-
-                    }
-                    else if (key === "patientPhoneNumber") {
-                        var phoneNumbers = '<button class="btn btn-sm  btn-outline-light my-1"> <i class="bi bi-telephone"></i> ' + request.patientPhoneNumber + '</button>' + (request.requesterPhoneNumber && request.patientPhoneNumber != request.requesterPhoneNumber ? ' <br />' + '<button class="btn btn-sm  btn-outline-light my-1"> <i class="bi bi-telephone"></i> ' + request.requesterPhoneNumber + '</button><br />' : '');
+                        // Handle special case if statusID is 1 and key is 'physicianName'
+                    } else if (key === "patientPhoneNumber") {
+                        // Display patient phone number
+                        var phoneNumbers = '<button class="btn btn-sm btn-outline-light my-1"> <i class="bi bi-telephone"></i> ' + request.patientPhoneNumber + '</button>' + (request.requesterPhoneNumber && request.patientPhoneNumber != request.requesterPhoneNumber ? ' <br />' + '<button class="btn btn-sm btn-outline-light my-1"> <i class="bi bi-telephone"></i> ' + request.requesterPhoneNumber + '</button><br />' : '');
                         if ([2, 3, 4].includes(request.requestTyepid)) {
-                            phoneNumbers += "(" + ["familyfriend", "concierge", "business"][request.requestTyepid - 2] + ")";
+                            phoneNumbers += "<br/>(" + ["familyfriend", "concierge", "business"][request.requestTyepid - 2] + ")";
                         } else {
                             phoneNumbers += " <br/>(Patient)";
                         }
                         newRow.append('<td class="' + key + '">' + phoneNumbers + '</td>');
                     } else if (key === 'patientEmail') {
+                        // Display patient email with dropdown menu
                         var emailCell = $('<td class="scale-1">');
                         var dropdownMenu = $('<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">');
                         dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="mailto:${request.patientEmail}">${request.patientEmail}</a></li>`);
@@ -145,16 +160,23 @@ $(document).ready(function () {
                         dropdownButton.append(dropdownMenu);
                         emailCell.append(dropdownButton);
                         newRow.append(emailCell);
-                    } 
-                    else {
-                        if (request[key] == null) request[key] = '-';
-                        if (key === 'dateOfBirth') {
-                            const date = new Date(request[key]);
-                            const options = { month: 'short', day: 'numeric', year: 'numeric' };
-                            const formatter = new Intl.DateTimeFormat('en-US', options);
-                            request[key] = formatter.format(date).substring(0, 4) + " " + date.getDay() + " , " + date.getFullYear();
+                    } else {
+                        // Display other fields
+                        if (isPhysicianDashboard && ["patientName", "patientEmail", "patientPhoneNumber", "address"].includes(key)) {
+                            newRow.append('<td class="' + key + '">' + request[key] + '</td>');
                         }
-                        newRow.append('<td class="' + key + '">' + request[key] + '</td>');
+                        if (!isPhysicianDashboard) {
+                            // Replace null values with '-'
+                            if (request[key] == null) request[key] = '-';
+                            if (key === 'dateOfBirth') {
+                                // Format date of birth
+                                const date = new Date(request[key]);
+                                const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                                const formatter = new Intl.DateTimeFormat('en-US', options);
+                                request[key] = formatter.format(date).substring(0, 4) + " " + date.getDay() + " , " + date.getFullYear();
+                            }
+                            newRow.append('<td class="' + key + '">' + request[key] + '</td>');
+                        }
                     }
                 }
             }
@@ -162,33 +184,29 @@ $(document).ready(function () {
             var actionsCell = $('<td>');
             var dropdownMenu = $('<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">');
 
+            // Populate dropdown menu with options
             request.menuOptions.forEach(function (option) {
-                var enumName = mapNumberToEnumName(option); 
+                var enumName = mapNumberToEnumName(option);
                 var imageUrl = menuOptionImageMapping[enumName];
                 var modalId = toCamelCase(enumName) + 'Modal';
 
-                if ([2, 3, 5, 9, 11, 12].includes(option)) {
+                if ([2, 3, 5, 9, 11].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
-                }
-                else if (option == 10) {
+                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                } else if (option == 10) {
                     let status = getEncounterFormstatus(request.requestId);
                     console.log(status);
                     if (status == 1) {
                         var id = toCamelCase(enumName);
-                        dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
-                    }
-                    else {
+                        dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id="${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
+                    } else {
                         var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="/admin/${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                        dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
                     }
-                }
-                else {
+                } else {
                     var id = toCamelCase(enumName);
-                    dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id = "${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
-                   
+                    dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id="${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
                 }
-
             });
 
             var dropdownButton = $('<div class="dropdown">');
@@ -198,24 +216,24 @@ $(document).ready(function () {
             newRow.append(actionsCell);
             $('#request-table tbody').append(newRow);
 
+            // Colorize rows based on request type
             $('#request-table tbody tr').each(function () {
                 var requestTypeId = $(this).data('request-type-id');
-                // var colors = ['#5fbc61', '#ffb153', '#fb91ca', '#007fc6e8'];
                 var colors = ['forestgreen', 'darkorange', 'deeppink', 'dodgerblue'];
                 if (requestTypeId >= 1 && requestTypeId <= 4) {
                     $(this).css('background-color', colors[requestTypeId - 1]);
                 }
             });
-            
+
+            // Setup pagination with 10 items per page
             setupPagination(10);
-
-
         });
+
     }
     function renderMobileAccoridan(data) {
         $(".data-row").remove();
         var accordion = $('#RequestAccordion');
-        data.forEach(function (request, index) {           
+        data.forEach(function (request, index) {
             var panelId = 'panel' + index;
             var panel = $('<div class="accordion-item data-row">').attr('data-request-type-id', request.requestTyepid);
             var header = $('<h2 class="accordion-header" id="heading' + panelId + '">');
@@ -223,11 +241,11 @@ $(document).ready(function () {
             var actions = '';
             var viewCase = '';
             var menuOptionColors = {
-                0: '#943DB8', 
-                1: '#E42929', 
-                2: 'white',  
-                3: '#228B22',  
-                4: '#228B22',  
+                0: '#943DB8',
+                1: '#E42929',
+                2: 'white',
+                3: '#228B22',
+                4: '#228B22',
                 5: '#943DB8',
                 6: '#00ADEF',
                 7: '#00ADEF',
@@ -244,15 +262,15 @@ $(document).ready(function () {
 
                 if ([3, 5, 9, 10, 11, 12].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>';
+                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5" href="' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>';
                 }
                 else if (option == 2) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    viewCase += '<a class="btn w-50 btn-transparent border border-1 border-primary text-primary rounded-5 viewCasebtn" href="/admin/' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>'
+                    viewCase += '<a class="btn w-50 btn-transparent border border-1 border-primary text-primary rounded-5 viewCasebtn" href="' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>'
                 }
                 else {
                     var id = toCamelCase(enumName)
-                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '"' + 'data-request-type-id = "'  + request.requestTyepid +   '" >' + enumName + '</a>';
+                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '"' + 'data-request-type-id = "' + request.requestTyepid + '" >' + enumName + '</a>';
                 }
             });
 
@@ -343,7 +361,7 @@ $(document).ready(function () {
             data: { requestId },
             async: false,
             success: function (data) {
-                status = data;                
+                status = data;
             },
             error: function () {
                 alert("While featching count");
@@ -441,7 +459,7 @@ $(document).ready(function () {
         }
     });
 
-  
+
 
 
 
@@ -478,17 +496,17 @@ $(document).ready(function () {
 
 
     function setLastState(state) {
-    localStorage.setItem('lastState', state);
-}
+        localStorage.setItem('lastState', state);
+    }
     function getLastState() {
-    return localStorage.getItem('lastState');
+        return localStorage.getItem('lastState');
     }
 
 
     function handleStateClick(state) {
-    $('.active').not(this).removeClass('active');
-    $('#requestState').text('(' + state.toUpperCase() + ')');
-    $(this).toggleClass('active');
+        $('.active').not(this).removeClass('active');
+        $('#requestState').text('(' + state.toUpperCase() + ')');
+        $(this).toggleClass('active');
     }
 
     var lastState = getLastState();

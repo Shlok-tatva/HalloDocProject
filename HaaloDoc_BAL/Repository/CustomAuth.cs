@@ -13,14 +13,14 @@ using HalloDoc_DAL.DataContext;
 
 namespace HalloDoc_BAL.Repository
 {
-   
-    public class CustomAuth : Attribute , IAuthorizationFilter
-    {
-        private readonly string _accountType;
 
-        public CustomAuth(string accountType)
+    public class CustomAuth : Attribute, IAuthorizationFilter
+    {
+        private readonly string[] _accountTypes;
+
+        public CustomAuth(params string[] accountTypes)
         {
-            _accountType = accountType;
+            _accountTypes = accountTypes;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -45,6 +45,7 @@ namespace HalloDoc_BAL.Repository
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "Index" }));
                 return;
             }
+
             var accoutType = jwttoken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
 
             if (string.IsNullOrWhiteSpace(accoutType))
@@ -53,16 +54,14 @@ namespace HalloDoc_BAL.Repository
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(_accountType) || accoutType != _accountType)
+            if (_accountTypes == null || _accountTypes.Length == 0 || !_accountTypes.Contains(accoutType))
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "AccessDenied" }));
                 return;
             }
-           
         }
-
-
     }
+
 
 
 }

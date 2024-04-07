@@ -169,6 +169,11 @@ namespace HalloDoc_BAL.Repository
             return menuNames;
         }
 
+        public int GetAccountTypeByroleId(int roleId)
+        {
+                return (int)_context.Roles.FirstOrDefault(r => r.Roleid == roleId).Accounttype;
+        }
+
         public void EmailLog(string email , string messaage , string subject , string? name , int roleId , int? requestId , int? adminId , int? physicianId , int action , bool isSent , int sentTires)
         {
             try

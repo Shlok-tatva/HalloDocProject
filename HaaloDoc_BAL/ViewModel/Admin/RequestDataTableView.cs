@@ -38,6 +38,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
 
         public int? regionId { get; set; }
 
+
         [Required]
         public string Address { get; set; }
 
@@ -47,6 +48,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
 
         [Required]
         public int RequestTyepid { get; set; }
+
+        public bool isPhysicianDashboard { get; set; }
     }
 }
 
@@ -64,5 +67,6 @@ public enum MenuOptionEnum
     orders,
     Encounter,
     closeCase,
+    Accept
     // Add other menu options as needed
 }

@@ -143,12 +143,14 @@ namespace HalloDoc.Controllers
                     }
                     else if (aspnetroleid == 2)
                     {
-                        Physician physician = _physicianrepo.GetPhysician(user.Id);
-                        string token = _jwtServices.GenerateToken(user.Email, "User" , physician.Roleid);
+                        Physician physician = _physicianrepo.GetPhysician(logedinUser.Id);
+                        string token = _jwtServices.GenerateToken(user.Email, "Provider" , physician.Roleid);
                         HttpContext.Session.SetString("jwttoken", token);
-                        HttpContext.Session.SetString("UserId", user.Email);
+                        HttpContext.Session.SetString("Username", physician.Firstname + " " + physician.Lastname);
+                        HttpContext.Session.SetString("providerId", physician.Physicianid.ToString());
                         HttpContext.Session.SetInt32("roleid", (int)physician.Roleid);
-                        return Redirect("/Physician/Dashboard");
+                        TempData["Success"] = "Login successfully";
+                        return Redirect("/Provider/Dashboard");
                     }
                     else
                     {
