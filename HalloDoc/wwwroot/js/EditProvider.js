@@ -93,5 +93,60 @@
         });
     });
 
+    // Change Password of Provider
+
+    $("#resetPassword").on("click", function () {
+        var password = $("#providerPassword").val();
+        if (password.length < 5) {
+            showToaster("minimum length of password should be 5", "error");
+            return;
+        }
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
+                cancelButton: "btn btn-outline-info btn-lg hover_white"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Are you sure you want to Update Password",
+            icon: "warning",
+            buttons: true,
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            dangerMode: true,
+        }).then((willAgree) => {
+            if (willAgree.isConfirmed) {
+                var providerID = +$("#providerID").val();
+                var formdata = new FormData();
+                formdata.append("providerId", providerID);
+                formdata.append("password", $("#providerPassword").val());
+                $.ajax({
+                    url: "/changeProviderPassword",
+                    type: 'POST',
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        debugger
+                        console.log(response);
+                        showToaster("Password change successfully!", "success");
+                    },
+                    error: function (error) {
+                        debugger
+                        console.log(error)
+                        showToaster("Failed to change Password", "error");
+                    }
+                });
+
+
+            }
+        });
+    })
+
+
+
 
 });

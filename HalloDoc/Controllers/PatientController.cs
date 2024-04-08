@@ -136,7 +136,7 @@ namespace HelloDoc.Controllers
 
                         if (formData.UploadFile != null)
                         {
-                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile , request.Requestid, null);
+                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile , request.Requestid, null, null);
                         }
 
                         requestClient.Notes = formData.Symptoms;
@@ -220,7 +220,7 @@ namespace HelloDoc.Controllers
 
                         if (formData.UploadFile != null)
                         {
-                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid, null);
+                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid, null, null);
                         }
 
                         requestClient.Notes = formData.Symptoms;

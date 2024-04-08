@@ -88,12 +88,13 @@ $(document).ready(function () {
         return tableData;
 
     }
+
     function renderDesktopTable(data, statusID, isPhysicianDashboard) {
         debugger
         var headers = Object.keys(data[0]);
 
         if (isPhysicianDashboard) {
-            headers = ["patientName", "patientEmail", "patientPhoneNumber", "address", "menuOptions"];
+            headers = ["patientName", "patientEmail", "patientPhoneNumber", "address", "callStatus", "menuOptions"];
         }
 
         var headerMapping = {
@@ -109,6 +110,7 @@ $(document).ready(function () {
             "requesterPhoneNumber": " Requester Phone Number",
             "address": "Address",
             "notes": "Notes",
+            "callStatus": "Status",
             "menuOptions": "Action"
         };
 
@@ -122,6 +124,14 @@ $(document).ready(function () {
                 return;
             }
 
+            if (isPhysicianDashboard == false && header === "callStatus") {
+                return;
+            }
+
+            if (isPhysicianDashboard == true && header === "callStatus" && [1, 2, 4].includes(statusID)) {
+                return;
+            }
+
             if (["requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId", "isPhysicianDashboard"].includes(header)) {
                 return;
             }
@@ -131,13 +141,16 @@ $(document).ready(function () {
         });
 
         $('#request-table thead').append(headerRow);
+
         data.forEach(function (request, index) {
             var newRow = $('<tr class="data-row">').attr('data-request-type-id', request.requestTyepid);
             var newAccordionItem = $('<div class="accordion-item">');
 
             for (var key in request) {
+
                 // Exclude certain keys from being displayed
                 if (!["menuOptions", "requestTyepid", "status", "requesterPhoneNumber", "requesterEmail", "requestId", "regionId", "isPhysicianDashboard"].includes(key)) {
+
                     if (statusID == 1 && key === 'physicianName') {
                         // Handle special case if statusID is 1 and key is 'physicianName'
                     } else if (key === "patientPhoneNumber") {
@@ -162,12 +175,33 @@ $(document).ready(function () {
                         newRow.append(emailCell);
                     } else {
                         // Display other fields
-                        if (isPhysicianDashboard && ["patientName", "patientEmail", "patientPhoneNumber", "address"].includes(key)) {
+                        if (request[key] == null) request[key] = '-';
+                        if (isPhysicianDashboard && ["patientName", "patientEmail", "patientPhoneNumber", "address", "callStatus"].includes(key)) {
+                            debugger
+                            if (key === "callStatus" && [1, 2, 4].includes(statusID)) {
+                                continue;
+                            }
+                            else {
+                                if (request[key] == 1) {
+                                    newRow.append('<td class="houseCall"> <button class="btn btn-info text-white">House call</button> </td>');
+                                    continue;
+                                }
+                                else {
+                                    newRow.append('<td class="' + key + '">' + request[key] + '</td>');
+                                    continue;
+                                }
+                            }
+
                             newRow.append('<td class="' + key + '">' + request[key] + '</td>');
                         }
+
                         if (!isPhysicianDashboard) {
+
+                            if (key === "callStatus") {
+                                continue;
+                            }
+
                             // Replace null values with '-'
-                            if (request[key] == null) request[key] = '-';
                             if (key === 'dateOfBirth') {
                                 // Format date of birth
                                 const date = new Date(request[key]);
@@ -190,18 +224,35 @@ $(document).ready(function () {
                 var imageUrl = menuOptionImageMapping[enumName];
                 var modalId = toCamelCase(enumName) + 'Modal';
 
+                // Here we check if the option is either 2,3,5,9,11 then we have to open particular modal so we append link which open respectively modal other wise we append a link which redirect to particular page
+
                 if ([2, 3, 5, 9, 11].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
                     dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+
                 } else if (option == 10) {
+
+                    // Here we do some complex task like first we fetch the status and Request call type of particular request and if the requestcalltype is undefined(it means it is null in database then still request has not any call type then by default we show the select call type modal)
+
                     let status = getEncounterFormstatus(request.requestId);
-                    console.log(status);
-                    if (status == 1) {
-                        var id = toCamelCase(enumName);
-                        dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id="${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
-                    } else {
-                        var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                        dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                    let requestCallType = getRequestCallType(request.requestId);
+                    console.log(requestCallType);
+
+                    if (requestCallType == undefined && isPhysicianDashboard == true) {
+                        dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="selectCallType" data-request-type-id="${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
+                    }
+                    else {
+                        // Once the reqeustCall type is not undefined that means the request has call type then we make one more condition like if the status is 1 then the encounter form is finalized so we show modal that allow provider to download the encounter form other wise we shown the encounter page to physician.
+
+                        // Note:- This is only work for provider admin every time see the encounter page 
+
+                        if (status == 1 && isPhysicianDashboard == true) {
+                            var id = toCamelCase(enumName);
+                            dropdownMenu.append(`<li><div class="dropdown-item menu-option open-modal" data-option="${enumName}" data-request-id="${request.requestId}" data-modal-id="${modalId}" data-request-type-id="${request.requestTyepid}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</div></li>`);
+                        } else {
+                            var link = toCamelCase(enumName) + '?request=' + request.requestId;
+                            dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
+                        }
                     }
                 } else {
                     var id = toCamelCase(enumName);
@@ -230,6 +281,8 @@ $(document).ready(function () {
         });
 
     }
+
+
     function renderMobileAccoridan(data) {
         $(".data-row").remove();
         var accordion = $('#RequestAccordion');
@@ -324,6 +377,8 @@ $(document).ready(function () {
 
         });
     }
+
+
     function toCamelCase(text) {
         return text.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
             if (+match === 0) return ""; // Remove spaces if it's a zero
@@ -352,11 +407,12 @@ $(document).ready(function () {
         $('.filter-btn:first').css("border", "1px solid gray");
     }
 
+
     function getEncounterFormstatus(requestId) {
 
         var status;
         $.ajax({
-            url: 'EcounterFormStatus',
+            url: '/Admin/EcounterFormStatus',
             type: "GET",
             data: { requestId },
             async: false,
@@ -371,6 +427,25 @@ $(document).ready(function () {
         return status;
     }
 
+    function getRequestCallType(requestId) {
+
+        var type;
+        $.ajax({
+            url: '/Admin/RequestCallType',
+            type: "GET",
+            data: { requestId },
+            async: false,
+            success: function (data) {
+                type = data;
+                console.log(data);
+            },
+            error: function () {
+                alert("While featching count");
+            }
+        })
+
+        return type;
+    }
 
 
 

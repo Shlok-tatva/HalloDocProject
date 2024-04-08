@@ -53,29 +53,29 @@
                     success: function (response) {
                         debugger
                         console.log($("#finalValue").val());
-                        
-                        if($("#finalValue").val() != 1){
-                        Swal.fire({
-                            title: "Done",
-                            text: "Form Data Saved Succesfully",
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500
-                        })
-                        }
-                        else{
+
+                        if ($("#finalValue").val() != 1) {
                             Swal.fire({
-                            title: "Done",
-                            text: "Form Data Finalize Succesfully",
-                            icon: "success",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(function(){
-                            location.href = "/Admin/Dashboard";
-                        })
+                                title: "Done",
+                                text: "Form Data Saved Succesfully",
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                        }
+                        else {
+                            Swal.fire({
+                                title: "Done",
+                                text: "Form Data Finalize Succesfully",
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                location.href = "Dashboard";
+                            })
 
                         }
-                        
+
                     },
                     error: function (xhr, status, error) {
                         Swal.fire({
@@ -92,7 +92,7 @@
             });
         });
 
-        </script>
+    </script>
 }
 
 <div class=" mt-5 container m-auto ">
@@ -104,6 +104,30 @@
             </button>
         </div>
     </div>
+    <div class="mt-4 m-auto w-75">
+        @if (@ViewBag.isprovider == false)
+        {
+            @if (Model.isFinalize == 1)
+            {
+
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill" /></svg>
+                    <div>
+                        Encounter form is finalized by provider
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-primary d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill" /></svg>
+                    <div>
+                        Encounter form is not finalized by provider
+                    </div>
+                </div>
+            }
+        }
+    </div>
 
     <!-- Form start  -->
     <form id="encounterForm" asp-action="encounter" method="post" enctype="multipart/form-data">
@@ -113,220 +137,242 @@
 
                 <h1 class="col-12 text-info text-center fw-bolder my-3">Medical Report-Confidential</h1>
 
-                <input type="text" asp-for="requestId" class="visually-hidden"/>
+                <input type="text" asp-for="requestId" class="visually-hidden" />
                 <input id="finalValue" type="text" asp-for="isFinalize" class="visually-hidden" />
-                
+
                 <div class="form-floating col-md-6 my-3">
                     <input asp-for="firstName" type="text" class="form-control" placeholder=" ">
                     <label asp-for="firstName" for="floatingInput" class="control-label ms-3">
-                       First Name
+                        First Name
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
                     <input asp-for="lastName" type="text" class="form-control" placeholder=" ">
                     <label asp-for="lastName" for="floatingInput" class="control-label ms-3">
-                       Last Name
+                        Last Name
                     </label>
                 </div>
 
                 <div class="form-floating col-md-12 my-3">
                     <input asp-for="location" type="text" class="form-control" placeholder=" ">
                     <label asp-for="location" for="floatingInput" class="control-label ms-3">
-                       Location
+                        Location
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for ="dateOfBirth" type="date" class="form-control" id="dob">
+                    <input asp-for="dateOfBirth" type="date" class="form-control" id="dob">
                     <label asp-for="dateOfBirth" for="dob" class="control-label ms-3">
                         Date Of Birth
-                     </label>
-                 </div>
+                    </label>
+                </div>
 
-                 <div class="form-floating col-md-6 my-3">
+                <div class="form-floating col-md-6 my-3">
                     <input asp-for="dateOfRequest" type="date" class="form-control" id="dateofrequest">
                     <label asp-for="dateOfRequest" for="dateofrequest" class="control-label ms-3">
                         Date of Request
-                     </label>
-                 </div>
+                    </label>
+                </div>
 
-                 <div class="form-floating col-md-6 my-3">
+                <div class="form-floating col-md-6 my-3">
                     <input asp-for="phone" id="phone" type="tel" class="form-control"> <br />
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
                     <input asp-for="email" type="email" class="form-control" placeholder=" ">
                     <label asp-for="email" for="floatingInput" class="control-label ms-3">
-                       Email
+                        Email
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
                     <input asp-for="historyOfPresentIllnessOrInjury" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="historyOfPresentIllnessOrInjury" for="floatingInput" class="control-label ms-3">
-                       History of Presenet Illness or Injury
+                        History of Presenet Illness or Injury
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
                     <input asp-for="medicalHistory" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="medicalHistory" for="floatingInput" class="control-label ms-3">
-                       Medical History
+                        Medical History
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
                     <input asp-for="medications" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="medications" for="floatingInput" class="control-label ms-3">
-                       Medications
+                        Medications
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="allergies"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="allergies" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="allergies" for="floatingInput" class="control-label ms-3">
-                       Allergies
+                        Allergies
                     </label>
                 </div>
 
                 <div class="form-floating col-md-4 my-3">
-                    <input asp-for="temp"  type="text" class="form-control" placeholder=" ">
+                    <input asp-for="temp" type="text" class="form-control" placeholder=" ">
                     <label asp-for="temp" for="floatingInput" class="control-label ms-3">
-                       Temp
+                        Temp
                     </label>
                 </div>
 
                 <div class="form-floating col-md-4 my-3">
-                    <input asp-for="hr"  type="text" class="form-control" placeholder=" ">
+                    <input asp-for="hr" type="text" class="form-control" placeholder=" ">
                     <label asp-for="hr" for="floatingInput" class="control-label ms-3">
-                       HR
+                        HR
                     </label>
                 </div>
 
                 <div class="form-floating col-md-4 my-3">
-                    <input asp-for="rr"  type="text" class="form-control" placeholder=" ">
+                    <input asp-for="rr" type="text" class="form-control" placeholder=" ">
                     <label asp-for="rr" for="floatingInput" class="control-label ms-3">
-                       RR
+                        RR
                     </label>
                 </div>
 
                 <div class="form-floating col-md-2 my-3">
-                    <input asp-for="bloodPressureDiastolic"  type="text" class="form-control" placeholder=" ">
+                    <input asp-for="bloodPressureDiastolic" type="text" class="form-control" placeholder=" ">
                     <label asp-for="bloodPressureDiastolic" for="floatingInput" class="control-label ms-3">
-                       Blood Pressure(Diastolic)
+                        Blood Pressure(Diastolic)
                     </label>
                 </div>
 
                 <div class="form-floating col-md-2 my-3">
-                    <input asp-for="bloodPressureSystolic"  type="text" class="form-control" placeholder=" ">
+                    <input asp-for="bloodPressureSystolic" type="text" class="form-control" placeholder=" ">
                     <label asp-for="bloodPressureSystolic" for="floatingInput" class="control-label ms-3">
-                       Blood Pressure(Systolic)
+                        Blood Pressure(Systolic)
                     </label>
                 </div>
 
                 <div class="form-floating col-md-4 my-3">
-                    <input asp-for="o2"  type="text" class="form-control" placeholder=" ">
+                    <input asp-for="o2" type="text" class="form-control" placeholder=" ">
                     <label asp-for="o2" for="floatingInput" class="control-label ms-3">
-                       O2
+                        O2
                     </label>
                 </div>
 
                 <div class="form-floating col-md-4 my-3">
-                    <input asp-for="pain"  type="text" class="form-control" placeholder=" ">
+                    <input asp-for="pain" type="text" class="form-control" placeholder=" ">
                     <label asp-for="pain" for="floatingInput" class="control-label ms-3">
-                       Pain
+                        Pain
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="heent"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="heent" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="heent" for="floatingInput" class="control-label ms-3">
-                       Heent
+                        Heent
                     </label>
                 </div>
 
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="cv"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="cv" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="cv" for="floatingInput" class="control-label ms-3">
-                       CV
+                        CV
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="chest"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="chest" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="chest" for="floatingInput" class="control-label ms-3">
-                       Chest
+                        Chest
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="abd"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="abd" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="abd" for="floatingInput" class="control-label ms-3">
-                       ABD
+                        ABD
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="extremities"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="extremities" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="extremities" for="floatingInput" class="control-label ms-3">
-                       Extr
+                        Extr
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="skin"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="skin" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="skin" for="floatingInput" class="control-label ms-3">
-                       Skin
+                        Skin
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="neuro"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="neuro" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="neuro" for="floatingInput" class="control-label ms-3">
-                       Neuro
+                        Neuro
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="other"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="other" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="other" for="floatingInput" class="control-label ms-3">
-                       Other
+                        Other
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="diagnosis"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="diagnosis" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="diagnosis" for="floatingInput" class="control-label ms-3">
-                       Diagnosis
+                        Diagnosis
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="treatmentPlan"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="treatmentPlan" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="treatmentPlan" for="floatingInput" class="control-label ms-3">
-                      Treatment Plan
+                        Treatment Plan
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="medicalDispensed"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="medicalDispensed" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="medicalDispensed" for="floatingInput" class="control-label ms-3">
-                       Medical Dispensed
+                        Medical Dispensed
                     </label>
                 </div>
                 <div class="form-floating col-md-6 my-3">
-                    <input asp-for="procedures"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="procedures" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="procedures" for="floatingInput" class="control-label ms-3">
-                       Procedures
+                        Procedures
                     </label>
                 </div>
 
                 <div class="form-floating col-md-12 my-3">
-                    <input asp-for="followup"  type="text" class="form-control" style="height:80px;" placeholder=" ">
+                    <input asp-for="followup" type="text" class="form-control" style="height:80px;" placeholder=" ">
                     <label asp-for="followup" for="floatingInput" class="control-label ms-3">
-                       Followup
+                        Followup
                     </label>
                 </div>
 
 
                 <div class="my-3 d-flex justify-content-end ">
                     <button type="submit" class="btn btn-info text-white">Save Changes</button>
-                    <button id="isfinalize" class="btn btn-finalize hover_white mx-2">Finalize</button>
-                    <div onclick="history.back()" class="btn btn-outline-info hover_white hover_primary ">Cancel</div>
+                    @if (@ViewBag.isprovider == true)
+                    {
+                        <button id="isfinalize" class="btn btn-finalize hover_white ms-2">Finalize</button>
+                    }
+
+                    <div onclick="history.back()" class="btn btn-outline-info ms-2 hover_white hover_primary ">Cancel</div>
                 </div>
             </div>
         </div>
     </form>
 </div>
+
+
+
+
+
+@*Icon of alert *@
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+    </symbol>
+    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+    </symbol>
+    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+    </symbol>
+</svg>

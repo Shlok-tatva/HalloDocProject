@@ -16,6 +16,7 @@ namespace HalloDoc_BAL.Repository
         int[] GetStatus(int statusId);
         ViewCaseView GetViewCase(int requestId);
         ViewNotesView GetViewNotesView(int requestId);
+        void UpdateNotes(int requestId, int? adminId, string? adminNotes, int? providerId, string? providerNotes);
         void cancelCase(int requestId, int adminId, string reason, string note);
         List<ViewUploadView> GetuploadedDocuments(int requestId);
         void DeletefileFromDatabase(int fileId);
@@ -25,11 +26,13 @@ namespace HalloDoc_BAL.Repository
         List<Physician> GetPhysiciansByRegion(int regionId);
         void transferCase(int requestId, int physicianId, int adminId ,string note);
         void clearCase(int requestId, int adminId);
-        void sendAgreement(int requestId, int adminId , string email , string link);
+        void sendAgreement(int requestId, int? adminId, int? providerId , string email , string link);
         EncounterFormView GetEncounterFormView(int requestId);
         void SubmitEncounterForm(EncounterFormView formView);
         EncounterFormView GetEncounterForm(int requestId);
         int getEcounterFormStatus(int requestId);
+        int? getrequestCallType(int requestId);
+
         List<Healthprofessionaltype> getAllProfessions();
         List<Healthprofessional> GetBusinessesByProfession(int professionId);
         Healthprofessional GetBusinessDetailsById(int Vendorid);
@@ -76,6 +79,9 @@ namespace HalloDoc_BAL.Repository
         List<Rolemenu> GetMenuByRole(int roleID);
         string GetMenuNameById(int menuid);
         List<UserAccessView> GetUserAccessView(int roleId);
+
+        /*Provider request*/
+        void TransferRequestRequest(int requestId, string reason, int providerId);
 
         }
 }

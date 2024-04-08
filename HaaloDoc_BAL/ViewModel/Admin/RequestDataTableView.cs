@@ -49,6 +49,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required]
         public int RequestTyepid { get; set; }
 
+        public int? callStatus { get; set; }
+
         public bool isPhysicianDashboard { get; set; }
     }
 }

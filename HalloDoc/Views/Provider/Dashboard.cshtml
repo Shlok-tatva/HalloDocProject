@@ -83,7 +83,7 @@
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between mx-3">
-        <h4>Patients <span id="requestState" class="">(New)</span></h4>
+        <h4>Patients <span id="requestState">(New)</span></h4>
         <div>
             <button id="open-sendLinkModal" class="btn btn-info text-white">
                 <i class="bi bi-send"></i>
@@ -174,11 +174,18 @@
 
 </div>
 
-@* <partial name="_assignCase" model="Model.regions" />
-<partial name="_transferCase" model="Model.regions" />
-<partial name="_sendAgreement" />
+
+<partial name="~/Views/Admin/_sendAgreement.cshtml" />
+<partial name="~/Views/Admin/_sendLink.cshtml" />
+<partial name="~/Views/Admin/_encounter.cshtml" />
+<partial name="_transferRequest" />
+<partial name="_selectCallType" />
+
+
+@*<partial name="_transferCase" model="Model.regions" />
 <partial name="_encounter" />
 <partial name="_sendLink" /> *@
+
 
 @if (@TempData["Error"] != null)
 {

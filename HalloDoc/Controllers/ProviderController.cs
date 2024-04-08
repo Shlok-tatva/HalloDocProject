@@ -72,9 +72,38 @@ namespace HalloDocAdmin.Controllers
             return Ok(statusCounts);
         }
 
+
         public IActionResult AcceptCase(int requestId)
         {
-            return Ok();
+            try
+            {
+                Request rq = _requestRepository.Get(requestId);
+                rq.Status = 2;
+                rq.Accepteddate = DateTime.Now;
+                _requestRepository.Update(rq);
+
+                  int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+                _commonFunctionrepo.AddRequestStatusLog(requestId, 2, "Request Accept by Physician", null, providerId, false);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public IActionResult TransferRequest(int requestId, string reason)
+        {
+            int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+            try
+            {
+                _adminFunctionRepository.TransferRequestRequest(requestId, reason, providerId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         public IActionResult ViewCase()
@@ -83,6 +112,29 @@ namespace HalloDocAdmin.Controllers
             return RedirectToAction("ViewCase", "Admin", new { request = requestId });
         }
 
+        public IActionResult ViewNotes()
+        {
+            int requestId = Int32.Parse(Request.Query["request"]);
+            return RedirectToAction("ViewNotes", "Admin", new { request = requestId });
+        }
+
+        public IActionResult ViewUpload()
+        {
+            int requestId = Int32.Parse(Request.Query["request"]);
+            return RedirectToAction("ViewUpload", "Admin", new { request = requestId });
+        }
+
+        public IActionResult Encounter()
+        {
+            int requestId = Int32.Parse(Request.Query["request"]);
+            return RedirectToAction("Encounter", "Admin", new { request = requestId });
+        }
+
+        public IActionResult Orders()
+        {
+            var requestId = Request.Query["request"];
+            return RedirectToAction("Orders", "Admin", new { request = requestId });
+        }
 
         public IActionResult Logout()
         {

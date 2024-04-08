@@ -6,9 +6,19 @@ $(document).ready(function () {
 
         var modalId = $(this).data('modal-id');
         var requestId = $(this).data('request-id');
+
+        if (modalId == "clearCaseModal") {
+            debugger;
+            clearCase(requestId);
+        }
+
+        if (modalId == 'acceptModal') {
+            debugger;
+            AcceptCase(requestId);
+        }
+
         var data = getRequest(requestId);
         var patientName = data.firstname + " , " + data.lastname;
-        console.log(data);
         debugger
         var patientPhone = data.phonenumber;
         var patientEmail = data.email;
@@ -18,12 +28,12 @@ $(document).ready(function () {
         $('#' + modalId).find('#requestIdcanleCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdTransferCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdsendAgreement').prop("value", requestId);
+        $('#' + modalId).find('#reqeustIdTransfer').prop("value", requestId);
         $('#' + modalId).find('#requestIdencounter').prop("value", data.requestid);
 
         $('#' + modalId).find('#patientName').text(patientName);
         $('#' + modalId).find('#phoneNumberSendAgreement').prop("value", patientPhone);
         $('#' + modalId).find('#emailSendAgreement').prop("value", patientEmail);
-
 
         if (modalId == "sendAgreementModal") {
             var requestTypeId = $(this).data('request-type-id');
@@ -47,13 +57,6 @@ $(document).ready(function () {
 
         // Show the modal
         $('#' + modalId).modal('show');
-
-
-        if (modalId == "clearCaseModal") {
-            debugger;
-            clearCase(requestId);
-        }
-
     });
 
 
@@ -369,6 +372,92 @@ $(document).ready(function () {
     }
 
 
+    /* Accept Case Function*/
+    function AcceptCase(requestId) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
+                cancelButton: "btn btn-outline-info btn-lg hover_white"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Confirmation of Acceptation of Case",
+            text: `Are you sure you want to accept this request?`,
+            iconHtml: "<div class='warning_icon'><i class='bi bi-exclamation-circle-fill'></i></div>",
+            showCancelButton: true,
+            confirmButtonText: "Accept",
+            cancelButtonText: "Cancel",
+        }).then((result) => {
+            console.log(requestId);
+            if (result.isConfirmed) {
+                console.log(requestId);
+                $.ajax({
+                    url: "AcceptCase",
+                    method: "POST",
+                    data: { requestId },
+                    success: function (response) {
+                        Swal.fire({
+                            title: "Accepted",
+                            text: "Request Accepted Sucessfully",
+                            icon: "success",
+                            showConfirmButton: false,
+                        }).then(function () {
+                            location.reload();
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        showToaster("Error while accepting Request", "error");
+                    }
+                });
+            }
+        });
+    }
+
+    /* Transfer Request to admin Ajax Call */
+    $('#TransferRequest').validate({
+        rules: {
+            reasonForTransfer: {
+                required: true
+            }
+        },
+        messages: {
+            reasonForTransfer: {
+                required: "Please provide a reason for Transfer."
+            }
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element.parent());
+            error.addClass('text-danger');
+        },
+        submitHandler: function (form) {
+            var formData = new FormData();
+            formData.append('requestId', $('#reqeustIdTransfer').val());
+            formData.append('reason', $('#reasonForTransfer').val());
+            $.ajax({
+                url: "TransferRequest",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.fire({
+                        title: "Done",
+                        text: "Request transferd successfully",
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1000
+                    }).then(function () {
+                        location.reload();
+                    })
+                },
+                error: function (xhr, status, error) {
+                    showToaster("Error while transferring request", "error");
+                }
+            });
+        }
+    });
 
 });
 

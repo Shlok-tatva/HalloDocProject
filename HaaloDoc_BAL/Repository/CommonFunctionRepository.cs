@@ -80,7 +80,7 @@ namespace HalloDoc_BAL.Repository
         }
 
 
-        public void HandleFileUpload(IFormFile UploadFile, int requestId , int? adminId)
+        public void HandleFileUpload(IFormFile UploadFile, int requestId , int? adminId , int? providerId)
         {
             var requestwisefile = new Requestwisefile();
             string FilePath = "wwwroot\\Upload\\" + requestId;
@@ -101,6 +101,7 @@ namespace HalloDoc_BAL.Repository
             requestwisefile.Filename = UploadImage;
             requestwisefile.Createddate = DateTime.Now;
             requestwisefile.Adminid = adminId;
+            requestwisefile.Physicianid = providerId;
             _context.Requestwisefiles.Add(requestwisefile);
             _context.SaveChanges();
         }
@@ -213,6 +214,21 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+
+        public void AddRequestStatusLog(int requestId, short status, string notes, int? adminId, int? providerId, bool trasnaporttoAdmin)
+        {
+            Requeststatuslog log = new Requeststatuslog();
+
+            log.Requestid = requestId;
+            log.Status = status;
+            log.Notes = notes;
+            log.Createddate = DateTime.Now;
+            log.Physicianid = providerId;
+            log.Transtoadmin = trasnaporttoAdmin;
+            _context.Requeststatuslogs.Add(log);
+            _context.SaveChanges();
+
+        }
 
         private int GetCountOfTodayRequests()
         {

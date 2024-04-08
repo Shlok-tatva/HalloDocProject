@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Rotativa.AspNetCore;
+using System.Text.RegularExpressions;
 using System.Transactions;
 
 namespace HalloDocAdmin.Controllers
@@ -157,11 +158,23 @@ namespace HalloDocAdmin.Controllers
             return View();
         }
 
+        [HttpGet, Route("Provider/viewCase", Name = "ProviderViewCase")]
+        [HttpGet, Route("Admin/viewCase", Name = "AdminViewCase")]
         [CustomAuth("Admin", "Provider")]
         public IActionResult ViewCase()
-            {
+        {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
+            string providerid = HttpContext.Session.GetString("providerId");
+            string adminid = HttpContext.Session.GetString("AdminId");
+            if (providerid != null && adminid == null)
+            {
+                ViewBag.isprovider = true;
+            }
+            else
+            {
+                ViewBag.isprovider = false;
+            }
             int requestId = Int32.Parse(Request.Query["request"]);
             ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
             var castag = _adminFunctionRepository.GetAllCaseTag();
@@ -196,9 +209,22 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        [HttpGet, Route("Provider/ViewNotes", Name = "ProviderViewNotes")]
+        [HttpGet, Route("Admin/ViewNotes", Name = "AdminViewNotes")]
         [CustomAuth("Admin", "Provider")]
         public IActionResult ViewNotes()
         {
+            string providerid = HttpContext.Session.GetString("providerId");
+            string adminid = HttpContext.Session.GetString("AdminId");
+            if (providerid != null && adminid == null)
+            {
+                ViewBag.isprovider = true;
+            }
+            else
+            {
+                ViewBag.isprovider = false;
+            }
+
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             int requestId = Int32.Parse(Request.Query["request"]);
@@ -207,30 +233,31 @@ namespace HalloDocAdmin.Controllers
             return View(view);
         }
 
+
         [CustomAuth("Admin", "Provider")]
         [HttpPost("UpdateNotes")]
-        public IActionResult UpdateNotes(int requestId, string adminNotes)
+        public IActionResult UpdateNotes(int requestId, string adminNotes, string providerNotes)
         {
             try
             {
-                Requestnote requestnote = _requestNotesRepository.Get(requestId);
-                if (requestnote == null)
+                string providerid = HttpContext.Session.GetString("providerId");
+                string adminid = HttpContext.Session.GetString("AdminId");
+
+                if (adminid != null)
                 {
-                    Requestnote note = new Requestnote();
-                    note.Requestid = requestId;
-                    note.Adminnotes = adminNotes;
-                    note.Createdby = "faeb647e-a0fe-4b31-a87d-4a2c9693242b";
-                    note.Createddate = DateTime.Now;
-                    _requestNotesRepository.Add(note);
+                    int adminID = Int32.Parse(adminid);
+                    _adminFunctionRepository.UpdateNotes(requestId, adminID, adminNotes, null, null);
+                    return Ok();
+                }
+                else if (providerid != null)
+                {
+                    int providerID = Int32.Parse(providerid);
+                    _adminFunctionRepository.UpdateNotes(requestId, null, null, providerID, providerNotes);
                     return Ok();
                 }
                 else
                 {
-                    requestnote.Adminnotes = adminNotes;
-                    requestnote.Modifiedby = "faeb647e-a0fe-4b31-a87d-4a2c9693242b";
-                    requestnote.Modifieddate = DateTime.Now;
-                    _requestNotesRepository.Update(requestnote);
-                    return Ok();
+                    return BadRequest();
                 }
             }
             catch (Exception ex)
@@ -276,6 +303,8 @@ namespace HalloDocAdmin.Controllers
         }
 
         #region DocumetnView
+        [HttpGet, Route("Provider/ViewUpload", Name = "ProviderViewUpload")]
+        [HttpGet, Route("Admin/ViewUpload", Name = "AdminViewUpload")]
         [CustomAuth("Admin", "Provider")]
         public IActionResult ViewUpload()
         {
@@ -292,15 +321,32 @@ namespace HalloDocAdmin.Controllers
             return View(documetns);
         }
 
+
         [CustomAuth("Admin", "Provider")]
         [HttpPost("UploadFile")]
         public IActionResult UploadFile(IFormFile file, int requestId)
         {
-            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+            string providerid = HttpContext.Session.GetString("providerId");
+            string adminid = HttpContext.Session.GetString("AdminId");
+
             try
             {
-                _commonFunctionrepo.HandleFileUpload(file, requestId, adminId);
-                return Ok(new { success = true });
+                if (adminid != null)
+                {
+                    int adminId = Int32.Parse(adminid);
+                    _commonFunctionrepo.HandleFileUpload(file, requestId, adminId, null);
+                    return Ok(new { success = true });
+                }
+                else if (providerid != null)
+                {
+                    int providerId = Int32.Parse(providerid);
+                    _commonFunctionrepo.HandleFileUpload(file, requestId, null, providerId);
+                    return Ok(new { success = true });
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
             catch (Exception ex)
             {
@@ -347,7 +393,7 @@ namespace HalloDocAdmin.Controllers
         }
 
         [CustomAuth("Admin", "Provider")]
-        public IActionResult SendfilesonMail(string receverEmail, string[] filePaths , int requestId)
+        public IActionResult SendfilesonMail(string receverEmail, string[] filePaths, int requestId)
         {
             try
             {
@@ -357,7 +403,7 @@ namespace HalloDocAdmin.Controllers
                 bool isSent = _adminFunctionRepository.SendEmail("shlok.jadeja@etatvasoft.com", title, message, filePaths);
                 HalloDoc_DAL.Models.Request rq = _requestRepository.Get(requestId);
                 string name = rq.Firstname + " , " + rq.Lastname;
-                _commonFunctionrepo.EmailLog("shlok.jadeja@etatvasoft.com" , message, "Sent files on Mail", name, 1 , requestId, adminId, null, 2, isSent, 1);
+                _commonFunctionrepo.EmailLog("shlok.jadeja@etatvasoft.com", message, "Sent files on Mail", name, 1, requestId, adminId, null, 2, isSent, 1);
                 return Ok();
             }
             catch (Exception ex)
@@ -473,37 +519,75 @@ namespace HalloDocAdmin.Controllers
         [HttpPost("SendAgreement")]
         public IActionResult SendAgreement(int requestId, string email, string phoneNumber)
         {
-            int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
-            string key = "770A8A65DA156D24EE2A093277530142";
-            string encryptedrequestId = _commonFunctionrepo.Encrypt(requestId.ToString(), key);
-            var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/reviewagreement?&requestId={encryptedrequestId}";
-            _adminFunctionRepository.sendAgreement(requestId, adminId, email, accountCreationLink);
+            try
+            {
+                string key = "770A8A65DA156D24EE2A093277530142";
+                string encryptedrequestId = _commonFunctionrepo.Encrypt(requestId.ToString(), key);
+                var accountCreationLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/patient/reviewagreement?&requestId={encryptedrequestId}";
 
-            return Ok();
+                string providerid = HttpContext.Session.GetString("providerId");
+                string adminid = HttpContext.Session.GetString("AdminId");
+                if (adminid != null)
+                {
+                    int adminId = Int32.Parse(adminid);
+                    _adminFunctionRepository.sendAgreement(requestId, adminId, null, email, accountCreationLink);
+                    return Ok();
+                }
+                else if (providerid != null)
+                {
+                    int providerId = Int32.Parse(providerid);
+                    _adminFunctionRepository.sendAgreement(requestId, null, providerId, email, accountCreationLink);
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
         #endregion
 
         #region Encounter-Page-and-PDFGenration
 
-        [HttpGet]
+        [HttpGet, Route("Provider/Encounter", Name = "ProviderViewEncounter")]
+        [HttpGet, Route("Admin/Encounter", Name = "AdminViewEncounter")]
         [CustomAuth("Admin", "Provider")]
         public IActionResult Encounter()
         {
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
+            string providerid = HttpContext.Session.GetString("providerId");
+            
+            if(providerid != null)
+            {
+                ViewBag.isprovider = true;
+            }
+            else
+            {
+                ViewBag.isprovider = false;
+            }
 
             int requestId = Int32.Parse(Request.Query["request"]);
             EncounterFormView view = _adminFunctionRepository.GetEncounterFormView(requestId);
-            if (view == null)
+            if (providerid != null && view.isFinalize == 1)
             {
                 TempData["Error"] = "Form finalized";
-                return RedirectToAction("");
+                return Redirect("Dashboard");
             }
             return View(view);
         }
 
+
         [CustomAuth("Admin", "Provider")]
-        [HttpPost("encounter")]
+        [HttpPost, Route("Provider/Encounter", Name = "ProviderPostEncounter")]
+        [HttpPost, Route("Admin/Encounter", Name = "AdminPostEncounter")]
         public IActionResult Encounter(EncounterFormView formData)
         {
             try
@@ -524,6 +608,17 @@ namespace HalloDocAdmin.Controllers
             return _adminFunctionRepository.getEcounterFormStatus(requestId);
 
         }
+
+        [CustomAuth("Admin", "Provider")]
+        public int? RequestCallType(int requestId)
+        {
+
+            return _adminFunctionRepository.getrequestCallType(requestId);
+
+        }
+
+
+
 
         [CustomAuth("Admin", "Provider")]
         [HttpGet]
@@ -572,6 +667,9 @@ namespace HalloDocAdmin.Controllers
         #endregion
 
         #region Order-Page
+
+        [HttpGet, Route("Provider/Orders", Name = "ProviderOrder")]
+        [HttpGet, Route("Admin/Orders", Name = "AdminOrder")]
         [CustomAuth("Admin", "Provider")]
         public IActionResult Orders()
         {
@@ -608,22 +706,29 @@ namespace HalloDocAdmin.Controllers
             return Json(business);
         }
 
+        [HttpPost, Route("Provider/Addorder", Name = "ProviderPostOrder")]
+        [HttpPost, Route("Admin/Addorder", Name = "AdminPostOrder")]
         [CustomAuth("Admin", "Provider")]
         public IActionResult Addorder(Orderdetail details)
         {
+             string providerid = HttpContext.Session.GetString("providerId");
             try
             {
                 if (details != null)
                 {
                     details.Createddate = DateTime.Now;
                     _adminFunctionRepository.AddOrder(details);
-                    return Ok();
+                    TempData["Success"] = "Order Created Successfully !";
+                    if (providerid != null) return RedirectToAction("Dashboard", "Provider");
+                    return Redirect("Dashboard");
                 }
                 return BadRequest();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                TempData["Error"] = "Error whileOrder Creation !";
+                if (providerid != null) return RedirectToAction("Dashboard", "Provider");
+                return Redirect("Dashboard");
             }
         }
         #endregion
@@ -835,13 +940,13 @@ namespace HalloDocAdmin.Controllers
                 {
 
                     isSent = _adminFunctionRepository.SendEmail(email, title, message);
-                    _commonFunctionrepo.EmailLog(email , message, title, null, 1 , null, adminId, physicianId, 3, isSent, 1);
+                    _commonFunctionrepo.EmailLog(email, message, title, null, 1, null, adminId, physicianId, 3, isSent, 1);
                     return Ok(new { message = "Message sent successfully via Email." });
                 }
                 else if (selectedRadio == "Both")
                 {
                     isSent = _adminFunctionRepository.SendEmail(email, title, message);
-                    _commonFunctionrepo.EmailLog(email, message, title, null , 1, null, adminId, physicianId, 3, isSent, 1);
+                    _commonFunctionrepo.EmailLog(email, message, title, null, 1, null, adminId, physicianId, 3, isSent, 1);
 
 
                     return Ok(new { message = "Message sent successfully via Phone and Email." });
@@ -1498,7 +1603,7 @@ namespace HalloDocAdmin.Controllers
 
         [CustomAuth("Admin")]
         public IActionResult PatientRecords(string? firstName, string? lastName, string? email, string? phoneNumber)
-           {
+        {
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Records";
             var regions = _adminFunctionRepository.GetAllReagion();
@@ -1512,7 +1617,7 @@ namespace HalloDocAdmin.Controllers
             else
             {
                 data = _userRepository.GetBySearch(firstName, lastName, email, phoneNumber);
-                 return PartialView("Records/_patientRecordsData", data);
+                return PartialView("Records/_patientRecordsData", data);
 
             }
         }
@@ -1523,9 +1628,9 @@ namespace HalloDocAdmin.Controllers
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
             int userId = Int32.Parse(Request.Query["Id"]);
-            List<Request> data = _requestRepository.GetAll().Where(r=>r.Userid == userId).ToList();
+            List<Request> data = _requestRepository.GetAll().Where(r => r.Userid == userId).ToList();
             ViewData["ViewName"] = "Records";
-            return View("Records/PatientRequestes" , data);
+            return View("Records/PatientRequestes", data);
         }
 
         [CustomAuth("Admin")]
@@ -1537,7 +1642,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.regions = regions;
 
             List<BlockHistoryView> data = new List<BlockHistoryView>();
-            if(name == null && date == null && email == null && phoneNumber == null)
+            if (name == null && date == null && email == null && phoneNumber == null)
             {
                 data = _adminFunctionRepository.GetBlockHistoryData(null, null, null, null);
                 return View("Records/BlockHistory", data);
@@ -1553,7 +1658,7 @@ namespace HalloDocAdmin.Controllers
 
         [HttpPost]
         [CustomAuth("Admin")]
-        public IActionResult unBlock(int Id , int requestId)
+        public IActionResult unBlock(int Id, int requestId)
         {
             try
             {
@@ -1574,8 +1679,8 @@ namespace HalloDocAdmin.Controllers
             var accountType = _adminFunctionRepository.getAllRoleType();
             ViewBag.accountType = accountType;
             ViewBag.LogType = 1;
-            List<LogView> data = _adminFunctionRepository.GetEmailLogs(null , null , null , null , null);
-            return View("Records/Logs" , data);
+            List<LogView> data = _adminFunctionRepository.GetEmailLogs(null, null, null, null, null);
+            return View("Records/Logs", data);
         }
 
         [CustomAuth("Admin")]
@@ -1583,10 +1688,10 @@ namespace HalloDocAdmin.Controllers
         {
             try
             {
-            List<LogView> data = _adminFunctionRepository.GetEmailLogs(accountType, receiverName, emailId, createdDate, sentDate);
-            return PartialView("Records/_LogData", data);
+                List<LogView> data = _adminFunctionRepository.GetEmailLogs(accountType, receiverName, emailId, createdDate, sentDate);
+                return PartialView("Records/_LogData", data);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest();
             }

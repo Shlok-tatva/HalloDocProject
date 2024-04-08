@@ -53,6 +53,12 @@ main {
     margin-right: 3rem;
 }
 
+#requestState {
+    color: #006fdb;
+    font-size: 1rem;
+    font-weight: 600
+}
+
 .circle {
     width: 15px;
     height: 15px;

@@ -45,7 +45,7 @@
 
     <!-- Form start  -->
     <form asp-action="EditProvider" method="post" enctype="multipart/form-data">
-        <input type="text" asp-for="ProviderId" class="visually-hidden" />
+        <input id="providerID" type="text" asp-for="ProviderId" class="visually-hidden" />
 
         <div class="mt-4 m-auto form_content">
             <div class="row p-4 shadow rounded-3">
@@ -108,7 +108,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end mt-1 mb-2 me-2">
-                    <button class="btn btn-outline-info hover_white" id="resetPassword">Reset Password</button>
+                    <div class="btn btn-outline-info hover_white" id="resetPassword">Reset Password</div>
                 </div>
 
                 <!-- Provider Information -->

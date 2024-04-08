@@ -14,7 +14,7 @@
             document.getElementById('navbarHeader').classList.add("show");
         }
 
-        $(document).ready(function(){
+        $(document).ready(function () {
 
             $('#updateEmail').on('submit', function (e) {
                 e.preventDefault();
@@ -29,13 +29,13 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function(response) {
-                                Swal.fire("Saved!", "", "success");
-                                                 },
-                    error: function(xhr, status, error) {
-                                    Swal.fire("Error While Save Changes!", "", "error");
-                                 }
-                             }); 
+                    success: function (response) {
+                        Swal.fire("Saved!", "", "success");
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire("Error While Save Changes!", "", "error");
+                    }
+                });
             })
         })
 
@@ -47,39 +47,49 @@
     <div class="mt-4 m-auto d-flex justify-content-between">
         <div class="d-flex align-items-center justify-content-center">
 
-            @if(@Model.statusId == 1){
-        <h3 class="me-2 mt-1 fw-bolder">New Request</h3>
-        }
-        else if(@Model.statusId == 2){
-        <h3 class="me-2 mt-1 fw-bolder">Panding Request </h3>
-        }
-        else if(@Model.statusId == 4 || @Model.statusId == 5){
-       <h3 class="me-2 mt-1 fw-bolder">Active Request</h3>
-        }
-        else if(@Model.statusId == 6){
-       <h3 class="me-2 mt-1 fw-bolder">Concluded Request</h3>
-        }
-        else if(@Model.statusId == 3 || @Model.statusId == 7 || @Model.statusId == 8){
-       <h3 class="me-2 mt-1 fw-bolder">Closed Request</h3>
-        }
-        else if(@Model.statusId == 9){
-       <h3 class="me-2 mt-1 fw-bolder">Unpaid Request</h3>
-        }
+            @if (@Model.statusId == 1)
+            {
+                <h3 class="me-2 mt-1 fw-bolder">New Request</h3>
+            }
+            else if (@Model.statusId == 2)
+            {
+                <h3 class="me-2 mt-1 fw-bolder">Panding Request </h3>
+            }
+            else if (@Model.statusId == 4 || @Model.statusId == 5)
+            {
+                <h3 class="me-2 mt-1 fw-bolder">Active Request</h3>
+            }
+            else if (@Model.statusId == 6)
+            {
+                <h3 class="me-2 mt-1 fw-bolder">Concluded Request</h3>
+            }
+            else if (@Model.statusId == 3 || @Model.statusId == 7 || @Model.statusId == 8)
+            {
+                <h3 class="me-2 mt-1 fw-bolder">Closed Request</h3>
+            }
+            else if (@Model.statusId == 9)
+            {
+                <h3 class="me-2 mt-1 fw-bolder">Unpaid Request</h3>
+            }
 
 
-        @if(@Model.requesttypeId == 1){
-        <span class="badg fs-6 patient rounded-5 p-1 px-3 text-light fw-bolder">patient</span> 
-        }
-        else if(@Model.requesttypeId == 2){
-        <span class="badg fs-6 family rounded-5 p-1 px-3 text-light fw-bolder">Family / Friend</span> 
-        }
-        else if(@Model.requesttypeId == 3){
-        <span class="badg fs-6 concierge rounded-5 p-1 px-3 text-light fw-bolder">Concierge</span> 
-        }
-        else if(@Model.requesttypeId == 4){
-        <span class="badg fs-6 business rounded-5 p-1 px-3 text-light fw-bolder">Business</span> 
-        }
-        
+            @if (@Model.requesttypeId == 1)
+            {
+                <span class="badg fs-6 patient rounded-5 p-1 px-3 text-light fw-bolder">patient</span>
+            }
+            else if (@Model.requesttypeId == 2)
+            {
+                <span class="badg fs-6 family rounded-5 p-1 px-3 text-light fw-bolder">Family / Friend</span>
+            }
+            else if (@Model.requesttypeId == 3)
+            {
+                <span class="badg fs-6 concierge rounded-5 p-1 px-3 text-light fw-bolder">Concierge</span>
+            }
+            else if (@Model.requesttypeId == 4)
+            {
+                <span class="badg fs-6 business rounded-5 p-1 px-3 text-light fw-bolder">Business</span>
+            }
+
         </div>
         <div>
             <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
@@ -95,7 +105,7 @@
 
                 <div class="form-floating col-12 my-3">
                     <input value="@Model.symptom" class="form-control readonly" id="floatingTextarea2"
-                        style="height: 100px" readonly></input>
+                           style="height: 100px" readonly></input>
                     <label for="floatingTextarea2" class="ms-3">Patients Notes </label>
                 </div>
 
@@ -128,49 +138,59 @@
                     </label>
                 </div>
 
-               <form id="updateEmail" class="col-md-12 row">
-                <div class="form-floating col-md-6 my-3">
-                    <input id="requestId" value="@Model.requestId" class="visually-hidden">
-                    <input name="Email" type="email" value="@Model.email" id="email" class="form-control">
-                    <label for="floatingInput" class="control-label ms-3">
-                        Email
-                    </label>
-                </div>
-                <div class="col-md-6 my-3">
-                    <button class="btn btn-outline-info btn-lg hover_white" type="submit">Edit</button>
-                </div>
+                <form id="updateEmail" class="col-md-12 row">
+                    @{
+                        var className = @ViewBag.isprovider == true ? "readonly" : "";
+                    }
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input id="requestId" value="@Model.requestId" class="visually-hidden">
+                        <input name="Email" type="email" value="@Model.email" id="email" class="form-control @className" @className>
+                        <label for="floatingInput" class="control-label ms-3">
+                            Email
+                        </label>
+                    </div>
+
+                    @if (@ViewBag.isprovider == false)
+                    {
+                        <div class="col-md-6 my-3">
+                            <button class="btn btn-outline-info btn-lg hover_white" type="submit">Edit</button>
+                        </div>
+
+                    }
                 </form>
-  
 
-                @if(@Model.requesttypeId != 1){
-                <h5 class="col-12 fw-bold my-3">Requester Information</h5>
 
-                <div class="form-floating col-md-6 my-3">
-                    <input value="@Model.requesterfirstName" type="text" class="form-control readonly" readonly>
-                    <label for="floatingInput" class="control-label ms-3">
-                        First Name
-                    </label>
-                </div>
+                @if (@Model.requesttypeId != 1)
+                {
+                    <h5 class="col-12 fw-bold my-3">Requester Information</h5>
 
-                <div class="form-floating col-md-6 my-3">
-                    <input value="@Model.requesterlastName" type="text" class="form-control readonly" readonly>
-                    <label for="floatingInput" class="control-label ms-3">
-                        Last Name
-                    </label>
-                </div>
+                    <div class="form-floating col-md-6 my-3">
+                        <input value="@Model.requesterfirstName" type="text" class="form-control readonly" readonly>
+                        <label for="floatingInput" class="control-label ms-3">
+                            First Name
+                        </label>
+                    </div>
 
-                <div class="form-floating col-md-6 my-3">
-                    <input value="@Model.requesterPhoneNumber" id="phone1" type="tel" class="form-control readonly" readonly> <br />
-                    <label for="floatingInput" class="control-label ms-3">
-                    </label>
-                </div>
+                    <div class="form-floating col-md-6 my-3">
+                        <input value="@Model.requesterlastName" type="text" class="form-control readonly" readonly>
+                        <label for="floatingInput" class="control-label ms-3">
+                            Last Name
+                        </label>
+                    </div>
 
-                <div class="form-floating col-md-6 my-3">
-                    <input value="@Model.requesterEmail" type="email" class="form-control" readonly>
-                    <label for="floatingInput" class="control-label ms-3">
-                        Email
-                    </label>
-                </div>
+                    <div class="form-floating col-md-6 my-3">
+                        <input value="@Model.requesterPhoneNumber" id="phone1" type="tel" class="form-control readonly" readonly> <br />
+                        <label for="floatingInput" class="control-label ms-3">
+                        </label>
+                    </div>
+
+                    <div class="form-floating col-md-6 my-3">
+                        <input value="@Model.requesterEmail" type="email" class="form-control" readonly>
+                        <label for="floatingInput" class="control-label ms-3">
+                            Email
+                        </label>
+                    </div>
                 }
 
 
@@ -198,12 +218,17 @@
                 </div>
 
                 <div class="my-3 d-flex justify-content-end">
-                    @if (@Model.statusId == 1)
+                    @if (@Model.statusId == 1 && @ViewBag.isprovider == false)
                     {
                         <a class="btn btn-success text-white mx-2 open-modal" data-option="Assign Case" data-request-id="@Model.requestId" data-toggle="modal" data-modal-id="assignCaseModal">Assign Case</a>
                     }
                     <a href="./viewNotes/?request=@Model.requestId" class="btn btn-info text-white hover_primary mx-2">View Notes</a>
-                    <button class="btn btn-danger hover_white open-modal" data-option="Cancel Case" data-request-id="@Model.requestId" data-toggle="modal" data-modal-id="cancelCaseModal"> Cancel</button>
+
+                    @if (@ViewBag.isprovider == false)
+                    {
+                        <button class="btn btn-danger hover_white open-modal" data-option="Cancel Case" data-request-id="@Model.requestId" data-toggle="modal" data-modal-id="cancelCaseModal"> Cancel</button>
+                    }
+
                 </div>
 
             </div>
@@ -211,9 +236,13 @@
     </div>
 </div>
 
-@if (@Model.statusId == 1)
+@if (@Model.statusId == 1 && @ViewBag.isprovider == false)
 {
-<partial name="_assignCase" model="Model.ListofRegion" />
-}
 
-<partial name="_cancelCase" model="@ViewData["casetag"]" />
+    <partial name="_assignCase" model="Model.ListofRegion" />
+
+}
+@if (@ViewBag.isprovider == false)
+{
+    <partial name="_cancelCase" model="@ViewData["casetag"]" />
+}

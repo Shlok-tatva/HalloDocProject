@@ -122,7 +122,7 @@ namespace HalloDoc.Controllers
         {
             try
             {  
-                    _commonFunctionrepo.HandleFileUpload(file, requestId , null);
+                    _commonFunctionrepo.HandleFileUpload(file, requestId , null, null);
                     return Ok(new { success = true });            
             }
             catch (Exception ex)
@@ -261,7 +261,7 @@ namespace HalloDoc.Controllers
 
                     if (formData.UploadFile != null)
                     {
-                        _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid , null);
+                        _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid, null, null) ;
                     }
 
                     requestClient.Notes = formData.Symptoms;
