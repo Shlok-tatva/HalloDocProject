@@ -29,8 +29,8 @@ $(document).ready(function () {
         $('#' + modalId).find('#requestIdTransferCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdsendAgreement').prop("value", requestId);
         $('#' + modalId).find('#reqeustIdTransfer').prop("value", requestId);
+        $('#' + modalId).find('#requestIdCallType').prop("value", requestId);
         $('#' + modalId).find('#requestIdencounter').prop("value", data.requestid);
-
         $('#' + modalId).find('#patientName').text(patientName);
         $('#' + modalId).find('#phoneNumberSendAgreement').prop("value", patientPhone);
         $('#' + modalId).find('#emailSendAgreement').prop("value", patientEmail);
@@ -358,6 +358,7 @@ $(document).ready(function () {
                             title: "Cleared",
                             text: "Request Cleared Sucessfully",
                             icon: "success",
+                            timer: 1500,
                             showConfirmButton: false,
                         }).then(function () {
                             location.reload();
@@ -459,5 +460,36 @@ $(document).ready(function () {
         }
     });
 
-});
+
+    /* Call status change Ajax Call */
+    $('#saveButton').click(function () {
+        debugger
+            var selectedOption = $('input[name="options-outlined"]:checked').attr('id');
+            var callType = selectedOption === "success-outlined" ? 1 : 2;
+            var requestId = +$("#requestIdCallType").val();
+
+            $.ajax({
+                url: 'HandleCallType',
+                type: 'POST',
+                data: { callType: callType, requestId: requestId },
+                success: function (response) {
+                    Swal.fire({
+                        text: response,
+                        icon: "success",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        location.reload();
+                    })
+                },
+                error: function (xhr, status, error) {
+                    showToaster("Error while selecting Call type", "error");
+                }
+            });
+        });
+
+
+
+
+})
 

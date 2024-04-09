@@ -155,7 +155,7 @@ namespace HalloDoc_BAL.Repository
                 case 3:
                     return new List<MenuOptionEnum> { MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.orders, MenuOptionEnum.Encounter }; // Map to 'Active' state
                 case 4:
-                    return new List<MenuOptionEnum> { MenuOptionEnum.orders, MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.Encounter }; // Map to 'Conclude' state
+                    return new List<MenuOptionEnum> { MenuOptionEnum.ConcludeCare, MenuOptionEnum.viewCase, MenuOptionEnum.viewUpload, MenuOptionEnum.viewNotes, MenuOptionEnum.Encounter }; // Map to 'Conclude' state
                 default:
                     return new List<MenuOptionEnum>(); // Default case
             }
@@ -299,7 +299,7 @@ namespace HalloDoc_BAL.Repository
                 if (providerId != null && providerNotes != null)
                 {
                     note.Physiciannotes = providerNotes;
-                    note.Createdby = _context.Physicians.FirstOrDefault(ph => ph.Physicianid  == (int)providerId).Aspnetuserid;
+                    note.Createdby = _context.Physicians.FirstOrDefault(ph => ph.Physicianid == (int)providerId).Aspnetuserid;
                 }
                 note.Createddate = DateTime.Now;
                 _requestNotesRepository.Add(note);
@@ -991,14 +991,27 @@ namespace HalloDoc_BAL.Repository
                         return;
                     }
                     physician.Modifieddate = DateTime.Now;
-                    physician.Modifiedby = model.Modifiedby;
-                    physician.Status = model.Status;
+                    if (model.Modifiedby != null)
+                    {
+                        physician.Modifiedby = model.Modifiedby;
+                    }
+
+                    if (model.Status != null)
+                    {
+                        physician.Status = model.Status;
+                    }
+
                 }
 
                 physician.Firstname = model.firstName;
                 physician.Lastname = model.lastName;
                 physician.Mobile = model.phoneNumber;
-                physician.Roleid = model.roleid;
+
+                if (model.roleid != null)
+                {
+                    physician.Roleid = model.roleid;
+                }
+
                 physician.Regionid = model.regionId;
                 physician.Businessname = model.businessName;
                 physician.Businesswebsite = model.businessWebsite;
@@ -2060,8 +2073,8 @@ namespace HalloDoc_BAL.Repository
             var email = "shlok.jadeja@etatvasoft.com";
             var title = "Request:- " + requestId + " Transfer request";
             var message = "I want to transfer the request the reason is :- " + reason;
-             bool isSent = SendEmail(email, title, message, null);
-            _commonFunctionrepo.EmailLog(email, message, "Sent Request tranfer request", "Shlok Jadeja", 1 , requestId, 4 , providerId, 6, isSent, 1);
+            bool isSent = SendEmail(email, title, message, null);
+            _commonFunctionrepo.EmailLog(email, message, "Sent Request tranfer request", "Shlok Jadeja", 1, requestId, 4, providerId, 6, isSent, 1);
             _commonFunctionrepo.AddRequestStatusLog(requestId, 2, reason, 4, providerId, true);
 
         }

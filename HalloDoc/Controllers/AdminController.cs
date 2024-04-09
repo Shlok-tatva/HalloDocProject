@@ -564,8 +564,8 @@ namespace HalloDocAdmin.Controllers
             ViewData["ViewName"] = "Dashboard";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             string providerid = HttpContext.Session.GetString("providerId");
-            
-            if(providerid != null)
+
+            if (providerid != null)
             {
                 ViewBag.isprovider = true;
             }
@@ -711,7 +711,7 @@ namespace HalloDocAdmin.Controllers
         [CustomAuth("Admin", "Provider")]
         public IActionResult Addorder(Orderdetail details)
         {
-             string providerid = HttpContext.Session.GetString("providerId");
+            string providerid = HttpContext.Session.GetString("providerId");
             try
             {
                 if (details != null)
@@ -855,32 +855,60 @@ namespace HalloDocAdmin.Controllers
 
         }
 
-        [CustomAuth("Admin")]
+        [CustomAuth("Admin", "Provider")]
         [RouteAuthFilter]
-        [HttpGet]
+        [HttpGet, Route("Admin/EditProvider", Name = "EditProvider")]
+        [HttpGet, Route("Provider/PhyscianProfile", Name = "PhyscianProfile")]
         public IActionResult EditProvider()
         {
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Providers";
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
-            int providerId = Int32.Parse(Request.Query["providerId"]);
+            int providerId;
+            string providerid = HttpContext.Session.GetString("providerId");
+            if (providerid == null)
+            {
+                ViewBag.isprovider = false;
+                providerId = Int32.Parse(Request.Query["providerId"]);
+
+            }
+            else
+            {
+                ViewBag.isprovider = true;
+                providerId = Int32.Parse(providerid);
+
+            }
             var view = _adminFunctionRepository.getProviderView(providerId);
             return View("provider/EditProvider", view);
         }
 
-        [CustomAuth("Admin")]
+
+
+        [CustomAuth("Admin", "Provider")]
         [HttpPost]
         public IActionResult EditProvider(CreateProviderView formData, int[] selectedRegions)
         {
             try
             {
-                int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                string adminid = HttpContext.Session.GetString("AdminId");
+                if (adminid != null)
+                {
+                int adminId = Int32.Parse(adminid);
                 Admin admin = _adminrepo.GetAdminById(adminId);
                 formData.Modifiedby = admin.Aspnetuserid;
+                }
                 _adminFunctionRepository.CreateOrUpdateProvider(formData, selectedRegions, true);
+
                 TempData["Success"] = "Provider Edited Successfully !";
+                if(adminid != null)
+                {
                 return RedirectToAction("EditProvider", "Admin", new { providerID = formData.ProviderId });
+                }
+                else
+                {
+                 return RedirectToAction("PhyscianProfile", "Provider");
+                }
             }
             catch (Exception ex)
             {

@@ -69,6 +69,7 @@ public enum MenuOptionEnum
     orders,
     Encounter,
     closeCase,
-    Accept
+    Accept,
+    ConcludeCare
     // Add other menu options as needed
 }

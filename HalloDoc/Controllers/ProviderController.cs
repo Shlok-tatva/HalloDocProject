@@ -53,7 +53,8 @@ namespace HalloDocAdmin.Controllers
             return View(view);
         }
 
-      
+
+
 
         public IActionResult getRequestCountPerStatusId()
         {
@@ -65,7 +66,7 @@ namespace HalloDocAdmin.Controllers
 
                 int[] statusIds = _adminFunctionRepository.GetStatus(i);
                 int count = _requestRepository.GetAll().Count(row => row.Physicianid == providerId && statusIds.Contains(row.Status));
-               
+
                 statusCounts.Add(i, count);
             }
             Console.Write(statusCounts);
@@ -82,11 +83,11 @@ namespace HalloDocAdmin.Controllers
                 rq.Accepteddate = DateTime.Now;
                 _requestRepository.Update(rq);
 
-                  int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+                int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
                 _commonFunctionrepo.AddRequestStatusLog(requestId, 2, "Request Accept by Physician", null, providerId, false);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -105,6 +106,60 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        public IActionResult HandleCallType(int callType, int requestId)
+        {
+            try
+            {
+
+                Request rq = _requestRepository.Get(requestId);
+                if (callType == 1)
+                {
+                    rq.Calltype = 1;
+                    rq.Modifieddate = DateTime.Now;
+                    _requestRepository.Update(rq);
+                    return Ok("Request Call Type set to HOUSECALL successfully!");
+                }
+                else if (callType == 2)
+                {
+                    // Handle consult
+                    rq.Calltype = 2;
+                    rq.Status = 6; // set the Request into conclude state
+                    rq.Modifieddate = DateTime.Now;
+                    _requestRepository.Update(rq);
+                    return Ok("Request Call Type set to Consult successfully !");
+                }
+                else
+                {
+                    return BadRequest("Invalid call type");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult houseCallevenetHandler(int requestId)
+        {
+            try
+            {
+                int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+                Request rq = _requestRepository.Get(requestId);
+                rq.Status = 6; // send request to conclude state
+                rq.Modifieddate = DateTime.Now;
+                _requestRepository.Update(rq);
+                _commonFunctionrepo.AddRequestStatusLog(requestId, 6, "Request Completed By Physician still not Concluded", null, providerId, false);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         public IActionResult ViewCase()
         {
@@ -135,6 +190,60 @@ namespace HalloDocAdmin.Controllers
             var requestId = Request.Query["request"];
             return RedirectToAction("Orders", "Admin", new { request = requestId });
         }
+
+        [HttpGet]
+        public IActionResult concludeCare()
+        {
+            ViewData["ViewName"] = "Dashboard";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+
+            int requestId = Int32.Parse(Request.Query["request"]);
+            Request request = _requestRepository.Get(requestId);
+
+            List<ViewUploadView> documetns = _adminFunctionRepository.GetuploadedDocuments(requestId);
+            ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
+
+            var concludeCasedata = new
+            {
+                Document = documetns,
+                RequestId = requestId,
+                CFnumber = request.Confirmationnumber,
+                FirstName = view.firstName,
+                LastName = view.lastName,
+            };
+
+            return View(concludeCasedata);
+        }
+
+        [HttpPost]
+        public IActionResult concludeCare(int requestId , string providerNote)
+        {
+            try
+            {
+                int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+                Request rq = _requestRepository.Get(requestId);
+                rq.Status = 8; // Request Concluded By Provider so it is in 
+                rq.Completedbyphysician = true;
+                rq.Modifieddate = DateTime.Now;
+                _requestRepository.Update(rq);
+                _commonFunctionrepo.AddRequestStatusLog(requestId, 8, providerNote , null, providerId, false);
+
+                return RedirectToAction("Dashboard");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+
+        public IActionResult PhyscianProfile()
+        {
+            ViewData["ViewName"] = "Providers";
+            int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+            return RedirectToAction("EditProvider", "Admin", new { providerId = providerId });
+        }
+
 
         public IActionResult Logout()
         {

@@ -1,4 +1,4 @@
-
+﻿
 $(document).ready(function () {
 
 
@@ -38,7 +38,8 @@ $(document).ready(function () {
         9: "Orders",
         10: "Encounter",
         11: "Close Case",
-        12: "Accept"
+        12: "Accept",
+        13: "Conclude Care"
     };
     // Object mapping menu options to image URLs
     const menuOptionImageMapping = {
@@ -54,7 +55,8 @@ $(document).ready(function () {
         'Orders': 'orders.png',
         'Encounter': 'encounter.png',
         'Close Case': 'closeCase.png',
-        'Accept': 'clearCase.png'
+        'Accept': 'clearCase.png',
+        'Conclude Care': 'encounter.png',
     };
     function reloadDataTable(statusID, reqtype, filter) {
         var tableData;
@@ -72,10 +74,17 @@ $(document).ready(function () {
                 $('#request-table thead').empty();
                 $('#RequestAccordion').empty();
 
+                if (data.length == 0) {
+                    var norow = `<tr><td class="px-5 py-2"><h2 class="p-4 alert alert-info"> No request found.</h2></td></tr>`;
+                    $('#request-table tbody').append(norow);
+                    $('#RequestAccordion').append(`<h2 class="p-4 text-center alert alert-info m-4"> No request found.</h2>`);
+
+                }
+
                 if (data.length > 0) {
                     data.sort((a, b) => a.requestId - b.requestId);
                     if (window.innerWidth < 900) {
-                        renderMobileAccoridan(data);
+                        renderMobileAccoridan(data, data[0].isPhysicianDashboard);
                     } else {
                         renderDesktopTable(data, statusID, data[0].isPhysicianDashboard);
                     }
@@ -128,7 +137,7 @@ $(document).ready(function () {
                 return;
             }
 
-            if (isPhysicianDashboard == true && header === "callStatus" && [1, 2, 4].includes(statusID)) {
+            if (isPhysicianDashboard == true && header === "callStatus" && [1, 2, 4].includes(+statusID)) {
                 return;
             }
 
@@ -140,9 +149,11 @@ $(document).ready(function () {
             headerRow.append('<th class="py-4">' + columnName + '</th>');
         });
 
-        $('#request-table thead').append(headerRow);
 
+        $('#request-table thead').append(headerRow);
+        
         data.forEach(function (request, index) {
+
             var newRow = $('<tr class="data-row">').attr('data-request-type-id', request.requestTyepid);
             var newAccordionItem = $('<div class="accordion-item">');
 
@@ -178,12 +189,16 @@ $(document).ready(function () {
                         if (request[key] == null) request[key] = '-';
                         if (isPhysicianDashboard && ["patientName", "patientEmail", "patientPhoneNumber", "address", "callStatus"].includes(key)) {
                             debugger
-                            if (key === "callStatus" && [1, 2, 4].includes(statusID)) {
+                            if (key === "callStatus" && [1, 2, 4].includes(+statusID)) {
                                 continue;
                             }
                             else {
                                 if (request[key] == 1) {
-                                    newRow.append('<td class="houseCall"> <button class="btn btn-info text-white">House call</button> </td>');
+                                    newRow.append(`<td class="houseCall"> <button class="btn btn-info text-white">House call</button> </td>`);
+                                    newRow.find('.houseCall button').click(function () {
+                                        HouseCallEventHandler(request.requestId);
+                                    });
+
                                     continue;
                                 }
                                 else {
@@ -226,7 +241,7 @@ $(document).ready(function () {
 
                 // Here we check if the option is either 2,3,5,9,11 then we have to open particular modal so we append link which open respectively modal other wise we append a link which redirect to particular page
 
-                if ([2, 3, 5, 9, 11].includes(option)) {
+                if ([2, 3, 5, 9, 11, 13].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
                     dropdownMenu.append(`<li><a class="dropdown-item menu-option" href="${link}" data-option="${enumName}" data-request-id="${request.requestId}"><image src="/images/${imageUrl}" class="menu-icon" />${enumName}</a></li>`);
 
@@ -283,10 +298,12 @@ $(document).ready(function () {
     }
 
 
-    function renderMobileAccoridan(data) {
+
+    function renderMobileAccoridan(data, isPhysicianDashboard) {
         $(".data-row").remove();
         var accordion = $('#RequestAccordion');
         data.forEach(function (request, index) {
+            console.log(request);
             var panelId = 'panel' + index;
             var panel = $('<div class="accordion-item data-row">').attr('data-request-type-id', request.requestTyepid);
             var header = $('<h2 class="accordion-header" id="heading' + panelId + '">');
@@ -313,19 +330,47 @@ $(document).ready(function () {
                 var backgroundColor = menuOptionColors[option] || 'blue';
                 var modalId = toCamelCase(enumName) + 'Modal';
 
-                if ([3, 5, 9, 10, 11, 12].includes(option)) {
+                if ([3, 5, 9, 11, 13].includes(option)) {
                     var link = toCamelCase(enumName) + '?request=' + request.requestId;
                     actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5" href="' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>';
                 }
+                else if (option == 10) {
+
+                    let status = getEncounterFormstatus(request.requestId);
+                    let requestCallType = getRequestCallType(request.requestId);
+                    var id = toCamelCase(enumName)
+
+                    if (requestCallType == undefined && isPhysicianDashboard == true) {
+
+                        actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="selectCallType" style="background-color: ' + backgroundColor + '"' + 'data-request-type-id = "' + request.requestTyepid + '" >' + enumName + '</a>';
+                    }
+                    else {
+
+                        // Once the reqeustCall type is not undefined that means the request has call type then we make one more condition like if the status is 1 then the encounter form is finalized so we show modal that allow provider to download the encounter form other wise we shown the encounter page to physician.
+
+                        // Note:- This is only work for provider admin every time see the encounter page 
+
+                        if (status == 1 && isPhysicianDashboard == true) {
+                            actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '"' + 'data-request-type-id = "' + request.requestTyepid + '" >' + enumName + '</a>';
+
+                        } else {
+                            var link = toCamelCase(enumName) + '?request=' + request.requestId;
+                            actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5" href="' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>';
+                        }
+
+                    }
+                }
+
                 else if (option == 2) {
-                    var link = toCamelCase(enumName) + '?request=' + request.requestId;
-                    viewCase += '<a class="btn w-50 btn-transparent border border-1 border-primary text-primary rounded-5 viewCasebtn" href="' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>'
+                        var link = toCamelCase(enumName) + '?request=' + request.requestId;
+                        viewCase += '<a class="btn w-50 btn-transparent border border-1 border-primary text-primary rounded-5 viewCasebtn" href="' + link + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" style="background-color: ' + backgroundColor + '">' + enumName + '</a>'
                 }
                 else {
-                    var id = toCamelCase(enumName)
-                    actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '"' + 'data-request-type-id = "' + request.requestTyepid + '" >' + enumName + '</a>';
-                }
-            });
+                   
+                        var id = toCamelCase(enumName)
+                        actions += '<a class="btn w-50 btn-transparent border border-1 text-white rounded-5 open-modal" id="' + id + '" data-option="' + enumName + '" data-request-id="' + request.requestId + '" data-toggle="modal"' + ' data-modal-id="' + modalId + '" style="background-color: ' + backgroundColor + '"' + 'data-request-type-id = "' + request.requestTyepid + '" >' + enumName + '</a>';
+                    }
+                });
 
             var requestTypeText;
             var bgColor;
@@ -355,10 +400,19 @@ $(document).ready(function () {
 
             header.append(`<div class="w-100 gap-2 border-5 pt-3 pb-5 px-4"><div class="d-flex justify-content-between mb-3"><span class="mobilesearch fs-5 ">${request.patientName}</span><div class="d-flex align-items-center"><div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: ${bgColor};"></div><span class="fs-5">${requestTypeText}</span></div></div><div class="d-flex justify-content-between "><div class=""><span class="fs-5">${request.address}</span></div><div class="btn btn-transparent btn-sm border border-1 border-info text-info rounded-5">Map Location</div></div></div>`);
 
-            var accordionBody = `<div class="accordion-body p-0"><div class="d-flex flex-column gap-2 bg-info-subtle mb-2 py-3 px-4 "><div class="text-end">${viewCase}</div><div><i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Date of Birth: ${request.dateOfBirth}</span></div><div><i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Email: ${request.patientEmail}</span></div><div><i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Phone: ${request.patientPhoneNumber}</span></div><div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Requestor: ${request.requesterName}</span></div>`;
+            var accordionBody = `<div class="accordion-body p-0"><div class="d-flex flex-column gap-2 bg-info-subtle mb-2 py-3 px-4 "><div class="text-end">${viewCase}</div><div><i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Date of Birth: ${request.dateOfBirth}</span></div><div><i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Email: ${request.patientEmail}</span></div><div><i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Phone: ${request.patientPhoneNumber}</span></div>`;
 
-            if (request.status === 2) {
-                accordionBody += '<div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' + '<span class="fs-5">Doctor Name: ' + request.doctorName + '</span></div>';
+            if (!isPhysicianDashboard) {
+                accordionBody += `<div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Requestor: ${request.requesterName}</span></div>`;
+            }
+
+            if (request.status === 2 && !isPhysicianDashboard) {
+                accordionBody += '<div><i class="fa-regular fa-user fs-5 border border-1 border-info rounded-5 p-2 me-2"></i>' + '<span class="fs-5">Doctor Name: ' + request.physicianName + '</span></div>';
+            }
+
+
+            if (request.status === 4 && isPhysicianDashboard && request.callStatus == 1) {
+                actions += '<button class="btn w-50 btn-transparent border border-1 text-white rounded-5 btn btn-info text-white houseCall"> House Call </button>';
             }
 
             accordionBody += '<div class="d-flex flex-column mt-3 gap-3">' +
@@ -372,6 +426,15 @@ $(document).ready(function () {
             panel.append(header);
             panel.append(body);
             accordion.append(panel);
+
+            if (request.status === 4 && isPhysicianDashboard && request.callStatus == 1) {
+                var houseCallButton = body.find('.houseCall');
+                houseCallButton.click(function () {
+                    HouseCallEventHandler(request.requestId);
+                });
+            }
+
+            
 
             setupPagination(5);
 
@@ -448,7 +511,6 @@ $(document).ready(function () {
     }
 
 
-
     /* Export Data to CSV */
     $("#export").on("click", function () {
         var lastStatusID = localStorage.getItem("lastStatusID");
@@ -471,6 +533,7 @@ $(document).ready(function () {
         $("#sendLinktModal").modal('show');
     })
 
+    /* Send Link Logic */
     $('#sendLink').validate({
         rules: {
             firstNameSendLink: {
@@ -618,6 +681,51 @@ $(document).ready(function () {
         handleStateClick.call(this, 'Unpaid');
         setLastState('Unpaid');
     });
+
+
+
+    /* For Provider site house call button event handler */
+    function HouseCallEventHandler(requestId) {
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
+                cancelButton: "btn btn-outline-info btn-lg hover_white"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Confirmation of Complete Request",
+            text: `Are you sure you want to Complete this request? Once complete this  request ${requestId} then this request is goes to conclude state`,
+            iconHtml: "<div class='warning_icon'><i class='bi bi-exclamation-circle-fill'></i></div>",
+            showCancelButton: true,
+            confirmButtonText: "Complete",
+            cancelButtonText: "Cancel",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "houseCallevenetHandler",
+                    method: "POST",
+                    data: { requestId },
+                    success: function (response) {
+                        Swal.fire({
+                            title: "Completed",
+                            text: "Request completed Sucessfully",
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                        }).then(function () {
+                            location.reload();
+                        })
+                    },
+                    error: function (xhr, status, error) {
+                        showToaster("Error While completing Request", "error");
+                    }
+                });
+            }
+        });
+    }
+
 
 
 });
