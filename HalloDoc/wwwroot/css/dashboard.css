@@ -11,6 +11,7 @@ main {
 
 .active {
     border-bottom: 2px solid #01BBE7;
+    background: #0086fb0d;
 }
 
     .active a {
@@ -21,6 +22,9 @@ main {
     text-decoration: none;
     color: black;
     font-weight: 400;
+}
+.links:hover {
+    background: #0086fb0d;
 }
 
 .navbar-toggler {

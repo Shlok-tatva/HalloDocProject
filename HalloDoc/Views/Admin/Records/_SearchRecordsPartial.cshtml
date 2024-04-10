@@ -1,0 +1,63 @@
+﻿@model List<HalloDoc_BAL.ViewModel.Records.SearchRecordView>
+
+<table class="table table-hover document_table my-3 me-0">
+    <thead class="">
+        <tr class="table_header searchrecords_header">
+            <th class="">Patient Name</th>
+            <th class="">Requestor</th>
+            <th class="">Date Of Service</th>
+            <th class="">Close Case Date</th>
+            <th class="">Email</th>
+            <th class="">Phone Number</th>
+            <th class="">Address</th>
+            <th class="">Zip</th>
+            <th class="">Request Status</th>
+            <th class="">Physician</th>
+            <th class="">Physician Note</th>
+            <th class="">Cancelled By Provider Note</th>
+            <th class="">Admin Note</th>
+            <th class="">Patient Note</th>
+            <th class="">Delete Permanently</th>
+        </tr>
+    </thead>
+
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="data-row searchrecords_data_row">
+                <td class="">@(item.PatientName ?? "-")</td>
+                <td class="">@(item.Requestor ?? "-")</td>
+                <td class="">@(item.ServiceDate ?? "-")</td>
+                <td class="">@(item.DateofClose ?? "-")</td>
+                <td class="">@(item.Email ?? "-")</td>
+                <td class="">@(item.PhoneNumber ?? "-")</td>
+                <td class="">@(item.Address ?? "-")</td>
+                <td class="">@(item.Zip ?? "-")</td>
+                <td class="">@(item.StatusName ?? "-")</td>
+                <td class="">@(item.PhysicianName ?? "-")</td>
+                <td class="">@(item.PhysicianNote ?? "-")</td>
+                <td class="">@(item.CancelledByProvidor ?? "-")</td>
+                <td class="">@(item.AdminNotes ?? "-")</td>
+                <td class="">@(item.PatientNote ?? "-")</td>
+                <td class=" text-center">
+                    <a role="button" data-bs-toggle="modal" data-bs-target="#DeleteConfirmationModal" data-bs-requestid="@item.RequestId" class="btn btn-outline-info btn-sm hover_white">Delete</a>
+                </td>
+            </tr>
+
+        }
+
+    </tbody>
+</table>
+@if (Model.Count > 10)
+{
+    <div id="pagination" class="d-flex flex-row-reverse p-3">
+        <div class="d-flex">
+            <button id="first-button" class="pagination_btn">First</button>
+            <button id="prev-button" class="pagination_btn" disabled><i class="fa-solid fa-arrow-left"></i></button>
+            <div id="page-buttons"></div>
+            <button id="next-button" class="pagination_btn"><i class="fa-solid fa-arrow-right"></i></button>
+            <button id="last-button" class="pagination_btn">Last</button>
+        </div>
+    </div>
+}

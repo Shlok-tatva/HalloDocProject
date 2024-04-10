@@ -574,7 +574,7 @@ $(document).ready(function () {
         submitHandler: function (form) {
             var formData = new FormData(form);
             $.ajax({
-                url: "/SendLink",
+                url: "/Admin/SendLink",
                 method: "POST",
                 data: formData,
                 processData: false,

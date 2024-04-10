@@ -1400,16 +1400,22 @@ namespace HalloDoc_BAL.Repository
             return hasShift;
         }
 
-        public void CreateShift(ScheduleModel data, int adminId)
+        public void CreateShift(ScheduleModel data, int? adminId, int? providerId)
         {
 
             using (var transaction = new TransactionScope())
             {
                 Shift shift = new Shift();
-                shift.Physicianid = data.Physicianid;
+
+                if (adminId != null) shift.Physicianid = data.Physicianid;
+                if (providerId != null) shift.Physicianid = (int)providerId;
+
                 shift.Repeatupto = data.Repeatupto;
                 shift.Startdate = data.Startdate;
-                shift.Createdby = _adminRepo.GetAdminById(adminId).Aspnetuserid;
+
+                if (adminId != null) shift.Createdby = _adminRepo.GetAdminById((int)adminId).Aspnetuserid;
+                if (providerId != null) shift.Createdby = _context.Physicians.Where(p => p.Physicianid == (int)providerId).FirstOrDefault().Aspnetuserid;
+
                 shift.Createddate = DateTime.Now;
                 shift.Isrepeat = data.Isrepeat;
                 shift.Repeatupto = data.Repeatupto;
@@ -1626,7 +1632,7 @@ namespace HalloDoc_BAL.Repository
 
         }
 
-        public List<ScheduleModel> GetShift(int month, int year, int? regionId)
+        public List<ScheduleModel> GetShift(int month, int year, int? regionId, int? providerId)
         {
             List<ScheduleModel> ScheduleDetails = new List<ScheduleModel>();
 
@@ -1645,7 +1651,7 @@ namespace HalloDoc_BAL.Repository
                                           join sd in _context.Shiftdetails
                                           on s.Shiftid equals sd.Shiftid into shiftGroup
                                           from sd in shiftGroup.DefaultIfEmpty()
-                                          where sd.Shiftdate == schedule && sd.Isdeleted == false
+                                          where sd.Shiftdate == schedule && sd.Isdeleted == false && (providerId == null || s.Physicianid == providerId)
                                           select new ScheduleModel
                                           {
                                               Shiftid = sd.Shiftdetailid,
@@ -1694,13 +1700,15 @@ namespace HalloDoc_BAL.Repository
             return shiftdata;
         }
 
-        public void EditShift(ScheduleModel shift, int adminId)
+        public void EditShift(ScheduleModel shift, int? adminId, int? providerId)
         {
             Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shift.Shiftid);
             sd.Shiftdate = (DateTime)shift.Shiftdate;
             sd.Starttime = shift.Starttime;
             sd.Endtime = shift.Endtime;
-            sd.Modifiedby = _adminRepo.GetAdminById(adminId).Aspnetuserid;
+            if (adminId != null) sd.Modifiedby = _adminRepo.GetAdminById((int)adminId).Aspnetuserid;
+            if (providerId != null) sd.Modifiedby = _context.Physicians.Where(p => p.Physicianid == (int)providerId).FirstOrDefault().Aspnetuserid;
+
             sd.Modifieddate = DateTime.Now;
             _context.Shiftdetails.Update(sd);
             _context.SaveChanges();
@@ -1719,12 +1727,12 @@ namespace HalloDoc_BAL.Repository
 
         }
 
-        public void DeleteShift(int shiftId, int adminId)
+        public void DeleteShift(int shiftId, int? adminId, int? providerId)
         {
             Shiftdetail sd = _context.Shiftdetails.FirstOrDefault(sd => sd.Shiftdetailid == shiftId);
             sd.Isdeleted = true;
-            var admin = _adminRepo.GetAdminById(adminId);
-            sd.Modifiedby = admin?.Aspnetuserid;
+            if (adminId != null) sd.Modifiedby = _adminRepo.GetAdminById((int)adminId).Aspnetuserid;
+            if (providerId != null) sd.Modifiedby = _context.Physicians.Where(p => p.Physicianid == (int)providerId).FirstOrDefault().Aspnetuserid;
             sd.Modifieddate = DateTime.Now;
             _context.Shiftdetails.Update(sd);
             _context.SaveChanges();
@@ -1816,6 +1824,104 @@ namespace HalloDoc_BAL.Repository
         #endregion
 
         #region Records
+
+        public List<SearchRecordView> GetSearchRecords(string? Email, DateTime? FromDoS, string? Phone, string? Patient, string? Provider, int RequestStatus, int RequestType, DateTime? ToDoS)
+        {
+            var data = (from r in _context.Requests
+                        join rc in _context.Requestclients on r.Requestid equals rc.Requestid
+                        join p in _context.Physicians on r.Physicianid equals p.Physicianid into prJoin
+                        from p in prJoin.DefaultIfEmpty()
+                        join rn in _context.Requestnotes on r.Requestid equals rn.Requestid into rrnJoin
+                        from rn in rrnJoin.DefaultIfEmpty()
+                        where r.Isdeleted == false
+                        select new
+                        {
+                            Request = r,
+                            RequestClient = rc,
+                            Physician = p,
+                            RequestNote = rn
+                        }).ToList();
+
+            var result = data.Select(item => new SearchRecordView
+            {
+                RequestId = item.Request.Requestid,
+                PatientName = $"{item.RequestClient.Firstname} {item.RequestClient.Lastname}",
+                Requestor = $"{item.Request.Firstname} {item.Request.Lastname}",
+                DateOfService = item.Request.Accepteddate,
+                ServiceDate = item.Request.Accepteddate?.ToString("MMMM dd, yyyy"),
+                DateofClose = GetCloseDate(item.Request.Requestid)?.ToString("MMMM dd, yyyy") ?? "",
+                CloseDate = GetCloseDate(item.Request.Requestid),
+                Email = item.RequestClient.Email,
+                PhoneNumber = item.RequestClient.Phonenumber,
+                Address = item.RequestClient.Location,
+                Zip = item.RequestClient.Zipcode,
+                RequestStatus = item.Request.Status,
+                PhysicianName = item.Physician != null ? $"{item.Physician.Firstname} {item.Physician.Lastname}" : "", // Handle null Physician
+                PhysicianNote = item.RequestNote?.Physiciannotes,
+                CancelledByProvidor = GetPatientCancellationNotes(item.Request.Requestid),
+                PatientNote = item.RequestClient.Notes,
+                RequestTypeId = item.Request.Requesttypeid,
+                AdminNotes = item.RequestNote?.Adminnotes
+            }).ToList();
+
+
+            result = result.Where(item =>
+                (string.IsNullOrEmpty(Email) || item.Email.Contains(Email)) &&
+                (string.IsNullOrEmpty(Phone) || item.PhoneNumber.Contains(Phone)) &&
+                (string.IsNullOrEmpty(Patient) || item.PatientName.ToLower().Contains(Patient)) &&
+                (string.IsNullOrEmpty(Provider) || item.PhysicianName.ToLower().Contains(Provider)) &&
+                (RequestStatus == 0 || item.RequestStatus == RequestStatus) &&
+                (RequestType == 0 || item.RequestTypeId == RequestType) &&
+                (FromDoS == null || item.DateOfService?.Date >= FromDoS.Value.Date) &&
+                (ToDoS == null || item.DateOfService?.Date <= ToDoS.Value.Date)
+            ).ToList();
+
+            return result;
+        }
+
+        public DateTime? GetConcludeDate(int requestid)
+        {
+            Requeststatuslog? log = _context.Requeststatuslogs.OrderByDescending(x => x.Createddate).FirstOrDefault(x => x.Requestid == requestid && x.Status == 6 && x.Physicianid != null);
+            return log?.Createddate;
+        }
+
+        public DateTime? GetCloseDate(int requestid)
+        {
+            Requeststatuslog? log = _context.Requeststatuslogs.OrderByDescending(x => x.Createddate).FirstOrDefault(x => x.Requestid == requestid && x.Status == 9);
+            return log?.Createddate;
+        }
+        public string? GetPatientCancellationNotes(int requestid)
+        {
+            Requeststatuslog? log = _context.Requeststatuslogs.OrderByDescending(x => x.Createddate).FirstOrDefault(x => x.Requestid == requestid && x.Status == 3 && x.Physicianid != null);
+            return log?.Notes;
+        }
+
+        public bool DeletePatientRequest(int requestid)
+        {
+            Request? request = _context.Requests.FirstOrDefault(x => x.Requestid == requestid);
+            if (request != null)
+            {
+                try
+                {
+                    request.Isdeleted = true;
+                    request.Modifieddate = DateTime.Now;
+                    _context.Requests.Update(request);
+                    _context.SaveChanges();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    throw new ApplicationException("Failed to submit Form", ex);
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
         public List<BlockHistoryView> GetBlockHistoryData(string? name, DateTime? date, string? email, string? phoneNumber)
         {
             List<BlockHistoryView> data = new List<BlockHistoryView>();
@@ -2039,6 +2145,17 @@ namespace HalloDoc_BAL.Repository
         public List<Region> GetAllReagion()
         {
             return _context.Regions.ToList();
+        }
+        public List<Region> getProvidersRegion(int providerId)
+        {
+            List<int> regionIds = _context.Physicianregions.Where(pr => pr.Physicianid == providerId).Select(pr => pr.Regionid).ToList();
+            List<Region> regions = new List<Region>();
+            foreach (var id in regionIds)
+            {
+                Region rj = _context.Regions.FirstOrDefault(r => r.Regionid == id);
+                regions.Add(rj);
+            }
+            return regions;
         }
         public List<Casetag> GetAllCaseTag()
         {

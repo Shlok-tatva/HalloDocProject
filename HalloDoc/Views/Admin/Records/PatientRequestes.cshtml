@@ -124,13 +124,14 @@
         </table>
     </div>
 
-    <div id="pagination">
-        <button id="first-button" class="pagination_btn">First</button>
-        <button id="prev-button" class="pagination_btn" disabled><i class="bi bi-chevron-left fs-5"></i> </button>
-        <!-- Pagination buttons container -->
-        <div id="page-buttons"></div>
-        <button id="next-button" class="pagination_btn"> <i class="bi bi-chevron-right fs-5"></i> </button>
-        <button id="last-button" class="pagination_btn">Last</button>
+    <div id="pagination" class="d-flex flex-row-reverse p-3">
+        <div class="d-flex">
+            <button id="first-button" class="pagination_btn">First</button>
+            <button id="prev-button" class="pagination_btn" disabled><i class="fa-solid fa-arrow-left"></i></button>
+            <div id="page-buttons"></div>
+            <button id="next-button" class="pagination_btn"><i class="fa-solid fa-arrow-right"></i></button>
+            <button id="last-button" class="pagination_btn">Last</button>
+        </div>
     </div>
 
 </div>

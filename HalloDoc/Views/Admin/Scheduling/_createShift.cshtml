@@ -12,6 +12,7 @@
             <form asp-action="CreateShift" id="createShift" class="row p-3">
                 @*<input type="hidden" asp-for="Shiftid" />*@
 
+
                 <div class="form-floating my-3">
                     <select asp-for="Regionid" class="p-2 px-3 form-control w-100 " id="selectregion">
                         <option value="" selected disabled>Regions</option>
@@ -22,14 +23,18 @@
                     </select>
                 </div>
 
-                <div class="form-floating mb-3">
-                    <select class="form-select pt-1" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example">
-                        <option value="" selected disabled>Physician</option>
-                    </select>
-                </div>
 
+
+                @if (!ViewBag.isprovider)
+                {
+                    <div class="form-floating mb-3">
+                        <select class="form-select pt-1" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example">
+                            <option value="" selected disabled>Physician</option>
+                        </select>
+                    </div>
+                }
                 <div class="col-md-12 form-floating mb-3">
-                    <input id="StartDate" asp-for="Startdate"  class="form-control rounded vcs" name="Startdate" type="date" placeholder=Suchtext autocomplete=off>
+                    <input id="StartDate" asp-for="Startdate" class="form-control rounded vcs" name="Startdate" type="date" placeholder=Suchtext autocomplete=off>
                     <label for="floatingInput">Starting Date</label>
                 </div>
                 <div class="col-md-6 form-floating mb-3">
@@ -134,6 +139,6 @@
 
 <script type="text/javascript">
 
-    
-    
+
+
 </script>

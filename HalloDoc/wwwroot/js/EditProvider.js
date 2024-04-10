@@ -124,7 +124,7 @@
                 formdata.append("providerId", providerID);
                 formdata.append("password", $("#providerPassword").val());
                 $.ajax({
-                    url: "/changeProviderPassword",
+                    url: "/Admin/changeProviderPassword",
                     type: 'POST',
                     data: formdata,
                     processData: false,

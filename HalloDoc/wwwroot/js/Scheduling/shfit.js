@@ -75,7 +75,7 @@ $(document).ready(function () {
         var selectedEndTime = $('#EndTime').val();
 
         $.ajax({
-            url: 'CheckExistingShifts',
+            url: '/Admin/CheckExistingShifts',
             type: 'GET',
             data: {
                 physicianId: physicianId,
@@ -118,6 +118,7 @@ document.getElementById('StartDate').min = formattedDate;
 
 addEndTimeChangeListener('StartTime', 'EndTime');
 
+
 window.onload = toggleCheckboxes;
 function toggleCheckboxes() {
     var repeatCheckbox = document.getElementById('Isrepeat');
@@ -155,7 +156,7 @@ function updateShiftData() {
     var shiftid = $("#shiftid").val();
     $.ajax({
         type: "POST",
-        url: 'UpdateshiftStatus?shiftId=' + shiftid,
+        url: '/Admin/UpdateshiftStatus?shiftId=' + shiftid,
         cache: false,
         success: function (response) {
             location.reload();
@@ -167,10 +168,11 @@ function updateShiftData() {
 }
 
 function deleteshift() {
+    debugger;
     var shiftid = $("#shiftid").val();
     $.ajax({
         type: "POST",
-        url: 'DeleteShift?shiftid=' + shiftid,
+        url: '/Admin/DeleteShift?shiftid=' + shiftid,
         cache: false,
         success: function (response) {
             location.reload();
@@ -184,7 +186,6 @@ function deleteshift() {
 
 document.getElementById('delete').addEventListener('click', (event) => {
     event.preventDefault();
-
     Swal.fire({
         icon: "warning",
         title: "Do you want delete shift ?",
@@ -195,6 +196,7 @@ document.getElementById('delete').addEventListener('click', (event) => {
         confirmButtonText: "Yes",
         cancelButtonText: `Don't delete`
     }).then((result) => {
+        debugger;
         if (result.isConfirmed) {
             deleteshift();
         }
@@ -262,32 +264,48 @@ function toggleDisabled() {
 
 
 function addEndTimeChangeListener(startTimeId, endTimeId) {
-    document.getElementById(endTimeId).addEventListener('change', function () {
-        const startTimeInput = document.getElementById(startTimeId);
-        const endTimeInput = document.getElementById(endTimeId);
-        const startTime = startTimeInput.value;
-        const endTime = endTimeInput.value;
+    const startTimeInput = document.getElementById(startTimeId);
+    const endTimeInput = document.getElementById(endTimeId);
 
-        if (startTime === '' || endTime === '') {
-            return;
-        }
-        const startParts = startTime.split(':');
-        const endParts = endTime.split(':');
-        const startDate = new Date(2000, 0, 1, startParts[0], startParts[1], startParts[2] || 0);
-        const endDate = new Date(2000, 0, 1, endParts[0], endParts[1], endParts[2] || 0);
-
-        // Check if end time is earlier than start time
-        if (endDate < startDate) {
-            Swal.fire({
-                icon: "error",
-                title: "Wrong End time...",
-                text: "End time cannot be earlier than start time!"
-            });
-            endTimeInput.value = '';
-
+    // Listener for start time change
+    startTimeInput.addEventListener('change', function () {
+        if (endTimeInput.value !== '') {
+            validateTime(startTimeInput, endTimeInput);
         }
     });
+
+    // Listener for end time change
+    endTimeInput.addEventListener('change', function () {
+        validateTime(startTimeInput, endTimeInput);
+    });
 }
+
+function validateTime(startTimeInput, endTimeInput) {
+    const startTime = startTimeInput.value;
+    const endTime = endTimeInput.value;
+
+    if (startTime === '' || endTime === '') {
+        return;
+    }
+
+    const startParts = startTime.split(':');
+    const endParts = endTime.split(':');
+    const startDate = new Date(2000, 0, 1, startParts[0], startParts[1], startParts[2] || 0);
+    const endDate = new Date(2000, 0, 1, endParts[0], endParts[1], endParts[2] || 0);
+
+    // Check if end time is earlier than start time
+    if (endDate < startDate) {
+        Swal.fire({
+            icon: "error",
+            title: "Wrong End time...",
+            text: "End time cannot be earlier than start time!"
+        });
+        endTimeInput.value = '';
+        $('#shiftSubmit').prop('disabled', true);
+
+    }
+}
+
 
 
 

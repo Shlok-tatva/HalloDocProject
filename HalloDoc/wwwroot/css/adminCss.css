@@ -22,6 +22,7 @@ main {
 
 .active {
     border-bottom: 2.5px solid #01BBE7;
+    background: #0086fb0d;
 }
 
 .active > a {
@@ -33,6 +34,12 @@ main {
     text-decoration: none;
     color: black;
     font-weight: 400;
+}
+.links:hover {
+    border-bottom: 2.5px solid #01BBE7;
+    background: #0086fb0d;
+    cursor: pointer;
+    
 }
 
 .card_svg {

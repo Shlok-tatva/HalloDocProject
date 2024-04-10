@@ -51,26 +51,28 @@ namespace HalloDoc_BAL.Repository
         void createAdmin(CreateAdminView data, int[] regions , int adminId);
 
         bool HasExistingShifts(int physicianId, DateTime date, TimeOnly startTime, TimeOnly endTime);
-        void CreateShift(ScheduleModel data, int adminId);
+        void CreateShift(ScheduleModel data, int? adminId , int? providerId);
         List<ScheduleModel> PhysicianAll();
         List<ScheduleModel> PhysicianByRegion(int? region);
-        List<ScheduleModel> GetShift(int month, int year , int? regionId);
+        List<ScheduleModel> GetShift(int month, int year , int? regionId , int? providerId);
         ScheduleModel GetShiftByShiftdetailId(int Shiftdetailid);
-        void EditShift(ScheduleModel shift, int adminId);
+        void EditShift(ScheduleModel shift, int? adminId , int? providerId);
         void Updateshiftstatus(int shiftId, int adminId);
-        void DeleteShift(int shiftId, int adminId);
+        void DeleteShift(int shiftId, int? adminId , int? providerId);
 
 
         List<CreateProviderView> PhysicianOnCall(int? region);
         List<ScheduleModel> GetAllNotApprovedShift(int? regionId, int? month);
 
 
+        List<SearchRecordView> GetSearchRecords(string? Email, DateTime? FromDoS, string? Phone, string? Patient, string? Provider, int RequestStatus, int RequestType, DateTime? ToDoS);
         List<BlockHistoryView> GetBlockHistoryData(string? name, DateTime? date, string? email, string? phoneNumber);
         void unBlock(int blockrequestId, int requestId);
         List<LogView> GetEmailLogs(int? accountType, string? receiverName, string? emailId, DateTime? createdDate, DateTime? sentDate);
         List<LogView> GetSMSLogs(int? accountType, string? receiverName, string? phoneNumber, DateTime? createdDate, DateTime? sentDate);
 
 
+        List<Region> getProvidersRegion(int providerId);
         List<Role> GetAllRole();
         List<Menu> GetAllMenu();
         List<Aspnetrole> getAllRoleType();

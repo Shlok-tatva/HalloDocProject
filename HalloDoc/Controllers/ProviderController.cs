@@ -44,7 +44,7 @@ namespace HalloDocAdmin.Controllers
             _userRepository = userRepository;
         }
 
-        //[RouteAuthFilter]
+        [RouteAuthFilter]
         public IActionResult Dashboard()
         {
             ViewData["ViewName"] = "Dashboard";
@@ -236,7 +236,7 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
-
+        [RouteAuthFilter]
         public IActionResult PhyscianProfile()
         {
             ViewData["ViewName"] = "Providers";
@@ -244,6 +244,55 @@ namespace HalloDocAdmin.Controllers
             return RedirectToAction("EditProvider", "Admin", new { providerId = providerId });
         }
 
+        [RouteAuthFilter]
+        public IActionResult ProviderSchedule()
+        {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "ProviderSchedule";
+            int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+            var regions = _adminFunctionRepository.getProvidersRegion(providerId);
+            ViewBag.regions = regions;
+            ViewBag.isprovider = true;
+            return View("ProviderSchedule");
+        }
+        public IActionResult GetShiftByMonth(int? month, int? year, int? regionId)
+        {
+            int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+            var data = _adminFunctionRepository.GetShift((int)month, (int)year, regionId , providerId);
+            return Json(data);
+        }
+        public IActionResult EditShiftData(ScheduleModel data)
+        {
+            try
+            {
+                int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+                _adminFunctionRepository.EditShift(data, null ,providerId);
+                TempData["Success"] = "Shift Edited successfully";
+                return Redirect("ProviderSchedule");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error While Shift Edit";
+                return Redirect("ProviderSchedule");
+            }
+        }
+
+        public IActionResult CreateShift(ScheduleModel data)
+        {
+            try
+            {
+                int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+                data.Status = 0;
+                _adminFunctionRepository.CreateShift(data, null, providerId);
+                TempData["Success"] = "Shift created successfully";
+                return Redirect("ProviderSchedule");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error while shift creation";
+                return Redirect("ProviderSchedule");
+            }
+        }
 
         public IActionResult Logout()
         {

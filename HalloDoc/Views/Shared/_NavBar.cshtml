@@ -39,58 +39,10 @@
     <div class="collapse ps-md-5 shadow" id="navbarHeader">
         <div class="container-fluid mobile_nav bg-white">
 
-            @*<div class="d-flex">
-            <div class="p-3 links @(ViewData["ViewName"] == "Dashboard" ? "active" : "")">
-            <a asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
-            </div>
-            <div class="p-3 links @(ViewData["ViewName"] == "ProviderLocation" ? "active" : "")">
-            <a asp-controller="Admin" asp-action="ProviderLocation" class="text">Provider Location</a>
-            </div>
-            <div class="p-3 links @(ViewData["ViewName"] == "AdminProfile" ? "active" : "")">
-            <a asp-controller="Admin" asp-action="AdminProfile" class="text">My Profile</a>
-            </div>
-            <div class="p-3 links dropdown @(ViewData["ViewName"] == "Providers" ? "active" : "")" style="text-align:left !important;">
-            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Providers
-            </a>
-            <ul class="dropdown-menu">
-            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Provider">Provider</a></li>
-            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Scheduling">Scheduling</a></li>
-            <li><a class="dropdown-item" href="#">Invoicing</a></li>
-            </ul>
-            </div>
-            <div class="p-3 links @(ViewData["ViewName"] == "Partners" ? "active" : "")">
-            <a asp-controller="Admin" asp-action="Partners" class="text">Partners</a>
-            </div>
-            <div class="p-3 links dropdown @(ViewData["ViewName"] == "Access" ? "active" : "")" style="text-align:left !important;">
-            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Access
-            </a>
-            <ul class="dropdown-menu">
-            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Access">Account Access</a></li>
-            <li><a class="dropdown-item" asp-controller="Admin" asp-action="UserAccess">User Access</a></li>
-            </ul>
-            </div>
-            <div class="p-3 links @(ViewData["ViewName"] == "Records" ? "active" : "")">
-            <a asp-controller="Admin" asp-action="Records" class="text">Records</a>
-            </div>
-
-            @foreach (var menu in menus)
-            {
-            <div class="p-3 links @(ViewData["ViewName"] == menu ? "active" : "")">
-            <a asp-controller="Admin" asp-action="@menu">@menu</a>
-            </div>
-            }
-
-            </div>*@
-
-
             <div class="d-flex">
                 @if (accountType == 1 && menus.Contains("Dashboard"))
                 {
-                    <div class="p-3 links @(ViewData["ViewName"] == "Dashboard" ? "active" : "")">
+                    <div class="p-3 links @(ViewBag.ViewName == "Dashboard" ? "active" : "")">
                         <a asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
                     </div>
                 }
@@ -165,19 +117,45 @@
                     </div>
                 }
 
-                <div class="p-3 links dropdown @(ViewData["ViewName"] == "Records" ? "active" : "")" style="text-align:left !important;">
-                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Records
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item">Search Record</a></li>
-                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="EmailLogs">Email Logs</a></li>
-                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="SmsLogs">SMS Logs</a></li>
-                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="PatientRecords">Patient Records</a></li>
-                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="BlockHistory">Block History</a></li>
-                    </ul>
-                </div>
+                @if (new[] { "SearchRecords", "EmailLogs", "SmsLogs", "PatientRecords", "BlockHistory" }.Any(menu => menus.Contains(menu)))
+                {
+                    <div class="p-3 links dropdown @(ViewData["ViewName"] == "Records" ? "active" : "")" style="text-align:left !important;">
+                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Records
+                        </a>
+                        <ul class="dropdown-menu">
+                            @if (menus.Contains("SearchRecords"))
+                            {
+                                <li><a asp-controller="Admin" asp-action="SearchRecords" class="dropdown-item">Search Record</a></li>
+                            }
+                            @if (menus.Contains("EmailLogs"))
+                            {
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="EmailLogs">Email Logs</a></li>
+                            }
+                            @if (menus.Contains("SmsLogs"))
+                            {
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="SmsLogs">SMS Logs</a></li>
+                            }
+                            @if (menus.Contains("PatientRecords"))
+                            {
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="PatientRecords">Patient Records</a></li>
+                            }
+                            @if (menus.Contains("BlockHistory"))
+                            {
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="BlockHistory">Block History</a></li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                
+
+                @if (accountType == 2 && menus.Contains("ProviderSchedule"))
+                {
+                    <div class="p-3 links @(ViewData["ViewName"] == "ProviderSchedule" ? "active" : "")">
+                        <a asp-controller="Provider" asp-action="ProviderSchedule">My Schedule</a>
+                    </div>
+                }
 
                 @if (accountType == 2 && menus.Contains("PhyscianProfile"))
                 {
@@ -185,6 +163,7 @@
                         <a asp-controller="Provider" asp-action="PhyscianProfile">My Profile</a>
                     </div>
                 }
+
 
             </div>
 

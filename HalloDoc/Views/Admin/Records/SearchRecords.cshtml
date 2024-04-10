@@ -1,0 +1,148 @@
+﻿@*@model List<HalloDoc_BAL.ViewModel.Records.SearchRecordView>;*@
+
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+    <style>
+        table{
+            table-layout: fixed;
+        }
+        tr, th, td {
+            /*text-align: left !important;*/
+            overflow-wrap: break-word;
+            font-size: 0.9rem !important;
+        }
+/*        th {
+            padding-left: 15px !important
+        }
+
+        td {
+            padding: 15px !important;
+        }*/
+    </style>
+}
+
+@section Scripts {
+    <script src="~/js/Records/SearchRecords.js"></script>
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+<partial name="_NavBar" />
+
+<div class="m-4 mt-5">
+    <div class="">
+        <div class="d-flex justify-content-between">
+            <h3 class="fw-bold">Search Records</h3>
+            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+                <i class="fa-solid fa-chevron-left"></i> Back
+            </button>
+        </div>
+    </div>
+    <div class="shadow rounded-3 mt-3">
+        <div class="w-100 d-flex flex-column align-items-center">
+            <div class="req_form_container w-100">
+                <div class="row p-3 gx-2">
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <select class="py-2 form-control form-select w-100" id="RequestStatus">
+                                <option value="0" selected>Select Request Status</option>
+                                <option value="1">Unassigned</option>
+                                <option value="2">Accepted</option>
+                                <option value="3">Cancelled</option>
+                                <option value="4">MDEnRoute</option>
+                                <option value="5">MDONSite</option>
+                                <option value="6">Conclude</option>
+                                <option value="7">CancelledByPatient</option>
+                                <option value="8">Closed</option>
+                                <option value="9">UnPaid</option>
+                                <option value="10">Clear</option>
+                                <option value="11">Blocked</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="PatientName" placeholder="Patient Name">
+                            <label for="PatientName">Patient Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <select class="py-2 form-control form-select w-100" id="RequestType">
+                                <option value="0" selected>Select Request Type</option>
+                                <option value="1">Patient</option>
+                                <option value="2">Family</option>
+                                <option value="3">Concierge</option>
+                                <option value="4">Business</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <input type="date" id='FromDoS' class="form-control" placeholder="From Date of Service">
+                            <label for="FromDoS">From Date of Service</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row px-3 gx-2">
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="ToDoS" placeholder="To Date of Service">
+                            <label for="ToDoS">To Date of Service</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="ProviderName" placeholder="Provider Name">
+                            <label for="ProviderName">Provider Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="Email" placeholder="Email">
+                            <label for="email">Email</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating mb-3">
+                            <input type="tel" id='Phone' class="form-control" placeholder="Phone Number">
+                            <label for="phone">Phone Number</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex p-3 flex-row-reverse">
+                    <button id="SearchFilter" class="btn btn-info text-white mx-1">Search</button>
+                    <button id="ClearFilter" class="btn btn_hover btn-outline-info hover_white mx-1">Clear</button>
+                </div>
+                <div id="SearchRecords">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="DeleteConfirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h1 class="modal-title text-light  fs-5" id="exampleModalLabel">Confirm Delete</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure want to delete??</p>
+                <div class="modal-footer">
+                    <input id="DelRequestId" type="text" class="d-none" />
+                    <button id="DeleteSuccess" type="button" class="btn btn-info text-light">Confirm</button>
+                    <button type="button" class="btn btn_hover btn-outline-info" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
