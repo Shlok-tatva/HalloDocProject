@@ -237,6 +237,11 @@ namespace HalloDoc_BAL.Repository
             return _context.Requests.Where(u => u.Createddate.Date == currentDate).Count();
         }
 
+        public List<Region> GetAllReagion()
+        {
+            return _context.Regions.ToList();
+        }
+
 
 
     }

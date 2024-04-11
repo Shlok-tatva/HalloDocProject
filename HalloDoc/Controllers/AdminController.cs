@@ -1370,6 +1370,9 @@ namespace HalloDocAdmin.Controllers
                 ViewBag.Username = HttpContext.Session.GetString("Username");
                 var regions = _adminFunctionRepository.GetAllReagion();
                 ViewBag.regions = regions;
+                ViewBag.isprovider = false;
+
+
                 int physicianId = Int32.Parse(Request.Query["physicianId"]);
                 var view = _adminFunctionRepository.getProviderView(physicianId);
                 return View("provider/EditProvider", view);

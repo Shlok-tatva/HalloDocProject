@@ -22,6 +22,9 @@ $(document).ready(function () {
         debugger
         var patientPhone = data.phonenumber;
         var patientEmail = data.email;
+
+
+
         // Update the modal body to display the requestId
         $('#' + modalId).find('#requestIdassignCase').prop("value", requestId);
         $('#' + modalId).find('#requestIdblockCase').prop("value", requestId);
@@ -62,6 +65,7 @@ $(document).ready(function () {
 
     /*Modal Click Close the Modal  */
     $('.close').on('click', function () {
+        debugger;
         $('#blockPatientModal').modal('hide');
         $('#cancelCaseModal').modal('hide');
         $('#assignCaseModal').modal('hide');
@@ -69,7 +73,6 @@ $(document).ready(function () {
         $('#sendAgreementModal').modal('hide');
         $("#encounterModal").modal('hide');
         $("#sendLinktModal").modal('hide');
-
     })
 
     /* Block Request Ajax Call */

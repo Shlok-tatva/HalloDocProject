@@ -1,7 +1,8 @@
 ﻿@model List<HalloDoc_DAL.Models.Healthprofessional>;
 
+<div class="overflow-x-scroll mobile_d_none">
 
-<table  class="w-100 table table-hover overflow-scroll">
+<table  class="w-100 table table-hover">
     <thead>
         <tr class="text-start">
             <th class="text-start ps-3">Profession</th>
@@ -10,7 +11,7 @@
             <th class="text-start ps-3">Fax Number</th>
             <th class="text-start ps-3">Phone Number</th>
             <th class="text-start ps-3">Business Contact</th>
-            <th class="text-start ps-3" "">Actions</th>
+            <th class="text-start ps-3">Actions</th>
         </tr>
     </thead>
 
@@ -38,3 +39,83 @@
 }
     </tbody>
 </table>
+</div>
+
+
+<div class="accordion mt-4 desktop_d_none" id="accordionExample">
+    @{
+        var accountCount = 0;
+        foreach (var vendor in Model)
+        {
+            var accountId = "collapse" + accountCount;
+            var accountHeaderId = "collapseHeader" + accountCount;
+            accountCount = accountCount + 1;
+
+            <div class="accordion-item data-row-mobile">
+                <h2 class="accordion-header" id="@accountHeaderId">
+                    <button class="accordion-button p-4 border-bottom border-1 text-black" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#@accountId" aria-expanded="false" aria-controls="@accountId">
+                        <div class="d-flex align-items-center">
+                             <span class="mx-2">@vendor.Vendorname</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="@accountId" class="accordion-collapse collapse" aria-labelledby="@accountHeaderId">
+                    <div class="accordion-body">
+
+                        <div class="mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-regular fa-envelope fs-6"></i>
+                            </div>
+                            <div class="col-auto">
+                                Email:
+                            </div>
+                            <div class="col-auto mx-2">@vendor.Email</div>
+                        </div>
+
+                        <div class="mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-phone "></i>
+                            </div>
+                            <div class="col-auto">
+                                Fax:
+                            </div>
+                            <div class="col-auto mx-2">@vendor.Faxnumber</div>
+                        </div>
+
+                        <div class="mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-phone "></i>
+                            </div>
+                            <div class="col-auto">
+                                Phone Number:
+                            </div>
+                            <div class="col-auto mx-2">@vendor.Phonenumber</div>
+                        </div>
+
+                        <div class="mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-regular fa-envelope fs-6"></i>
+                            </div>
+                            <div class="col-auto">
+                               Business Contact:
+                            </div>
+                            <div class="col-auto mx-2">@vendor.Businesscontact</div>
+                        </div>
+
+                        <div class="container-fluid p-0 d-flex flex-row justify-content-end my-2">
+                            <a href="/Admin/EditPartner?vendorid=@vendor.Vendorid" class="btn btn-sm hover_white btn-outline-info">Edit</a>
+                            <button class="btn btn-sm mx-2 hover_white btn-outline-info open-modal"
+                                    data-vendorid="@vendor.Vendorid"
+                                    data-vendorname="@vendor.Vendorname">
+                                Delete
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+

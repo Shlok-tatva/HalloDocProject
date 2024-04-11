@@ -64,6 +64,8 @@ namespace HelloDoc.Controllers
         public IActionResult PatientRequest()
         {
             ViewData["ViewName"] = "PatientRequest";
+            var regions = _commonFunctionrepo.GetAllReagion();
+            ViewBag.regions = regions;
             return View();
         }
 
@@ -82,6 +84,7 @@ namespace HelloDoc.Controllers
                         var requestClient = new Requestclient();
                         var aspnetuser = _aspnetuserrepo.GetByEmail(formData.Email);
                         var hasher = new PasswordHasher<string>();
+                        string state = _commonFunctionrepo.GetAllReagion().Where(r => r.Regionid == formData.regionId).FirstOrDefault().Name;
 
                         if (aspnetuser == null)
                         {
@@ -110,7 +113,8 @@ namespace HelloDoc.Controllers
                             user.Strmonth = formData.DateOfBirth.Month.ToString("00");
                             user.Street = formData.Street;
                             user.City = formData.City;
-                            user.State = formData.State;
+                            user.Regionid = formData.regionId;
+                            user.State = state;
                             user.Zipcode = formData.ZipCode;
                             user.Isdeleted = false;
                             user.Createdby = aspnetuser.Id;
@@ -129,8 +133,9 @@ namespace HelloDoc.Controllers
                         request.Email = formData.Email;
                         request.Phonenumber = formData.PhoneNumber;
                         request.Status = 1;
-                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(formData.State , formData.LastName , formData.FirstName);
+                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName , formData.FirstName);
                         request.Isurgentemailsent = false;
+                        request.Isdeleted = false;
                         request.Createddate = DateTime.Now;
                         _requestrepo.Add(request);
 
@@ -150,7 +155,8 @@ namespace HelloDoc.Controllers
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
                         requestClient.City = formData.City;
-                        requestClient.State = formData.State;
+                        requestClient.State = state;
+                        requestClient.Regionid = formData.regionId;
                         requestClient.Zipcode = formData.ZipCode;
                         _requestclientrepo.Add(requestClient);
 
@@ -182,6 +188,8 @@ namespace HelloDoc.Controllers
         public IActionResult FamilyFriendRequest()
         {
             ViewData["ViewName"] = "FamilyFriendRequest";
+            var regions = _commonFunctionrepo.GetAllReagion();
+            ViewBag.regions = regions;
             return View();
         }   
 
@@ -203,8 +211,10 @@ namespace HelloDoc.Controllers
                         request.Firstname = formData.f_firstName;
                         request.Lastname = formData.f_lastName;
                         request.Email = formData.f_Email;
+                        string state = _commonFunctionrepo.GetAllReagion().Where(r => r.Regionid == formData.regionId).FirstOrDefault().Name;
 
-                        if(user != null)
+
+                        if (user != null)
                         {
                             request.Userid = user.Userid;
                         }
@@ -215,6 +225,8 @@ namespace HelloDoc.Controllers
                         request.Isdeleted = false;
                         request.Createddate = DateTime.Now;
                         request.Relationname = formData.relationWithPatinet;
+                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName, formData.FirstName);
+
 
                         _requestrepo.Add(request);
 
@@ -235,7 +247,9 @@ namespace HelloDoc.Controllers
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
                         requestClient.City = formData.City;
-                        requestClient.State = formData.State;
+                        requestClient.State = state;
+                        requestClient.Regionid = formData.regionId;
+
                         requestClient.Zipcode = formData.ZipCode;
                         _requestclientrepo.Add(requestClient);
 
@@ -272,6 +286,8 @@ namespace HelloDoc.Controllers
         public IActionResult ConciergeRequest()
         {
             ViewData["ViewName"] = "ConciergeRequest";
+            var regions = _commonFunctionrepo.GetAllReagion();
+            ViewBag.regions = regions;
             return View();
         }
 
@@ -290,6 +306,8 @@ namespace HelloDoc.Controllers
                         var rconcierge = new RConcierge();
                         var requestConcierge = new Requestconcierge();
                         var user = _userrepo.GetUser(formData.Email);
+                        string state = _commonFunctionrepo.GetAllReagion().Where(r => r.Regionid == formData.regionId).FirstOrDefault().Name;
+
 
 
                         request.Requesttypeid = 3;
@@ -304,6 +322,7 @@ namespace HelloDoc.Controllers
                         request.Status = 1;
                         request.Isurgentemailsent = false;
                         request.Isdeleted = false;
+                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName, formData.FirstName);
                         request.Createddate = DateTime.Now;    
                         _requestrepo.Add(request);
 
@@ -319,7 +338,8 @@ namespace HelloDoc.Controllers
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
                         requestClient.City = formData.City;
-                        requestClient.State = formData.State;
+                        requestClient.State = state;
+                        requestClient.Regionid = formData.regionId;
                         requestClient.Zipcode = formData.ZipCode;
 
                         _requestclientrepo.Add(requestClient);
@@ -327,7 +347,7 @@ namespace HelloDoc.Controllers
                         rconcierge.Conciergename = formData.FirstName + " " + formData.LastName;
                         rconcierge.Address = formData.HotelOrPropertyName;
                         rconcierge.City = formData.City;
-                        rconcierge.State = formData.State;
+                        rconcierge.State = state;
                         rconcierge.Street = formData.Street;
                         rconcierge.Zipcode = formData.ZipCode;
                         rconcierge.Createddate = DateTime.Now;
@@ -373,6 +393,8 @@ namespace HelloDoc.Controllers
         public IActionResult BusinessRequest()
         {
             ViewData["ViewName"] = "BusinessRequest";
+            var regions = _commonFunctionrepo.GetAllReagion();
+            ViewBag.regions = regions;
             return View();
         }
 
@@ -391,6 +413,8 @@ namespace HelloDoc.Controllers
                         var rbusiness = new RBusinessdatum();
                         var requestbusiness = new Requestbusiness();
                         var user = _userrepo.GetUser(formData.Email);
+                        string state = _commonFunctionrepo.GetAllReagion().Where(r => r.Regionid == formData.regionId).FirstOrDefault().Name;
+
 
                         request.Requesttypeid = 4;
                         request.Firstname = formData.BusinessFirstName;
@@ -404,6 +428,7 @@ namespace HelloDoc.Controllers
                         request.Status = 1;
                         request.Isurgentemailsent = false;
                         request.Isdeleted = false;
+                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName, formData.FirstName);
                         request.Createddate = DateTime.Now;
                         _requestrepo.Add(request);
 
@@ -419,7 +444,8 @@ namespace HelloDoc.Controllers
                         requestClient.Intdate = formData.DateOfBirth.Day;
                         requestClient.Street = formData.Street;
                         requestClient.City = formData.City;
-                        requestClient.State = formData.State;
+                        requestClient.State = state;
+                        requestClient.Regionid = formData.regionId;
                         requestClient.Zipcode = formData.ZipCode;
 
                         _requestclientrepo.Add(requestClient);
@@ -523,6 +549,7 @@ namespace HelloDoc.Controllers
                     user.Street = requestClient.Street;
                     user.City = requestClient.City;
                     user.State = requestClient.State;
+                    user.Regionid = requestClient.Regionid;
                     user.Zipcode = requestClient.Zipcode;
                     user.Isdeleted = false;
                     user.Createdby = aspnetuser.Id;

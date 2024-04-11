@@ -73,7 +73,7 @@ function fetchSearchRecords(email, fromdos, phone, todos, patient, provider, sta
             } else {
                 console.log("Function Success");
                 $('#SearchRecords').html(response);
-                setupPagination(10);
+                setupPagination(10 , ".data-row");
             }
         },
         error: function () {

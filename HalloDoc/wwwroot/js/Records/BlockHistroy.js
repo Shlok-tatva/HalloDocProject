@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    setupPagination(5);
+    setupPagination(5 , ".data-row");
 
     $('#BloclpatientSearch').on('submit', function (e) {
         e.preventDefault();
@@ -25,7 +25,7 @@ $(document).ready(function () {
             data: formData,
             success: function (response) {
                 $('#blockUserData').html(response);
-                setupPagination(5);
+                setupPagination(5 , ".data-row");
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText); 

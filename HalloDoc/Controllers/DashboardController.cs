@@ -197,6 +197,8 @@ namespace HalloDoc.Controllers
         public IActionResult RequestForme(){
             ViewData["ViewName"] = "RequestForme";
             var email = HttpContext.Session.GetString("UserId");
+            var regions = _commonFunctionrepo.GetAllReagion();
+            ViewBag.regions = regions;
             if (email == null)
             {
                 return Redirect("/Login");
@@ -209,8 +211,9 @@ namespace HalloDoc.Controllers
             FirstName = user.Firstname,
             LastName  = user.Lastname,
             Email = user.Email,
-            State = user.State,
+            regionId = (int)user.Regionid,
             Street = user.Street,
+            DateOfBirth = DateTime.ParseExact(user.Intyear.Value.ToString("") + "-" + user.Strmonth + "-" + string.Format("{0:00}", user.Intdate.Value) , "yyyy-MM-dd" , null),
             City = user.City,
             ZipCode = user.Zipcode
             };
@@ -227,6 +230,8 @@ namespace HalloDoc.Controllers
             }
             var username = GetUsernameFromEmail(email); // Extract username from email
             ViewBag.Username = username;
+            var regions = _commonFunctionrepo.GetAllReagion();
+            ViewBag.regions = regions;
 
             return View();
         }
@@ -241,6 +246,8 @@ namespace HalloDoc.Controllers
                     User user = _userrepo.GetUser(email);
                     var request = new Request();
                     var requestClient = new Requestclient();
+                    string state = _commonFunctionrepo.GetAllReagion().Where(r => r.Regionid == formData.regionId).FirstOrDefault().Name;
+
 
                     request.Requesttypeid = 1;
                     request.Userid = user.Userid;
@@ -251,6 +258,7 @@ namespace HalloDoc.Controllers
                     request.Status = 1;
                     request.Isurgentemailsent = false;
                     request.Createddate = DateTime.Now;
+                    request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName, formData.FirstName);
 
                     if (formData.RelationWithPatinet != null)
                     {
@@ -275,7 +283,8 @@ namespace HalloDoc.Controllers
                     requestClient.Intdate = formData.DateOfBirth.Day;
                     requestClient.Street = formData.Street;
                     requestClient.City = formData.City;
-                    requestClient.State = formData.State;
+                    requestClient.State = state;
+                    requestClient.Regionid = formData.regionId;
                     requestClient.Zipcode = formData.ZipCode;
                     _requestclientrepo.Add(requestClient);
 

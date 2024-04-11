@@ -1,6 +1,6 @@
 ﻿@model List<HalloDoc_BAL.ViewModel.Admin.ProviderInfoAdmin>;
 
-<table class="w-100 table table-hover overflow-scroll">
+<table class="w-100 table table-hover overflow-scroll mobile_d_none">
     <thead>
         <tr>
             <th class="w-10">Stop <br /> Notification</th>
@@ -42,3 +42,71 @@
         }
     </tbody>
 </table>
+
+
+<div class="accordion mt-4 desktop_d_none" id="accordionExample">
+    @{
+        var accountCount = 0;
+        foreach (var provider in Model)
+        {
+            var accountId = "collapse" + accountCount;
+            var accountHeaderId = "collapseHeader" + accountCount;
+            accountCount = accountCount + 1;
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="@accountHeaderId">
+                    <button class="accordion-button d-flex flex-column align-items-start border-bottom border-1 text-black" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#@accountId" aria-expanded="false" aria-controls="@accountId">
+                        <div class="d-flex align-items-center">
+                            @if (provider.stopNotification)
+                            {
+                               <input type="checkbox" data-physicianid="@provider.providerId" id="" checked>
+                            }
+                            else
+                            {
+                                <input type="checkbox" data-physicianid="@provider.providerId" id="">
+                            } <span class="mx-2">@provider.providerName</span>
+                        </div>
+                        <br />
+                        <div>
+                            On call Status: <span class="mx-2">Un Avalible</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="@accountId" class="accordion-collapse collapse" aria-labelledby="@accountHeaderId">
+                    <div class="accordion-body">
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-user"></i> </div>
+                            <div class="col-auto">
+                                Role:
+                            </div>
+                            <div class="col-auto mx-2">@provider.providerRole</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-check "></i>
+                            </div>
+                            <div class="col-auto">
+                                Status:
+                            </div>
+                            <div class="col-auto mx-2">@provider.statusString</div>
+                        </div>
+
+                        <div class="container-fluid p-0 d-flex flex-row justify-content-end my-2">
+                            <button class="btn btn-sm hover_white btn-outline-info mx-2 open-modal"
+                                    data-physicianid="@provider.providerId"
+                                    data-email="@provider.providerEmail"
+                                    data-adminid="@ViewBag.adminId"
+                                    data-phone="@provider.providerPhone">
+                                Contact
+                            </button>
+                            <a href="EditProvider?providerId=@provider.providerId" class="btn btn-sm hover_white btn-outline-info">edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

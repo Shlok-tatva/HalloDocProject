@@ -23,6 +23,7 @@ $(document).ready(function () {
         }
 
         userData.each(function () {
+            debugger
             var $this = $(this);
             var accountType = $this.data("accounttype");
 

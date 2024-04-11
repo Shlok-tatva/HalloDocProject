@@ -83,13 +83,27 @@
         </label>
         <span asp-validation-for="City" class="text-danger"></span>
     </div>
-    <div class="form-floating col-md-6 my-3">
+  @*  <div class="form-floating col-md-6 my-3">
         <input asp-for="State" type="text" class="form-control" placeholder="name@example.com">
         <label asp-for="State" for="floatingInput" class="control-label ms-3">
             State
         </label>
         <span asp-validation-for="State" class="text-danger"></span>
+    </div>*@
+
+    <div class="form-floating col-md-6 my-3">
+        <select asp-for="regionId" class="p-2 form-control mb-3 w-100" required>
+            <option value="" disabled selected hidden>State</option>
+            @foreach (var region in ViewBag.regions)
+            {
+                <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+            }
+        </select>
+        <span asp-validation-for="regionId" class="text-danger"></span>
     </div>
+
+
+
     <div class="form-floating col-md-6 my-3">
         <input asp-for="ZipCode" type="text" class="form-control" placeholder="name@example.com">
         <label asp-for="ZipCode" for="floatingInput" class="control-label ms-3">

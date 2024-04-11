@@ -19,36 +19,35 @@
 
 <partial name="_NavBar" />
 
-<div class=" my-5 w-75 m-auto">
+<div class="my-5 container m-auto">
     <div class="mt-4 m-auto form_content">
-
         <div class="d-flex justify-content-between">
             <h3 class="fw-bold">Account Access</h3>
-            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+            <button onclick="history.back()" class="btn btn btn-outline-info hover_white ms-5">
                 <i class="fa-solid fa-chevron-left"></i> Back
             </button>
         </div>
 
 
-    <div class="border-0 rounded-3 shadow my-4">
-        <div class="row p-3">
-            <div class="col-md-12 my-auto text-end">
-                <a href="/Admin/CreateAccess" class="btn btn-outline-info hover_white">Create Access</a>
+        <div class="rounded-3 shadow my-4">
+            <div class="row p-3 ">
+                <div class="col-md-12 my-auto text-end">
+                    <a href="/Admin/CreateAccess" class="btn btn-outline-info hover_white">Create Access</a>
+                </div>
             </div>
-        </div>
 
-        <div>
-            <table class="w-100 table table-hover overflow-scroll">
-                <thead>
-                    <tr>
-                        <th class="text-start ps-5 w-25">Name</th>
-                        <th class="text-center ps-5 w-10">Account Type</th>
-                        <th class="text-end pe-5 w-25">Actions</th>
-                    </tr>
-                </thead>
+            <div>
+                <table class="w-100 table table-hover mobile_d_none">
+                    <thead>
+                        <tr>
+                            <th class="text-start ps-5 w-25">Name</th>
+                            <th class="text-center ps-5 w-10">Account Type</th>
+                            <th class="text-end pe-5 w-25">Actions</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                    @foreach(var role in Model)
+                    <tbody>
+                        @foreach (var role in Model)
                         {
                             <tr class="text-start">
                                 <td class="ps-5">@role.Name</td>
@@ -63,8 +62,27 @@
                             </tr>
                         }
                     </tbody>
-            </table>
+                </table>
+
+
+                <div class="desktop_d_none">
+                    @foreach (var role in Model)
+                    {
+                        <div class="border-bottom p-3">
+                            <div class="my-1">Name:- @role.Name</div>
+                            <div class="my-2">Account Type:- @ViewBag.AccountTypeNames[(int)role.Accounttype]</div>
+                            <div class="my-2">
+                                <a href="/Admin/EditAccess/?roleId=@role.Roleid" class="btn btn hover_white btn-outline-info">Edit</a>
+                                <button data-roleid="@role.Roleid" data-rolename="@role.Name" class="btn btn hover_white btn-outline-info open-modal">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+
+            </div>
         </div>
     </div>
-</div>
 </div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace HalloDoc.Models
 {
@@ -37,7 +38,7 @@ namespace HalloDoc.Models
         public string City { get; set; }
 
         [Required(ErrorMessage = "Please enter State")]
-        public string State { get; set; } 
+        public int regionId { get; set; } 
 
         [RegularExpression(@"^\d{6}$", ErrorMessage = "Invalid zip code")]
         public string ZipCode { get; set; }

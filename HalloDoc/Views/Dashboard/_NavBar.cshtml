@@ -1,7 +1,7 @@
 ﻿<header class="NavbarHeader bg-white">
     <div class="navbar pb-0">
         <div class="container-fluid border-bottom border-2">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" id="navBartoggleBtn">
                 <svg class="navbar-toggler-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24px" height="24px" viewBox="0,0,256,256">
                     <g fill="#01bce9" fill-rule="nonzero" stroke="none" stroke-width="0" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8.53333,8.53333)"><path d="M3,7c-0.36064,-0.0051 -0.69608,0.18438 -0.87789,0.49587c-0.18181,0.3115 -0.18181,0.69676 0,1.00825c0.18181,0.3115 0.51725,0.50097 0.87789,0.49587h24c0.36064,0.0051 0.69608,-0.18438 0.87789,-0.49587c0.18181,-0.3115 0.18181,-0.69676 0,-1.00825c-0.18181,-0.3115 -0.51725,-0.50097 -0.87789,-0.49587zM3,14c-0.36064,-0.0051 -0.69608,0.18438 -0.87789,0.49587c-0.18181,0.3115 -0.18181,0.69676 0,1.00825c0.18181,0.3115 0.51725,0.50097 0.87789,0.49587h24c0.36064,0.0051 0.69608,-0.18438 0.87789,-0.49587c0.18181,-0.3115 0.18181,-0.69676 0,-1.00825c-0.18181,-0.3115 -0.51725,-0.50097 -0.87789,-0.49587zM3,21c-0.36064,-0.0051 -0.69608,0.18438 -0.87789,0.49587c-0.18181,0.3115 -0.18181,0.69676 0,1.00825c0.18181,0.3115 0.51725,0.50097 0.87789,0.49587h24c0.36064,0.0051 0.69608,-0.18438 0.87789,-0.49587c0.18181,-0.3115 0.18181,-0.69676 0,-1.00825c-0.18181,-0.3115 -0.51725,-0.50097 -0.87789,-0.49587z"></path></g></g>
                 </svg>
@@ -23,13 +23,13 @@
         </div>
     </div>
 
-    <div class="collapse shadow-sm" id="navbarHeader">
-        <div class="container-fluid bg-white shadow mobile_nav">
+    <div class="shadow-sm" id="navbarHeader">
+        <div class="container-fluid bg-white p-0 shadow mobile_nav">
             <div class="d-flex">
-                <div class="p-3 links @(ViewData["ViewName"] == "Dashboard" ? "active" : "")">
+                <div class="p-3 px-md-4 links @(ViewData["ViewName"] == "Dashboard" ? "active" : "")">
                     <a asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                 </div>
-                <div class="p-3 links @(ViewData["ViewName"] == "UserProfile" ? "active" : "")">
+                <div class="p-3 px-md-4 links @(ViewData["ViewName"] == "UserProfile" ? "active" : "")">
                     <a asp-controller="Dashboard" asp-action="Profile" class="text">Patient</a>
                 </div>
             </div>

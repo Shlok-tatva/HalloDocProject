@@ -1,0 +1,123 @@
+﻿@model List<HalloDoc_BAL.ViewModel.Admin.UserAccessView>;
+
+<div class="mobile_d_none">
+    <table class="w-100 table table-hover overflow-scroll">
+        <colgroup>
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 20%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 15%;">
+            <col span="1" style="width: 8%;">
+            <col span="1" style="width: 15%;">
+
+        </colgroup>
+        <thead>
+            <tr class="text-start">
+                <th class="text-start ps-4">Account Type</th>
+                <th class="text-start ps-4">Account POC</th>
+                <th class="text-start ps-4">Phone</th>
+                <th class="text-center pe-4">Status</th>
+                <th class="text-center">Open Request</th>
+                <th class="text-end pe-5">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                @foreach (var user in Model)
+                {
+                    <tr class="text-start user-data" data-accounttype="@user.accountType">
+                        <td class="ps-4">@user.accountType</td>
+                        <td class="ps-4">@user.accountPOC</td>
+                        <td class="ps-4">@user.phoneNumber</td>
+                        <td class="text-start ps-5">@user.statusString</td>
+                        <td class="text-center">@user.openRequest</td>
+                        <td class="text-end pe-5">
+                            @if (user.accountTypeId == 1)
+                            {
+                                <a href="/Admin/EditAdmin?adminId=@user.adminId" class="btn btn-sm hover_white btn-outline-info">Edit a</a>
+                            }
+                            else if (user.accountTypeId == 2)
+                            {
+                                <a href="/Admin/EditPhysician?physicianId=@user.physicianId" class="btn btn-sm hover_white btn-outline-info">Edit p</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="accordion mt-4 desktop_d_none" id="accordionExample">
+    @{
+        var accountCount = 0;
+        foreach (var user in Model)
+        {
+            var accountId = "collapse" + accountCount;
+            var accountHeaderId = "collapseHeader" + accountCount;
+            accountCount = accountCount + 1;
+
+            <div class="accordion-item data-row-mobile user-data" data-accounttype="@user.accountType">
+                <h2 class="accordion-header" id="@accountHeaderId">
+                    <button class="accordion-button d-flex flex-column align-items-start border-bottom border-1 text-black" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#@accountId" aria-expanded="false" aria-controls="@accountId">
+                        <div class="my-2">
+                            <span class="">@user.accountPOC</span>
+                        </div>
+                        <div>
+                            <span class="">Account Type:- @user.accountType</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="@accountId" class="accordion-collapse collapse" aria-labelledby="@accountHeaderId">
+                    <div class="accordion-body">
+
+                        <div class="mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-phone "></i>
+                            </div>
+                            <div class="col-auto">
+                                Phone:
+                            </div>
+                            <div class="col-auto mx-2">@user.phoneNumber</div>
+                        </div>
+
+                        <div class="mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-check "></i>
+                            </div>
+                            <div class="col-auto">
+                                Status:
+                            </div>
+                            <div class="col-auto mx-2">@user.statusString</div>
+                        </div>
+
+                        <div class="mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-regular fa-file"></i>
+                            </div>
+                            <div class="col-auto">
+                                Open Request:
+                            </div>
+                            <div class="col-auto mx-2">@user.openRequest</div>
+                        </div>
+
+                        <div class="container-fluid p-0 d-flex flex-row justify-content-end my-2">
+                            @if (user.accountTypeId == 1)
+                            {
+                                <a href="/Admin/EditAdmin?adminId=@user.adminId" class="btn btn-sm hover_white btn-outline-info">Edit a</a>
+                            }
+                            else if (user.accountTypeId == 2)
+                            {
+                                <a href="/Admin/EditPhysician?physicianId=@user.physicianId" class="btn btn-sm hover_white btn-outline-info">Edit p</a>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

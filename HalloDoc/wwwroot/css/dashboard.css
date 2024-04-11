@@ -63,12 +63,20 @@ td, th {
     .mobile_nav {
         position: absolute;
         height: 100vh;
-        width: 50%;
+        width: 50% !important;
         margin: 0px;
         z-index: 100;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+        transform: translateX(-300px);
+        transition: transform 0.3s ease; /* Added transition */
     }
 
         .mobile_nav div {
             flex-direction: column;
         }
+
+    .show-nav {
+        transform: translateX(0); /* Moved to show position */
+    }
+
 }

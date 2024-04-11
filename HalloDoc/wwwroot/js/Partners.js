@@ -16,7 +16,8 @@ $(document).ready(function () {
                 $('#vendorTable').empty();
                 $('#vendorTable').html(data);
                 contactModalHandler();
-                setupPagination(10);
+                setupPaginationBasedOnDevice();
+
             },
             error: function () {
                 alert("error");
@@ -71,4 +72,5 @@ function contactModalHandler() {
     })
 }
 
-setupPagination(10);
+setupPaginationBasedOnDevice();
+

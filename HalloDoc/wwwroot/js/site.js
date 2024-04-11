@@ -160,18 +160,19 @@ $(document).ready(function () {
 })
 
 
-function setupPagination(items) {
+/* Initial Function that do Pagination */
+function setupPagination(items , className) {
     const itemsPerPage = items;
     let currentPage = 1;
-    let totalPages = Math.ceil($('.data-row').length / itemsPerPage);
+    let totalPages = Math.ceil($(className).length / itemsPerPage);
     const maxPageButtons = 3;
     let startPage = 1;
 
     function showRowsForPage(page) {
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        $('.data-row').hide();
-        $('.data-row').slice(startIndex, endIndex).show();
+        $(className).hide();
+        $(className).slice(startIndex, endIndex).show();
     }
 
     function generatePaginationButtons() {
@@ -238,6 +239,35 @@ function setupPagination(items) {
     generatePaginationButtons();
     updateButtonStates();
 }
+
+
+
+/* For Table Set the pagination */
+function setupPaginationDesktop() {
+    setupPagination(10, ".data-row");
+}
+
+/* For accordian set the pagination */
+function setupPaginationMobile() {
+    setupPagination(10, ".data-row-mobile");
+}
+
+/* Check Window Size and return true false */
+function isMobileWindowSize() {
+    return window.innerWidth <= 590; 
+}
+
+/* now Run only that function based on the window size */
+function setupPaginationBasedOnDevice() {
+    if (isMobileWindowSize()) {
+        setupPaginationMobile();
+    } else {
+        setupPaginationDesktop();
+    }
+}
+
+/* On window Resize run that function so that it will do dynamic pagination based on that */
+window.addEventListener('resize', setupPaginationBasedOnDevice);
 
 
 function exportDataToCSV(arrayOfObjects, filename) {
@@ -327,3 +357,10 @@ function getPhysicians(regionId, physiciandropId, callback) {
     });
 }
 
+
+
+$(document).ready(function () {
+    $('#navBartoggleBtn').click(function () {
+        $('.mobile_nav').toggleClass('show-nav');
+    });
+});

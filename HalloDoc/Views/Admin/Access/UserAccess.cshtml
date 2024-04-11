@@ -25,12 +25,12 @@
 
 <partial name="_NavBar" />
 
-<div class=" my-5 w-75 m-auto">
+<div class=" my-5 container m-auto">
     <div class="mt-4 m-auto form_content">
 
         <div class="d-flex justify-content-between">
             <h3 class="fw-bold">User Access</h3>
-            <button onclick="history.back()" class="btn btn-lg btn-outline-info hover_white ms-5">
+            <button onclick="history.back()" class="btn btn btn-outline-info hover_white ms-5">
                 <i class="fa-solid fa-chevron-left"></i> Back
             </button>
         </div>
@@ -56,57 +56,7 @@
                 </div>
 
             </div>
-
-            <div>
-                <table class="w-100 table table-hover overflow-scroll">
-                    <colgroup>
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 8%;">
-                        <col span="1" style="width: 15%;">
-
-                    </colgroup>
-                    <thead>
-                        <tr class="text-start">
-                            <th class="text-start ps-4">Account Type</th>
-                            <th class="text-start ps-4">Account POC</th>
-                            <th class="text-start ps-4">Phone</th>
-                            <th class="text-center pe-4">Status</th>
-                            <th class="text-center">Open Request</th>
-                            <th class="text-end pe-5">Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @if (Model.Count > 0)
-                        {
-                            @foreach (var user in Model)
-                            {
-                                <tr class="text-start user-data" data-accounttype ="@user.accountType">
-                                    <td class="ps-4">@user.accountType</td>
-                                    <td class="ps-4">@user.accountPOC</td>
-                                    <td class="ps-4">@user.phoneNumber</td>
-                                    <td class="text-start ps-5">@user.statusString</td>
-                                    <td class="text-center">@user.openRequest</td>
-                                    <td class="text-end pe-5">
-                                        @if (user.accountTypeId == 1)
-                                        {
-                                            <a href="/Admin/EditAdmin?adminId=@user.adminId" class="btn btn-sm hover_white btn-outline-info">Edit a</a>
-                                        }
-                                        else if(user.accountTypeId == 2)
-                                        {
-                                            <a href="/Admin/EditPhysician?physicianId=@user.physicianId" class="btn btn-sm hover_white btn-outline-info">Edit p</a>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        }
-
-                    </tbody>
-                </table>
-            </div>
+            <partial name="~/Views/Admin/Access/_UserDataAccess.cshtml" model="Model" />
         </div>
     </div>
 </div>

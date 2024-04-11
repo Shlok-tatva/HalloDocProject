@@ -292,7 +292,7 @@ $(document).ready(function () {
             });
 
             // Setup pagination with 10 items per page
-            setupPagination(10);
+            setupPagination(10 , ".data-row");
         });
 
     }
@@ -396,9 +396,9 @@ $(document).ready(function () {
                     bgColor = "black";
             }
 
-            var header = $(`<button class="accordion-button bg-info-subtle border-bottom border-1 border-secondary-subtle " type="button" data-bs-toggle="collapse" data-bs-target="#${panelId}" aria-expanded="true" aria-controls="${panelId}">`);
+            var header = $(`<button class="accordion-button bg-info-subtle border-bottom border-1 border-secondary-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#${panelId}" aria-expanded="true" aria-controls="${panelId}">`);
 
-            header.append(`<div class="w-100 gap-2 border-5 pt-3 pb-5 px-4"><div class="d-flex justify-content-between mb-3"><span class="mobilesearch fs-5 ">${request.patientName}</span><div class="d-flex align-items-center"><div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: ${bgColor};"></div><span class="fs-5">${requestTypeText}</span></div></div><div class="d-flex justify-content-between "><div class=""><span class="fs-5">${request.address}</span></div><div class="btn btn-transparent btn-sm border border-1 border-info text-info rounded-5">Map Location</div></div></div>`);
+            header.append(`<div class="w-100 gap-2 border-5 pt-3 pb-5 px-4"><div class="d-flex justify-content-between mb-3"><span class="mobilesearch fs-5 ">${request.patientName}</span><div class="d-flex align-items-center"><div class="border border-1 rounded-5 m-1" style="width: 15px; height:15px; background-color: ${bgColor};"></div><span class="fs-5">${requestTypeText}</span></div></div><div class="d-flex justify-content-between "><div class=""><span class="fs-5">${request.address}</span></div><div class="btn btn-transparent btn border border-1 border-info text-info rounded-5"><i class="bi bi-geo-alt-fill fs-5"></i></div></div></div>`);
 
             var accordionBody = `<div class="accordion-body p-0"><div class="d-flex flex-column gap-2 bg-info-subtle mb-2 py-3 px-4 "><div class="text-end">${viewCase}</div><div><i class="fa-regular fa-calendar fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Date of Birth: ${request.dateOfBirth}</span></div><div><i class="fa-regular fa-envelope fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Email: ${request.patientEmail}</span></div><div><i class="fas fa-phone fs-5 border border-1 border-info rounded-5 p-2 me-2"></i><span class="fs-5">Phone: ${request.patientPhoneNumber}</span></div>`;
 
@@ -436,7 +436,7 @@ $(document).ready(function () {
 
             
 
-            setupPagination(5);
+            setupPagination(5 , ".data-row");
 
         });
     }
