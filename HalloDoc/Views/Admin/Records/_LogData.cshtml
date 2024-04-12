@@ -1,7 +1,7 @@
 ﻿@model List<HalloDoc_BAL.ViewModel.Records.LogView>;
 
 
-<table class="table table-hover w-100 my-4">
+<table class="table table-hover w-100 my-4 mobile_d_none">
     <thead class="">
         <tr>
             <th>Recipient</th>
@@ -46,3 +46,122 @@
         }
     </tbody>
 </table>
+
+
+<div class="accordion mt-4 desktop_d_none" id="accordionExample">
+    @{
+        var accountCount = 0;
+        foreach (var log in Model)
+        {
+            var accountId = "collapse" + accountCount;
+            var accountHeaderId = "collapseHeader" + accountCount;
+            accountCount = accountCount + 1;
+
+            <div class="accordion-item data-row-mobile">
+                <h2 class="accordion-header" id="@accountHeaderId">
+                    <button class="accordion-button d-flex flex-column align-items-start border-bottom border-1 text-black" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#@accountId" aria-expanded="false" aria-controls="@accountId">
+                        <div class="d-flex align-items-center">
+                            <span class="mx-2">@log.recipientName</span>
+                        </div>
+                        <br />
+                        <div class="mx-2">
+                           Action Name: <span class="mx-2"> @log.Action</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="@accountId" class="accordion-collapse collapse" aria-labelledby="@accountHeaderId">
+                    <div class="accordion-body">
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="col-auto">
+                                Role:
+                            </div>
+                            <div class="col-auto mx-2">@log.roleName</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="col-auto">
+                                @if (ViewBag.LogType == 1)
+                                {
+                                    <span>Email</span>
+                                }
+                                else if (ViewBag.LogType == 2)
+                                {
+                                    <span>Phone Number</span>
+                                }
+                            </div>
+                            <div class="col-auto mx-2">
+                                @if (ViewBag.LogType == 1)
+                                {
+                                    <span>@log.emailId</span>
+                                }
+                                else if (ViewBag.LogType == 2)
+                                {
+                                    <span>@log.phoneNumber</span>
+                                }
+                            </div>
+                        </div>
+
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-clock "></i>
+                            </div>
+                            <div class="col-auto">
+                                Created Date:
+                            </div>
+                            <div class="col-auto mx-2">@log.createdDate.ToString("MMM dd, yyyy hh:mm tt")</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-clock "></i>
+                            </div>
+                            <div class="col-auto">
+                                Sent Date:
+                            </div>
+                            <div class="col-auto mx-2">@log.createdDate.ToString("MMM dd, yyyy")</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-check "></i>
+                            </div>
+                            <div class="col-auto">
+                               Is sent:
+                            </div>
+                            <div class="col-auto mx-2">@(@log.isSent ? "Yes" : "No")</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                            </div>
+                            <div class="col-auto">
+                                Sent Tries:
+                            </div>
+                            <div class="col-auto mx-2">@log.sentTries</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+                            <div class="col-auto">
+                                Confirmation Number: 
+                            </div>
+                            <div class="col-auto mx-2">@log.confirmationNumber</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

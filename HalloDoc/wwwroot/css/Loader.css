@@ -1,0 +1,21 @@
+﻿
+.loader {
+    top: 0;
+    left: 0;
+    position: fixed;
+    opacity: 0.8;
+    z-index: 10000000;
+    background: black;
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-circle {
+    width: 150px;
+    height: 150px;
+    font-size: 45px;
+}

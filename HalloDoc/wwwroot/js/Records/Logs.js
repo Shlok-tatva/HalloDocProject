@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    setupPagination(10 , ".data-row");
+    setupPaginationBasedOnDevice();
     $('#emailLogsForm').submit(function (e) {
         e.preventDefault(); 
         searchEmailLogs(); 

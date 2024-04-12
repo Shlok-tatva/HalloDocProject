@@ -615,7 +615,7 @@ $(document).ready(function () {
         setTimeout(function () {
             $('#spinner').hide();
             filterDataTable(requestTypeId);
-        }, 500);
+        }, 0);
     }
     function filterDataTable(requestTypeId) {
         var lastState = localStorage.getItem("lastStatusID");
@@ -629,9 +629,6 @@ $(document).ready(function () {
         var lastState = localStorage.getItem("lastStatusID");
         reloadDataTable(lastState, lastFilter, reigonId);
     })
-
-
-
 
     function setLastState(state) {
         localStorage.setItem('lastState', state);

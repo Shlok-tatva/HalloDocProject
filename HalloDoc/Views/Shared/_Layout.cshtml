@@ -11,22 +11,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css" />
     @* Google Font CDn  *@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel='stylesheet' type='text/css' href='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps.css'>
     @RenderSection("PatientLoginStyle", false)
     @RenderSection("PatientRequestStyle", false)
     @RenderSection("DashboardCSS", false)
     @RenderSection("Style", false)
-
+    <link rel="stylesheet" href="~/css/Loader.css" />
 
 </head>
 
@@ -43,31 +42,26 @@
         </main>
     </div>
 
+        <partial name="_Loader" />
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @* full calender CDN  *@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-
-
-      @* for download encounter form as pdf  *@
+    @* for download encounter form as pdf  *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js" integrity="sha512-9+ilAOeXY8qy2bw/h51MmliNNHvdyhTpLIlqDmVpD26z8VjVJsUJtk5rhbDIUvYiD+EpGoAu0xTa7MhZohFQjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.1.135/jspdf.min.js"></script>
-
     @* Tom Tom API  *@
     <script src='https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.1/maps/maps-web.min.js'></script>
     @await RenderSectionAsync("NavbarScript", required: false)
     @await RenderSectionAsync("UserProfileScript", required: false)
     @await RenderSectionAsync("Scripts", required: false)
-
     @if (String.Equals(ViewData["ViewName"], "ConciergeRequest") || String.Equals(ViewData["ViewName"],
     "BusinessRequest") || String.Equals(ViewData["ViewName"], "FamilyFriendRequest"))
     {
@@ -77,9 +71,25 @@
     {
         @await RenderSectionAsync("PatinetPasswordFeildGenration", required: false)
     }
+    @*Loader will shown on every Ajax Call and page load *@
+    <script>
+        $(document).ready(function () {
+            $('#AjaxLoader').show();
+        });
 
+        $(window).on('load', function () {
+            setTimeout(function () {
+                $('#AjaxLoader').hide();
+            }, 100);
+        });
+        $(document).ajaxStart(function () {
+            $('#AjaxLoader').show();
+        }).ajaxStop(function () {
+            setTimeout(function () {
+                $('#AjaxLoader').hide();
+            }, 0);
+        });
+    </script>
 </body>
-
 <partial name="_ValidationScriptsPartial" />
-
 </html>

@@ -52,7 +52,7 @@ namespace HalloDoc_BAL.Repository
 
         public List<Request> GetAll()
         {
-            return _context.Requests.Include(e => e.Physician).ToList();
+            return _context.Requests.Include(e => e.Physician).Include(f => f.Requestwisefiles).ToList();
         }
 
     }

@@ -1,6 +1,6 @@
 ﻿@model List<HalloDoc_DAL.Models.User>;
 
-<table class="table table-hover w-100 my-4">
+<table class="table table-hover w-100 my-4 mobile_d_none">
     <thead class="">
         <tr>
             <th>First Name</th>
@@ -27,3 +27,67 @@
         }
     </tbody>
 </table>
+
+<div class="accordion mt-4 desktop_d_none" id="accordionExample">
+    @{
+        var accountCount = 0;
+        foreach (var user in Model)
+        {
+            var accountId = "collapse" + accountCount;
+            var accountHeaderId = "collapseHeader" + accountCount;
+            accountCount = accountCount + 1;
+
+            <div class="accordion-item data-row-mobile">
+                <h2 class="accordion-header" id="@accountHeaderId">
+                    <button class="accordion-button d-flex flex-column align-items-start border-bottom border-1 text-black" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#@accountId" aria-expanded="false" aria-controls="@accountId">
+                        <div class="d-flex align-items-center">
+                            <span class="mx-2">@user.Firstname @user.Lastname</span>
+                        </div>
+                        <br />
+                        <div>
+                           <span class="mx-2">(@user.Mobile)</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="@accountId" class="accordion-collapse collapse" aria-labelledby="@accountHeaderId">
+                    <div class="accordion-body">
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="col-auto">
+                                Email:
+                            </div>
+                            <div class="col-auto mx-2">@user.Email</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-check "></i>
+                            </div>
+                            <div class="col-auto">
+                                Phone:
+                            </div>
+                            <div class="col-auto mx-2">@user.Mobile</div>
+                        </div>
+
+                        <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                            <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                <i class="fa-solid fa-check "></i>
+                            </div>
+                            <div class="col-auto">
+                                Address:
+                            </div>
+                            <div class="col-auto mx-2">@user.Street @user.City , @user.State (@user.Zipcode)</div>
+                        </div>
+
+                        <div class="container-fluid p-0 d-flex flex-row justify-content-end my-2">
+                            <a href="PatientRequestes?id=@user.Userid" class="btn btn-outline-info btn-sm hover_white">Explore</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

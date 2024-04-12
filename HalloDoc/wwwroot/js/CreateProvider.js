@@ -101,7 +101,8 @@ $(document).ready(function () {
         } else {
             $button.addClass('o-1');
         }
-
     });
+
+
 });
 

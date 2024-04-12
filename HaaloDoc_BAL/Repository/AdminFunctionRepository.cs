@@ -1853,7 +1853,7 @@ namespace HalloDoc_BAL.Repository
                 CloseDate = GetCloseDate(item.Request.Requestid),
                 Email = item.RequestClient.Email,
                 PhoneNumber = item.RequestClient.Phonenumber,
-                Address = item.RequestClient.Location,
+                Address = item.RequestClient.Street + " " + item.RequestClient.City + "," + item.RequestClient.State + " (" + item.RequestClient.Zipcode + " )",
                 Zip = item.RequestClient.Zipcode,
                 RequestStatus = item.Request.Status,
                 PhysicianName = item.Physician != null ? $"{item.Physician.Firstname} {item.Physician.Lastname}" : "", // Handle null Physician

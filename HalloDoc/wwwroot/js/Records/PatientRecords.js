@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    setupPagination(10 , ".data-row");
+    setupPaginationBasedOnDevice();
 
     $('#patientRecordSearch').on('submit', function (e) {
         e.preventDefault();
@@ -31,7 +31,7 @@ $(document).ready(function () {
                 debugger;
                 console.log(response);
                 $('#patientRecordData').html(response);
-                setupPagination(10 , ".data-row");
+                setupPaginationBasedOnDevice();
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText); // Log error to console

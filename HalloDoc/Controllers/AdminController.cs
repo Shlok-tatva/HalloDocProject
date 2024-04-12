@@ -1649,6 +1649,8 @@ namespace HalloDocAdmin.Controllers
 
         public IActionResult SearchRecords()
         {
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewData["ViewName"] = "Records";
             return View("Records/SearchRecords");
         }
 

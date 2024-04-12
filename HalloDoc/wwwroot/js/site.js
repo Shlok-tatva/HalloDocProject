@@ -249,12 +249,12 @@ function setupPaginationDesktop() {
 
 /* For accordian set the pagination */
 function setupPaginationMobile() {
-    setupPagination(10, ".data-row-mobile");
+    setupPagination(5, ".data-row-mobile");
 }
 
 /* Check Window Size and return true false */
 function isMobileWindowSize() {
-    return window.innerWidth <= 590; 
+    return window.innerWidth <= 900; 
 }
 
 /* now Run only that function based on the window size */

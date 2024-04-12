@@ -36,9 +36,15 @@ main {
     font-weight: 400;
 }
 
+
 .links:hover {
     border-bottom: 2.5px solid #01BBE7;
     background: #0086fb0d;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background: #0086fb33;
     cursor: pointer;
 }
 
@@ -438,13 +444,6 @@ th {
         display: block;
     }
 
-    .mobile_d_none {
-        display: none;
-    }
-
-
-      
-
     .mobile_nav {
         position: absolute;
         height: 100vh;
@@ -462,8 +461,12 @@ th {
     .show-nav {
         transform: translateX(0); /* Moved to show position */
     }
+}
 
-
+@media (max-width:900px){
+    .mobile_d_none {
+        display: none;
+    }
 }
 
 

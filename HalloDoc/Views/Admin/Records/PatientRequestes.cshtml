@@ -19,7 +19,7 @@
 
 @section Scripts {
     <script>
-        setupPagination(5 , ".data-row");
+        setupPaginationBasedOnDevice();
     </script>
     <script>
         if (window.innerWidth > 530) {
@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="shadow rounded-3 mt-3">
-        <table class="table table-hover w-100 my-2">
+        <table class="table table-hover w-100 my-2 mobile_d_none">
             <thead class="">
                 <tr>
                     <th>Client/Member</th>
@@ -65,56 +65,25 @@
                         <td>
                             @{
                                 var statusString = "";
-
-                                switch (request.Status)
-                                {
-                                    case 1:
-                                        statusString = "Unassigned";
-                                        break;
-                                    case 2:
-                                        statusString =  "Accepted";
-                                        break;
-                                    case 3:
-                                        statusString = "Cancel by Admin";
-                                        break;
-                                    case 4:
-                                        statusString = "MDEnRoute";
-                                        break;
-                                    case 5:
-                                        statusString = "MDONSite";
-                                        break;
-                                    case 6:
-                                        statusString = "Conclude";
-                                        break;
-                                    case 7:
-                                        statusString = "Cancelled By Patient";
-                                        break;
-                                    case 8:
-                                        statusString = "Closed";
-                                        break;
-                                    case 9:
-                                        statusString = "UnPaid";
-                                        break;
-                                    case 10:
-                                        statusString = "Clear";
-                                        break;
-                                    case 11:
-                                        statusString = "Blocked by Admin";
-                                        break;
-                                    default:          
-                                        statusString  =  "Unknown";
-                                        break;
-                                }
+                                statusString = getStatusName(request.Status);
                             }
                             @statusString
                         </td>
-                        <td> @(request.Status == (short)8 ? "<a href='' class='btn btn-otline-info hover_white'>View</a>" : "-" ) </td>
+                        <td>
+                            @if (request.Status == (short)8)
+                            {
+                                <a href="encounter?request=@request.Requestid" class="btn btn-outline-info btn-sm hover_white">View</a>
+                            }
+                            else
+                            {
+                                <span> - </span>
+                            }
                         <td>
                             <div class="dropdown">
                                 <button class="btn btn-outline-info btn-sm hover_white dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li><a href="viewCase?request=@request.Requestid" class="dropdown-item">View Case</a></li>
-                                    <li><a href="viewUpload?request=@request.Requestid" class="dropdown-item">Documents</a></li>
+                                    <li><a href="viewUpload?request=@request.Requestid" class="dropdown-item"> (@request.Requestwisefiles.Where(rf => rf.Isdeleted != true).Count()) Documents</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -122,7 +91,79 @@
                 }
             </tbody>
         </table>
+
+        <div class="accordion mt-4 desktop_d_none" id="accordionExample">
+            @{
+                var accountCount = 0;
+                foreach (var request in Model)
+                {
+                    var accountId = "collapse" + accountCount;
+                    var accountHeaderId = "collapseHeader" + accountCount;
+                    accountCount = accountCount + 1;
+
+                    <div class="accordion-item data-row-mobile">
+                        <h2 class="accordion-header" id="@accountHeaderId">
+                            <button class="accordion-button d-flex flex-column align-items-start border-bottom border-1 text-black" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#@accountId" aria-expanded="false" aria-controls="@accountId">
+                                <div class="d-flex align-items-center">
+                                    <span class="mx-2">@request.Firstname @request.Lastname</span>
+                                </div>
+                                <br />
+                                <div>
+                                    <span class="mx-2">@request.Confirmationnumber</span>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="@accountId" class="accordion-collapse collapse" aria-labelledby="@accountHeaderId">
+                            <div class="accordion-body">
+                                <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                                    <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                        <i class="fa-solid fa-clock"></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        Date:
+                                    </div>
+                                    <div class="col-auto mx-2">@request.Createddate.ToString("MMM dd , yyyy")</div>
+                                </div>
+
+                                <div class="container-fluid mb-2 p-0 d-flex flex-row align-items-center">
+                                    <div class="col-auto me-2 btn btn-sm btn-outline-info rounded-5">
+                                        <i class="fa-solid fa-check "></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        Status:
+                                    </div>
+                                    <div class="col-auto mx-2">
+                                        @{
+                                            var statusString = "";
+                                            statusString = getStatusName(request.Status);
+                                        }
+                                        @statusString
+                                    </div>
+                                </div>
+
+                                <div class="p-0 d-flex flex-column my-2">
+                                    @if (request.Status == (short)8)
+                                    {
+                                        <a href="encounter?request=@request.Requestid" class="btn btn-outline-info my-2 btn hover_white">View Report</a>
+                                    }
+                                    <a href="viewCase?request=@request.Requestid" class="btn btn-outline-info my-2 hover_white">View Case</a>
+                                    <a href="viewUpload?request=@request.Requestid" class="btn btn-outline-info hover_white"> (@request.Requestwisefiles.Where(rf => rf.Isdeleted != true).Count()) Documents</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+
     </div>
+
+
+
+
+
 
     <div id="pagination" class="d-flex flex-row-reverse p-3">
         <div class="d-flex">
@@ -135,3 +176,50 @@
     </div>
 
 </div>
+
+@{
+    string getStatusName(int requestId)
+    {
+        string statusString = "";
+        switch (requestId)
+        {
+            case 1:
+                statusString = "Unassigned";
+                break;
+            case 2:
+                statusString = "Accepted";
+                break;
+            case 3:
+                statusString = "Cancel by Admin";
+                break;
+            case 4:
+                statusString = "MDEnRoute";
+                break;
+            case 5:
+                statusString = "MDONSite";
+                break;
+            case 6:
+                statusString = "Conclude";
+                break;
+            case 7:
+                statusString = "Cancelled By Patient";
+                break;
+            case 8:
+                statusString = "Closed";
+                break;
+            case 9:
+                statusString = "UnPaid";
+                break;
+            case 10:
+                statusString = "Clear";
+                break;
+            case 11:
+                statusString = "Blocked by Admin";
+                break;
+            default:
+                statusString = "Unknown";
+                break;
+        }
+        return statusString;
+    }
+}
