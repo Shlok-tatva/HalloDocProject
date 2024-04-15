@@ -27,6 +27,7 @@ namespace HalloDoc_BAL.Repository
         void transferCase(int requestId, int physicianId, int adminId ,string note);
         void clearCase(int requestId, int adminId);
         void sendAgreement(int requestId, int? adminId, int? providerId , string email , string link);
+        void sendRequestSupport(int adminId, string Message);
         EncounterFormView GetEncounterFormView(int requestId);
         void SubmitEncounterForm(EncounterFormView formView);
         EncounterFormView GetEncounterForm(int requestId);

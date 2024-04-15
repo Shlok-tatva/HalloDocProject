@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HalloDoc.Models
+namespace HalloDoc_BAL.ViewModel.Patient
 {
     public class UserDataviewModel
     {
-        
+
         public int userid { get; set; }
 
         [Required(ErrorMessage = "Please enter first name")]

@@ -65,15 +65,25 @@ $(document).ready(function () {
 
     /*Modal Click Close the Modal  */
     $('.close').on('click', function () {
-        debugger;
-        $('#blockPatientModal').modal('hide');
-        $('#cancelCaseModal').modal('hide');
-        $('#assignCaseModal').modal('hide');
-        $('#transferModal').modal('hide');
-        $('#sendAgreementModal').modal('hide');
-        $("#encounterModal").modal('hide');
-        $("#sendLinktModal").modal('hide');
-    })
+        debugger
+        var modalId = $(this).closest('.modal').attr('id');
+
+        switch (modalId) {
+            case 'assignCaseModal':
+                $('#assignCaseModal').trigger('reset');
+                $('.error').empty();
+                break;
+            case 'cancelCaseModal':
+                $('#cancelCaseForm').trigger('reset');
+                break;
+            // Add cases for other modals as needed
+            default:
+                // If there's no specific action for this modal, do nothing
+                break;
+        }
+        $('#' + modalId).modal('hide');
+    });
+
 
     /* Block Request Ajax Call */
     $('#blockRequest').validate({
@@ -179,6 +189,9 @@ $(document).ready(function () {
             },
             physicianSelect: {
                 required: true
+            },
+            Description: {
+                required: true
             }
         },
         messages: {
@@ -187,6 +200,9 @@ $(document).ready(function () {
             },
             physicianSelect: {
                 required: "Please select a physician"
+            },
+            Description: {
+                required: "Please enter a Message."
             }
         },
         errorPlacement: function (error, element) {

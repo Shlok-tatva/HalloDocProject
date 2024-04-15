@@ -1,4 +1,4 @@
-﻿@model List<HalloDoc.Models.DocumentViewModel>;
+﻿@model List<HalloDoc_BAL.ViewModel.Patient.DocumentViewModel>;
 
 @section DashboardCSS{
     <link rel="stylesheet" href="~/css/dashboard.css" />
@@ -134,7 +134,7 @@
         <div class="shadow p-3 mt-3 rounded">
             <div class="text-secondary">
                 <span>Patient Name</span>
-                <h5 class="text-info fw-bold">@ViewBag.Username<span class="text-secondary fw-normal">(@Model[0].Requestid)</span> </h5>
+                <h5 class="text-info fw-bold">@ViewBag.Username<span class="text-secondary fw-normal">(@Model[0].confirmationNumber)</span> </h5>
                 <p class="pt-1">Check here for any files that you or the doctors of your subsequentts requestors have attached for you to review. </p>
             </div>
 

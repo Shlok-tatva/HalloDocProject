@@ -1,15 +1,15 @@
-﻿@model BusinessFormData;
+﻿@model HalloDoc_BAL.ViewModel.Patient.BusinessFormData;
 
 <h5 class="col-12 fw-bold my-3"> Business Information</h5>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="BusinessFirstName" type="text" class="form-control" placeholder="">
+    <input asp-for="BusinessFirstName" type="text" class="form-control" placeholder=" ">
     <label asp-for="BusinessFirstName" for="floatingInput" class="control-label ms-3">
         Your First Name
     </label>
     <span asp-validation-for="BusinessFirstName" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="BusinessLastName" type="text" class="form-control" placeholder="">
+    <input asp-for="BusinessLastName" type="text" class="form-control" placeholder=" ">
     <label asp-for="BusinessLastName" for="floatingInput" class="control-label ms-3">
         Your Last Name
     </label>
@@ -19,14 +19,14 @@
 </div>
 
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="BusinessPhoneNumber" id="phone1" type="tel" class="form-control"> <br />
+    <input asp-for="BusinessPhoneNumber" id="phone1" type="tel" class="form-control" > <br />
     <label for="floatingInput" class="control-label ms-3">
     </label>
     <span asp-validation-for="BusinessPhoneNumber" class="text-danger"></span>
 </div>
 
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="BusinessEmail" type="email" class="form-control" placeholder="">
+    <input asp-for="BusinessEmail" type="email" class="form-control" placeholder=" ">
     <label asp-for="BusinessEmail" for="floatingInput" class="control-label ms-3">
         Your Email
     </label>
@@ -35,7 +35,7 @@
 </div>
 
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="BusinessOrPropertyName" type="text" class="form-control" placeholder="">
+    <input asp-for="BusinessOrPropertyName" type="text" class="form-control" placeholder=" ">
     <label asp-for="BusinessOrPropertyName" for="floatingInput" class="control-label ms-3">
         Business / Property Name
     </label>
@@ -43,7 +43,7 @@
 </div>
 
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="CaseNumber" type="text" class="form-control" placeholder="">
+    <input asp-for="CaseNumber" type="text" class="form-control" placeholder=" ">
     <label asp-for="CaseNumber" for="floatingInput" class="control-label ms-3">
         Case Number (Optinal)
     </label>

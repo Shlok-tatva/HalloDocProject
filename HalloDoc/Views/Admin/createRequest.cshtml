@@ -1,8 +1,9 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Create Request";
 }
 
-@model PatientFormData;
+@model HalloDoc_BAL.ViewModel.Patient.PatientFormData;
 
 
 @section Style {
@@ -23,6 +24,7 @@
 
 
 <div class=" mt-5 container-sm m-auto">
+
     <div class="mt-4 w-75 m-auto">
         <div class="d-flex justify-content-between">
             <h3>Submit Information</h3>
@@ -31,4 +33,11 @@
             </button>
         </div>
     </div>
+    <form asp-action="CreateRequest">
+        <div class="mt-4 m-auto form_content">
+            <div class="row p-4 shadow rounded-3">
+                <partial name="_PatientData" model="Model" />
+            </div>
+        </div>
+    </form>
 </div>

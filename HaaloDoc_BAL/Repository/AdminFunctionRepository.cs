@@ -590,6 +590,25 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+        public void sendRequestSupport(int adminId, string Message)
+        {
+            // Get the list of providers who are not on call
+
+            List<CreateProviderView> providersNotOnCall = PhysicianOnCall(null) // Assuming null region means all regions
+                .Where(provider => provider.onCallStatus != 1) // Filter out providers who are not on call
+                .ToList();
+
+            foreach (var provider in providersNotOnCall)
+            {
+                string toEmail = provider.email;
+                string subject = "Support Request";
+                string body = "We are short an Coverage and needs additional support On Call to respond to Requests. " +  Message;
+                bool issent = SendEmail(toEmail, subject, body, null);
+                string name = provider.firstName + " " + provider.lastName;
+                _commonFunctionrepo.EmailLog(toEmail, body, subject, name, 2, null, adminId, provider.ProviderId, 6, issent, 1);
+            }
+        }
+
 
         #region Encounter-Form
         public EncounterFormView GetEncounterFormView(int requestId)
@@ -2026,6 +2045,8 @@ namespace HalloDoc_BAL.Repository
             foreach (var item in logs)
             {
                 LogView emaillog = new LogView();
+
+                emaillog.logId = item.Emaillogid;
                 emaillog.Action = item.Subjectname;
                 emaillog.emailId = item.Emailid;
                 emaillog.createdDate = item.Createdate;
@@ -2046,6 +2067,7 @@ namespace HalloDoc_BAL.Repository
                 emaillogs.Add(emaillog);
             }
 
+            emaillogs.Sort((a, b) => (int)b.logId - (int)a.logId);
             return emaillogs;
         }
 

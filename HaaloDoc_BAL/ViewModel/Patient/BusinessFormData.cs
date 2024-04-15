@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HalloDoc.Models
+namespace HalloDoc_BAL.ViewModel.Patient
 {
     public class BusinessFormData : PatientFormData
     {

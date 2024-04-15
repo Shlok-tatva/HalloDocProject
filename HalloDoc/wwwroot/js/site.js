@@ -338,7 +338,7 @@ function getPhysicians(regionId, physiciandropId, callback) {
             // Update the physician select dropdown with fetched data
             console.log(data);
             var physicianDropdown = document.getElementById(physiciandropId);
-            physicianDropdown.innerHTML = '';
+            physicianDropdown.innerHTML = ' <option value="" selected disabled>Select Physician</option> ';
             data.forEach(function (physician) {
                 var option = document.createElement("option");
                 option.value = physician.id;

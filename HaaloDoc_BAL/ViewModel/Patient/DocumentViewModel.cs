@@ -1,4 +1,6 @@
-﻿namespace HalloDoc.Models
+﻿using Microsoft.AspNetCore.Http;
+
+namespace HalloDoc_BAL.ViewModel.Patient
 {
     public class DocumentViewModel
     {
@@ -11,5 +13,7 @@
         public IFormFile? UploadFile { get; set; }
 
         public string? UploadImage { get; set; }
+        
+        public string? confirmationNumber { get; set; }
     }
 }

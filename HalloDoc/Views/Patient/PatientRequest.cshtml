@@ -1,6 +1,4 @@
-﻿
-@model PatientFormData;
-
+﻿@model HalloDoc_BAL.ViewModel.Patient.PatientFormData;
 @{
     ViewData["Title"] = "Patient Request";
 }
@@ -21,8 +19,11 @@
                     contentType: 'application/json',
                     data: JSON.stringify(email),
                     success: function (response) {
-                        // Use the toggle method to show or hide the password fields
                         $('.password-fields').toggle(!response.exists);
+                        if (response.isblock){
+                            showToaster("Email Id is Block by admin use different Email Id" , "error");
+                            $('#email').val("");
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.error(error);

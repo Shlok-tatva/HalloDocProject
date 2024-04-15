@@ -74,22 +74,37 @@
     @*Loader will shown on every Ajax Call and page load *@
     <script>
         $(document).ready(function () {
-            $('#AjaxLoader').show();
+            $('#AjaxLoader').fadeIn();
         });
 
         $(window).on('load', function () {
             setTimeout(function () {
-                $('#AjaxLoader').hide();
-            }, 100);
+                $('#AjaxLoader').fadeOut();
+            }, 0);
         });
         $(document).ajaxStart(function () {
-            $('#AjaxLoader').show();
+            $('#AjaxLoader').fadeIn();
         }).ajaxStop(function () {
             setTimeout(function () {
-                $('#AjaxLoader').hide();
+                $('#AjaxLoader').fadeOut();
             }, 0);
         });
     </script>
+
+    @if (TempData["Error"] != null)
+    {
+        <script>
+            showToaster("@TempData["Error"]", "error");
+        </script>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <script>
+            showToaster("@TempData["Success"]", "success");
+        </script>
+    }
+
+
 </body>
 <partial name="_ValidationScriptsPartial" />
 </html>

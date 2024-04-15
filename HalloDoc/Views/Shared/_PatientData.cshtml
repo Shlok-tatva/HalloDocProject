@@ -1,23 +1,23 @@
-﻿@model PatientFormData;
+﻿@model HalloDoc_BAL.ViewModel.Patient.PatientFormData;
 
 <!-- Patient Information -->
 
 <h5 class="col-12 fw-bold my-3">Patient Information</h5>
 
 <div class="form-floating my-3">
-    <textarea asp-for="Symptoms" class="form-control" placeholder="" id="floatingTextarea2" style="height: 100px"></textarea>
+    <textarea asp-for="Symptoms" class="form-control" placeholder=" " id="floatingTextarea2" style="height: 100px"></textarea>
     <label asp-for="Symptoms" for="floatingTextarea2" class="ms-3">Enter Brief Details Of Symptoms</label>
     <span asp-validation-for="Symptoms" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="FirstName" type="text" class="form-control" placeholder="name@example.com">
+    <input asp-for="FirstName" type="text" class="form-control" placeholder=" ">
     <label asp-for="FirstName" for="floatingInput" class="control-label ms-3">
         First Name
     </label>
     <span asp-validation-for="FirstName" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="LastName" type="text" class="form-control" placeholder="name@example.com">
+    <input asp-for="LastName" type="text" class="form-control" placeholder=" ">
     <label asp-for="LastName" for="floatingInput" class="control-label ms-3">
         Last Name
     </label>
@@ -37,7 +37,7 @@
     <input asp-for="Email" type="email" id="email" class="form-control" placeholder="name@example.com">
     <label asp-for="Email" for="floatingInput" class="control-label ms-3">
         Email
-    </label> 
+    </label>
     <span asp-validation-for="Email" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
@@ -48,7 +48,7 @@
 </div>
 
 <div class="form-floating col-md-6 my-3 password-fields">
-    <input asp-for="Password" type="password"  class="form-control" required>
+    <input asp-for="Password" type="password" class="form-control" placeholder=" " required>
     <label asp-for="Password" for="floatingInput" class="control-label ms-3">
         Password
     </label>
@@ -56,7 +56,7 @@
 </div>
 
 <div id="" class="form-floating col-md my-3 password-fields">
-    <input asp-for="ConfirmPassword" type="password" class="form-control" required>
+    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder=" " required>
     <label asp-for="ConfirmPassword" for="floatingInput" class="control-label ms-3">
         Confirm Password
     </label>
@@ -69,7 +69,7 @@
 @if (!String.Equals(ViewData["ViewName"], "ConciergeRequest"))
 {
     <div class="form-floating col-md-6 my-3">
-        <input asp-for="Street" type="text" class="form-control" placeholder="name@example.com">
+        <input asp-for="Street" type="text" class="form-control" placeholder=" ">
         <label asp-for="Street" for="floatingInput" class="control-label ms-3">
             Street
         </label>
@@ -77,13 +77,13 @@
 
     </div>
     <div class="form-floating col-md-6 my-3">
-        <input asp-for="City" type="text" class="form-control" placeholder="name@example.com">
+        <input asp-for="City" type="text" class="form-control" placeholder=" ">
         <label asp-for="City" for="floatingInput" class="control-label ms-3">
             City
         </label>
         <span asp-validation-for="City" class="text-danger"></span>
     </div>
-  @*  <div class="form-floating col-md-6 my-3">
+    @*  <div class="form-floating col-md-6 my-3">
         <input asp-for="State" type="text" class="form-control" placeholder="name@example.com">
         <label asp-for="State" for="floatingInput" class="control-label ms-3">
             State
@@ -105,7 +105,7 @@
 
 
     <div class="form-floating col-md-6 my-3">
-        <input asp-for="ZipCode" type="text" class="form-control" placeholder="name@example.com">
+        <input asp-for="ZipCode" type="text" class="form-control" placeholder=" ">
         <label asp-for="ZipCode" for="floatingInput" class="control-label ms-3">
             Zip Code
         </label>
@@ -114,24 +114,25 @@
 }
 
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="RoomOrSuite" type="text" class="form-control">
+    <input asp-for="RoomOrSuite" type="text" class="form-control" placeholder=" ">
     <label asp-for="RoomOrSuite" for="floatingInput" class="control-label ms-3">
         Room # / Suite (optional)
     </label>
 </div>
 
 
-@if(String.Equals(ViewData["ViewName"] , "RequestForSomeone")){
+@if (String.Equals(ViewData["ViewName"], "RequestForSomeone"))
+{
     <h5 class="col-12 fw-bold my-3">Relation</h5>
-     <div class="form-floating col-md-6 my-3">
-        <input asp-for="RelationWithPatinet" type="text" class="form-control" placeholder="name@example.com">
-        <label asp-for="RelationWithPatinet"  for="floatingInput" class="control-label ms-3">
+    <div class="form-floating col-md-6 my-3">
+        <input asp-for="RelationWithPatinet" type="text" class="form-control" placeholder=" ">
+        <label asp-for="RelationWithPatinet" for="floatingInput" class="control-label ms-3">
             Relation with Patinet (Optional)
         </label>
     </div>
-} 
+}
 
-@if (!String.Equals(ViewData["ViewName"] , "ConciergeRequest") && !String.Equals(ViewData["ViewName"] , "BusinessRequest"))
+@if (!String.Equals(ViewData["ViewName"], "ConciergeRequest") && !String.Equals(ViewData["ViewName"], "BusinessRequest") && !String.Equals(ViewData["ViewName"], "createRequest"))
 {
 
     <h5 class="col-12 fw-bold my-3">(Optinal) Upload Photo or Document</h5>
@@ -148,6 +149,28 @@
         </label>
     </div>
 }
+
+@if (String.Equals(ViewData["ViewName"], "createRequest"))
+{
+    if (!ViewBag.isprovider)
+    {   
+    <h5 class="col-12 fw-bold my-3">Admin Notes</h5>
+    <div class="form-floating col-md-12 my-3">
+        <textarea asp-for="adminNotes" class="form-control" placeholder=" " id="adminNotes" style="height: 100px"></textarea>
+        <label asp-for="adminNotes" for="adminNotes" class="ms-3">Admin Notes</label>
+        </div>
+    }
+    else
+    {
+        <h5 class="col-12 fw-bold my-3">Provider Notes</h5>
+        <div class="form-floating col-md-12 my-3">
+            <textarea asp-for="providerNotes" class="form-control" placeholder=" " id="providerNotes" style="height: 100px"></textarea>
+            <label asp-for="providerNotes" for="providerNotes" class="ms-3">Provider Notes</label>
+        </div>
+    }
+}
+
+
 <div class="my-3 d-flex justify-content-end ">
     <input class="btn btn-outline-info hover_white hover_primary mx-2 btn-lg" type="submit"></input>
     <input class="btn btn-outline-info hover_white hover_primary btn-lg" type="reset"></input>

@@ -121,11 +121,9 @@
                     </h6>
 
                     <input name="requestId" id="requestId" value="@Model.RequestId" class="visually-hidden" />
-                    <div class="form-floating col-md-12 my-3">
-                        <input name="providerNote" type="text" class="form-control" style="height:120px;" placeholder=" ">
-                        <label for="floatingInput" class="control-label ms-3">
-                            Provider Notes
-                        </label>
+                    <div class="form-floating my-3">
+                        <textarea name="providerNote" class="form-control" placeholder=" " id="floatingTextarea2" style="height: 100px"></textarea>
+                        <label for="floatingTextarea2" class="ms-3">Provider Notes</label>
                     </div>
                     <div class="d-flex gap-2 justify-content-end">
                         <button class="btn btn-info text-light" id="saveBtn">Conclude Care</button>

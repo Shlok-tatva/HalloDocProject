@@ -8,5 +8,6 @@ namespace HalloDoc_BAL.Interface
         string Decrypt(string chiperText, string Key);
         bool SendEmail(string toEmail, string Title , string Message );
         void createLog(Requeststatuslog log);
+        bool isBlockEmail(string email);
     }
 }

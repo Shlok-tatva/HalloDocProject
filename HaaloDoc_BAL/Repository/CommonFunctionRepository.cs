@@ -1,5 +1,6 @@
 ﻿using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.ViewModel.Admin;
+using HalloDoc_BAL.ViewModel.Patient;
 using HalloDoc_DAL.DataContext;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace HalloDoc_BAL.Repository
 {
@@ -18,12 +20,13 @@ namespace HalloDoc_BAL.Repository
         private readonly ApplicationDbContext _context;
         private readonly IRequestwisefileRepository _requestwisefilerepo;
         private readonly IRequestClientRepository _requestclientrepo;
-
-        public CommonFunctionRepository(ApplicationDbContext context, IRequestwisefileRepository requestwisefilerepo , IRequestClientRepository requestclientrepo)
+        private readonly IPatientFunctionRepository _patientFunctionRepository;
+        public CommonFunctionRepository(ApplicationDbContext context, IRequestwisefileRepository requestwisefilerepo, IRequestClientRepository requestclientrepo, IPatientFunctionRepository patientFunctionRepository)
         {
             _context = context;
             _requestwisefilerepo = requestwisefilerepo;
             _requestclientrepo = requestclientrepo;
+            _patientFunctionRepository = patientFunctionRepository;
 
 
         }
@@ -80,7 +83,7 @@ namespace HalloDoc_BAL.Repository
         }
 
 
-        public void HandleFileUpload(IFormFile UploadFile, int requestId , int? adminId , int? providerId)
+        public void HandleFileUpload(IFormFile UploadFile, int requestId, int? adminId, int? providerId)
         {
             var requestwisefile = new Requestwisefile();
             string FilePath = "wwwroot\\Upload\\" + requestId;
@@ -133,14 +136,14 @@ namespace HalloDoc_BAL.Repository
             {
                 regionsData.ForEach(region =>
                 {
-                   int regionId = Int32.Parse(region.RegionId);
+                    int regionId = Int32.Parse(region.RegionId);
                     if (region.IsChecked == true)
                     {
                         Adminregion adminregion = new Adminregion();
                         adminregion.Adminid = adminId;
                         adminregion.Regionid = regionId;
                         _context.Adminregions.Add(adminregion);
-                       
+
 
                     }
                     else if (region.IsChecked == false)
@@ -154,7 +157,7 @@ namespace HalloDoc_BAL.Repository
             }
             catch (Exception ex)
             {
-                
+
             }
         }
 
@@ -172,10 +175,10 @@ namespace HalloDoc_BAL.Repository
 
         public int GetAccountTypeByroleId(int roleId)
         {
-                return (int)_context.Roles.FirstOrDefault(r => r.Roleid == roleId).Accounttype;
+            return (int)_context.Roles.FirstOrDefault(r => r.Roleid == roleId).Accounttype;
         }
 
-        public void EmailLog(string email , string messaage , string subject , string? name , int roleId , int? requestId , int? adminId , int? physicianId , int action , bool isSent , int sentTires)
+        public void EmailLog(string email, string messaage, string subject, string? name, int roleId, int? requestId, int? adminId, int? physicianId, int action, bool isSent, int sentTires)
         {
             try
             {
@@ -191,9 +194,9 @@ namespace HalloDoc_BAL.Repository
                 log.Physicianid = physicianId;
                 log.Action = action;
                 log.Receivername = name;
-                if(requestId != null)
+                if (requestId != null)
                 {
-                log.Confirmationnumber = _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Confirmationnumber;
+                    log.Confirmationnumber = _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Confirmationnumber;
                 }
 
                 if (isSent)
@@ -208,7 +211,7 @@ namespace HalloDoc_BAL.Repository
                 _context.Emaillogs.Add(log);
                 _context.SaveChanges();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
@@ -228,6 +231,106 @@ namespace HalloDoc_BAL.Repository
             _context.Requeststatuslogs.Add(log);
             _context.SaveChanges();
 
+        }
+
+        public void createRequest(PatientFormData formData, int? adminId, int? providerId, string requestScheme, HostString requestHost)
+        {
+            using (var transaction = new TransactionScope())
+            {
+                User user = _context.Users.FirstOrDefault(u => u.Email == formData.Email);
+                var request = new Request();
+                var requestClient = new Requestclient();
+                string state = _context.Regions.Where(r => r.Regionid == formData.regionId).FirstOrDefault().Name;
+
+
+                request.Requesttypeid = 1;
+                if (user != null)
+                {
+                    request.Userid = user.Userid;
+                }
+                else
+                {
+                    request.Userid = null;
+                }
+                request.Firstname = formData.FirstName;
+                request.Lastname = formData.LastName;
+                request.Email = formData.Email;
+                request.Phonenumber = formData.PhoneNumber;
+                request.Status = 1;
+                request.Isurgentemailsent = false;
+                request.Isdeleted = false;
+                request.Createddate = DateTime.Now;
+                request.Confirmationnumber = GetConfirmationNumber(state, formData.LastName, formData.FirstName);
+
+                if (formData.RelationWithPatinet != null)
+                {
+                    request.Relationname = formData.RelationWithPatinet;
+                }
+
+                if(providerId != null)
+                {
+                    request.Status = 2;
+                    request.Physicianid = providerId;
+                }
+
+                _context.Requests.Add(request);
+                _context.SaveChanges();
+
+                if (formData.UploadFile != null)
+                {
+                    HandleFileUpload(formData.UploadFile, request.Requestid, null, null);
+                }
+
+                requestClient.Notes = formData.Symptoms;
+                requestClient.Requestid = request.Requestid;
+                requestClient.Firstname = formData.FirstName;
+                requestClient.Lastname = formData.LastName;
+                requestClient.Phonenumber = formData.PhoneNumber;
+                requestClient.Email = formData.Email;
+                requestClient.Strmonth = formData.DateOfBirth.Month.ToString("00");
+                requestClient.Intyear = formData.DateOfBirth.Year;
+                requestClient.Intdate = formData.DateOfBirth.Day;
+                requestClient.Street = formData.Street;
+                requestClient.City = formData.City;
+                requestClient.State = state;
+                requestClient.Regionid = formData.regionId;
+                requestClient.Zipcode = formData.ZipCode;
+
+                _requestclientrepo.Add(requestClient);
+
+                Requestnote note = new Requestnote();
+                if(adminId != null)
+                {
+                    Admin admin = _context.Admins.FirstOrDefault(a => a.Adminid == adminId);
+                    note.Requestid = request.Requestid;
+                    note.Createddate = DateTime.Now;
+                    note.Createdby = admin.Aspnetuserid;
+                    note.Adminnotes = formData.adminNotes;
+                    _context.Requestnotes.Add(note);
+
+                }
+                if(providerId != null)
+                {
+                    Physician pro = _context.Physicians.FirstOrDefault(a => a.Physicianid == providerId);
+                    note.Requestid = request.Requestid;
+                    note.Createddate = DateTime.Now;
+                    note.Createdby = pro.Aspnetuserid;
+                    note.Physiciannotes = formData.providerNotes;
+                    _context.Requestnotes.Add(note);
+                }
+                _context.SaveChanges();
+
+                string key = "770A8A65DA156D24EE2A093277530142";
+                string encryptedEmail = Encrypt(formData.Email, key);
+                var accountCreationLink = $"{requestScheme}://{requestHost}/patient/createAccount?email={encryptedEmail}&requestId={request.Requestid}";
+                var title = "Account Creation Link";
+                var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
+                bool isSent = _patientFunctionRepository.SendEmail(formData.Email, title, message);
+                string name = formData.FirstName + " , " + formData.LastName;
+                EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
+                transaction.Complete();
+
+            }
         }
 
         private int GetCountOfTodayRequests()

@@ -1,4 +1,4 @@
-﻿namespace HalloDoc.Models
+﻿namespace HalloDoc_BAL.ViewModel.Patient
 {
     public class DashboardViewModel
     {

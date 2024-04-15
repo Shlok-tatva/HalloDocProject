@@ -1,35 +1,35 @@
-﻿@model FamilyFriendFormData
+﻿@model HalloDoc_BAL.ViewModel.Patient.FamilyFriendFormData;
 
 <h5 class="col-12 fw-bold my-3"> Family / Firend Information</h5>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="f_firstName" type="text" class="form-control" placeholder="">
+    <input asp-for="f_firstName" type="text" class="form-control" placeholder=" ">
     <label asp-for="f_firstName" for="floatingInput" class="control-label ms-3">
         Your First Name
     </label>
     <span asp-validation-for="f_firstName" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="f_lastName" type="text" class="form-control" placeholder="">
+    <input asp-for="f_lastName" type="text" class="form-control" placeholder=" ">
     <label asp-for="f_lastName" for="floatingInput" class="control-label ms-3">
         Your Last Name
     </label>
     <span asp-validation-for="f_lastName" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="f_PhoneNumber" id="phone1" type="tel" class="form-control"> <br />
+    <input asp-for="f_PhoneNumber" id="phone1" type="tel" class="form-control" > <br />
     <label for="floatingInput" class="control-label ms-3">
     </label>
     <span asp-validation-for="f_PhoneNumber" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="f_Email" type="email" class="form-control" placeholder="">
+    <input asp-for="f_Email" type="email" class="form-control" placeholder=" ">
     <label asp-for="f_Email" for="floatingInput" class="control-label ms-3">
         Your Email
     </label>
     <span asp-validation-for="f_Email" class="text-danger"></span>
 </div>
 <div class="form-floating col-md-6 my-3">
-    <input asp-for="relationWithPatinet" type="text" class="form-control" placeholder="">
+    <input asp-for="relationWithPatinet" type="text" class="form-control" placeholder=" ">
     <label asp-for="relationWithPatinet" for="floatingInput" class="control-label ms-3">
         Relation With Patient
     </label>

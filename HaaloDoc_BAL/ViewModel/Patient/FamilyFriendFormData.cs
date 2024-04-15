@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HalloDoc.Models
+namespace HalloDoc_BAL.ViewModel.Patient
 {
     public class FamilyFriendFormData : PatientFormData
     {
@@ -18,7 +18,7 @@ namespace HalloDoc.Models
         [Phone(ErrorMessage = "Invalid phone number")]
         public string f_PhoneNumber { get; set; }
 
-        [Required (ErrorMessage = "Please specify your relation with the patient")]
+        [Required(ErrorMessage = "Please specify your relation with the patient")]
         public string relationWithPatinet { get; set; }
 
     }

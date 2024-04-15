@@ -8,7 +8,7 @@ namespace HalloDoc_BAL.ViewModel.Records
 {
     public class LogView
     {
-
+        public int? logId { get; set; }
         public string recipientName { get; set; }
         public string Action { get; set; }
         public string roleName { get; set; }

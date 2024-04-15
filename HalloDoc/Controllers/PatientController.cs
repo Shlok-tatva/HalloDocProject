@@ -15,6 +15,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using HalloDoc_BAL.ViewModel.Patient;
 
 namespace HelloDoc.Controllers
 {
@@ -133,7 +134,7 @@ namespace HelloDoc.Controllers
                         request.Email = formData.Email;
                         request.Phonenumber = formData.PhoneNumber;
                         request.Status = 1;
-                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName , formData.FirstName);
+                        request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName, formData.FirstName);
                         request.Isurgentemailsent = false;
                         request.Isdeleted = false;
                         request.Createddate = DateTime.Now;
@@ -141,7 +142,7 @@ namespace HelloDoc.Controllers
 
                         if (formData.UploadFile != null)
                         {
-                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile , request.Requestid, null, null);
+                            _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid, null, null);
                         }
 
                         requestClient.Notes = formData.Symptoms;
@@ -162,27 +163,33 @@ namespace HelloDoc.Controllers
 
                         transaction.Complete();
 
-                        return RedirectToAction("Index");
+                        TempData["Success"] = "Request Created Successfully";
+                        return RedirectToAction("SubmitRequest");
                     }
                     catch (Exception ex)
                     {
-                        throw new ApplicationException("Failed to submit Form", ex);
+                        TempData["Error"] = "fail to Create Request , " + ex.Message;
+                        return RedirectToAction("PatientRequest");
                     }
                 }
             }
             else
             {
-                return RedirectToAction("Index");
-            }   
+                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                TempData["Error"] = errorMessage;
+                return RedirectToAction("PatientRequest");
+            }
         }
 
 
         public IActionResult CheckEmailAvailbility([FromBody] string email)
         {
-
             bool emailExists = _aspnetuserrepo.Exists(email);
-            return Ok(new { exists = emailExists });
+            bool isBlockEmail = _patientFuncrepo.isBlockEmail(email);
+
+            return Ok(new { exists = emailExists, isblock =  isBlockEmail });
         }
+
 
 
         public IActionResult FamilyFriendRequest()
@@ -191,7 +198,7 @@ namespace HelloDoc.Controllers
             var regions = _commonFunctionrepo.GetAllReagion();
             ViewBag.regions = regions;
             return View();
-        }   
+        }
 
 
         [HttpPost]
@@ -262,21 +269,25 @@ namespace HelloDoc.Controllers
                             var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
                             bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
                             string name = formData.FirstName + " , " + formData.LastName;
-                            _commonFunctionrepo.EmailLog(formData.Email, message, title, name , 3, request.Requestid, null, null, 4, isSent, 1);
+                            _commonFunctionrepo.EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
                         }
 
                         transaction.Complete();
 
-                        return RedirectToAction("Index");
+                        TempData["Success"] = "Request Created Successfully";
+                        return RedirectToAction("SubmitRequest");
                     }
                     catch (Exception ex)
                     {
-                        throw new ApplicationException("Failed to submit Form", ex);
+                        TempData["Error"] = "fail to Create Request , " + ex.Message;
+                        return RedirectToAction("FamilyFriendRequest");
                     }
                 }
             }
             else
             {
+                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                TempData["Error"] = errorMessage;
                 return RedirectToAction("FamilyFriendRequest");
             }
 
@@ -323,7 +334,7 @@ namespace HelloDoc.Controllers
                         request.Isurgentemailsent = false;
                         request.Isdeleted = false;
                         request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName, formData.FirstName);
-                        request.Createddate = DateTime.Now;    
+                        request.Createddate = DateTime.Now;
                         _requestrepo.Add(request);
 
                         requestClient.Notes = formData.Symptoms;
@@ -359,7 +370,7 @@ namespace HelloDoc.Controllers
 
                         _requestConciergerepo.Add(requestConcierge);
 
-                        if(user == null)
+                        if (user == null)
                         {
                             string key = "770A8A65DA156D24EE2A093277530142";
                             string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
@@ -369,22 +380,26 @@ namespace HelloDoc.Controllers
                             var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
                             bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
                             string name = formData.FirstName + " , " + formData.LastName;
-                            _commonFunctionrepo.EmailLog(formData.Email, message, title, name , 3, request.Requestid, null, null, 4, isSent, 1);
+                            _commonFunctionrepo.EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
 
                         }
                         transaction.Complete();
 
-                        return RedirectToAction("Index");
+                        TempData["Success"] = "Request Created Successfully";
+                        return RedirectToAction("SubmitRequest");
                     }
                     catch (Exception ex)
                     {
-                        throw new ApplicationException("Failed to submit Form", ex);
+                        TempData["Error"] = "fail to Create Request , " + ex.Message;
+                        return RedirectToAction("ConciergeRequest");
                     }
                 }
             }
             else
             {
-                return RedirectToAction("FamilyFriendRequest");
+                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                TempData["Error"] = errorMessage;
+                return RedirectToAction("ConciergeRequest");
             }
 
         }
@@ -465,7 +480,7 @@ namespace HelloDoc.Controllers
 
                         _requestbusinessrepo.Add(requestbusiness);
 
-                        if(user == null)
+                        if (user == null)
                         {
                             string key = "770A8A65DA156D24EE2A093277530142";
                             string encryptedEmail = _patientFuncrepo.Encrypt(formData.Email, key);
@@ -474,22 +489,26 @@ namespace HelloDoc.Controllers
                             var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
                             bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
                             string name = formData.FirstName + " , " + formData.LastName;
-                            _commonFunctionrepo.EmailLog(formData.Email, message, title, name , 3, request.Requestid, null, null, 4, isSent, 1);
+                            _commonFunctionrepo.EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
 
                         }
 
                         transaction.Complete();
 
-                        return RedirectToAction("Index");
+                        TempData["Success"] = "Request Created Successfully";
+                        return RedirectToAction("SubmitRequest");
                     }
                     catch (Exception ex)
                     {
-                        throw new ApplicationException("Failed to submit Form", ex);
+                        TempData["Error"] = "fail to Create Request , " + ex.Message;
+                        return RedirectToAction("BusinessRequest");
                     }
                 }
             }
             else
             {
+                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                TempData["Error"] = errorMessage;
                 return RedirectToAction("BusinessRequest");
             }
 
@@ -515,56 +534,57 @@ namespace HelloDoc.Controllers
             Request request = _requestrepo.Get(formData.requestId);
             User CheckUser = _userrepo.GetUser(formData.Email);
 
-            if(CheckUser == null)
+            if (CheckUser == null)
             {
-            using(var trancation = new TransactionScope())
-            {
-                try
+                using (var trancation = new TransactionScope())
                 {
-                    var aspnetuser = new Aspnetuser();
-                    var user = new User();
-                    var hasher = new PasswordHasher<string>();
+                    try
+                    {
+                        var aspnetuser = new Aspnetuser();
+                        var user = new User();
+                        var hasher = new PasswordHasher<string>();
 
-                    Guid guid = Guid.NewGuid();
-                    string str = guid.ToString();
+                        Guid guid = Guid.NewGuid();
+                        string str = guid.ToString();
 
-                    aspnetuser.Id = str;
-                    aspnetuser.Username = formData.Email;
-                    aspnetuser.Email = formData.Email;
-                    aspnetuser.Phonenumber = requestClient.Phonenumber;
-                    string hashedPassword = hasher.HashPassword(null, formData.Password);
-                    aspnetuser.Passwordhash = hashedPassword;
-                    aspnetuser.Createddate = DateTime.Now;
-                    aspnetuser.Roleid = 3;
-                    _aspnetuserrepo.Add(aspnetuser);
+                        aspnetuser.Id = str;
+                        aspnetuser.Username = formData.Email;
+                        aspnetuser.Email = formData.Email;
+                        aspnetuser.Phonenumber = requestClient.Phonenumber;
+                        string hashedPassword = hasher.HashPassword(null, formData.Password);
+                        aspnetuser.Passwordhash = hashedPassword;
+                        aspnetuser.Createddate = DateTime.Now;
+                        aspnetuser.Roleid = 3;
+                        _aspnetuserrepo.Add(aspnetuser);
 
-                    user.Aspnetuserid = aspnetuser.Id;
-                    user.Firstname = requestClient.Firstname;
-                    user.Lastname = requestClient.Lastname;
-                    user.Email = formData.Email;
-                    user.Intyear = requestClient.Intyear;
-                    user.Intdate = requestClient.Intdate;
-                    user.Strmonth = requestClient.Strmonth;
-                    user.Mobile = requestClient.Phonenumber;
-                    user.Street = requestClient.Street;
-                    user.City = requestClient.City;
-                    user.State = requestClient.State;
-                    user.Regionid = requestClient.Regionid;
-                    user.Zipcode = requestClient.Zipcode;
-                    user.Isdeleted = false;
-                    user.Createdby = aspnetuser.Id;
-                    user.Createddate = DateTime.Now;
-                    _userrepo.Add(user);
+                        user.Aspnetuserid = aspnetuser.Id;
+                        user.Firstname = requestClient.Firstname;
+                        user.Lastname = requestClient.Lastname;
+                        user.Email = formData.Email;
+                        user.Intyear = requestClient.Intyear;
+                        user.Intdate = requestClient.Intdate;
+                        user.Strmonth = requestClient.Strmonth;
+                        user.Mobile = requestClient.Phonenumber;
+                        user.Street = requestClient.Street;
+                        user.City = requestClient.City;
+                        user.State = requestClient.State;
+                        user.Regionid = requestClient.Regionid;
+                        user.Zipcode = requestClient.Zipcode;
+                        user.Isdeleted = false;
+                        user.Createdby = aspnetuser.Id;
+                        user.Createddate = DateTime.Now;
+                        _userrepo.Add(user);
 
-                    request.Userid = user.Userid;
-                    _requestrepo.Update(request);
+                        request.Userid = user.Userid;
+                        _requestrepo.Update(request);
 
-                    trancation.Complete();
+                        trancation.Complete();
+                        TempData["Success"] = "Account Created Successfully !";
                         return Redirect("/login");
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["Error"] = "Error while Account Creation !";
                         return Redirect("/Login");
 
                     }
@@ -595,36 +615,36 @@ namespace HelloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult reviewAgreement(int requestId , int status , string? cancellationNote)
+        public IActionResult reviewAgreement(int requestId, int status, string? cancellationNote)
         {
-            using(var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope())
             {
                 Request request = _requestrepo.Get(requestId);
-                if(request.Status == 2)
+                if (request.Status == 2)
                 {
-                Requeststatuslog log = new Requeststatuslog();
-                log.Requestid = requestId;
-                log.Createddate = DateTime.Now;
+                    Requeststatuslog log = new Requeststatuslog();
+                    log.Requestid = requestId;
+                    log.Createddate = DateTime.Now;
 
-                if(status == 0)
-                {
-                    request.Status = 4;
-                    log.Status = 4;
-                    log.Notes = "Agreement accepted by patient";
-                    _requestrepo.Update(request);
-                    _patientFuncrepo.createLog(log);
-                    transaction.Complete();
-                    return Ok(new { message = "Agreement accepted by patient" });
+                    if (status == 0)
+                    {
+                        request.Status = 4;
+                        log.Status = 4;
+                        log.Notes = "Agreement accepted by patient";
+                        _requestrepo.Update(request);
+                        _patientFuncrepo.createLog(log);
+                        transaction.Complete();
+                        return Ok(new { message = "Agreement accepted by patient" });
                     }
-                else
-                {
-                    request.Status = 7;
-                    log.Status = 7;
-                    log.Notes = "Agreement canceled by patient , reason:- " + cancellationNote;
-                    _requestrepo.Update(request);
-                    _patientFuncrepo.createLog(log);
-                    transaction.Complete();
-                    return Ok(new { message = "Agreement canceled by patient" });
+                    else
+                    {
+                        request.Status = 7;
+                        log.Status = 7;
+                        log.Notes = "Agreement canceled by patient , reason:- " + cancellationNote;
+                        _requestrepo.Update(request);
+                        _patientFuncrepo.createLog(log);
+                        transaction.Complete();
+                        return Ok(new { message = "Agreement canceled by patient" });
                     }
                 }
                 else

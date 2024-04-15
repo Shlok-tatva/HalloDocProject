@@ -1,6 +1,7 @@
 ﻿using HalloDoc.Models;
 using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.Repository;
+using HalloDoc_BAL.ViewModel.Patient;
 using HalloDoc_DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -25,8 +26,8 @@ namespace HalloDoc.Controllers
 
 
 
-       
-        public DashboardController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo , IPatientFunctionRepository patientFuncrepo, ICommonFunctionRepository commonFunctionrepo)
+
+        public DashboardController(IAspnetuserRepository aspnetuser, IRequestClientRepository requestclient, IRequestRepository requestrepo, IUserRepository user, IRConciergeRepository conciergerepo, IRequestConciergeRepository requestConciergerepo, IRBusinessRepository rbusinessrepo, IRequestBusinessRepository requestbusinessrepo, IRequestwisefileRepository requestwisefilerepo, IPatientFunctionRepository patientFuncrepo, ICommonFunctionRepository commonFunctionrepo)
         {
             _aspnetuserrepo = aspnetuser;
             _requestclientrepo = requestclient;
@@ -46,7 +47,7 @@ namespace HalloDoc.Controllers
             ViewData["ViewName"] = "Dashboard";
             var email = HttpContext.Session.GetString("UserId");
 
-            if(email == null)
+            if (email == null)
             {
                 return Redirect("/Login");
             }
@@ -55,24 +56,24 @@ namespace HalloDoc.Controllers
             ViewBag.Username = username;
             User user = _userrepo.GetUser(email);
 
-       
-                var requestData = from request in _requestrepo.GetAll(user.Userid)
-                                  join requestFile in _requestwisefilerepo.GetAll()
-                                  on request.Requestid equals requestFile.Requestid into gj
-                                  from subfile in gj.DefaultIfEmpty()
-                                  group subfile by new { request.Requestid, request.Status, request.Createddate } into g
-                                  select new DashboardViewModel
-                                  {
-                                      Requestid = g.Key.Requestid,
-                                      requestDate = g.Key.Createddate,
-                                      requestStatus = g.Key.Status,
-                                      DocumentCount = g.Count(f => f != null)
-                                  };
 
-              var dashboardRequests = requestData.ToList();
+            var requestData = from request in _requestrepo.GetAll(user.Userid)
+                              join requestFile in _requestwisefilerepo.GetAll()
+                              on request.Requestid equals requestFile.Requestid into gj
+                              from subfile in gj.DefaultIfEmpty()
+                              group subfile by new { request.Requestid, request.Status, request.Createddate } into g
+                              select new DashboardViewModel
+                              {
+                                  Requestid = g.Key.Requestid,
+                                  requestDate = g.Key.Createddate,
+                                  requestStatus = g.Key.Status,
+                                  DocumentCount = g.Count(f => f != null)
+                              };
+
+            var dashboardRequests = requestData.ToList();
             return View(dashboardRequests);
-          
-           
+
+
         }
 
         public IActionResult DocumentView(int Requestid)
@@ -95,9 +96,10 @@ namespace HalloDoc.Controllers
                                    select new DocumentViewModel
                                    {
                                        Requestid = request.Requestid,
-                                       uploadDate = requestFile.Createddate,    
+                                       uploadDate = requestFile.Createddate,
                                        UploadImage = requestFile.Filename,
                                        fileName = Path.GetFileName(requestFile.Filename),
+                                       confirmationNumber = request.Confirmationnumber,
                                    };
             // Pass the list of DocumentViewModel to the view
             return View(requestwiseFiles.ToList());
@@ -121,9 +123,9 @@ namespace HalloDoc.Controllers
         public IActionResult UploadFile(IFormFile file, int requestId)
         {
             try
-            {  
-                    _commonFunctionrepo.HandleFileUpload(file, requestId , null, null);
-                    return Ok(new { success = true });            
+            {
+                _commonFunctionrepo.HandleFileUpload(file, requestId, null, null);
+                return Ok(new { success = true });
             }
             catch (Exception ex)
             {
@@ -145,7 +147,7 @@ namespace HalloDoc.Controllers
             var username = GetUsernameFromEmail(email);
             ViewBag.Username = username;
             User user = _userrepo.GetUser(email);
-            userData =  new UserDataviewModel
+            userData = new UserDataviewModel
             {
                 userid = user.Userid,
                 FirstName = user.Firstname,
@@ -164,25 +166,25 @@ namespace HalloDoc.Controllers
 
         [HttpPost("UpdateUser")]
 
-        public IActionResult UpdateUser(int userid , string FirstName , string LastName , string Email , string phone, string DateOfBirth ,  string Street , string State , string City , string ZipCode)
+        public IActionResult UpdateUser(int userid, string FirstName, string LastName, string Email, string phone, string DateOfBirth, string Street, string State, string City, string ZipCode)
         {
             try
             {
-            var date = DateTime.Parse(DateOfBirth);
+                var date = DateTime.Parse(DateOfBirth);
 
-            User user = _userrepo.GetUserByID(userid);
-            user.Firstname = FirstName;
-            user.Lastname =LastName;
-            user.Email = Email;
-            user.Mobile = phone;
-            user.Intyear = date.Year;
-            user.Strmonth = date.ToString("MM");
-            user.Intdate = date.Day;
-            user.Street = Street;
-            user.State = State;
-            user.City = City;
-            user.Zipcode = ZipCode;
-            _userrepo.Update(user);
+                User user = _userrepo.GetUserByID(userid);
+                user.Firstname = FirstName;
+                user.Lastname = LastName;
+                user.Email = Email;
+                user.Mobile = phone;
+                user.Intyear = date.Year;
+                user.Strmonth = date.ToString("MM");
+                user.Intdate = date.Day;
+                user.Street = Street;
+                user.State = State;
+                user.City = City;
+                user.Zipcode = ZipCode;
+                _userrepo.Update(user);
 
                 return Ok();
             }
@@ -194,7 +196,8 @@ namespace HalloDoc.Controllers
 
         }
 
-        public IActionResult RequestForme(){
+        public IActionResult RequestForme()
+        {
             ViewData["ViewName"] = "RequestForme";
             var email = HttpContext.Session.GetString("UserId");
             var regions = _commonFunctionrepo.GetAllReagion();
@@ -207,20 +210,21 @@ namespace HalloDoc.Controllers
             ViewBag.Username = username;
 
             User user = _userrepo.GetUser(email);
-            var patinetData = new PatientFormData{
-            FirstName = user.Firstname,
-            LastName  = user.Lastname,
-            Email = user.Email,
-            regionId = (int)user.Regionid,
-            Street = user.Street,
-            DateOfBirth = DateTime.ParseExact(user.Intyear.Value.ToString("") + "-" + user.Strmonth + "-" + string.Format("{0:00}", user.Intdate.Value) , "yyyy-MM-dd" , null),
-            City = user.City,
-            ZipCode = user.Zipcode
+            var patinetData = new PatientFormData
+            {
+                FirstName = user.Firstname,
+                LastName = user.Lastname,
+                Email = user.Email,
+                regionId = (int)user.Regionid,
+                Street = user.Street,
+                DateOfBirth = DateTime.ParseExact(user.Intyear.Value.ToString("") + "-" + user.Strmonth + "-" + string.Format("{0:00}", user.Intdate.Value), "yyyy-MM-dd", null),
+                City = user.City,
+                ZipCode = user.Zipcode
             };
             return View(patinetData);
         }
 
-        public IActionResult RequestForSomeone(PatientFormData formData)
+        public IActionResult RequestForSomeone()
         {
             ViewData["ViewName"] = "RequestForSomeone";
             var email = HttpContext.Session.GetString("UserId");
@@ -256,6 +260,7 @@ namespace HalloDoc.Controllers
                     request.Email = formData.Email;
                     request.Phonenumber = formData.PhoneNumber;
                     request.Status = 1;
+                    request.Isdeleted = false;
                     request.Isurgentemailsent = false;
                     request.Createddate = DateTime.Now;
                     request.Confirmationnumber = _commonFunctionrepo.GetConfirmationNumber(state, formData.LastName, formData.FirstName);
@@ -269,7 +274,7 @@ namespace HalloDoc.Controllers
 
                     if (formData.UploadFile != null)
                     {
-                        _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid, null, null) ;
+                        _commonFunctionrepo.HandleFileUpload(formData.UploadFile, request.Requestid, null, null);
                     }
 
                     requestClient.Notes = formData.Symptoms;
@@ -278,7 +283,7 @@ namespace HalloDoc.Controllers
                     requestClient.Lastname = formData.LastName;
                     requestClient.Phonenumber = formData.PhoneNumber;
                     requestClient.Email = formData.Email;
-                    requestClient.Strmonth = formData.DateOfBirth.Month.ToString();
+                    requestClient.Strmonth = formData.DateOfBirth.Month.ToString("00");
                     requestClient.Intyear = formData.DateOfBirth.Year;
                     requestClient.Intdate = formData.DateOfBirth.Day;
                     requestClient.Street = formData.Street;
@@ -296,16 +301,18 @@ namespace HalloDoc.Controllers
                     var message = $"Please click <a href=\"{accountCreationLink}\">here</a> to create your account.";
                     bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
                     string name = formData.FirstName + " , " + formData.LastName;
-                    _commonFunctionrepo.EmailLog(formData.Email, message, title, name , 3, request.Requestid, null, null, 4, isSent, 1);
+                    _commonFunctionrepo.EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
 
                     transaction.Complete();
-
+                    TempData["Success"] = "Request Created Successfully";
                     return RedirectToAction("Index");
                 }
             }
             else
             {
-            return NotFound();
+                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                TempData["Error"] = errorMessage;
+                return NotFound();
             }
         }
 

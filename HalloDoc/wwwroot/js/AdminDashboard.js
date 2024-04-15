@@ -530,9 +530,8 @@ $(document).ready(function () {
 
     /* Send Link Modal*/
     $('#open-sendLinkModal').on("click", function () {
-        $("#sendLinktModal").modal('show');
+        $("#sendLinkModal").modal('show');
     })
-
     /* Send Link Logic */
     $('#sendLink').validate({
         rules: {
@@ -597,7 +596,43 @@ $(document).ready(function () {
         }
     });
 
+    /* Request Support Modal */
+    $('#open-requestSupportModal').on("click", function () {
+        $("#requestSupportModal").modal('show');
+    })
 
+    $('#requestSupport').validate({
+        rules: {
+            supportMessage: {
+                required: true,
+            }
+        },
+        messages: {
+            supportMessage: {
+                required: "Please Enter Support Message !",
+            }
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element.parent());
+            error.addClass('text-danger');
+        },
+        submitHandler: function (form) {
+            var formData = new FormData(form);
+            $.ajax({
+                url: "/Admin/RequestSupport",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    showToaster("Error while sending Request Message Providers !", "error");
+                }
+            });
+        }
+    });
 
 
 

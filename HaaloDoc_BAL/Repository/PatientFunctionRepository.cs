@@ -124,5 +124,13 @@ namespace HalloDoc_BAL.Repository
                 _context.SaveChanges();
             }
         }
+       public bool isBlockEmail(string email)
+        {
+            Blockrequest req = _context.Blockrequests.FirstOrDefault(r => r.Email == email);
+            if (req != null)
+                return true;
+            else return false;
+
+        }
     }
 }

@@ -1,5 +1,7 @@
 
 $(document).ready(function () {
+    setupPaginationBasedOnDevice();
+
     $("#DeleteSuccess").on("click", function () {
         var requestid = $("#DelRequestId").val();
         deletePatientRequest(requestid);
@@ -26,7 +28,6 @@ $(document).ready(function () {
         clearFiltersAndFetchRecords();
     });
 
-    fetchSearchRecords("", "", "", "", "", "", 0, 0);
 });
 
 function deletePatientRequest(requestid) {
@@ -73,7 +74,7 @@ function fetchSearchRecords(email, fromdos, phone, todos, patient, provider, sta
             } else {
                 console.log("Function Success");
                 $('#SearchRecords').html(response);
-                setupPagination(10 , ".data-row");
+                setupPaginationBasedOnDevice();
             }
         },
         error: function () {
