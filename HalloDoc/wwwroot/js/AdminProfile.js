@@ -3,7 +3,7 @@ $(document).ready(function () {
     $("#resetPassword").on("click", function () {
         var password = $("#Adminpassword").val();
         if (password.length < 5) {
-            showToaster("minimum length of password should be 5" , "error");
+            showToaster("minimum length of password should be 5", "error");
             return;
         }
 
@@ -37,12 +37,12 @@ $(document).ready(function () {
                     success: function (response) {
                         debugger
                         console.log(response);
-                        showToaster("Password change successfully!" , "success");
+                        showToaster("Password change successfully!", "success");
                     },
                     error: function (error) {
                         debugger
                         console.log(error)
-                        showToaster("Failed to change Password" , "error");
+                        showToaster("Failed to change Password", "error");
                     }
                 });
 
@@ -51,6 +51,29 @@ $(document).ready(function () {
         });
     })
 
+
+    $('#statusSelect, #roleSelect').change(function () {
+        $('#saveAccountInfo').show();
+    });
+
+    $('#saveAccountInfo').click(function () {
+        debugger
+        var adminId = $('#adminId').val();
+        var status = $('#statusSelect').val();
+        var roleId = $('#roleSelect').val();
+
+        $.ajax({
+            url: '/Admin/changeAdminRoleOrStatus',
+            method: 'POST',
+            data: { adminId: adminId, status: status, roleId: roleId },
+            success: function (response) {
+                showToaster("Account Info edited successfully!", "success");
+            },
+            error: function (xhr, status, error) {
+                showToaster("Something Wrong !", "error");
+            }
+        });
+    });
 
 
     $(".readonly").prop('readonly', true);
@@ -100,21 +123,21 @@ $(document).ready(function () {
 
     $('#editButton').click(function (e) {
         e.preventDefault();
-        if ($('#adminProfile').valid()) { 
+        if ($('#adminProfile').valid()) {
             handleSaveData("#adminProfile", "#editButton");
         }
     });
 
     $('#editButton2').click(function (e) {
         e.preventDefault();
-        if ($('#adminProfile').valid()) { 
+        if ($('#adminProfile').valid()) {
             handleSaveData("#adminProfile", "#editButton2");
         }
     });
- 
 
 
-    function handleSaveData(formId , buttonId) {
+
+    function handleSaveData(formId, buttonId) {
         debugger
         var changedCheckboxData = [];
 
@@ -123,11 +146,11 @@ $(document).ready(function () {
             var finalIsChecked = $(this).is(':checked');
             var initialIsChecked = initialCheckboxState[regionId];
 
-          
+
             if (initialIsChecked !== finalIsChecked) {
                 changedCheckboxData.push({ regionId: regionId, isChecked: finalIsChecked });
             }
-        }); 
+        });
 
         var formdata = $(formId).serializeArray();
         var formdataObject = {};
@@ -142,7 +165,7 @@ $(document).ready(function () {
             regions: changedCheckboxData
         };
 
-            console.log(requestData);
+        console.log(requestData);
 
         if ($(buttonId).text() === "Edit") {
             $.ajax({
@@ -151,10 +174,10 @@ $(document).ready(function () {
                 contentType: 'application/json',
                 data: JSON.stringify(requestData),
                 success: function (response) {
-                    showToaster("Profile Data change successfully!" , "success");
+                    showToaster("Profile Data change successfully!", "success");
                 },
                 error: function (xhr, status, error) {
-                    showToaster("Error While changing Data!" , "error");
+                    showToaster("Error While changing Data!", "error");
                 }
             });
         }

@@ -634,7 +634,9 @@ namespace HelloDoc.Controllers
                         _requestrepo.Update(request);
                         _patientFuncrepo.createLog(log);
                         transaction.Complete();
-                        return Ok(new { message = "Agreement accepted by patient" });
+                        TempData["success"] = "Agreement accepted by patient";
+                        return RedirectToAction("Index", "Login");
+
                     }
                     else
                     {
@@ -644,12 +646,14 @@ namespace HelloDoc.Controllers
                         _requestrepo.Update(request);
                         _patientFuncrepo.createLog(log);
                         transaction.Complete();
-                        return Ok(new { message = "Agreement canceled by patient" });
+                        TempData["success"] = "Agreement canceled by patient";
+                        return RedirectToAction("Index" , "Login");
                     }
                 }
                 else
                 {
-                    return BadRequest("Maybe You already accept/cancel agreement");
+                    TempData["error"] = "Maybe You already accept/cancel agreement";
+                    return RedirectToAction("Index", "Login");
                 }
             }
         }

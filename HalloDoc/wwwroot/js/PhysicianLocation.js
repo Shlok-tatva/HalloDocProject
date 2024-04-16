@@ -72,7 +72,7 @@ function createMarker(position, color, popupText, physicianData) {
 
     marker.getElement().addEventListener('click', function () {
         // Populate the modal with fetched details
-        debugger
+        
         populateModal(physicianData);
         $('#physicianModal').modal('show');
     });

@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     $(".edit-button").click(function () {
         var section = $(this).data("section");
-        debugger
+        
         $(this).hide();
         $(this).siblings(".save-button").show();
         $(`input[data-section="${section}"]`).removeAttr("readonly");
@@ -35,7 +35,7 @@
     });
 
     $(".open-modal").on("click", function () {
-        debugger
+        
         let providerId = +$(this).data("providerid");
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
@@ -130,12 +130,10 @@
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        debugger
                         console.log(response);
                         showToaster("Password change successfully!", "success");
                     },
                     error: function (error) {
-                        debugger
                         console.log(error)
                         showToaster("Failed to change Password", "error");
                     }

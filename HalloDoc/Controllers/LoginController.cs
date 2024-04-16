@@ -154,6 +154,7 @@ namespace HalloDoc.Controllers
                     }
                     else
                     {
+                        TempData["Error"] = "Account does not exists";
                         return Redirect("/login/PhysicianLogin");
                     }
 
@@ -185,12 +186,13 @@ namespace HalloDoc.Controllers
         public IActionResult resetPassword(string email)
         {
             User user = _userrepo.GetUser(email);
-            string name = user.Firstname + " , " + user.Lastname;
             if(user == null)
             {
                 TempData["Error"] = "User Not Found";
                 return Redirect("/login/forgetPassword");
             }
+
+            string name = user.Firstname + " , " + user.Lastname;
 
             string key = "770A8A65DA156D24EE2A093277530142";
             String encryptedEmail = _petientfunctionrepo.Encrypt(email , key);

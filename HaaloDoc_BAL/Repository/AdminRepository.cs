@@ -1,6 +1,7 @@
 ﻿using HalloDoc_BAL.Interface;
 using HalloDoc_DAL.DataContext;
 using HalloDoc_DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace HalloDoc_BAL.Repository
 
         public Admin GetAdminById(int id)
         {
-            return _context.Admins.FirstOrDefault(a => a.Adminid == id);
+            return _context.Admins.Include(a => a.Aspnetuser).FirstOrDefault(a => a.Adminid == id);
         }
         public Admin GetAdmin(string id)
         {

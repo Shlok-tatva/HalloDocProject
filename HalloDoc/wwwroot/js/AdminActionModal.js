@@ -8,18 +8,15 @@ $(document).ready(function () {
         var requestId = $(this).data('request-id');
 
         if (modalId == "clearCaseModal") {
-            debugger;
             clearCase(requestId);
         }
 
         if (modalId == 'acceptModal') {
-            debugger;
             AcceptCase(requestId);
         }
 
         var data = getRequest(requestId);
         var patientName = data.firstname + " , " + data.lastname;
-        debugger
         var patientPhone = data.phonenumber;
         var patientEmail = data.email;
 
@@ -65,7 +62,6 @@ $(document).ready(function () {
 
     /*Modal Click Close the Modal  */
     $('.close').on('click', function () {
-        debugger
         var modalId = $(this).closest('.modal').attr('id');
 
         switch (modalId) {
@@ -210,7 +206,6 @@ $(document).ready(function () {
             error.addClass('text-danger');
         },
         submitHandler: function (form) {
-            debugger
             var formData = new FormData();
             formData.append('requestId', $('#requestIdassignCase').val());
             formData.append('physicianId', $('#physicianSelect').val());
@@ -482,7 +477,6 @@ $(document).ready(function () {
 
     /* Call status change Ajax Call */
     $('#saveButton').click(function () {
-        debugger
             var selectedOption = $('input[name="options-outlined"]:checked').attr('id');
             var callType = selectedOption === "success-outlined" ? 1 : 2;
             var requestId = +$("#requestIdCallType").val();

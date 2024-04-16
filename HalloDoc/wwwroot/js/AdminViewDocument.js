@@ -48,7 +48,6 @@ $('.sendMail').click(function () {
 function downloadFile(filePath) {
     if (filePath != undefined) {
 
-    debugger
     $.ajax({
         url: '/Admin/DownloadFile',
         type: 'GET',
@@ -174,7 +173,6 @@ function getEmailDataAndSend() {
 
     // Loop through table rows to find selected files
     $('.fileCheckbox:checked').each(function () {
-        debugger;
         var filePath = $(this).closest('tr').find('.download-btn').data('file');
         if (filePath !== undefined && filePath.length > 0) {
             var trimpath = "wwwroot/" + filePath.substring(2);

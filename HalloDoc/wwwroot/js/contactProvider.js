@@ -3,7 +3,6 @@ $(document).ready(function () {
     physicianNotificationHandler();
 
     $('#regionForProvider').on('change' , function () {
-        debugger;
         console.log($(this).val());
         var regionId = +$(this).val();
 
@@ -12,7 +11,6 @@ $(document).ready(function () {
             type: 'GET',
             data: { regionId },
             success: function (data) {
-                debugger
                 console.log(data);
                 $('#providerTable').empty();
                 $('#providerTable').html(data);
@@ -27,7 +25,6 @@ $(document).ready(function () {
 
 
     $(document).on('click', '.open-modal', function () {
-        debugger
         var requestId = $(this).data('physicianid');
         var email = $(this).data('email');
         var phonenumber = $(this).data('phone');
@@ -50,7 +47,6 @@ $(document).ready(function () {
     })
 
     $("#contactProvider").on('submit', function (e) {
-        debugger;
         e.preventDefault();
         var physicianId = +$("#physicianId").val();
         var selectedRadio = $("input:radio[name=channel]:checked").val();

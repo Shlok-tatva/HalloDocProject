@@ -16,7 +16,6 @@
     })
 
     $('#saveBtn').on('click', function (e) {
-        debugger
         e.preventDefault();
         var formdata = new FormData();
         formdata.append("requestId", $("#requestId").val());

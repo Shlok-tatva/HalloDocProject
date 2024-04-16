@@ -216,18 +216,18 @@ namespace HalloDocAdmin.Controllers
                 if (adminid != null)
                 {
                     int adminId = Int32.Parse(adminid);
-                    _commonFunctionrepo.createRequest(data, adminId, null , requestScheme , requestHost);
+                    _commonFunctionrepo.createRequest(data, adminId, null, requestScheme, requestHost);
                 }
                 if (providerid != null)
                 {
                     int providerId = Int32.Parse(providerid);
-                    _commonFunctionrepo.createRequest(data, null, providerId , requestScheme, requestHost);
+                    _commonFunctionrepo.createRequest(data, null, providerId, requestScheme, requestHost);
                 }
 
                 TempData["Success"] = "Request Created Successfully! ";
-                if(providerid != null)
+                if (providerid != null)
                 {
-                    return RedirectToAction("Dashboard" , "Provider");
+                    return RedirectToAction("Dashboard", "Provider");
                 }
                 else
                 {
@@ -254,24 +254,49 @@ namespace HalloDocAdmin.Controllers
         [CustomAuth("Admin", "Provider")]
         public IActionResult ViewCase()
         {
-            ViewData["ViewName"] = "Dashboard";
-            ViewBag.ViewName = "Dashboard";
-            ViewBag.Username = HttpContext.Session.GetString("Username");
             string providerid = HttpContext.Session.GetString("providerId");
             string adminid = HttpContext.Session.GetString("AdminId");
-            if (providerid != null && adminid == null)
+            try
             {
-                ViewBag.isprovider = true;
+
+                ViewData["ViewName"] = "Dashboard";
+                ViewBag.ViewName = "Dashboard";
+                ViewBag.Username = HttpContext.Session.GetString("Username");
+                if (providerid != null && adminid == null)
+                {
+                    ViewBag.isprovider = true;
+                }
+                else
+                {
+                    ViewBag.isprovider = false;
+                }
+
+                if (!int.TryParse(Request.Query["request"], out int requestId))
+                {
+                    TempData["Error"] = "Invalid request ID";
+                    if (providerid != null) return RedirectToAction("Dashboard", "Provider");
+                    return RedirectToAction("Dashboard");
+                }
+                ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
+                var castag = _adminFunctionRepository.GetAllCaseTag();
+                ViewData["casetag"] = castag;
+                if (providerid != null && view.providerId != Int32.Parse(providerid))
+                {
+                    TempData["Error"] = "Request Not Found";
+                    return RedirectToAction("Dashboard", "Provider");
+                }
+
+                return View(view);
             }
-            else
+            catch (Exception)
             {
-                ViewBag.isprovider = false;
+                TempData["Error"] = "Request Not Found";
+                if (providerid != null && adminid == null)
+                {
+                    return RedirectToAction("Dashboard", "Provider");
+                }
+                return RedirectToAction("Dashboard");
             }
-            int requestId = Int32.Parse(Request.Query["request"]);
-            ViewCaseView view = _adminFunctionRepository.GetViewCase(requestId);
-            var castag = _adminFunctionRepository.GetAllCaseTag();
-            ViewData["casetag"] = castag;
-            return View(view);
         }
 
 
@@ -310,22 +335,45 @@ namespace HalloDocAdmin.Controllers
         {
             string providerid = HttpContext.Session.GetString("providerId");
             string adminid = HttpContext.Session.GetString("AdminId");
-            if (providerid != null && adminid == null)
+            try
             {
-                ViewBag.isprovider = true;
-            }
-            else
-            {
-                ViewBag.isprovider = false;
-            }
+                if (providerid != null && adminid == null)
+                {
+                    ViewBag.isprovider = true;
+                }
+                else
+                {
+                    ViewBag.isprovider = false;
+                }
 
-            ViewData["ViewName"] = "Dashboard";
-            ViewBag.Username = HttpContext.Session.GetString("Username");
-            int requestId = Int32.Parse(Request.Query["request"]);
-            ViewNotesView view = _adminFunctionRepository.GetViewNotesView(requestId);
-            ViewBag.requestId = requestId;
-            return View(view);
+                ViewData["ViewName"] = "Dashboard";
+                ViewBag.Username = HttpContext.Session.GetString("Username");
+
+                if (!int.TryParse(Request.Query["request"], out int requestId))
+                {
+                    TempData["Error"] = "Invalid request ID";
+                    if (providerid != null) return RedirectToAction("Dashboard", "Provider");
+                    return RedirectToAction("Dashboard");
+                }
+
+                ViewNotesView view = _adminFunctionRepository.GetViewNotesView(requestId);
+
+                if (providerid != null && view.providerId != Int32.Parse(providerid))
+                {
+                    TempData["Error"] = "Notes Not Found";
+                    return RedirectToAction("Dashboard");
+                }
+
+                ViewBag.requestId = requestId;
+                return View(view);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "An error occurred while processing your request";
+                return RedirectToAction("Dashboard");
+            }
         }
+
 
 
         [CustomAuth("Admin", "Provider")]
@@ -402,18 +450,47 @@ namespace HalloDocAdmin.Controllers
         [CustomAuth("Admin", "Provider")]
         public IActionResult ViewUpload()
         {
-            ViewData["ViewName"] = "Dashboard";
-            ViewBag.Username = HttpContext.Session.GetString("Username");
+            string providerid = HttpContext.Session.GetString("providerId");
+            string adminid = HttpContext.Session.GetString("AdminId");
+            try
+            {
+                ViewData["ViewName"] = "Dashboard";
+                ViewBag.Username = HttpContext.Session.GetString("Username");
 
-            int requestId = Int32.Parse(Request.Query["request"]);
-            Request request = _requestRepository.Get(requestId);
+                if (!int.TryParse(Request.Query["request"], out int requestId))
+                {
+                    TempData["Error"] = "Invalid request ID";
+                    if (providerid != null) return RedirectToAction("Dashboard", "Provider");
+                    return RedirectToAction("Dashboard");
+                }
 
-            List<ViewUploadView> documetns = _adminFunctionRepository.GetuploadedDocuments(requestId);
-            ViewBag.requestId = requestId;
-            ViewBag.CFnumber = request.Confirmationnumber;
-            ViewBag.patientName = request.Firstname + " " + request.Lastname;
-            return View(documetns);
+                Request request = _requestRepository.Get(requestId);
+                if (request == null)
+                {
+                    TempData["Error"] = "Request not found";
+                    if (providerid != null) return RedirectToAction("Dashboard", "Provider");
+                    return RedirectToAction("Dashboard");
+                }
+
+                if (providerid != null && request.Physicianid != Int32.Parse(providerid))
+                {
+                    TempData["Error"] = "Request not found";
+                    return RedirectToAction("Dashboard", "Provider");
+                }
+
+                List<ViewUploadView> documents = _adminFunctionRepository.GetuploadedDocuments(requestId);
+                ViewBag.requestId = requestId;
+                ViewBag.CFnumber = request.Confirmationnumber;
+                ViewBag.patientName = $"{request.Firstname} {request.Lastname}";
+                return View(documents);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "An error occurred while processing your request";
+                return RedirectToAction("Dashboard");
+            }
         }
+
 
 
         [CustomAuth("Admin", "Provider")]
@@ -668,12 +745,30 @@ namespace HalloDocAdmin.Controllers
                 ViewBag.isprovider = false;
             }
 
-            int requestId = Int32.Parse(Request.Query["request"]);
+            if (!int.TryParse(Request.Query["request"], out int requestId))
+            {
+                TempData["Error"] = "Invalid request ID";
+                if (providerid != null) return RedirectToAction("Dashboard", "Provider");
+                return RedirectToAction("Dashboard");
+            }
             EncounterFormView view = _adminFunctionRepository.GetEncounterFormView(requestId);
+
+            if (providerid != null && view.physicianId != Int32.Parse(providerid))
+            {
+                TempData["Error"] = "Request ID not found";
+                return RedirectToAction("Dashboard", "Provider");
+            }
+
             if (providerid != null && view.isFinalize == 1)
             {
                 TempData["Error"] = "Form finalized";
                 return Redirect("Dashboard");
+            }
+            Request rq = _requestRepository.Get(requestId);
+            if (providerid == null && rq == null)
+            {
+                TempData["Error"] = "Request ID not found";
+                return RedirectToAction("Dashboard");
             }
             return View(view);
         }
@@ -836,6 +931,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.Username = HttpContext.Session.GetString("Username");
             var regions = _adminFunctionRepository.GetAllReagion();
             ViewBag.regions = regions;
+            ViewBag.isEditAdmin = false;
             int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
             AdminProfileView view = _adminFunctionRepository.GetAdminProfileView(adminId);
             return View(view);
@@ -881,6 +977,7 @@ namespace HalloDocAdmin.Controllers
                 return BadRequest();
             }
         }
+
         #endregion
 
         #region Provider-Page
@@ -964,16 +1061,27 @@ namespace HalloDocAdmin.Controllers
             if (providerid == null)
             {
                 ViewBag.isprovider = false;
-                providerId = Int32.Parse(Request.Query["providerId"]);
-
+                if (!int.TryParse(Request.Query["providerId"], out providerId))
+                {
+                    // Handle scenario where providerId is not provided or cannot be parsed
+                    TempData["Error"] = "Invalid provider ID";
+                    return RedirectToAction("Provider");
+                }
             }
             else
             {
                 ViewBag.isprovider = true;
                 providerId = Int32.Parse(providerid);
-
             }
+
             var view = _adminFunctionRepository.getProviderView(providerId);
+            if (view == null)
+            {
+                // Handle scenario where provider details are not found
+                TempData["Error"] = "Provider details not found";
+                return RedirectToAction("Provider");
+            }
+
             return View("provider/EditProvider", view);
         }
 
@@ -1430,18 +1538,54 @@ namespace HalloDocAdmin.Controllers
             {
                 ViewData["ViewName"] = "Access";
                 ViewBag.Username = HttpContext.Session.GetString("Username");
-                var regions = _adminFunctionRepository.GetAllReagion();
-                ViewBag.regions = regions;
-                int adminId = Int32.Parse(Request.Query["adminId"]);
+                ViewBag.regions = _adminFunctionRepository.GetAllReagion();
+                ViewBag.allRoles = _adminFunctionRepository.GetAllRole();
+                ViewBag.isEditAdmin = true;
+
+                if (!int.TryParse(Request.Query["adminId"], out int adminId))
+                {
+                    // Handle scenario where adminId is not provided or cannot be parsed
+                    TempData["Error"] = "Invalid admin ID";
+                    return RedirectToAction("Access/UserAccess");
+                }
+
                 AdminProfileView view = _adminFunctionRepository.GetAdminProfileView(adminId);
+                if (view == null)
+                {
+                    // Handle scenario where admin profile is not found
+                    TempData["Error"] = "Admin profile not found";
+                    return RedirectToAction("Access/UserAccess");
+                }
+
                 return View("AdminProfile", view);
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "Try after sometime";
-                return Redirect("Access/UserAccess");
+                return RedirectToAction("Access/UserAccess");
             }
         }
+
+
+        public IActionResult changeAdminRoleOrStatus(int adminId, int status, int roleId)
+        {
+            try
+            {
+                int logedInAdmin = Int32.Parse(HttpContext.Session.GetString("AdminId"));
+                Admin admin = _adminrepo.GetAdminById(adminId);
+                admin.Roleid = roleId;
+                admin.Status = (short?)status;
+                admin.Modifieddate = DateTime.Now;
+                admin.Modifiedby = admin.Aspnetuser.Id;
+                _adminrepo.updateAdmin(admin);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [CustomAuth("Admin")]
         [HttpGet]
@@ -1498,6 +1642,8 @@ namespace HalloDocAdmin.Controllers
             {
                 int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
                 _adminFunctionRepository.createAdmin(formData, selectedRegions, adminId);
+                TempData["Success"] = "Admin Created Successfully";
+
                 return Redirect("Access/UserAccess");
             }
             catch (Exception ex)
@@ -1735,7 +1881,7 @@ namespace HalloDocAdmin.Controllers
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewData["ViewName"] = "Records";
             List<SearchRecordView> result = _adminFunctionRepository.GetSearchRecords(null, null, null, null, null, 0, 0, null);
-            return View("Records/SearchRecords" , result);
+            return View("Records/SearchRecords", result);
         }
 
         public IActionResult GetSearchRecords(string? Email, DateTime? FromDoS, string? Phone, string? Patient, String? Provider, int RequestStatus, int RequestType, DateTime? ToDoS)
@@ -1745,6 +1891,28 @@ namespace HalloDocAdmin.Controllers
 
         }
 
+        public IActionResult DeletePatientRequest(int requestid)
+        {
+            Request? request = _requestRepository.Get(requestid);
+            if (request != null)
+            {
+                try
+                {
+                    request.Isdeleted = true;
+                    request.Modifieddate = DateTime.Now;
+                    _requestRepository.Update(request);
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
 
 
 

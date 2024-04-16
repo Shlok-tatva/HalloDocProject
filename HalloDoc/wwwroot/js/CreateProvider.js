@@ -2,7 +2,6 @@ $(document).ready(function () {
     var _URL = window.URL || window.webkitURL;
 
     $("#photofile").change(function (e) {
-        debugger
         var image, file;
         if ((file = this.files[0])) {
             image = new Image();
@@ -63,7 +62,6 @@ $(document).ready(function () {
 
     // Event listener for saving the drawn image
     $('#saveDrawingBtn').on('click', function () {
-        debugger;
         var dataURL = drawCanvas.toDataURL("image/png");
         $('#saved').show();
         $('#saved').attr('src', dataURL);

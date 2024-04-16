@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HalloDoc_BAL.ViewModel.Admin
 {
@@ -13,6 +9,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", ErrorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Role is required")]
@@ -33,6 +30,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Phone Number is required")]
+        [RegularExpression(@"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$", ErrorMessage = "Invalid phone number")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Address1 is required")]
@@ -43,12 +41,15 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required(ErrorMessage = "City is required")]
         public string City { get; set; }
 
-        [Required(ErrorMessage = "Region ID is required")]
+        [Required(ErrorMessage = "State is required")]
         public int RegionId { get; set; }
 
         [Required(ErrorMessage = "Zip is required")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "Zip code must be exactly 6 digits")]
         public string Zip { get; set; }
 
+        [Required(ErrorMessage = "Altphone is required")]
+        [RegularExpression(@"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$", ErrorMessage = "Invalid altphone number")]
         public string? Altphone { get; set; }
     }
 }

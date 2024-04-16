@@ -5,6 +5,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
     public class ViewNotesView
     {
         public int requestId {get;set;}
+        public int? providerId { get;set;}
 
         public string adminNote { get; set; }
 

@@ -193,6 +193,7 @@ namespace HalloDoc_BAL.Repository
             var view = new ViewCaseView
             {
                 requestId = request.Requestid,
+                providerId = request.Physicianid,
                 firstName = requestClient.Firstname,
                 symptom = requestClient.Notes,
                 statusId = request.Status,
@@ -214,6 +215,12 @@ namespace HalloDoc_BAL.Repository
 
         public ViewNotesView GetViewNotesView(int requestId)
         {
+            Request request = _requestRepository.Get(requestId);
+            if (request == null)
+            {
+                throw new Exception("Request not found");
+            }
+
             ViewNotesView view = new ViewNotesView();
             Requestnote note = _requestNotesRepository.Get(requestId);
 
@@ -620,6 +627,7 @@ namespace HalloDoc_BAL.Repository
             if (requestclient != null)
             {
                 formView.requestId = requestId;
+                formView.physicianId  = _requestRepository.Get(requestId).Physicianid;
                 formView.firstName = requestclient.Firstname;
                 formView.lastName = requestclient.Lastname;
                 formView.dateOfBirth = requestclient.Intyear.Value.ToString("") + "-" + requestclient.Strmonth + "-" + string.Format("{0:00}", requestclient.Intdate.Value);
@@ -853,6 +861,7 @@ namespace HalloDoc_BAL.Repository
                     view.Status = admin.Status;
                     string role = _context.Roles.FirstOrDefault(r => r.Roleid == admin.Roleid).Name;
                     view.role = role;
+                    view.roleId = admin.Roleid;
                     view.UserName = _context.Aspnetusers.FirstOrDefault(u => u.Id == admin.Aspnetuserid).Username;
                     view.AdminRegions = (from ar in _context.Adminregions.ToList()
                                          where ar.Adminid == adminId
@@ -1172,7 +1181,7 @@ namespace HalloDoc_BAL.Repository
         {
             CreateProviderView view = new CreateProviderView();
             Physician phy = _context.Physicians.FirstOrDefault(ph => ph.Physicianid == providerId);
-
+            
             if (phy != null)
             {
                 Aspnetuser user = _context.Aspnetusers.FirstOrDefault(user => user.Id == phy.Aspnetuserid);
@@ -1208,6 +1217,10 @@ namespace HalloDoc_BAL.Repository
                 List<Physicianregion> regions = _context.Physicianregions.Where(ph => ph.Physicianid == phy.Physicianid).ToList();
                 int[] regionIds = regions.Select(pr => pr.Regionid).ToArray();
                 view.regionOfservice = regionIds;
+            }
+            else
+            {
+                return null;
             }
 
             return view;
@@ -1374,10 +1387,12 @@ namespace HalloDoc_BAL.Repository
                 admin.Lastname = data.LastName;
                 admin.Email = data.Email;
                 admin.Mobile = data.PhoneNumber;
+                admin.Regionid = data.RegionId;
                 admin.Address1 = data.Address1;
                 admin.Address2 = data.Address2;
                 admin.City = data.City;
                 admin.Altphone = data.Altphone;
+                admin.Zip = data.Zip;
                 admin.Createddate = DateTime.Now;
                 admin.Createdby = accountcreatedAdmin.Aspnetuserid;
                 admin.Status = 2;
@@ -1914,31 +1929,6 @@ namespace HalloDoc_BAL.Repository
             Requeststatuslog? log = _context.Requeststatuslogs.OrderByDescending(x => x.Createddate).FirstOrDefault(x => x.Requestid == requestid && x.Status == 3 && x.Physicianid != null);
             return log?.Notes;
         }
-
-        public bool DeletePatientRequest(int requestid)
-        {
-            Request? request = _context.Requests.FirstOrDefault(x => x.Requestid == requestid);
-            if (request != null)
-            {
-                try
-                {
-                    request.Isdeleted = true;
-                    request.Modifieddate = DateTime.Now;
-                    _context.Requests.Update(request);
-                    _context.SaveChanges();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    throw new ApplicationException("Failed to submit Form", ex);
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-
 
 
         public List<BlockHistoryView> GetBlockHistoryData(string? name, DateTime? date, string? email, string? phoneNumber)

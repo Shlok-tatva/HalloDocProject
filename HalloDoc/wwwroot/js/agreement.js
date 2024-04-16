@@ -10,8 +10,6 @@
 
 
     event.preventDefault(); // Prevent default form submission behavior
-    debugger;
-
     swalWithBootstrapButtons.fire({
         title: "Are you sure you want to agree?",
         text: "Once you agree, you cannot undo this action!",

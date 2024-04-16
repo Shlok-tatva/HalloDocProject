@@ -2,10 +2,33 @@
 $(document).ready(function () {
     setupPaginationBasedOnDevice();
 
-    $("#DeleteSuccess").on("click", function () {
-        var requestid = $("#DelRequestId").val();
-        deletePatientRequest(requestid);
-    });
+
+    $(".deleteSearchRecords").on("click", function () {
+        debugger
+        var requestid = $(this).data("requestid");
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
+                cancelButton: "btn btn-outline-info btn-lg hover_white"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Confirmation of Delete Request",
+            text: `Are you sure you want to Delete this request ${requestid}`,
+            iconHtml: "<div class='warning_icon'><i class='bi bi-exclamation-circle-fill'></i></div>",
+            showCancelButton: true,
+            confirmButtonText: "Delete",
+            cancelButtonText: "Cancel",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deletePatientRequest(requestid);
+            }
+        });
+
+    })
 
     $("#SearchFilter").on("click", function () {
         var email = $("#Email").val();
@@ -18,7 +41,7 @@ $(document).ready(function () {
         var type = $("#RequestType").val();
 
         if (!email && !fromdos && !phone && !todos && !patient && !provider && status == 0 && type == 0) {
-           showToaster("Please Enter some Search Fields" , "error");
+            showToaster("Please Enter some Search Fields", "error");
         } else {
             fetchSearchRecords(email, fromdos, phone, todos, patient, provider, status, type);
         }
@@ -35,21 +58,12 @@ function deletePatientRequest(requestid) {
         method: "POST",
         url: "DeletePatientRequest",
         data: { requestid: requestid },
-        success: function (response) {
-            if (response.code == 401) {
-                location.reload();
-            } else {
-                if (response == true) {
-                    $("#DeleteConfirmationModal").modal('hide');
-                    showToaster("Request Deleted Successfully" , "success");
-                    fetchSearchRecords();
-                } else {
-                    showToaster("Error deleting Request" , "error");
-                }
-            }
+        success: function () {
+            showToaster("Request Deleted Successfully", "success");
+            fetchSearchRecords();
         },
         error: function () {
-            showToaster("Failed to delete request." , "error");
+            showToaster("Failed to delete request.", "error");
         }
     });
 }
@@ -78,7 +92,7 @@ function fetchSearchRecords(email, fromdos, phone, todos, patient, provider, sta
             }
         },
         error: function () {
-            showToaster("Failed to fetch records." , "error");
+            showToaster("Failed to fetch records.", "error");
         }
     });
 }

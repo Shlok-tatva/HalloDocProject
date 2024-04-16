@@ -99,7 +99,6 @@ $(document).ready(function () {
     }
 
     function renderDesktopTable(data, statusID, isPhysicianDashboard) {
-        debugger
         var headers = Object.keys(data[0]);
 
         if (isPhysicianDashboard) {
@@ -188,7 +187,6 @@ $(document).ready(function () {
                         // Display other fields
                         if (request[key] == null) request[key] = '-';
                         if (isPhysicianDashboard && ["patientName", "patientEmail", "patientPhoneNumber", "address", "callStatus"].includes(key)) {
-                            debugger
                             if (key === "callStatus" && [1, 2, 4].includes(+statusID)) {
                                 continue;
                             }
@@ -520,7 +518,6 @@ $(document).ready(function () {
 
     /* Export All Data to CSV */
     $('#exportAll').click(function () {
-        debugger
         var lastStatusID = localStorage.getItem("lastStatusID")
         let data = reloadDataTable(lastStatusID, 0, 0);
         $('.filter-btn').css("border", "none");

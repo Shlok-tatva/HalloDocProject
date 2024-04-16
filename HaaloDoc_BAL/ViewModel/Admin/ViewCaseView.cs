@@ -9,6 +9,8 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required]
         public int requestId { get; set; }
 
+        public int? providerId { get; set; }
+
         [Required]
         public int statusId {get; set;}
 

@@ -11,7 +11,7 @@ $(document).ready(function () {
             type: 'GET',
             data: { professionId },
             success: function (data) {
-                debugger
+                
                 console.log(data);
                 $('#vendorTable').empty();
                 $('#vendorTable').html(data);

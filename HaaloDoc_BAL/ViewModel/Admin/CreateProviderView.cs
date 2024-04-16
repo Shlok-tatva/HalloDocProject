@@ -77,7 +77,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public string city { get; set; }
 
         [Required(ErrorMessage = "Zip Code is required")]
-        [RegularExpression(@"^\d{5}$", ErrorMessage = "Invalid Zip Code")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "Zip code must be exactly 6 digits")]
         public string Zip { get; set; }
 
         [Required(ErrorMessage = "Region is required")]

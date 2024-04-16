@@ -3,7 +3,6 @@ $(document).ready(function () {
 
 
     $(document).on('click', '.open-modal', function () {
-        debugger
         var modalId = $(this).data("modal-id");
 
         if (modalId == "editShiftModal") {

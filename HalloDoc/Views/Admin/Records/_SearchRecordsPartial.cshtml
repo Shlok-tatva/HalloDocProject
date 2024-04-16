@@ -41,7 +41,7 @@
                 <td class="">@(item.AdminNotes ?? "-")</td>
                 <td class="">@(item.PatientNote ?? "-")</td>
                 <td class=" text-center">
-                    <a role="button" data-bs-toggle="modal" data-bs-target="#DeleteConfirmationModal" data-bs-requestid="@item.RequestId" class="btn btn-outline-info btn-sm hover_white">Delete</a>
+                    <a role="button" data-requestid="@item.RequestId" class="btn btn-outline-info btn-sm hover_white deleteSearchRecords">Delete</a>
                 </td>
             </tr>
 
@@ -205,8 +205,7 @@
                         </div>
 
                         <div class="container-fluid p-0 d-flex flex-row justify-content-end my-2">
-                            
-                                <a role="button" data-bs-toggle="modal" data-bs-target="#DeleteConfirmationModal" data-bs-requestid="@item.RequestId" class="btn btn-outline-info btn-sm hover_white">Delete</a>
+                            <a role="button" data-requestid="@item.RequestId" class="btn btn-outline-info btn-sm hover_white deleteSearchRecords">Delete</a>
                         </div>
 
                     </div>

@@ -57,7 +57,7 @@ namespace HalloDoc_BAL.ViewModel.Patient
         [Required(ErrorMessage = "Please enter State")]
         public int regionId { get; set; }
 
-        [RegularExpression(@"^\d{6}$", ErrorMessage = "Invalid zip code")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "Zip code must be exactly 6 digits")]
         public string ZipCode { get; set; }
 
         public string? RoomOrSuite { get; set; }
