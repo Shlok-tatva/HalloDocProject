@@ -12,21 +12,34 @@
             <form asp-action="CreateShift" id="createShift" class="row p-3">
                 @*<input type="hidden" asp-for="Shiftid" />*@
 
-
-                <div class="form-floating my-3">
-                    <select asp-for="Regionid" class="p-2 px-3 form-control w-100 " id="selectregion">
-                        <option value="" selected disabled>Regions</option>
-                        @foreach (var region in ViewBag.regions)
-                        {
-                            <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
-                        }
-                    </select>
-                </div>
+                @if (ViewBag.isprovider)
+                {
+                    <div class="form-floating my-3">
+                        <select asp-for="Regionid" class="p-2 px-3 form-control w-100 ">
+                            <option value="" selected disabled>Regions</option>
+                            @foreach (var region in ViewBag.regions)
+                            {
+                                <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                            }
+                        </select>
+                    </div>
+                }
 
 
 
                 @if (!ViewBag.isprovider)
                 {
+                    <div class="form-floating my-3">
+                        <select asp-for="Regionid" class="p-2 px-3 form-control w-100 " id="selectregion">
+                            <option value="" selected disabled>Regions</option>
+                            @foreach (var region in ViewBag.regions)
+                            {
+                                <option value="@region.Regionid">@region.Name - (@region.Abbreviation)</option>
+                            }
+                        </select>
+                    </div>
+
+
                     <div class="form-floating mb-3">
                         <select class="form-select pt-1" asp-for="Physicianid" id="physicianSelect" aria-label="Default select example">
                             <option value="" selected disabled>Physician</option>

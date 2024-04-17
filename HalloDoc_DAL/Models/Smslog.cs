@@ -51,7 +51,8 @@ public partial class Smslog
     public int Senttries { get; set; }
 
     [Column("action")]
-    public int? Action { get; set; }
+    [StringLength(500)]
+    public string? Action { get; set; }
 
     [Column("receivername", TypeName = "character varying")]
     public string? Receivername { get; set; }

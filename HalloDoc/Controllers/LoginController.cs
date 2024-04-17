@@ -204,6 +204,7 @@ namespace HalloDoc.Controllers
             bool isSent = _petientfunctionrepo.SendEmail(email , title , message);
             _commonfunctionrepo.EmailLog(email, message, title, name , 3, null, null, null, 3, isSent, 1);
 
+
             return Ok();
         }
 
@@ -255,6 +256,12 @@ namespace HalloDoc.Controllers
         public IActionResult Accessdenied()
         {
             return View();
+        }
+
+        public IActionResult GetAllSessionData()
+        {
+            var sessionData = HttpContext.Session.Keys.ToDictionary(k => k, k => HttpContext.Session.GetString(k));
+            return Ok(sessionData);
         }
     }
 }

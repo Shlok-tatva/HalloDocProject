@@ -217,6 +217,36 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+        public void SMSLog(string phoneNumber, string messaage, string subject, string? name, int roleId, int? requestId, int? adminId, int? physicianId)
+        {
+            try
+            {
+                Smslog log = new Smslog();
+                log.Smstemplate = messaage;
+                log.Mobilenumber = phoneNumber;
+                log.Roleid = roleId;
+                log.Createdate = DateTime.Now;
+                log.Sentdate = DateTime.Now;
+                log.Adminid = adminId;
+                log.Requestid = requestId;
+                log.Physicianid = physicianId;
+                log.Action = messaage;
+                log.Receivername = name;
+                log.Issmssent = true;
+                if (requestId != null)
+                {
+                    log.Confirmationnumber = _context.Requests.FirstOrDefault(r => r.Requestid == requestId).Confirmationnumber;
+                }
+                log.Senttries = 1;
+                _context.Smslogs.Add(log);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
 
         public void AddRequestStatusLog(int requestId, short status, string notes, int? adminId, int? providerId, bool trasnaporttoAdmin)
         {

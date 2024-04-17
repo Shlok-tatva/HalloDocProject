@@ -150,11 +150,14 @@ namespace HalloDocAdmin.Controllers
                 {
                     int adminId = Int32.Parse(HttpContext.Session.GetString("AdminId"));
                     _commonFunctionrepo.EmailLog(emailSendLink, message, title, name, 1, null, adminId, null, 1, isSent, 1);
+                    _commonFunctionrepo.SMSLog(phoneSendLink, message, title, name, 1, null, adminId, null);
                 }
                 else
                 {
                     int providerId = Int32.Parse(providerid);
                     _commonFunctionrepo.EmailLog(emailSendLink, message, title, name, 1, null, null, providerId, 1, isSent, 1);
+                    _commonFunctionrepo.SMSLog(phoneSendLink, message, title, name, 1, null, null, providerId);
+
                 }
                 return Ok();
             }
@@ -575,6 +578,7 @@ namespace HalloDocAdmin.Controllers
                 HalloDoc_DAL.Models.Request rq = _requestRepository.Get(requestId);
                 string name = rq.Firstname + " , " + rq.Lastname;
                 _commonFunctionrepo.EmailLog("shlok.jadeja@etatvasoft.com", message, "Sent files on Mail", name, 1, requestId, adminId, null, 2, isSent, 1);
+
                 return Ok();
             }
             catch (Exception ex)
@@ -1135,7 +1139,6 @@ namespace HalloDocAdmin.Controllers
         }
 
         [CustomAuth("Admin", "Provider")]
-        [HttpPost("changeProviderPassword")]
         public IActionResult changeProviderPassword(int providerId, string password)
         {
             try
@@ -1162,7 +1165,7 @@ namespace HalloDocAdmin.Controllers
 
                 if (selectedRadio == "Phone")
                 {
-
+                    _commonFunctionrepo.SMSLog(phone, message, title, null, 1, null, adminId, physicianId);
                     return Ok(new { message = "Message sent successfully via Phone." });
 
                 }
@@ -1177,8 +1180,7 @@ namespace HalloDocAdmin.Controllers
                 {
                     isSent = _adminFunctionRepository.SendEmail(email, title, message);
                     _commonFunctionrepo.EmailLog(email, message, title, null, 1, null, adminId, physicianId, 3, isSent, 1);
-
-
+                    _commonFunctionrepo.SMSLog(phone, message, title, null, 1, null, adminId, physicianId);
                     return Ok(new { message = "Message sent successfully via Phone and Email." });
                 }
 

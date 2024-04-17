@@ -570,6 +570,7 @@ namespace HalloDoc_BAL.Repository
                 Request rq = _requestRepository.Get(requestId);
                 string name = rq.Firstname + " " + rq.Lastname;
                 _commonFunctionrepo.EmailLog(email, message, "Sent Agreement to Patient", name, 3, requestId, adminId, providerId, 5, isSent, 1);
+                _commonFunctionrepo.SMSLog(rq.Phonenumber, message, "Sent Agreement to Patient", name, 3, requestId, adminId, providerId);
 
                 Requeststatuslog log = new Requeststatuslog();
                 log.Requestid = requestId;
@@ -613,6 +614,7 @@ namespace HalloDoc_BAL.Repository
                 bool issent = SendEmail(toEmail, subject, body, null);
                 string name = provider.firstName + " " + provider.lastName;
                 _commonFunctionrepo.EmailLog(toEmail, body, subject, name, 2, null, adminId, provider.ProviderId, 6, issent, 1);
+                _commonFunctionrepo.SMSLog(provider.phoneNumber, body, subject, name, 2, null, adminId, provider.ProviderId);
             }
         }
 
@@ -2204,8 +2206,36 @@ namespace HalloDoc_BAL.Repository
             var message = "I want to transfer the request the reason is :- " + reason;
             bool isSent = SendEmail(email, title, message, null);
             _commonFunctionrepo.EmailLog(email, message, "Sent Request tranfer request", "Shlok Jadeja", 1, requestId, 4, providerId, 6, isSent, 1);
+            _commonFunctionrepo.SMSLog("9726666647", message, "Sent Request tranfer request", "Shlok Jadeja", 1, requestId, 4, providerId);
             _commonFunctionrepo.AddRequestStatusLog(requestId, 2, reason, 4, providerId, true);
 
         }
+
+        public void updateOrCreateProviderLocation(int providerId , float latitude , float longitude , string address)
+        {
+            Physicianlocation location =  _context.Physicianlocations.FirstOrDefault(l => l.Physicianid == providerId);
+            if(location == null)
+            {
+                location = new Physicianlocation();
+                Physician ph = _context.Physicians.FirstOrDefault(p => p.Physicianid == providerId);
+                location.Physicianid = providerId;
+                location.Latitude = latitude;
+                location.Longtitude = longitude;
+                location.Createddate = DateTime.Now;
+                location.Address = address;
+                location.Physicianname = ph.Firstname + " " + ph.Lastname;
+                _context.Physicianlocations.Add(location);
+            }
+            else
+            {
+                location.Latitude = latitude;
+                location.Longtitude = longitude;
+                location.Address = address;
+                location.Createddate = DateTime.Now;
+                _context.Physicianlocations.Update(location);
+            }
+            _context.SaveChanges();
+        }
+
     }
 }

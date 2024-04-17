@@ -1,12 +1,13 @@
 $(document).ready(function () {
+    
     var isprovider = ($('#monthcontainer').data('isprovider') == 1 ? true : false);
 
 
     $(document).on('click', '.open-modal', function () {
+        debugger
         var modalId = $(this).data("modal-id");
 
         if (modalId == "editShiftModal") {
-
             var shiftId = $(this).data("shiftid");
             var data = getShiftData(shiftId);
 
@@ -31,10 +32,10 @@ $(document).ready(function () {
 
 
             if (!isprovider) {
-            getPhysicians(data.regionid, 'phyiscianeditshift', function () {
-                $("#phyiscianeditshift").val(data.physicianid);
-                $("#editShiftModal").modal("show");
-            });
+                getPhysicians(data.regionid, 'phyiscianeditshift', function () {
+                    $("#phyiscianeditshift").val(data.physicianid);
+                    $("#editShiftModal").modal("show");
+                });
             }
 
 
@@ -101,9 +102,18 @@ $(document).ready(function () {
 
         else {
             var date = $(this).data('date');
-            $('#StartDate').val(date);
-            console.log(date);
-            $("#createShiftModal").modal("show");
+            var shiftDate = new Date(date);
+            var currentDate = new Date();
+            currentDate.setHours(0, 0, 0, 0);
+            if (shiftDate < currentDate) {
+                showToaster("Can't create Shift in past", "error");
+            }
+            else {
+                $('#StartDate').val(date);
+                console.log(date);
+                $("#createShiftModal").modal("show");
+            }
+
         }
     })
 
@@ -188,65 +198,65 @@ $(document).ready(function () {
         }
     }
     function GetShiftForMonth(month, year) {
-            var regionId = $('#fregion').val();
-            $.ajax({
-                type: "GET",
-                url: 'GetShiftByMonth',
-                data: { month: month, year: year, regionId: regionId },
-                dataType: "json",
-                success: function (response) {
-                    // Initialize an array to store extracted data
-                    extractedDataArray = [];
+        var regionId = $('#fregion').val();
+        $.ajax({
+            type: "GET",
+            url: 'GetShiftByMonth',
+            data: { month: month, year: year, regionId: regionId },
+            dataType: "json",
+            success: function (response) {
+                // Initialize an array to store extracted data
+                extractedDataArray = [];
 
-                    // Iterate over the array
-                    response.forEach(function (shift) {
-                        // Extract and store data from each shift object
-                        var extractedData = {
-                            //  date: shift.shidtDate.match(/\d{4}-(\d{2})-\d{2}/)[1],
-                            date: shift.shiftdate.match(/\d{4}-\d{2}-(\d{2})/)[1],
-                            shiftId: shift.shiftid,
-                            physicianId: shift.physicianid,
-                            physicianName: shift.physicianName,
-                            shiftDate: shift.shidtDate, // Correct the typo to "shiftDate"
-                            startTime: shift.starttime,
-                            endTime: shift.endtime,
-                            isRepeat: shift.isrepeat
-                        };
+                // Iterate over the array
+                response.forEach(function (shift) {
+                    // Extract and store data from each shift object
+                    var extractedData = {
+                        //  date: shift.shidtDate.match(/\d{4}-(\d{2})-\d{2}/)[1],
+                        date: shift.shiftdate.match(/\d{4}-\d{2}-(\d{2})/)[1],
+                        shiftId: shift.shiftid,
+                        physicianId: shift.physicianid,
+                        physicianName: shift.physicianName,
+                        shiftDate: shift.shidtDate, // Correct the typo to "shiftDate"
+                        startTime: shift.starttime,
+                        endTime: shift.endtime,
+                        isRepeat: shift.isrepeat
+                    };
 
-                        // Check if dayList exists and is an array
-                        if (Array.isArray(shift.dayList)) {
-                            // Create an array to store day data
-                            var dayDataArray = [];
+                    // Check if dayList exists and is an array
+                    if (Array.isArray(shift.dayList)) {
+                        // Create an array to store day data
+                        var dayDataArray = [];
 
-                            // Iterate over dayList and store data
-                            shift.dayList.forEach(function (day) {
-                                var dayData = {
-                                    shiftid: day.shiftid,
-                                    physicianName: day.physicianName,
-                                    startTime: day.starttime,
-                                    endTime: day.endtime,
-                                    status: day.status,
-                                };
-                                // Push day data into dayDataArray
-                                dayDataArray.push(dayData);
-                            });
-                            // Add dayDataArray to extractedData object
-                            extractedData.dayDataArray = dayDataArray;
-                        }
+                        // Iterate over dayList and store data
+                        shift.dayList.forEach(function (day) {
+                            var dayData = {
+                                shiftid: day.shiftid,
+                                physicianName: day.physicianName,
+                                startTime: day.starttime,
+                                endTime: day.endtime,
+                                status: day.status,
+                            };
+                            // Push day data into dayDataArray
+                            dayDataArray.push(dayData);
+                        });
+                        // Add dayDataArray to extractedData object
+                        extractedData.dayDataArray = dayDataArray;
+                    }
 
-                        // Push extracted data into the array
-                        extractedDataArray.push(extractedData);
-                    });
-                    console.log(extractedDataArray);
-                    $('#month').click();
-                    manipulate();
-                },
-                error: function () {
-                    // Handle error
-                    console.error("Error fetching provider list");
-                }
-            });
-        }
+                    // Push extracted data into the array
+                    extractedDataArray.push(extractedData);
+                });
+                console.log(extractedDataArray);
+                $('#month').click();
+                manipulate();
+            },
+            error: function () {
+                // Handle error
+                console.error("Error fetching provider list");
+            }
+        });
+    }
 
     let date = new Date();
     let year = date.getFullYear();
@@ -254,7 +264,7 @@ $(document).ready(function () {
     console.log(month);
     console.log(year);
 
-    GetShiftForMonth(month + 1 , year);
+    GetShiftForMonth(month + 1, year);
 
     const day = document.querySelector(".calendar-dates");
     const weekdays = document.querySelector(".calendar-weekdays");
@@ -325,9 +335,9 @@ $(document).ready(function () {
 
             lit += `<td class="table-text ${isToday} p-0"> 
                         <div class="first">${i}</div>
-                        <div class="open-modal ${Status.length > 0 ? 'Status-' + Status[0] : ''}" ${Status.length > 0 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 0 ? 'data-shiftid="' + ProviderNames[0].shiftid + '"' : ''} data-date="${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
-                        <div class="open-modal ${Status.length > 1 ? 'Status-' + Status[1] : ''}" ${Status.length > 1 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 1 ? 'data-shiftid="' + ProviderNames[1].shiftid + '"' : ''} data-date="${year}-${(month+1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</div>
-                        <div class="open-modal ${Status.length > 2 ? 'Status-' + Status[2] : ''}" ${Status.length > 2 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 2 ? 'data-shiftid="' + ProviderNames[2].shiftid + '"' : ''} data-date="${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0') }">${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</div>
+                        <div class="open-modal ${Status.length > 0 ? 'Status-' + Status[0] : ''}" ${Status.length > 0 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 0 ? 'data-shiftid="' + ProviderNames[0].shiftid + '"' : ''} data-date="${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}">${ProviderNames.length > 0 ? ProviderNames[0].name : ''}</div>
+                        <div class="open-modal ${Status.length > 1 ? 'Status-' + Status[1] : ''}" ${Status.length > 1 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 1 ? 'data-shiftid="' + ProviderNames[1].shiftid + '"' : ''} data-date="${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}">${ProviderNames.length > 1 ? ProviderNames[1].name : ''}</div>
+                        <div class="open-modal ${Status.length > 2 ? 'Status-' + Status[2] : ''}" ${Status.length > 2 ? 'data-modal-id="editShiftModal"' : ''} ${ProviderNames.length > 2 ? 'data-shiftid="' + ProviderNames[2].shiftid + '"' : ''} data-date="${year}-${(month + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}">${ProviderNames.length > 2 ? ProviderNames[2].name : ''}</div>
                         <div type="button" id="${buttonId}" ${ProviderNames.length > 3 ? 'data-modal-id="#exampleModal"' : ''} data-month="${month}" data-index="${i}" class="${Status.length > 3 ? 'btn btn-info w-100 text-white rounded-0 open-modal' : ''}">${ProviderNames.length > 3 ? 'View All' : ''}</div>
                     </td>`;
             dayCount++;
@@ -368,7 +378,7 @@ $(document).ready(function () {
                     }
                 }
                 // Call the manipulate function to update the calendar display
-                GetShiftForMonth(month+1, year);
+                GetShiftForMonth(month + 1, year);
             }
 
         });
@@ -383,12 +393,12 @@ $(document).ready(function () {
     datepicker.addEventListener("change", (event) => {
         if (x == 1) {
             debugger;
-        const selectedDate = new Date(event.target.value);
-        month = selectedDate.getMonth();
-        year = selectedDate.getFullYear();
-        console.log(month , year);
-        GetShiftForMonth(month, year);
-        centerSpan.click();
+            const selectedDate = new Date(event.target.value);
+            month = selectedDate.getMonth();
+            year = selectedDate.getFullYear();
+            console.log(month, year);
+            GetShiftForMonth(month, year);
+            centerSpan.click();
         }
     });
 
@@ -796,7 +806,7 @@ $(document).ready(function () {
 
     $('#fregion').on('change', function () {
         if (x == 1) {
-            GetShiftForMonth(month + 1 , year);
+            GetShiftForMonth(month + 1, year);
         } else if (x == 2 || x == 3) {
             getProviderList();
         } else {

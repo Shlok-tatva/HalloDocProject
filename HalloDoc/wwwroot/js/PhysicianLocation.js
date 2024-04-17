@@ -58,7 +58,7 @@ function createMarker(position, color, popupText, physicianData) {
     var iconElement = document.createElement('div');
     iconElement.className = 'marker-icon';
     iconElement.style.backgroundImage =
-        'url(https://img.freepik.com/premium-vector/avatar-bearded-doctor-doctor-with-stethoscope-vector-illustrationxa_276184-31.jpg)';
+        `url(/upload/physician/${physicianData.physicianid}/photo.png)`;
     markerContentElement.appendChild(iconElement);
 
     // .appendChild(`<h5>${popupText}</h5>`);

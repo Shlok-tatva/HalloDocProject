@@ -85,6 +85,8 @@ namespace HalloDoc_BAL.Repository
 
         /*Provider request*/
         void TransferRequestRequest(int requestId, string reason, int providerId);
+        void updateOrCreateProviderLocation(int providerId, float latitude, float longitude, string address);
+
 
         }
 }

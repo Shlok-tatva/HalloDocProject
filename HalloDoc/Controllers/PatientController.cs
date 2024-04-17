@@ -270,6 +270,8 @@ namespace HelloDoc.Controllers
                             bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
                             string name = formData.FirstName + " , " + formData.LastName;
                             _commonFunctionrepo.EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
+                            _commonFunctionrepo.SMSLog(formData.PhoneNumber, message, title, name, 3, request.Requestid, null, null);
+
                         }
 
                         transaction.Complete();
@@ -381,6 +383,8 @@ namespace HelloDoc.Controllers
                             bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
                             string name = formData.FirstName + " , " + formData.LastName;
                             _commonFunctionrepo.EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
+                            _commonFunctionrepo.SMSLog(formData.PhoneNumber, message, title, name, 3, request.Requestid, null, null);
+
 
                         }
                         transaction.Complete();
@@ -490,6 +494,8 @@ namespace HelloDoc.Controllers
                             bool isSent = _patientFuncrepo.SendEmail(formData.Email, title, message);
                             string name = formData.FirstName + " , " + formData.LastName;
                             _commonFunctionrepo.EmailLog(formData.Email, message, title, name, 3, request.Requestid, null, null, 4, isSent, 1);
+                            _commonFunctionrepo.SMSLog(formData.PhoneNumber, message, title, name, 3, request.Requestid, null, null);
+
 
                         }
 

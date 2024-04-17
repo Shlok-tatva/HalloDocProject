@@ -294,6 +294,20 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        public IActionResult UpdateproviderLocation(float latitude, float longitude , string address)
+        {
+            try
+            {
+                int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
+                _adminFunctionRepository.updateOrCreateProviderLocation(providerId, latitude, longitude, address);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

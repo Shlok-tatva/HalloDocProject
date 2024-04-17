@@ -39,6 +39,7 @@ $(document).ready(function () {
         });
     })
 
+
     $('#shiftSubmit').prop('disabled', true);
 
 
