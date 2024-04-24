@@ -1,0 +1,59 @@
+﻿@model TMC_DAL.Models.Task;
+
+<div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal" role="document">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-success bg-opacity-75 text-white">
+                <h5 class="modal-title" id="exampleModalLongTitle">Task Form</h5>
+            </div>
+            <form asp-action="createTask" id="createTask" class="row p-3 needs-validation" novalidate>
+                <input type="text" id="taskId" asp-for="Id" value="-1" class="visually-hidden"/>
+                <div class="col-md-6 form-floating mb-4">
+                    <input id="taskName" asp-for="Taskname" class="form-control rounded" name="taskName" type="text" placeholder=" " autocomplete=off required>
+                    <label for="floatingInput">Task Name</label>
+                </div>
+
+                <div class="col-md-6 form-floating mb-4">
+                    <input id="assignee" asp-for="Assignee" class="form-control rounded" name="assignee" type="text" placeholder=" " autocomplete=off required>
+                    <label for="floatingInput">Assignee</label>
+                </div>
+
+                <div class="col-md-6 form-floating mb-4">
+                    <input id="Discription" asp-for="Discription" class="form-control rounded " name="Discription" type="text" placeholder=" " autocomplete=off required>
+                    <label for="floatingInput">Discription</label>
+                </div>
+
+                <div class="col-md-6 form-floating mb-4">
+                    <input id="dueDate" asp-for="Duedate" class="form-control rounded" name="DueDate" type="date" placeholder=Suchtext autocomplete=off required>
+                    <label for="floatingInput">Due Date</label>
+                </div>
+
+                <div class="col-md-6 form-floating mb-4">
+                    <input id="city" asp-for="City" class="form-control rounded" name="city" type="text" placeholder=Suchtext autocomplete=off required>
+                    <label for="floatingInput">City</label>
+                </div>
+
+                <div class="col-md-6 form-floating mb-4">
+                    <input asp-for="Category" class="form-control rounded" list="cities" id="category" name="Category" placeholder=Suchtext required>
+                    <datalist id="cities">
+                        @foreach (var category in ViewBag.category)
+                        {
+                            <option value="@category.Name">@category.Name</option>
+                        }
+                    </datalist>
+                    <label for="floatingInput">Category</label>
+
+                </div>
+
+                <div class="col-md-12 row">
+                    <div class="col-md-6">
+                        <div class="w-100 btn btn-light shadow close">Cancel</div>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="w-100 btn btn-success">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
