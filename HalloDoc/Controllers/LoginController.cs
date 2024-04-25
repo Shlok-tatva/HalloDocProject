@@ -203,9 +203,8 @@ namespace HalloDoc.Controllers
             var message = $"Please click <a href=\"{resetPassowrdLink}\">here</a> to Reset Your Password account.";
             bool isSent = _petientfunctionrepo.SendEmail(email , title , message);
             _commonfunctionrepo.EmailLog(email, message, title, name , 3, null, null, null, 3, isSent, 1);
-
-
-            return Ok();
+            TempData["Success"] = "Reset password link sent to Email";
+            return Redirect("/login/forgetPassword");
         }
 
         [HttpGet]

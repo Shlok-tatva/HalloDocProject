@@ -164,37 +164,52 @@ namespace HalloDoc.Controllers
         }
 
 
-        [HttpPost("UpdateUser")]
-
-        public IActionResult UpdateUser(int userid, string FirstName, string LastName, string Email, string phone, string DateOfBirth, string Street, string State, string City, string ZipCode)
+        public IActionResult UpdateUser(UserDataviewModel userData)
         {
             try
             {
-                var date = DateTime.Parse(DateOfBirth);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState); // Return validation errors
+                }
 
-                User user = _userrepo.GetUserByID(userid);
-                user.Firstname = FirstName;
-                user.Lastname = LastName;
-                user.Email = Email;
-                user.Mobile = phone;
-                user.Intyear = date.Year;
-                user.Strmonth = date.ToString("MM");
-                user.Intdate = date.Day;
-                user.Street = Street;
-                user.State = State;
-                user.City = City;
-                user.Zipcode = ZipCode;
+                var dateOfBirth = DateTime.Parse(userData.DateOfBirth);
+
+                User user = _userrepo.GetUserByID(userData.userid);
+                if (user == null)
+                {
+                    return NotFound(); // Return 404 if user not found
+                }
+
+                // Update user properties
+                user.Firstname = userData.FirstName;
+                user.Lastname = userData.LastName;
+                user.Email = userData.Email;
+                user.Mobile = userData.PhoneNumber;
+                user.Intyear = dateOfBirth.Year;
+                user.Strmonth = dateOfBirth.ToString("MM");
+                user.Intdate = dateOfBirth.Day;
+                user.Street = userData.Street;
+                user.State = userData.State;
+                user.City = userData.City;
+                user.Zipcode = userData.ZipCode;
+
                 _userrepo.Update(user);
 
-                return Ok();
+                return Ok(); // Return 200 OK if update is successful
             }
-            catch (Exception ex)
+            catch (FormatException)
             {
-                return NotFound();
+                // Return 400 Bad Request for date parsing errors
+                return BadRequest("Invalid date format for DateOfBirth.");
             }
-
-
+            catch
+            {
+                // Return 500 Internal Server Error for other unexpected errors
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
+
 
         public IActionResult RequestForme()
         {

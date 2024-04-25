@@ -79,12 +79,14 @@
                 <form asp-action="PhysicianLogin" class="p-md-2 mb-4 w-auto">
                     <h1 class="text-center pb-3">Login To Your Account</h1>
                     <div class="form-floating mb-3">
-                        <input asp-for="Email" type="email" class="form-control " id="floatingInput" placeholder=" ">
+                        <input asp-for="Email" type="email" class="form-control " id="floatingInput" placeholder=" " required>
                         <label for="floatingInput" class="control-label">Username</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-3">
-                        <input asp-for="Passwordhash" type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                        <input asp-for="Passwordhash" type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
                         <label for="floatingPassword" class="control-label">Password</label>
+                        <span asp-validation-for="Passwordhash" class="text-danger"></span>
                     </div>
                     <button class="w-100 btn btn-lg btn-info text-white my-2" type="submit">Log In</button>
                     <a href="/login/ForgetPassword" class="w-100 btn btn-lg text-info" type="submit">
