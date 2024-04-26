@@ -27,6 +27,11 @@ namespace HalloDoc_BAL.Repository
             return _context.Physicians.FirstOrDefault(a => a.Aspnetuserid == id);
         }
 
+        public Physician GetPhysicianByEmail(string email)
+        {
+            return _context.Physicians.FirstOrDefault(a => a.Email == email);
+        }
+
     }
 
 }

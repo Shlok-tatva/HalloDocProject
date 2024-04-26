@@ -6,5 +6,7 @@ namespace HalloDoc_BAL.Interface
     {
         Physician GetPhysician(string id);
         Physician GetPhysicianById(int id);
+        Physician GetPhysicianByEmail(string email);
+
     }
 }

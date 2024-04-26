@@ -222,6 +222,14 @@ namespace HalloDocAdmin.Controllers
             {
                 int providerId = Int32.Parse(HttpContext.Session.GetString("providerId"));
                 Request rq = _requestRepository.Get(requestId);
+                int formStatus = _adminFunctionRepository.getEcounterFormStatus(requestId);
+
+                if(formStatus == null || formStatus == 0)
+                {
+                    TempData["Error"] = "First finalize the encounter form";
+                    return RedirectToAction("Dashboard");
+                }
+
                 rq.Status = 8; // Request Concluded By Provider so it is in 
                 rq.Completedbyphysician = true;
                 rq.Modifieddate = DateTime.Now;
@@ -319,7 +327,8 @@ namespace HalloDocAdmin.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return Redirect("/Login/PhysicianLogin");
+            TempData["Success"] = "Logout Successfully";
+            return Ok();
         }
 
     }

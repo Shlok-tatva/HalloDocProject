@@ -437,3 +437,37 @@ $(document).ready(function () {
         }, false)
     })
 })()
+
+$('#logout').on("click", function (e){
+    e.preventDefault();
+
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-info mx-2 btn-lg text-white my-2 mb-2",
+            cancelButton: "btn btn-outline-info btn-lg hover_white"
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: "Confirmation of Logout",
+        text: `Are you sure you want to Logout ?`,
+        iconHtml: "<div class='warning_icon'><i class='bi bi-exclamation-circle-fill'></i></div>",
+        showCancelButton: true,
+        confirmButtonText: "Logout",
+        cancelButtonText: "Cancel",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "Logout",
+                method: "POST",
+                success: function (response) {
+                    window.location = "/Patient/index";
+                },
+                error: function (xhr, status, error) {
+                    showToaster("Error While Logging out Role", "error");
+                }
+            });
+        }
+    });
+})

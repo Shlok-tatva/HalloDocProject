@@ -7,5 +7,6 @@ namespace HalloDoc_BAL.Interface
         Admin GetAdminById(int id);
         Admin GetAdmin(string id);
         void updateAdmin(Admin admin);
+        Admin GetByEmail(string email);
     }
 }

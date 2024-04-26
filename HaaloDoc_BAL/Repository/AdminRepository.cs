@@ -32,5 +32,10 @@ namespace HalloDoc_BAL.Repository
             _context.Admins.Update(admin);
             _context.SaveChanges();
         }
+
+        public Admin GetByEmail(string email)
+        {
+            return _context.Admins.FirstOrDefault(b => b.Email == email);
+        }
     }
 }

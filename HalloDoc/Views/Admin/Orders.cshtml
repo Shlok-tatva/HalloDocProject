@@ -30,35 +30,35 @@
         </div>
     </div>
 
-    <form asp-action="Addorder" class="mt-4 m-auto">
+    <form asp-action="Addorder" class="mt-4 m-auto needs-validation">
 
         <input asp-for="Requestid" type="text" value="@ViewData["requestId"]" class="visually-hidden"></input>
 
         <div class="row p-4 shadow rounded-3">
             <div class="form-floating col-md-6 my-3">
-                <select class="form-select pt-1" id="ProfessionSelect" aria-label="Select Profession">
+                <select class="form-select pt-1" id="ProfessionSelect" aria-label="Select Profession" required>
                     
                 </select>
 
             </div>
 
             <div class="form-floating col-md-6 my-3">
-                <select asp-for="Vendorid" class="form-select pt-1" id="BusinessSelect" aria-label="Select Business">
-                    <option>Select Business</option>
+                <select asp-for="Vendorid" class="form-select pt-1" id="BusinessSelect" aria-label="Select Business" required>
+                    <option value="" selected disabled>Select Business</option>
                 </select>
 
             </div>
 
             <div class="form-floating col-md-6 my-3">
-                <input asp-for="Businesscontact" type="text" class="form-control" id="BusinessContactInput" placeholder="Business Contact">
+                <input asp-for="Businesscontact" type="text" class="form-control" id="BusinessContactInput" placeholder="Business Contact" required>
                 <label asp-for="Businesscontact" for="BusinessContactInput" class="control-label ms-3">Business Contact</label>
             </div>
             <div class="form-floating col-md-6 my-3">
-                <input asp-for="Email" type="email" class="form-control" placeholder=" " id="EmailInput">
+                <input asp-for="Email" type="email" class="form-control" placeholder=" " id="EmailInput" required>
                 <label asp-for="Email" for="EmailInput" class="control-label ms-3">Email</label>
             </div>
             <div class="form-floating col-md-6 my-3">
-                <input asp-for="Faxnumber" type="text" class="form-control" id="FaxNumberInput" placeholder="Fax Number">
+                <input asp-for="Faxnumber" type="text" class="form-control" id="FaxNumberInput" placeholder="Fax Number" required>
                 <label asp-for="Faxnumber"  for="FaxNumberInput" class="control-label ms-3">Fax Number</label>
             </div>
 

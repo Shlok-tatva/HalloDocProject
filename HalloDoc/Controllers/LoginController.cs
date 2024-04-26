@@ -1,4 +1,4 @@
-﻿ using Azure.Core;
+﻿using Azure.Core;
 using HalloDoc_BAL.Interface;
 using HalloDoc_BAL.Repository;
 using HalloDoc_DAL.Models;
@@ -20,7 +20,7 @@ namespace HalloDoc.Controllers
         private readonly IJwtServices _jwtServices;
 
 
-        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo , ICommonFunctionRepository commonfunctionrepo , IUserRepository userrepo, IAdminRepository adminrepo , IPhysicianRepository physicianrepo , IJwtServices jwtServices)
+        public LoginController(IAspnetuserRepository aspnetuser, IPatientFunctionRepository petientfunctionrepo, ICommonFunctionRepository commonfunctionrepo, IUserRepository userrepo, IAdminRepository adminrepo, IPhysicianRepository physicianrepo, IJwtServices jwtServices)
         {
             _aspnetuserrepo = aspnetuser;
             _petientfunctionrepo = petientfunctionrepo;
@@ -34,19 +34,19 @@ namespace HalloDoc.Controllers
         public IActionResult Index()
         {
             var role = HttpContext.Session.GetInt32("roleid");
-            if(role == 3)
+            if (role == 3)
             {
                 return Redirect("/dashboard");
             }
             else
             {
-             return View();
+                return View();
             }
         }
 
         public IActionResult LoginUser(Aspnetuser user)
         {
-            
+
             if (user.Email == null || user.Passwordhash == null)
             {
                 TempData["Error"] = "Username and password cannot be empty.";
@@ -55,7 +55,7 @@ namespace HalloDoc.Controllers
             if (_aspnetuserrepo.Exists(user.Email))
             {
                 var storedPassword = _aspnetuserrepo.GetUserPassword(user.Email);
-               
+
                 var hasher = new PasswordHasher<string>();
                 PasswordVerificationResult result = hasher.VerifyHashedPassword(null, storedPassword, user.Passwordhash);
 
@@ -64,9 +64,9 @@ namespace HalloDoc.Controllers
                     var logedinUser = _aspnetuserrepo.GetByEmail(user.Email);
                     var roleid = logedinUser.Roleid;
 
-                    if(roleid == 3)
+                    if (roleid == 3)
                     {
-                        string token = _jwtServices.GenerateToken(user.Email, "User" , 3);
+                        string token = _jwtServices.GenerateToken(user.Email, "User", 3);
                         HttpContext.Session.SetString("jwttoken", token);
                         HttpContext.Session.SetString("UserId", user.Email);
                         HttpContext.Session.SetInt32("roleid", 3);
@@ -95,7 +95,7 @@ namespace HalloDoc.Controllers
                 TempData["Error"] = "User Dose not Exists";
                 return Redirect("/Login");
             }
-            
+
         }
 
         [HttpGet]
@@ -133,7 +133,7 @@ namespace HalloDoc.Controllers
                     if (aspnetroleid == 1)
                     {
                         Admin Admin = _adminrepo.GetAdmin(logedinUser.Id);
-                        string token = _jwtServices.GenerateToken(user.Email, "Admin" , Admin.Roleid);
+                        string token = _jwtServices.GenerateToken(user.Email, "Admin", Admin.Roleid);
                         HttpContext.Session.SetString("jwttoken", token);
                         HttpContext.Session.SetString("Username", Admin.Firstname + " " + Admin.Lastname);
                         HttpContext.Session.SetString("AdminId", Admin.Adminid.ToString());
@@ -144,7 +144,7 @@ namespace HalloDoc.Controllers
                     else if (aspnetroleid == 2)
                     {
                         Physician physician = _physicianrepo.GetPhysician(logedinUser.Id);
-                        string token = _jwtServices.GenerateToken(user.Email, "Provider" , physician.Roleid);
+                        string token = _jwtServices.GenerateToken(user.Email, "Provider", physician.Roleid);
                         HttpContext.Session.SetString("jwttoken", token);
                         HttpContext.Session.SetString("Username", physician.Firstname + " " + physician.Lastname);
                         HttpContext.Session.SetString("providerId", physician.Physicianid.ToString());
@@ -185,26 +185,53 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult resetPassword(string email)
         {
-            User user = _userrepo.GetUser(email);
-            if(user == null)
+            try
             {
-                TempData["Error"] = "User Not Found";
+
+                Aspnetuser aspnetUser = _aspnetuserrepo.GetByEmail(email);
+                string name = "";
+                if (aspnetUser == null)
+                {
+                    TempData["Error"] = "User Not Found";
+                    return Redirect("/login/forgetPassword");
+                }
+                else
+                {
+                    var roleId = aspnetUser.Roleid;
+                    if (roleId == 1)
+                    {
+                        Admin admin = _adminrepo.GetByEmail(email);
+                        name = admin.Firstname + " " + admin.Lastname;
+                    }
+                    else if (roleId == 2)
+                    {
+                        Physician ph = _physicianrepo.GetPhysicianByEmail(email);
+                        name = ph.Firstname + " " + ph.Lastname;
+                    }
+                    else if (roleId == 3)
+                    {
+                        User user = _userrepo.GetUser(email);
+                        name = user.Firstname + " " + user.Lastname;
+                    }
+                }
+
+                string key = "770A8A65DA156D24EE2A093277530142";
+                String encryptedEmail = _petientfunctionrepo.Encrypt(email, key);
+                DateTime date = DateTime.Now;
+                string encryptedDate = _petientfunctionrepo.Encrypt(date.ToString(), key);
+                var resetPassowrdLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/Login/changePassword?email={encryptedEmail}&datetime={encryptedDate}";
+                var title = "Reset Password Link";
+                var message = $"Please click <a href=\"{resetPassowrdLink}\">here</a> to Reset Your Password account.";
+                bool isSent = _petientfunctionrepo.SendEmail(email, title, message);
+                _commonfunctionrepo.EmailLog(email, message, title, name, 3, null, null, null, 3, isSent, 1);
+                TempData["Success"] = "Reset password link sent to Email";
                 return Redirect("/login/forgetPassword");
             }
-
-            string name = user.Firstname + " , " + user.Lastname;
-
-            string key = "770A8A65DA156D24EE2A093277530142";
-            String encryptedEmail = _petientfunctionrepo.Encrypt(email , key);
-            DateTime date = DateTime.Now;
-            string encryptedDate = _petientfunctionrepo.Encrypt(date.ToString(), key);
-            var resetPassowrdLink = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/Login/changePassword?email={encryptedEmail}&datetime={encryptedDate}";
-            var title = "Reset Password Link";
-            var message = $"Please click <a href=\"{resetPassowrdLink}\">here</a> to Reset Your Password account.";
-            bool isSent = _petientfunctionrepo.SendEmail(email , title , message);
-            _commonfunctionrepo.EmailLog(email, message, title, name , 3, null, null, null, 3, isSent, 1);
-            TempData["Success"] = "Reset password link sent to Email";
-            return Redirect("/login/forgetPassword");
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Try after Sometimes";
+                return Redirect("/login/forgetPassword");
+            }
         }
 
         [HttpGet]
@@ -222,7 +249,8 @@ namespace HalloDoc.Controllers
 
             var diffOfDate = currentDate - getDate;
 
-            if (diffOfDate.TotalSeconds < 1500) {
+            if (diffOfDate.TotalSeconds < 1500)
+            {
                 ViewBag.email = email;
                 return View();
             }
@@ -234,9 +262,9 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-        public IActionResult changePassword(string email , string password , string confirmPassword)
+        public IActionResult changePassword(string email, string password, string confirmPassword)
         {
-            if(password ==  confirmPassword)
+            if (password == confirmPassword)
             {
                 var hasher = new PasswordHasher<string>();
                 Aspnetuser aspnetuser = _aspnetuserrepo.GetByEmail(email);

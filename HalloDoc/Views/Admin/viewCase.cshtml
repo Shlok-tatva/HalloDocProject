@@ -13,32 +13,6 @@
         if (window.innerWidth > 530) {
             document.getElementById('navbarHeader').classList.add("show");
         }
-
-        $(document).ready(function () {
-
-            $('#updateEmail').on('submit', function (e) {
-                e.preventDefault();
-
-                var formData = new FormData();
-                formData.append('requestId', $('#requestId').val());
-                formData.append('Email', $('#email').val());
-
-                $.ajax({
-                    url: "/UpdateEmail",
-                    method: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        Swal.fire("Saved!", "", "success");
-                    },
-                    error: function (xhr, status, error) {
-                        Swal.fire("Error While Save Changes!", "", "error");
-                    }
-                });
-            })
-        })
-
     </script>
     <script src="~/js/AdminActionModal.js"></script>
 }

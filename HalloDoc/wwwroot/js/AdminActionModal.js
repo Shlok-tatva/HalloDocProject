@@ -501,8 +501,50 @@ $(document).ready(function () {
             });
         });
 
-
-
-
 })
 
+/* View Case */
+
+$(document).ready(function () {
+    var currentEmail = $('#email').val();
+
+    $('#updateEmail').on('submit', function (e) {
+        debugger
+        e.preventDefault();
+
+        var newEmail = $('#email').val();
+
+        // Check if the email has been updated
+        if (newEmail === currentEmail) {
+            showToaster('Email not updated', "error");
+            return;
+        }
+
+        // Validate the new email using regex
+        var emailRegex = /^[\w-]+(?:\.[\w-]+)*@(?:[\w-]+\.)+[a-zA-Z]{2,7}$/;
+
+        if (!emailRegex.test(newEmail)) {
+            showToaster('Invalid email format', "error");
+            return;
+        }
+
+        // Proceed with the AJAX request
+        var formData = new FormData();
+        formData.append('requestId', $('#requestId').val());
+        formData.append('Email', newEmail);
+
+        $.ajax({
+            url: "/UpdateEmail",
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                showToaster('Email updated successfully', "success");
+            },
+            error: function (xhr, status, error) {
+                showToaster('Error while saving changes', "error");
+            }
+        });
+    });
+});

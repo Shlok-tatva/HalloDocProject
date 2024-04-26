@@ -74,8 +74,6 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult SubmitPatientForm(PatientFormData formData)
         {
-            if (ModelState.IsValid)
-            {
                 using (var transaction = new TransactionScope())
                 {
                     try
@@ -172,13 +170,6 @@ namespace HelloDoc.Controllers
                         return RedirectToAction("PatientRequest");
                     }
                 }
-            }
-            else
-            {
-                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                TempData["Error"] = errorMessage;
-                return RedirectToAction("PatientRequest");
-            }
         }
 
 
@@ -204,8 +195,6 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult SubmitFamilyFriendData(FamilyFriendFormData formData)
         {
-            if (ModelState.IsValid)
-            {
                 using (var transaction = new TransactionScope())
                 {
                     try
@@ -285,14 +274,6 @@ namespace HelloDoc.Controllers
                         return RedirectToAction("FamilyFriendRequest");
                     }
                 }
-            }
-            else
-            {
-                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                TempData["Error"] = errorMessage;
-                return RedirectToAction("FamilyFriendRequest");
-            }
-
         }
 
 
@@ -308,8 +289,6 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult SubmitConciergeData(ConciergeFormData formData)
         {
-            if (ModelState.IsValid)
-            {
                 using (var transaction = new TransactionScope())
                 {
                     try
@@ -398,14 +377,6 @@ namespace HelloDoc.Controllers
                         return RedirectToAction("ConciergeRequest");
                     }
                 }
-            }
-            else
-            {
-                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                TempData["Error"] = errorMessage;
-                return RedirectToAction("ConciergeRequest");
-            }
-
         }
 
 
@@ -421,8 +392,7 @@ namespace HelloDoc.Controllers
         [HttpPost]
         public IActionResult SubmitBusinessData(BusinessFormData formData)
         {
-            if (ModelState.IsValid)
-            {
+           
                 using (var transaction = new TransactionScope())
                 {
                     try
@@ -510,13 +480,6 @@ namespace HelloDoc.Controllers
                         return RedirectToAction("BusinessRequest");
                     }
                 }
-            }
-            else
-            {
-                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                TempData["Error"] = errorMessage;
-                return RedirectToAction("BusinessRequest");
-            }
 
         }
 

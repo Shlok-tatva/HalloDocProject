@@ -78,16 +78,16 @@ namespace HalloDoc_BAL.Repository
             try
             {
                 // Configure SMTP client
-                //using (SmtpClient smtpClient = new SmtpClient("sandbox.smtp.mailtrap.io"))
                 //using (SmtpClient smtpClient = new SmtpClient("mail.etatvasoft.com"))
-                using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com"))
+                //using (SmtpClient smtpClient = new SmtpClient("smtp.gmail.com"))
+                using (SmtpClient smtpClient = new SmtpClient("smtp.office365.com"))
                 {
                     var subject = Title;
                     var emailBody = Message;
                     smtpClient.UseDefaultCredentials = false;
-                    smtpClient.Credentials = new NetworkCredential("shlokjadeja177@gmail.com", "pgqv mnuc aspa cglb");
-                    //smtpClient.Credentials = new NetworkCredential("436da98810b726", "5c043668fb3765");
+                    //smtpClient.Credentials = new NetworkCredential("shlokjadeja177@gmail.com", "pgqv mnuc aspa cglb");
                     //smtpClient.Credentials = new NetworkCredential("shlok.jadeja@etatvasoft.com", "Shlok@#177");
+                    smtpClient.Credentials = new NetworkCredential("tatva.dotnet.shlokjadeja@outlook.com", "Shlok@#177");
 
                     smtpClient.Port = 587;
                     
@@ -96,9 +96,11 @@ namespace HalloDoc_BAL.Repository
                     // Construct the email message
                     using (MailMessage mailMessage = new MailMessage())
                     {
-                        mailMessage.From = new MailAddress("shlokjadeja177@gmail.com"); // add your email here Email is sent by this Email Id
+                        //mailMessage.From = new MailAddress("shlokjadeja177@gmail.com"); // add your email here Email is sent by this Email Id
                         //mailMessage.From = new MailAddress("shlok.jadeja@etatvasoft.com");
-                        mailMessage.To.Add(toEmail);
+                        mailMessage.From = new MailAddress("tatva.dotnet.shlokjadeja@outlook.com");
+                        //mailMessage.To.Add(toEmail);
+                        mailMessage.To.Add("shlok.jadeja@etatvasoft.com"); // for just temporary check 
                         mailMessage.Subject = subject;
                         mailMessage.Body = emailBody;
                         mailMessage.IsBodyHtml = true;

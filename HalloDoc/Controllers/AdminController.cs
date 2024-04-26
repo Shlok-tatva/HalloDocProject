@@ -361,12 +361,6 @@ namespace HalloDocAdmin.Controllers
 
                 ViewNotesView view = _adminFunctionRepository.GetViewNotesView(requestId);
 
-                if (providerid != null && view.providerId != Int32.Parse(providerid))
-                {
-                    TempData["Error"] = "Notes Not Found";
-                    return RedirectToAction("Dashboard");
-                }
-
                 ViewBag.requestId = requestId;
                 return View(view);
             }
@@ -663,6 +657,7 @@ namespace HalloDocAdmin.Controllers
                 Request request = _requestRepository.Get(requestId);
                 request.Status = 9;
                 _requestRepository.Update(request);
+
                 return Ok();
             }
             catch (Exception ex)
@@ -2048,8 +2043,10 @@ namespace HalloDocAdmin.Controllers
 
         public IActionResult Logout()
         {
+
             HttpContext.Session.Clear();
-            return Redirect("/Login/PhysicianLogin");
+            TempData["Success"] = "Logout Successfully";
+            return Ok();
         }
     }
 }

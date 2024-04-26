@@ -257,8 +257,9 @@ namespace HalloDoc.Controllers
 
         public IActionResult SubmitRequest(PatientFormData formData)
         {
-            if (ModelState.IsValid)
+            try
             {
+
                 using (var transaction = new TransactionScope())
                 {
                     var email = HttpContext.Session.GetString("UserId");
@@ -325,11 +326,10 @@ namespace HalloDoc.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            else
+            catch(Exception ex)
             {
-                string errorMessage = string.Join(" and ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                TempData["Error"] = errorMessage;
-                return NotFound();
+                TempData["Error"] = "Error While Creating Request";
+                return RedirectToAction("Index");
             }
         }
 
