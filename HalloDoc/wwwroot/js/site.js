@@ -98,17 +98,56 @@ const initializeIntlTelInput = (input) => {
 const input = document.querySelector("#phone");
 const input2 = document.getElementById("phone1"); // Use getElementById instead of querySelector
 
-if(input) {
-initializeIntlTelInput(input);
+if (input) {
+    initializeIntlTelInput(input);
+    input.addEventListener('change', function () {
+        validatePhoneNumber(input);
+    });
 }
-if(input2) { // Check if input2 is not null
+
+if (input2) { // Check if input2 is not null
     initializeIntlTelInput(input2); // Run the function only if input2 exists
+    input2.addEventListener('change', function () {
+        validatePhoneNumber(input2);
+    });
 }
+
+function validatePhoneNumber(input) {
+    // Get the intlTelInput instance associated with the input
+    var iti = window.intlTelInputGlobals.getInstance(input);
+    // Check if the entered number is valid
+    if (iti.isValidNumber()) {
+        appendValidationMessage(input, "Valid phone number", "text-success");
+    } else {
+        appendValidationMessage(input, "Invalid phone number", "text-danger");
+    }
+}
+
+function appendValidationMessage(input, message, className) {
+    // Remove any existing validation message span
+    var existingSpan = input.nextElementSibling;
+    if (existingSpan && existingSpan.classList.contains("validation-message")) {
+        existingSpan.remove();
+    }
+
+    // Create a new span element
+    var span = document.createElement("span");
+    span.textContent = message;
+    span.classList.add("validation-message");
+    span.classList.add(className);
+
+    // Append the span after the input element
+    input.parentNode.insertBefore(span, input.nextSibling);
+}
+
+
 
 let inputFile = document.getElementById("inputFile");
 let fileNameInput = document.getElementById('fileNameInput');
 
+
 if (inputFile) {
+
 
 inputFile.addEventListener("change", function () {
     // Get the file name from the files property
@@ -122,6 +161,20 @@ inputFile.addEventListener("change", function () {
 
 });
 }
+
+
+$(document).ready(function () {
+    // Add blur event handler to input fields and textareas
+    $('input, textarea').on('blur', function () {
+        // Trim whitespace from the input value or textarea value
+        var trimmedValue = $(this).val().trim();
+
+        // Update the input value or textarea value with the trimmed value
+        $(this).val(trimmedValue);
+    });
+});
+
+
 
 function getRequest(requestId) {
     var requestdata;
