@@ -71,21 +71,6 @@ label {
     color: #212529;
 }
 
-/* width */
-::-webkit-scrollbar {
-    width: 3px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: #01BBE7;
-}
-
 input[type=date]:required:invalid::-webkit-datetime-edit {
     color: transparent !important;
 }

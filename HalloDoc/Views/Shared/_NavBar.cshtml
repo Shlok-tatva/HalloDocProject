@@ -25,11 +25,13 @@
             </a>
             <div class="d-flex justify-content-around align-items-center">
                 <h6 class="mx-2 my-2 mobile_d_none">Welcome, <strong>@ViewBag.Username</strong></h6>
+
                 <form asp-action="Logout" method="post">
                     <button type="submit" class="btn btn-outline-info mx-2 hover_white">
                         <strong><i class="bi bi-box-arrow-left fw-bolder"></i></strong> <span class="mobile_d_none">Logout</span>
                     </button>
                 </form>
+
                 <button id="btnSwitch" class="btn btn btn-outline-info hover_white">
                     <i class="fa-regular fa-moon fs-6" id="theme_mode_button"></i>
                 </button>
@@ -70,7 +72,7 @@
                 }
 
                 <!-- Dropdown Menu - Providers -->
-                @if (menus.Contains("Provider"))
+                @if (new[] { "Provider", "Scheduling", "Invoicing" }.Any(menu => menus.Contains(menu)))
                 {
                     <div class="p-3 links dropdown @(ViewData["ViewName"] == "Providers" ? "active" : "")" style="text-align:left !important;">
                         <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -101,7 +103,7 @@
                 }
 
                 <!-- Dropdown Menu - Providers -->
-                @if (menus.Contains("Access"))
+                @if (new[] { "Access", "UserAccess" }.Any(menu => menus.Contains(menu)))
                 {
                     <div class="p-3 links dropdown @(ViewData["ViewName"] == "Access" ? "active" : "")" style="text-align:left !important;">
                         <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -149,6 +151,12 @@
                 }
 
 
+                @if (accountType == 2 && menus.Contains("ProviderInvoice"))
+                {
+                    <div class="p-3 links @(ViewData["ViewName"] == "ProviderInvoice" ? "active" : "")">
+                        <a asp-controller="Provider" asp-action="ProviderInvoice">Invoicing</a>
+                    </div>
+                }
 
                 @if (accountType == 2 && menus.Contains("ProviderSchedule"))
                 {

@@ -82,6 +82,7 @@ namespace HalloDoc_BAL.Repository
         List<Rolemenu> GetMenuByRole(int roleID);
         string GetMenuNameById(int menuid);
         List<UserAccessView> GetUserAccessView(int roleId);
+        List<Physician> GetPhysicians();
 
         /*Provider request*/
         void TransferRequestRequest(int requestId, string reason, int providerId);

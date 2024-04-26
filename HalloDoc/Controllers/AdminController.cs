@@ -1404,6 +1404,7 @@ namespace HalloDocAdmin.Controllers
         #region UserAccess-And-RoleAccess
 
         [CustomAuth("Admin")]
+        [RouteAuthFilter]
         public IActionResult Access()
         {
             ViewData["ViewName"] = "Access";
@@ -1423,7 +1424,9 @@ namespace HalloDocAdmin.Controllers
             return View("Access/index", view);
         }
 
+
         [CustomAuth("Admin")]
+        [RouteAuthFilter]
         [HttpGet]
         public IActionResult CreateAccess()
         {
@@ -1513,6 +1516,7 @@ namespace HalloDocAdmin.Controllers
         }
 
         [CustomAuth("Admin")]
+        [RouteAuthFilter]
         public IActionResult UserAccess()
         {
             List<UserAccessView> view = new List<UserAccessView>();
@@ -2033,10 +2037,19 @@ namespace HalloDocAdmin.Controllers
 
         #endregion
 
+        /*Good To Have Feature*/
+
+        public IActionResult Invoicing()
+        {
+            ViewBag.Providers = _adminFunctionRepository.GetPhysicians();
+            ViewBag.TimesheetPeriods = _commonFunctionrepo.GetTimeSheetPeriod();
+            return View("Invoicing/index");
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return Redirect("/Login/index");
+            return Redirect("/Login/PhysicianLogin");
         }
     }
 }

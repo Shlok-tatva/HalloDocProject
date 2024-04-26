@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Provider Invoicing";
+}
+@section Style {
+    <link rel="stylesheet" href="~/css/adminCss.css" />
+}
+
+@section Scripts {
+    <script src="~/js/contactProvider.js"></script>
+    <script>
+        if (window.innerWidth > 530) {
+            document.getElementById('navbarHeader').classList.add("show");
+        }
+    </script>
+}
+
+<partial name="_NavBar" />
+
+<div class="container">
+    <div class="m-auto mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="me-2 mt-1 fw-bolder">TimeSheet</h3>
+            </div>
+            <div>
+                <button class="btn btn btn-outline-info hover_white ms-5" onclick="window.history.back()">
+                    <i class="fa-solid fa-chevron-left"></i> Back
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-2 border-0 rounded-3 shadow">
+            <div class="row">
+                <div class="col-md-4 m-2">
+                    <div class="form-floating">
+                        <select class="form-select" id="timesheetPeriodSelect" aria-label="Floating label select example">
+                            <option value="" selected disabled>Select Timesheet Period</option>
+                            @foreach (var period in ViewBag.TimesheetPeriods)
+                            {
+                                <option value="@period">@period</option>
+                            }
+                        </select>
+                        <label for="timesheetPeriodSelect">Search by Timesheet Period</label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+

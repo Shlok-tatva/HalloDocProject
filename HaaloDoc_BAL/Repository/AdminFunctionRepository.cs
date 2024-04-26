@@ -202,7 +202,7 @@ namespace HalloDoc_BAL.Repository
                 phoneNumber = requestClient.Phonenumber,
                 Address = requestClient.Street + " " + requestClient.City + " " + requestClient.State + " " + requestClient.Zipcode,
                 email = requestClient.Email,
-                Region = requestClient.Regionid,
+                Region =  _context.Regions.Where(r => r.Regionid == requestClient.Regionid).FirstOrDefault().Name,
                 requesterfirstName = request.Firstname,
                 requesterlastName = request.Lastname,
                 requesterEmail = request.Email,
@@ -2195,6 +2195,11 @@ namespace HalloDoc_BAL.Repository
         public string GetMenuNameById(int menuid)
         {
             return _context.Menus.Where(m => m.Menuid == menuid).First().Name;
+        }
+
+        public List<Physician> GetPhysicians()
+        {
+            return _context.Physicians.Where(p => p.Isdeleted != true).ToList();
         }
 
 

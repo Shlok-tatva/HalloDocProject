@@ -35,7 +35,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         [Required]
         public string phoneNumber { get; set; }
 
-        public int? Region { get; set; }
+        public string? Region { get; set; }
 
         public List<Region> ListofRegion { get; set; }
 

@@ -20,5 +20,6 @@ namespace HalloDoc_BAL.Interface
         void createRequest(PatientFormData data, int? adminId, int? providerId , string requestScheme, HostString requestHost);
         void AddRequestStatusLog(int requestId, short status, string notes, int? adminId, int? providerId, bool trasnaporttoAdmin);
         List<Region> GetAllReagion();
+        List<string> GetTimeSheetPeriod();
     }
 }
