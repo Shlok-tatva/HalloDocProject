@@ -15,7 +15,7 @@ namespace HalloDoc_BAL.ViewModel.Patient
         public string f_Email { get; set; }
 
         [Required(ErrorMessage = "Please enter Phone Number")]
-        [Phone(ErrorMessage = "Invalid phone number")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid Phone Number")]
         public string f_PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Please specify your relation with the patient")]

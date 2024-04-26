@@ -51,7 +51,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public string ConfirmEmail { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]
-        [Phone(ErrorMessage = "Invalid phone number")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid Phone Number")]
         public string Phone { get; set; }
 
         // Mailing & Billing Information
@@ -71,7 +71,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public string Zip { get; set; }
 
         [Required(ErrorMessage = "Billing phone number is required")]
-        [Phone(ErrorMessage = "Invalid billing phone number")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid Phone Number")]
         public string? billingPhone { get; set; }
 
         public List<int> AdminRegions { get; set; }

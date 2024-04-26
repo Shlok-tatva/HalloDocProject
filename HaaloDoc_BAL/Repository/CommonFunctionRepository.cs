@@ -363,6 +363,30 @@ namespace HalloDoc_BAL.Repository
             }
         }
 
+
+        public List<string> GetTimeSheetPeriod()
+        {
+            List<string> timesheetPeriods = new List<string>();
+
+            int currentYear = DateTime.Now.Year;
+
+            // Loop through each month of the current year
+            for (int month = 1; month <= 12; month++)
+            {
+                // Get the first day and last day of the month
+                DateTime firstDayOfMonth = new DateTime(currentYear, month, 1);
+                DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                string firstHalfOption = $"{currentYear}/{month.ToString("D2")}/01 - {currentYear}/{month.ToString("D2")}/15";
+                timesheetPeriods.Add(firstHalfOption);
+
+                string secondHalfOption = $"{currentYear}/{month.ToString("D2")}/16 - {currentYear}/{month.ToString("D2")}/{lastDayOfMonth.Day}";
+
+                timesheetPeriods.Add(secondHalfOption);
+            }
+            return timesheetPeriods;
+        }
+
         private int GetCountOfTodayRequests()
         {
             var currentDate = DateTime.Now.Date;

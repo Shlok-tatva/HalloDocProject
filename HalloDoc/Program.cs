@@ -52,6 +52,27 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseStatusCodePages(context => {
+    var request = context.HttpContext.Request;
+    var response = context.HttpContext.Response;
+
+    if (response.StatusCode == 404)
+    {
+        response.Redirect("/PageNoteFound");
+    }
+    else if (response.StatusCode >= 500 && response.StatusCode <= 599)
+    {
+        // Handle server-side errors by redirecting to a custom error page
+        response.Redirect("/ServerError");
+    }
+    else if (response.StatusCode == 0)
+    {
+        // Handle ERR_EMPTY_RESPONSE by redirecting to a custom error page
+        response.Redirect("/EmptyResponseError");
+    }
+    return Task.CompletedTask;
+});
+
 app.UseRouting();
 app.UseSession();
 app.UseRotativa();

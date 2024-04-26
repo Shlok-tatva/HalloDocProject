@@ -10,7 +10,7 @@ namespace HalloDoc_BAL.ViewModel.Patient
         [Required(ErrorMessage = "Please enter your last name")]
         public string BusinessLastName { get; set; }
 
-        [Phone(ErrorMessage = "Invalid phone number")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Invalid Phone Number")]
         public string BusinessPhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Please enter your email")]

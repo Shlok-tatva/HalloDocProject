@@ -15,8 +15,6 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public int? ProviderId { get; set; }
         public string? UserName { get; set; }
 
-        public string? Password { get; set; }
-
         public short? Status { get; set; }
 
         public string? statusString
@@ -55,7 +53,7 @@ namespace HalloDoc_BAL.ViewModel.Admin
         public string email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
-        [StringLength(5, ErrorMessage = "Password must be 5 characters long", MinimumLength = 5)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", ErrorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
         public string password { get; set; }
 
         [Required(ErrorMessage = "Phone Number is required")]

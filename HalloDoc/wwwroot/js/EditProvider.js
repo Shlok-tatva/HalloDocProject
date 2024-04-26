@@ -97,8 +97,11 @@
 
     $("#resetPassword").on("click", function () {
         var password = $("#providerPassword").val();
-        if (password.length < 5) {
-            showToaster("minimum length of password should be 5", "error");
+        var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\@\$!%*?&])[A-Za-z\d\@\$!%*?&]{8,}$/;
+
+
+        if (!passwordRegex.test(password)) {
+            showToaster("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.", "error");
             return;
         }
 

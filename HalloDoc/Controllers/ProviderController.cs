@@ -308,10 +308,18 @@ namespace HalloDocAdmin.Controllers
             }
         }
 
+        public IActionResult ProviderInvoice()
+        {
+            ViewData["ViewName"] = "ProviderInvoice";
+            ViewBag.Username = HttpContext.Session.GetString("Username");
+            ViewBag.TimesheetPeriods = _commonFunctionrepo.GetTimeSheetPeriod();
+            return View();
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return Redirect("/Login/index");
+            return Redirect("/Login/PhysicianLogin");
         }
 
     }
