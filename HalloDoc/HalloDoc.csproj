@@ -102,8 +102,9 @@
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="if [ -f &quot;$(TargetPath).locked&quot; ]; then rm &quot;$(TargetPath).locked&quot;; fi" />
-		<Exec Command="if [ -f &quot;$(TargetPath)&quot; ] && [ ! -f &quot;$(TargetPath).locked&quot; ]; then mv &quot;$(TargetPath)&quot; &quot;$(TargetPath).locked&quot;; fi" />
+		<Exec Command="if [ -f &quot;$(TargetPath)&quot; ] &amp;&amp; [ ! -f &quot;$(TargetPath).locked&quot; ]; then mv &quot;$(TargetPath)&quot; &quot;$(TargetPath).locked&quot;; fi" />
 	</Target>
+
 
 
 </Project>
