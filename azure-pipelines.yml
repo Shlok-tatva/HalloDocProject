@@ -1,8 +1,3 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-
 trigger:
 - main
 
@@ -13,21 +8,43 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  artifactStagingDirectory: '$(Build.ArtifactStagingDirectory)'
 
 steps:
+# 1. Install NuGet
 - task: NuGetToolInstaller@1
 
+# 2. Restore NuGet packages
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
 
+# 3. Build the solution and create a Web Deploy package
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(artifactStagingDirectory)"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+# 4. (Optional) Publish the build artifacts
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(artifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+# 5. Deploy the package to the Azure Web App
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Visual Studio Enterprise Subscription – MPN(00b80849-20f9-4e1e-b698-573ed62c37b3)'
+    appType: 'webApp'
+    WebAppName: 'hallodoctest'
+    package: '$(artifactStagingDirectory)/**/*.zip'
+    # configuration: '$(buildConfiguration)'   # Optional: only include if required
+
+# 6. Run tests (if any)
 - task: VSTest@2
   inputs:
     platform: '$(buildPlatform)'
