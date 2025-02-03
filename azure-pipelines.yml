@@ -41,7 +41,7 @@ steps:
     azureSubscription: 'Visual Studio Enterprise Subscription – MPN(00b80849-20f9-4e1e-b698-573ed62c37b3)'
     appType: 'webApp'
     WebAppName: 'hallodoctest'
-    package: '$(artifactStagingDirectory)/**/*.zip'
+    package: '$(artifactStagingDirectory)/**/HalloDoc.zip'
     # configuration: '$(buildConfiguration)'   # Optional: only include if required
 
 # 6. Run tests (if any)
